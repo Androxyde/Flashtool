@@ -1,0 +1,5 @@
+addresses = {
+	prepare_kernel_cred = "c00a253c"
+	commit_creds = "c00a2060"
+	ptmx_fops = "c0f47020"
+}

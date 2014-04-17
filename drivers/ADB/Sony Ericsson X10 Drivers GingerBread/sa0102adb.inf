@@ -1,0 +1,187 @@
+;**************************************************************************
+;
+; sa0102adb.inf   -- Sony Ericsson sa0102 ADB Interface Driver
+;
+;**************************************************************************
+
+[Version]
+Signature           = "$Windows NT$"
+Class               = sa0102AdbDeviceClass
+ClassGuid           = {D7C65D5D-29EB-4751-B3D4-28A027A3E8AC}
+Provider            = %ProviderName%
+DriverVer           = 02/23/2011,2.0.0010.20021
+CatalogFile.NTx86   = sa0102usb86.cat
+CatalogFile.NTamd64 = sa0102usba64.cat
+
+;
+; This section seems to be required for WinUsb driver installation.
+; If this section is removed the installer will report an error
+; "Required section not found in INF file".
+;
+[ClassInstall32]
+Addreg = sa0102UsbClassReg
+
+[sa0102UsbClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-1
+
+[Manufacturer]
+%ProviderName% = SEMC, NTx86, NTamd64
+
+[SEMC.NTx86]
+; Rachael GB
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_812E&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_612E&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_815D&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_615D&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_515D&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_215B&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_815B&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_915B&MI_00
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_814F&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_614F&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_514F&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8156&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6156&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5156&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_815C&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_615C&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_515C&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_815A&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_615A&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_515A&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8161&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6161&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5161&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8166&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6166&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5166&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8167&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6167&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5167&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8168&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6168&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5168&MI_01
+
+; Engineering PID (Should be removed on signed driver)
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6146&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5146&MI_01
+
+[SEMC.NTamd64]
+; Rachael GB
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_812E&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_612E&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_815D&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_615D&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_515D&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_215B&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_815B&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_915B&MI_00
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_814F&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_614F&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_514F&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8156&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6156&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5156&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_815C&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_615C&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_515C&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_815A&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_615A&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_515A&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8161&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6161&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5161&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8166&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6166&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5166&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8167&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6167&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5167&MI_01
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8168&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6168&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5168&MI_01
+
+; Engineering PID (Should be removed on signed driver)
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_6146&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5146&MI_01
+
+[USB_Install]
+Include = winusb.inf
+Needs   = WINUSB.NT
+
+[USB_Install.Services]
+Include     = winusb.inf
+AddService  = WinUSB,0x00000002,WinUSB_ServiceInstall
+
+[WinUSB_ServiceInstall]
+DisplayName     = %WinUSB_SvcDesc%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WinUSB.sys
+
+[USB_Install.Wdf]
+KmdfService = WINUSB, WinUSB_Install
+
+[WinUSB_Install]
+KmdfLibraryVersion  = 1.7
+
+[USB_Install.HW]
+AddReg  = Dev_AddReg
+
+[Dev_AddReg]
+HKR,,DeviceInterfaceGUIDs,0x10000,"{F72FE0D4-CBCB-407d-8814-9ED673D0DD6B}"
+
+[USB_Install.CoInstallers]
+AddReg    = CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WdfCoInstaller01007.dll,WdfCoInstaller","WinUSBCoInstaller.dll"
+
+[CoInstallers_CopyFiles]
+WinUSBCoInstaller.dll
+WdfCoInstaller01007.dll
+
+[DestinationDirs]
+CoInstallers_CopyFiles=11
+
+[SourceDisksNames]
+1 = %DISK_NAME%,,,\i386
+2 = %DISK_NAME%,,,\amd64
+
+[SourceDisksFiles.x86]
+WinUSBCoInstaller.dll  = 1
+WdfCoInstaller01007.dll = 1
+
+[SourceDisksFiles.amd64]
+WinUSBCoInstaller.dll  = 2
+WdfCoInstaller01007.dll = 2
+
+[Strings]
+ProviderName                = "Sony Ericsson"
+CompositeAdbInterface       = "Sony Ericsson sa0102 ADB Interface Driver"
+WinUSB_SvcDesc              = "Sony Ericsson sa0102 ADB Interface"
+DISK_NAME                   = "Sony Ericsson sa0102 ADB Interface Installation disk"
+ClassName                   = "Sony Ericsson sa0102"

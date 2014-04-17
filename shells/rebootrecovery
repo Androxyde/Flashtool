@@ -1,0 +1,6 @@
+#!SHELLPATH
+
+touch DEVICEWORKDIR/recoveryboot
+touch /cache/recovery/boot
+
+rm DEVICEWORKDIR/runscript && rm DEVICEWORKDIR/sysrun && /system/bin/reboot

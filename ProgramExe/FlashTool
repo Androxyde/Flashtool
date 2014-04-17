@@ -1,0 +1,120 @@
+#!/bin/sh
+
+export BASEDIR=$(dirname $0)
+export system64=$(uname -m)
+export OS=$(uname -s)
+
+cd $BASEDIR
+
+if test "$OS" = "Linux"
+then
+    chmod 755 ./x10flasher_lib/bin2elf
+    chmod 755 ./x10flasher_lib/bin2sin
+    if [ "$(whoami)" != "root" ]
+    then
+	export HASRULES="false"
+	if test -d /etc/udev/rules.d
+	then
+        	if grep -rl "0fce" /etc/udev/rules.d >/dev/null
+        	then
+			export HASRULES="true"
+		fi
+	fi
+	if test "$HASRULES" = "true"
+	then
+    		echo "Not running as root but Sony/SonyEriccson Vendor ID found on your udev rules"
+       		echo "if Flashing didn't work well, run flashtool as root"
+       	else
+       		echo "Not running as root and there is no Sony/SonyEriccson Vendor ID on your udev rules"   
+       		echo "The user must be granted access to adb/flashmode/fastboot"
+       		echo "If you are unsure what to do, run flashtool as root"
+       		exit 1
+       	fi
+    else
+        echo "Running as root."
+    fi
+    if test -z "${JAVA_HOME}"
+    then
+        if test "${system64}" = "x86_64"
+        then
+             export JAVA_HOME=./x10flasher_lib/linjre64
+             
+        else
+             export JAVA_HOME=./x10flasher_lib/linjre32
+             
+        fi
+        echo "JAVA_HOME not set. Using default value : ${JAVA_HOME}"
+    fi
+    if test -e ${JAVA_HOME}/bin/java
+    then
+         ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
+         ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
+         ISJAVA64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bit|wc -l)
+	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0
+	 then
+         	if test $ISJAVA64 -gt 0
+         	then
+         		export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64
+			UDEV=$(ldd x10flasher_lib/linux/lib64/udev/libusbx-1.0.so.0.1.0 |grep found|wc -l)
+			if test $UDEV -gt 0
+			then
+         			ln -sf udev1/libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
+			else
+         			ln -sf udev/libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
+			fi
+    	     		ln -sf swt64.jar ./x10flasher_lib/swtlin/swt.jar
+    			chmod 755 ./x10flasher_lib/adb.linux.x64
+ 			ln -sf adb.linux.x64 ./x10flasher_lib/adb.linux
+    			chmod 755 ./x10flasher_lib/fastboot.linux.x64
+ 			ln -sf fastboot.linux.x64 ./x10flasher_lib/fastboot.linux
+    			chmod 755 ./x10flasher_lib/unyaffs.linux.x64
+ 			ln -sf unyaffs.linux.x64 ./x10flasher_lib/unyaffs.linux
+         	else
+         		export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32
+			UDEV=$(ldd x10flasher_lib/linux/lib32/udev/libusbx-1.0.so.0.1.0 |grep found|wc -l)
+			if test $UDEV -gt 0
+			then
+         			ln -sf udev1/libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusbx-1.0.so
+			else
+         			ln -sf udev/libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusbx-1.0.so
+			fi
+             		ln -sf swt32.jar ./x10flasher_lib/swtlin/swt.jar
+    			chmod 755 ./x10flasher_lib/adb.linux.x86
+ 			ln -sf adb.linux.x86 ./x10flasher_lib/adb.linux
+    			chmod 755 ./x10flasher_lib/fastboot.linux.x86
+ 			ln -sf fastboot.linux.x86 ./x10flasher_lib/fastboot.linux
+    			chmod 755 ./x10flasher_lib/unyaffs.linux.x86
+ 			ln -sf unyaffs.linux.x86 ./x10flasher_lib/unyaffs.linux
+         	fi
+         	$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar -Djsse.enableSNIExtension=false x10flasher.jar
+	 else
+		echo "Java version must be 1.6 or 1.7"
+	 fi
+    else
+         echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
+         echo "Set the variable to a valid Java installation"
+    fi
+else
+    chmod 755 ./x10flasher_lib/adb.mac
+    chmod 755 ./x10flasher_lib/fastboot.mac
+    chmod 755 ./x10flasher_lib/unyaffs.mac
+    export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib64:$DYLD_LIBRARY_PATH
+    export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$DYLD_LIBRARY_PATH
+    ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusbx-1.0.dylib
+    ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusbx-1.0.dylib
+    ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
+    ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
+    ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
+    if test $ISJAVA64 -gt 0
+    then
+   		ln -sf swt64.jar ./x10flasher_lib/swtmac/swt.jar
+    else
+        ln -sf swt32.jar ./x10flasher_lib/swtmac/swt.jar
+    fi
+    if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0
+    then
+    	java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar
+    else
+		echo "Java version must be 1.6 or 1.7"
+    fi
+fi

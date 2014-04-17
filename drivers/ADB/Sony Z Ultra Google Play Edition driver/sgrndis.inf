@@ -1,0 +1,47 @@
+;**************************************************************************
+;
+; sgrndis.inf   -- Sony RNDIS Interface Driver
+;
+;**************************************************************************
+
+[Version]
+Signature           = "$Windows NT$"
+Class               = Net
+ClassGUID           = {4d36e972-e325-11ce-bfc1-08002be10318}
+Provider            = %ProviderName%
+DriverVer           = 10/01/2013,6.0.6000.16499
+CatalogFile.NTx86   = sgrndis86.cat
+
+[Manufacturer]
+%ProviderName%         = RndisDevices,NTx86
+
+; Decoration for x86 architecture
+[RndisDevices.NTx86]
+%RndisDevice%    = RNDIS.NT.5.1, USB\VID_0FCE&PID_71B6&MI_00
+%RndisDevice%    = RNDIS.NT.5.1, USB\VID_0FCE&PID_81B6&MI_00
+
+;@@@ This is the common setting for setup
+[ControlFlags]
+ExcludeFromSelect=*
+
+; DDInstall section
+; References the in-build Netrndis.inf
+[RNDIS.NT.5.1]
+Characteristics = 0x84   ; NCF_PHYSICAL + NCF_HAS_UI
+BusType         = 15
+; NEVER REMOVE THE FOLLOWING REFERENCE FOR NETRNDIS.INF
+include         = netrndis.inf
+needs           = Usb_Rndis.ndi
+
+; DDInstal.Services section
+[RNDIS.NT.5.1.Services]
+include     = netrndis.inf
+needs       = Usb_Rndis.ndi.Services
+
+; No sys copyfiles - the sys files are already in-build
+; (part of the operating system).
+
+; Modify these strings for your device as needed.
+[Strings]
+ProviderName                = "Sony"
+RndisDevice                 = "Sony Remote NDIS based Device"

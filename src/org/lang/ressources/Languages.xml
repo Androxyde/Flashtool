@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languages>
+    <fr trigger="fr">
+        <rdbtnmntmfr name="Français"/>
+        <rdbtnmntmen name="Anglais"/>
+        <rdbtnmntmger name="Allemand"/>
+		<rdbtnmntmpt name="Portugais"/>
+		<rdbtnmntmda name="Danois"/>
+		<rdbtnmntmar name="Arabe"/>
+		<rdbtnmntmgr name="Grecque"/>
+    </fr>
+    <en trigger="en">
+        <rdbtnmntmfr name="French"/>
+        <rdbtnmntmen name="English"/>
+        <rdbtnmntmger name="German"/>
+		<rdbtnmntmpt name="Portuguese"/>
+		<rdbtnmntmda name="Danish"/>
+		<rdbtnmntmar name="Arabic"/>
+		<rdbtnmntmgr name="Greek"/>
+    </en>
+    <ger trigger="ger">
+        <rdbtnmntmfr name="Französisch"/>
+        <rdbtnmntmen name="Englisch"/>
+        <rdbtnmntmger name="Deutsch"/>
+        <rdbtnmntmpt name="Portugiesisch"/>
+        <rdbtnmntmda name="Dänish"/>
+        <rdbtnmntmar name="Arabic"/>
+		<rdbtnmntmgr name="Griechisch"/>
+    </ger>
+	<pt trigger="pt">
+        <rdbtnmntmfr name="Françês"/>
+        <rdbtnmntmen name="Inglês"/>
+        <rdbtnmntmger name="Alemão"/>
+		<rdbtnmntmpt name="Português"/>
+		<rdbtnmntmda name="Danish"/>
+		<rdbtnmntmar name="Arabic"/>
+		<rdbtnmntmgr name="Grego"/>
+	</pt>
+    <da trigger="da">
+        <rdbtnmntmfr name="Fransk"/>
+        <rdbtnmntmen name="Engelsk"/>
+        <rdbtnmntmger name="Tysk"/>
+        <rdbtnmntmpt name="Portuguese"/>
+        <rdbtnmntmda name="Dansk"/>
+        <rdbtnmntmar name="Arabic"/>
+		<rdbtnmntmgr name="Græsk"/>
+    </da>   
+    <ar trigger="ar">
+        <rdbtnmntmfr name="French"/>
+        <rdbtnmntmen name="English"/>
+        <rdbtnmntmger name="German"/>
+        <rdbtnmntmpt name="Portuguese"/>
+        <rdbtnmntmda name="Danish"/>
+        <rdbtnmntmar name="Arabic"/>
+		<rdbtnmntmgr name="Greek"/>
+    </ar>
+	<gr trigger="gr">
+        <rdbtnmntmfr name="Γαλλικά"/>
+        <rdbtnmntmen name="Αγγλικά"/>
+        <rdbtnmntmger name="Γερμανικά"/>
+		<rdbtnmntmpt name="Πορτογαλικά"/>
+		<rdbtnmntmda name="Δανικά"/>
+		<rdbtnmntmar name="Αραβικά"/>
+		<rdbtnmntmgr name="Ελληνικά"/>
+    </gr>
+</languages>

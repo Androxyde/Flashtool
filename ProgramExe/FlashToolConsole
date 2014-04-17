@@ -1,0 +1,234 @@
+#!/bin/sh
+
+export BASEDIR=$(dirname $0)
+export system64=$(uname -m)
+export OS=$(uname -s)
+
+cd $BASEDIR
+
+show_help() {
+	echo Usage : FlashToolConsole [OPTIONS]
+        echo
+	echo MANDATORY :
+	echo '     --action=flash|imei|extract'
+    echo '     --file=/path/to/file.ftf (only when action=flash)'
+    echo '            /path/to/file.sin (only when action=extract)'
+	echo
+	echo
+	echo OPTIONAL :
+	echo '    --wipedata=yes|no (only when action=flash)'
+	echo '    --wipecache=yes|no (only when action=flash)'
+	echo '    --baseband=yes|no (only when action=flash)'
+	echo '    --system=yes|no (only when action=flash)'
+	echo '    --kernel=yes|no (only when action=flash)'
+	exit 0
+}
+
+if test $# -eq 0
+then
+   show_help;
+fi
+
+while test $# != 0
+do
+  case $1 in
+  --*=*)
+    ac_option=`expr "X$1" : 'X\([^=]*\)='`
+    ac_optarg=`expr "X$1" : 'X[^=]*=\(.*\)'`
+    ac_shift=:
+    ;;
+  *)
+    ac_option=$1
+    ac_optarg=$2
+    ac_shift=shift
+    ;;
+  esac
+
+  case $ac_option in
+  -a | --action)
+     export p_action=$ac_optarg;;
+  -f | --file)
+     export p_file=$ac_optarg;;
+  --wipedata)
+     export p_data=$ac_optarg;;
+  --wipecache)
+     export p_cache=$ac_optarg;;
+  --baseband)
+     export p_baseband=$ac_optarg;;
+  --system)
+     export p_system=$ac_optarg;;
+  --kernel)
+     export p_kernel=$ac_optarg;;
+  -h | --help)
+     show_help;;
+  *) 
+     show_help;;
+  esac
+  shift
+done
+
+case $p_action in
+   flash | imei | extract)
+      ;;
+   *)
+     show_help;;
+esac
+
+if [ "$p_action" = "flash" ]
+then
+    if test -z "$p_file"
+    then
+        echo --file is mandatory when --action=flash
+        exit 1
+    fi
+    if [ -e $p_file ]
+    then
+    if test -z $p_data
+    then
+       p_data=$(echo yes)
+    fi
+    if test -z $p_cache
+    then
+       p_cache=$(echo yes)
+    fi
+    if test -z $p_system
+    then
+       p_system=$(echo yes)
+    fi
+    if test -z $p_kernel
+    then
+       p_kernel=$(echo yes)
+    fi
+    if test -z $p_baseband
+    then
+       p_baseband=$(echo yes)
+    fi
+    else
+       echo $p_file does not exist.
+       exit 1
+    fi
+fi
+
+if [ "$p_action" = "extract" ]
+then
+    if test -z "$p_file"
+    then
+        echo --file is mandatory when --action=flash
+        exit 1
+    fi
+    if [ ! -e $p_file ]
+    then
+       echo $p_file does not exist.
+       exit 1
+    fi
+fi
+
+if test "$OS" = "Linux"
+then
+    chmod 755 ./x10flasher_lib/adb.linux
+    chmod 755 ./x10flasher_lib/fastboot.linux
+    chmod 755 ./x10flasher_lib/unyaffs.linux
+    chmod 755 ./x10flasher_lib/bin2elf
+    chmod 755 ./x10flasher_lib/bin2sin
+    if [ "$(whoami)" != "root" ]
+    then
+	export HASRULES="false"
+	if test -d /etc/udev/rules.d
+	then
+        	if grep -rl "0fce" /etc/udev/rules.d >/dev/null
+        	then
+			export HASRULES="true"
+		fi
+	fi
+	if test "$HASRULES" = "true"
+	then
+    		echo "Not running as root but Sony/SonyEriccson Vendor ID found on your udev rules"
+       		echo "if Flashing didn't work well, run flashtool as root"
+       	else
+       		echo "Not running as root and there is no Sony/SonyEriccson Vendor ID on your udev rules"   
+       		echo "The user must be granted access to adb/flashmode/fastboot"
+       		echo "If you are unsure what to do, run flashtool as root"
+       		exit 1
+       	fi
+    else
+        echo "Running as root."
+    fi
+    if test -z "${JAVA_HOME}"
+    then
+        if test "${system64}" = "x86_64"
+        then
+             export JAVA_HOME=./x10flasher_lib/linjre64
+             
+        else
+             export JAVA_HOME=./x10flasher_lib/linjre32
+             
+        fi
+        echo "JAVA_HOME not set. Using default value : ${JAVA_HOME}"
+    fi
+    if test -e ${JAVA_HOME}/bin/java
+    then
+         export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32
+         export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64:$LD_LIBRARY_PATH
+         ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusbx-1.0.so
+         ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
+         ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
+         ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
+         ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
+	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0
+	 then
+         	if test $ISJAVA64 -gt 0
+         	then
+    	     	ln -sf swt64.jar ./x10flasher_lib/swtlin/swt.jar
+         	else
+             	ln -sf swt32.jar ./x10flasher_lib/swtlin/swt.jar
+         	fi
+     		case $p_action in
+      			flash)
+         			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
+         		;;
+      			extract)
+         			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=extract --file=$p_file
+         		;;
+      			imei)
+         			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=imei
+   			esac
+	 else
+		echo "Java version must be 1.6 or 1.7"
+	 fi
+    else
+         echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
+         echo "Set the variable to a valid Java installation"
+    fi
+else
+    chmod 755 ./x10flasher_lib/adb.mac
+    chmod 755 ./x10flasher_lib/fastboot.mac
+    chmod 755 ./x10flasher_lib/unyaffs.mac
+    export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib64:$DYLD_LIBRARY_PATH
+    export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$DYLD_LIBRARY_PATH
+    ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusbx-1.0.dylib
+    ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusbx-1.0.dylib
+    ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
+    ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
+    ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
+    if test $ISJAVA64 -gt 0
+    then
+   		ln -sf swt64.jar ./x10flasher_lib/swtmac/swt.jar
+    else
+        ln -sf swt32.jar ./x10flasher_lib/swtmac/swt.jar
+    fi
+    if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0
+    then
+ 		case $p_action in
+  			flash)
+     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
+     		;;
+  			extract)
+     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=extract --file=$p_file
+     		;;
+  			imei)
+     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=imei
+		esac
+    else
+		echo "Java version must be 1.6 or 1.7"
+    fi
+fi

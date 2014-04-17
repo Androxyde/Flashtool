@@ -1,0 +1,96 @@
+;**************************************************************************
+;
+; so0104adb.inf   -- Sony so0104 ADB Interface Driver
+;
+;**************************************************************************
+
+[Version]
+Signature           = "$Windows NT$"
+Class               = so0104AdbDeviceClass
+ClassGuid           = {3FF9CC88-FC5A-43e5-9921-1433EC249BD8}
+Provider            = %ProviderName%
+DriverVer           = 12/22/2012,7.0.0000.00001
+CatalogFile.NTx86   = so0104usb86.cat
+CatalogFile.NTamd64 = so0104usba64.cat
+
+[ClassInstall32]
+Addreg = so0104UsbClassReg
+
+[so0104UsbClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-1
+
+[Manufacturer]
+%ProviderName% = Sony, NTx86, NTamd64
+
+[Sony.NTx86]
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_519B&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_619B&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_819B&MI_02
+
+[Sony.NTamd64]
+
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_519B&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_619B&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_819B&MI_02
+
+[USB_Install]
+Include = winusb.inf
+Needs   = WINUSB.NT
+
+[USB_Install.Services]
+Include     = winusb.inf
+AddService  = WinUSB,0x00000002,WinUSB_ServiceInstall
+
+[WinUSB_ServiceInstall]
+DisplayName     = %WinUSB_SvcDesc%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WinUSB.sys
+
+[USB_Install.Wdf]
+KmdfService = WINUSB, WinUSB_Install
+
+[WinUSB_Install]
+KmdfLibraryVersion  = 1.9
+
+[USB_Install.HW]
+AddReg  = Dev_AddReg
+
+[Dev_AddReg]
+HKR,,DeviceInterfaceGUIDs,0x10000,"{F72FE0D4-CBCB-407d-8814-9ED673D0DD6B}"
+
+[USB_Install.CoInstallers]
+AddReg    = CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WdfCoInstaller01009.dll,WdfCoInstaller","WinUSBCoInstaller2.dll"
+
+[CoInstallers_CopyFiles]
+WinUSBCoInstaller2.dll
+WdfCoInstaller01009.dll
+
+[DestinationDirs]
+CoInstallers_CopyFiles=11
+
+[SourceDisksNames]
+1 = %DISK_NAME%,,,\i386
+2 = %DISK_NAME%,,,\amd64
+
+[SourceDisksFiles.x86]
+WinUSBCoInstaller2.dll  = 1
+WdfCoInstaller01009.dll = 1
+
+[SourceDisksFiles.amd64]
+WinUSBCoInstaller2.dll  = 2
+WdfCoInstaller01009.dll = 2
+
+[Strings]
+ProviderName                = "Sony"
+CompositeAdbInterface       = "Sony so0104 ADB Interface Driver"
+WinUSB_SvcDesc              = "Sony so0104 ADB Interface"
+DISK_NAME                   = "Sony so0104 ADB Interface Installation disk"
+ClassName                   = "Sony so0104"

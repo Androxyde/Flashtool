@@ -1,0 +1,1 @@
+cp /system/kernel/KERNELTOBOOT/kernel.desc /system/kernel/default

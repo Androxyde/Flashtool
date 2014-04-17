@@ -1,0 +1,14 @@
+export PATH=DEVICEWORKDIR:$PATH
+
+busybox mount -o remount,rw /system
+
+for i in `busybox cat DEVICEWORKDIR/listappsadd`
+do
+   busybox cp DEVICEWORKDIR/$i /system/app
+   busybox chown 0.0 /system/app/$i
+   busybox chmod 644 /system/app/$i
+   busybox rm DEVICEWORKDIR/$i
+done
+busybox rm DEVICEWORKDIR/listappsadd
+
+busybox mount -o remount,ro /system
