@@ -1,4 +1,6 @@
-FlashtoolNew
+Flashtool
 ============
 
-Xperia device flashing
+Flashtool is a software used to flash Sony [Ericsson] Xperia line (2010 to 2013) phones that use the S1 protocol
+
+Please check http://www.flashtool.net to have more informations
