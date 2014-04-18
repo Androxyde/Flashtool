@@ -951,23 +951,25 @@ public class MainSWT {
     	if (guimode) {
     		String devid = Devices.identFromRecognition();
     		if (devid.length()==0) {
-    			MyLogger.getLogger().error("Cannot identify your device.");
-        		MyLogger.getLogger().info("Selecting from user input");
-        		devid=(String)WidgetTask.openDeviceSelector(shlSonyericsson);
-    			if (devid.length()>0) {
-        			Devices.setCurrent(devid);
-        			String prop = DeviceProperties.getProperty(Devices.getCurrent().getBuildProp());
-        			if (!Devices.getCurrent().getRecognition().contains(prop)) {
-        			    int response = Integer.parseInt(WidgetTask.openYESNOBox(shlSonyericsson, "Do you want to permanently identify this device as \n"+Devices.getCurrent().getName()+"?"));
-        				if (response == SWT.YES)
-        					Devices.getCurrent().addRecognitionToList(prop);
-        			}
-            		if (!Devices.isWaitingForReboot())
-            			MyLogger.getLogger().info("Connected device : " + Devices.getCurrent().getId());
-        		}
-        		else {
-        			MyLogger.getLogger().error("You can only flash devices.");
-        		}
+    			if (Devices.listDevices(false).hasMoreElements()) {
+    				MyLogger.getLogger().error("Cannot identify your device.");
+	        		MyLogger.getLogger().info("Selecting from user input");
+	        		devid=(String)WidgetTask.openDeviceSelector(shlSonyericsson);
+	    			if (devid.length()>0) {
+	        			Devices.setCurrent(devid);
+	        			String prop = DeviceProperties.getProperty(Devices.getCurrent().getBuildProp());
+	        			if (!Devices.getCurrent().getRecognition().contains(prop)) {
+	        			    int response = Integer.parseInt(WidgetTask.openYESNOBox(shlSonyericsson, "Do you want to permanently identify this device as \n"+Devices.getCurrent().getName()+"?"));
+	        				if (response == SWT.YES)
+	        					Devices.getCurrent().addRecognitionToList(prop);
+	        			}
+	            		if (!Devices.isWaitingForReboot())
+	            			MyLogger.getLogger().info("Connected device : " + Devices.getCurrent().getId());
+	        		}
+	        		else {
+	        			MyLogger.getLogger().error("You can only flash devices.");
+	        		}
+    			}
     		}
     		else {
 	    		Devices.setCurrent(devid);
