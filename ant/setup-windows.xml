@@ -2,8 +2,6 @@
 
 <project default="all" name="Create Windows Package">
 	
-	
-	
 	<target name="all" depends="clean, binaries, dodrivers, dosetup"/>
 
 	<target name="main_lib" depends="loadprops">
@@ -63,7 +61,7 @@
 	
 	   <target name="dodrivers">
 	   	    <property environment="env"/>
-	        <nsis script="drivers.nsi" path="${env.ProgramFiles(x86)}\NSIS\Unicode"/>
+	        <nsis script="../drivers.nsi" path="${env.ProgramFiles}\NSIS\Unicode"/>
 	    </target>
 
 	<target name="binaries" depends="clean, main_lib, JRE">
@@ -82,10 +80,10 @@
 	<target name="dosetup">
 		<property environment="env"/>
 		<delete file="../../Deploy/FlashTool/config.properties"/>
-		<copy file="setup.nsi" tofile="setup_new.nsi"/>
-		<replace file="setup_new.nsi" token="FLASHTOOLVERSION" value="${Internal-Version}"/>
-		<nsis script="setup_new.nsi" path="${env.ProgramFiles(x86)}\NSIS\Unicode"/>
-		<delete file="setup_new.nsi"/>
+		<copy file="../setup.nsi" tofile="../setup_new.nsi"/>
+		<replace file="../setup_new.nsi" token="FLASHTOOLVERSION" value="${Internal-Version}"/>
+		<nsis script="../setup_new.nsi" path="${env.ProgramFiles}\NSIS\Unicode"/>
+		<delete file="../setup_new.nsi"/>
 	</target>
 
 	<!--
@@ -109,7 +107,7 @@
 	    </macrodef>
     
 	<taskdef name="nsis" classname="com.danielreese.nsisant.Task">
-       <classpath location="libs/nsisant-1.3.jar"/>
+       <classpath location="../libs/nsisant-1.3.jar"/>
      </taskdef>
 
 </project>
