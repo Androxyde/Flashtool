@@ -2,15 +2,11 @@ package gui.tools;
 
 import gui.About;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.ProxySelector;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.Vector;
-
-import org.adb.AdbUtility;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,16 +17,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.logger.MyLogger;
 import org.system.DNSResolver;
-import org.system.Devices;
-import org.system.FTShell;
-import org.system.GlobalConfig;
-import org.system.OS;
-import org.system.TextFile;
-
-import com.btr.proxy.search.ProxySearch;
-import com.btr.proxy.search.ProxySearch.Strategy;
-import com.btr.proxy.util.PlatformUtil;
-import com.btr.proxy.util.PlatformUtil.Platform;
+import org.system.Proxy;
 
 public class VersionCheckerJob extends Job {
 
@@ -50,32 +37,12 @@ public class VersionCheckerJob extends Job {
 
 	public String getLatestRelease() {
 		try {
-			ProxySearch proxySearch = new ProxySearch();
-            
-			if (PlatformUtil.getCurrentPlattform() == Platform.WIN) {
-			  proxySearch.addStrategy(Strategy.IE);
-			  proxySearch.addStrategy(Strategy.FIREFOX);
-			  proxySearch.addStrategy(Strategy.JAVA);
-			} else 
-			if (PlatformUtil.getCurrentPlattform() == Platform.LINUX) {
-			  proxySearch.addStrategy(Strategy.GNOME);
-			  proxySearch.addStrategy(Strategy.KDE);
-			  proxySearch.addStrategy(Strategy.FIREFOX);
-			} else {
-			  proxySearch.addStrategy(Strategy.OS_DEFAULT);
-			}
-
-			ProxySelector myProxySelector = proxySearch.getProxySelector();
-			ProxySelector.setDefault(myProxySelector);
+			ProxySelector.setDefault(Proxy.getProxy());
 
 			SAXBuilder builder = new SAXBuilder();
 			Document doc = null;
 			MyLogger.getLogger().debug("Resolving github");
-			DNSResolver tr = new DNSResolver("github.com");
-			tr.start();
-			tr.join(2000);
-			tr.interrupt();
-            if  (tr.get()!=null) {
+            if  (Proxy.canResolve("github.com")) {
             	MyLogger.getLogger().debug("Finished resolving github. Result : Success");
             	URL u;
             	if (About.build.contains("beta"))
