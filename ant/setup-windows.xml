@@ -7,58 +7,58 @@
 	<target name="all" depends="clean, binaries, dodrivers, dosetup"/>
 
 	<target name="main_lib" depends="loadprops">
-        <jar destfile="../Deploy/FlashTool/x10flasher.jar">
+        <jar destfile="../../Deploy/FlashTool/x10flasher.jar">
             <manifest>
                 <attribute name="Main-Class" value="gui.Main"/>
                 <attribute name="Implementation-Version" value="Version ${Internal-Version} built on ${Internal-Date}"/>
             	<attribute name="Internal-Version" value="${Internal-Version}"/>
             </manifest>
-        	<fileset dir="./bin" excludes="/gui/ressources/icons/**"/>
+        	<fileset dir="../bin" excludes="/gui/ressources/icons/**"/>
         </jar>
 	</target>
 
 	<target name="clean">
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/winjre32"/>
-        <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre64"/>
-    	<delete dir="../Deploy/FlashTool/x10flasher_lib/linjre32"/>
-    	<delete dir="../Deploy/FlashTool/x10flasher_lib/linjre64"/>
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/macjre64"/>
-		<delete file="../Deploy/FlashTool/FlashTool.exe"/>
-	    <delete file="../Deploy/FlashTool/FlashTool64.exe"/>
-		<delete file="../Deploy/FlashTool/FlashToolConsole"/>
-		<delete file="../Deploy/FlashTool/FlashTool"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/7z.exe"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/adb.exe"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/bin2elf.exe"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/bin2sin.exe"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/fastboot.exe"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.windows.exe"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/7z.dll"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/AdbWinApi.dll"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/AdbWinUsbApi.dll"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/cygwin1.dll"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/adb.linux"/>
-        <delete file="../Deploy/FlashTool/x10flasher_lib/fastboot.linux"/>
-	    <delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.linux"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/bin2elf"/>
-	    <delete file="../Deploy/FlashTool/x10flasher_lib/bin2sin"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/adb.mac"/>
-        <delete file="../Deploy/FlashTool/x10flasher_lib/fastboot.mac"/>
-	    <delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac"/>
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtlin"/>
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtwin"/>
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtmac"/>
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/mac"/>
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/linux"/>
-        <delete file="../Deploy/FlashTool/config.properties"/>
+		<delete dir="../../Deploy/FlashTool/x10flasher_lib/winjre32"/>
+        <delete dir="../../Deploy/FlashTool/x10flasher_lib/winjre64"/>
+    	<delete dir="../../Deploy/FlashTool/x10flasher_lib/linjre32"/>
+    	<delete dir="../../Deploy/FlashTool/x10flasher_lib/linjre64"/>
+		<delete dir="../../Deploy/FlashTool/x10flasher_lib/macjre64"/>
+		<delete file="../../Deploy/FlashTool/FlashTool.exe"/>
+	    <delete file="../../Deploy/FlashTool/FlashTool64.exe"/>
+		<delete file="../../Deploy/FlashTool/FlashToolConsole"/>
+		<delete file="../../Deploy/FlashTool/FlashTool"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/7z.exe"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/adb.exe"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/bin2elf.exe"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/bin2sin.exe"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/fastboot.exe"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.windows.exe"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/7z.dll"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/AdbWinApi.dll"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/AdbWinUsbApi.dll"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/cygwin1.dll"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/adb.linux"/>
+        <delete file="../../Deploy/FlashTool/x10flasher_lib/fastboot.linux"/>
+	    <delete file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.linux"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/bin2elf"/>
+	    <delete file="../../Deploy/FlashTool/x10flasher_lib/bin2sin"/>
+		<delete file="../../Deploy/FlashTool/x10flasher_lib/adb.mac"/>
+        <delete file="../../Deploy/FlashTool/x10flasher_lib/fastboot.mac"/>
+	    <delete file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.mac"/>
+		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtlin"/>
+		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtwin"/>
+		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtmac"/>
+		<delete dir="../../Deploy/FlashTool/x10flasher_lib/mac"/>
+		<delete dir="../../Deploy/FlashTool/x10flasher_lib/linux"/>
+        <delete file="../../Deploy/FlashTool/config.properties"/>
 	</target>
 
 	<target name="JRE">
-		<unzip src="./jre/winjre.zip" dest="../Deploy/FlashTool/x10flasher_lib"/>
+		<unzip src="../jre/winjre.zip" dest="../../Deploy/FlashTool/x10flasher_lib"/>
 	</target>
 
 	<target name="loadprops">
-		<loadmf jar="../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar" prefix=""/>
+		<loadmf jar="../../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar" prefix=""/>
 	</target>
 	
 	   <target name="dodrivers">
@@ -67,27 +67,27 @@
 	    </target>
 
 	<target name="binaries" depends="clean, main_lib, JRE">
-		<copy file="./ProgramExe/FlashTool.exe" todir="../Deploy/FlashTool"/>
-		<copy file="./ProgramExe/FlashTool64.exe" todir="../Deploy/FlashTool"/>
-    	<copy todir="../Deploy/FlashTool/x10flasher_lib">
-    		<fileset dir="./win32"/>
+		<copy file="../ProgramExe/FlashTool.exe" todir="../../Deploy/FlashTool"/>
+		<copy file="../ProgramExe/FlashTool64.exe" todir="../../Deploy/FlashTool"/>
+    	<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+    		<fileset dir="../win32"/>
     	</copy>
-    	<copy todir="../Deploy/FlashTool/x10flasher_lib">
-    		<fileset dir="./libs"/>
+    	<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+    		<fileset dir="../libs"/>
     	</copy>
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtlin"/>
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtmac"/>
+		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtlin"/>
+		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtmac"/>
 	</target>
 
 	<target name="dosetup">
 		<property environment="env"/>
-		<delete file="../Deploy/FlashTool/config.properties"/>
+		<delete file="../../Deploy/FlashTool/config.properties"/>
 		<copy file="setup.nsi" tofile="setup_new.nsi"/>
 		<replace file="setup_new.nsi" token="FLASHTOOLVERSION" value="${Internal-Version}"/>
 		<nsis script="setup_new.nsi" path="${env.ProgramFiles(x86)}\NSIS\Unicode"/>
 		<delete file="setup_new.nsi"/>
 	</target>
-	   
+
 	<!--
 	    Loads entries from a manifest file.
 	    @jar     The jar from where to read
