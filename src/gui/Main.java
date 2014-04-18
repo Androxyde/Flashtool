@@ -1,26 +1,15 @@
 package gui;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Vector;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import libusb.LibUsbException;
 import linuxlib.JUsb;
-
 import org.system.AWTKillerThread;
 import org.system.OS;
-
 import flashsystem.FlasherConsole;
-import flashsystem.TaEntry;
-import flashsystem.TaFile;
 
 public class Main {
-	
-	
+
 	public static void main(String[] args) {
 		AWTKillerThread k = new AWTKillerThread();
 		k.start();
