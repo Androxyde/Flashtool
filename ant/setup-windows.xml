@@ -77,9 +77,10 @@
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtmac"/>
 	</target>
 
-	<target name="dosetup">
+	<target name="dosetup" depends="loadprops">
 		<property environment="env"/>
 		<delete file="../../Deploy/FlashTool/config.properties"/>
+		<delete file="../setup_new.nsi"/>
 		<copy file="../setup.nsi" tofile="../setup_new.nsi"/>
 		<replace file="../setup_new.nsi" token="FLASHTOOLVERSION" value="${Internal-Version}"/>
 		<nsis script="../setup_new.nsi" path="${env.ProgramFiles}\NSIS\Unicode"/>
