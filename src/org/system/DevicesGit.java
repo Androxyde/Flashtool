@@ -2,6 +2,8 @@ package org.system;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ProxySelector;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
@@ -14,6 +16,7 @@ import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.OpenSshConfig.Host;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.logger.MyLogger;
+
 import com.jcraft.jsch.Session;
 
 public class DevicesGit {
@@ -24,6 +27,7 @@ public class DevicesGit {
     private static Git git;
     
     public static void gitSync() throws IOException, InvalidRemoteException, org.eclipse.jgit.api.errors.TransportException, GitAPIException {
+    	ProxySelector.setDefault(Proxy.getProxy());
     	SshSessionFactory.setInstance(new JschConfigSessionFactory() {
     		  public void configure(Host hc, Session session) {
     		    session.setConfig("StrictHostKeyChecking", "no");
