@@ -25,7 +25,10 @@ public class Proxy {
 		  proxySearch.addStrategy(Strategy.OS_DEFAULT);
 		}
 
-		return proxySearch.getProxySelector();
+		if (proxySearch.getProxySelector()!=null)
+			return proxySearch.getProxySelector();
+		else
+			return ProxySelector.getDefault();
 
 	}
 	
