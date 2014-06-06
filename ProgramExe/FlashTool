@@ -49,8 +49,9 @@ then
     then
          ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
          ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
+         ISJAVA8=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.8|wc -l)
          ISJAVA64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bit|wc -l)
-	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0
+	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0 -o $ISJAVA8 -gt 0
 	 then
          	if test $ISJAVA64 -gt 0
          	then
@@ -88,7 +89,7 @@ then
          	fi
          	$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar -Djsse.enableSNIExtension=false x10flasher.jar
 	 else
-		echo "Java version must be 1.6 or 1.7"
+		echo "Java version must be 1.6 or 1.7 or 1.8"
 	 fi
     else
          echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
@@ -104,6 +105,7 @@ else
     ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusbx-1.0.dylib
     ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
     ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
+    ISJAVA8=$(java -version 2>&1|grep version|grep 1.8|wc -l)
     ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
     if test $ISJAVA64 -gt 0
     then
@@ -111,10 +113,10 @@ else
     else
         ln -sf swt32.jar ./x10flasher_lib/swtmac/swt.jar
     fi
-    if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0
+    if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0 -o $ISJAVA8  -gt 0
     then
     	java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar
     else
-		echo "Java version must be 1.6 or 1.7"
+		echo "Java version must be 1.6 or 1.7 or 1.8"
     fi
 fi
