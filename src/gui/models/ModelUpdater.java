@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Scanner;
 
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
 import org.system.DeviceEntry;
 import org.system.Devices;
@@ -22,7 +23,8 @@ public class ModelUpdater {
 	Properties _versions = new Properties();
 	boolean tosave = false;
 	String _model = "";
-	
+	private static Logger logger = Logger.getLogger(ModelUpdater.class);
+
 	public ModelUpdater(UpdateURL u) {
 		_url = u;
 		_model = u.getVariant();
@@ -70,7 +72,7 @@ public class ModelUpdater {
 			_url.dumpToFile();			
 		}
 		catch (Exception e) {
-			MyLogger.getLogger().warn(e.getMessage());
+			logger.warn(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -95,12 +97,12 @@ public class ModelUpdater {
 				}
 				catch (Exception e) {
 					_versions.setProperty(_custid.getProperty(custid), "N/A");
-					MyLogger.getLogger().warn("Cannot check update for "+custid+" ("+_custid.getProperty(custid)+")");
+					logger.warn("Cannot check update for "+custid+" ("+_custid.getProperty(custid)+")");
 				}
 			}
 			catch (Exception e1) {
 				_versions.setProperty(_custid.getProperty(custid), "N/A");
-				MyLogger.getLogger().warn("Network error while checking for "+custid+" ("+_custid.getProperty(custid)+")");
+				logger.warn("Network error while checking for "+custid+" ("+_custid.getProperty(custid)+")");
 			}
 		}
 	}

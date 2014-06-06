@@ -1,8 +1,11 @@
 package gui.tools;
 
 import flashsystem.SeusSinTool;
+
 import java.io.File;
 import java.util.Vector;
+
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -13,7 +16,8 @@ public class DecryptJob extends Job {
 
 	boolean canceled = false;
 	Vector files;
-
+	private static Logger logger = Logger.getLogger(DecryptJob.class);
+	
 	public DecryptJob(String name) {
 		super(name);
 	}
@@ -27,10 +31,10 @@ public class DecryptJob extends Job {
     	try {
 			for (int i=0;i<files.size();i++) {
 				File f = (File)files.get(i);
-				MyLogger.getLogger().info("Decrypting "+f.getName());
+				logger.info("Decrypting "+f.getName());
         		SeusSinTool.decrypt(f.getAbsolutePath());
 			}
-			MyLogger.getLogger().info("Decryption finished");
+			logger.info("Decryption finished");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {

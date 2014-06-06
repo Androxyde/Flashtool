@@ -5,6 +5,7 @@ import flashsystem.SeusSinTool;
 import java.io.File;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -16,6 +17,7 @@ public class DevicesSyncJob extends Job {
 
 	boolean canceled = false;
 	Vector files;
+	private static Logger logger = Logger.getLogger(DevicesSyncJob.class);
 
 	public DevicesSyncJob(String name) {
 		super(name);
@@ -27,7 +29,7 @@ public class DevicesSyncJob extends Job {
 			return Status.OK_STATUS;
 		}
 		catch (Exception e) {
-			MyLogger.getLogger().error("Cannot sync devices : "+e.getMessage());
+			logger.error("Cannot sync devices : "+e.getMessage());
 			return Status.CANCEL_STATUS;
 		}
     }

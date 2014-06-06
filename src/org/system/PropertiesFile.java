@@ -1,7 +1,6 @@
 package org.system;
 
 import gui.models.TableLine;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -109,7 +108,7 @@ public class PropertiesFile {
 	
 	public Object[] toArray() {
 		Vector<TableLine> v = new Vector<TableLine>();
-		Enumeration e = props.keys();
+		Enumeration<Object> e = props.keys();
 		while (e.hasMoreElements()) {
 			String key = (String)e.nextElement();
 			TableLine l = new TableLine();

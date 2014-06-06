@@ -24,6 +24,8 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.Deflater;
 
+import org.apache.log4j.Logger;
+import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.system.Devices;
 import org.system.OS;
@@ -45,6 +47,7 @@ public final class Bundle {
     private BundleMetaData _meta;
     private boolean bootdeliveryflashed=false;
     private XMLBootDelivery xmlb;
+    private static Logger logger = Logger.getLogger(Bundle.class);
 
     public Bundle() {
     	_meta = new BundleMetaData();
@@ -73,7 +76,7 @@ public final class Bundle {
 		try {
 			_firmware = new JarFile(path);
 			_meta = new BundleMetaData();
-			MyLogger.getLogger().debug("Creating bundle from ftf file : "+_firmware.getName());
+			logger.debug("Creating bundle from ftf file : "+_firmware.getName());
 			_device = _firmware.getManifest().getMainAttributes().getValue("device");
 			_version = _firmware.getManifest().getMainAttributes().getValue("version");
 			_branding = _firmware.getManifest().getMainAttributes().getValue("branding");
@@ -89,13 +92,13 @@ public final class Bundle {
 					catch (Exception e1) {e1.printStackTrace();
 					}
 					bundleList.put(entry.getName(), entry);
-					MyLogger.getLogger().debug("Added this entry to the bundle list : "+entry.getName());
+					logger.debug("Added this entry to the bundle list : "+entry.getName());
 				}
 				}
 			}
 		}
 		catch (IOException ioe) {
-			MyLogger.getLogger().error("Cannot open the file "+path);
+			logger.error("Cannot open the file "+path);
 		}
 	}
 
@@ -104,7 +107,7 @@ public final class Bundle {
 		for (int i=0;i<list.length;i++) {
 			BundleEntry entry = new BundleEntry(list[i],list[i].getName());
 			bundleList.put(entry.getName(), entry);
-			MyLogger.getLogger().debug("Added this entry to the bundle list : "+entry.getName());
+			logger.debug("Added this entry to the bundle list : "+entry.getName());
 		}
 	}
 
@@ -115,7 +118,7 @@ public final class Bundle {
 			String name = all.nextElement();
 			BundleEntry entry = new BundleEntry(new File(_meta.getPath(name)),name);
 			bundleList.put(entry.getName(), entry);
-			MyLogger.getLogger().debug("Added this entry to the bundle list : "+entry.getName());
+			logger.debug("Added this entry to the bundle list : "+entry.getName());
 		}
 	}
 
@@ -257,14 +260,14 @@ public final class Bundle {
 		while (esize.hasMoreElements()) {
 			size += esize.nextElement().getSize();
 		}
-		MyLogger.initProgress(size/10240+(size%10240>0?1:0));
+		LogProgress.initProgress(size/10240+(size%10240>0?1:0));
 	    Enumeration<BundleEntry> e = allEntries();
 		while (e.hasMoreElements()) {
 			BundleEntry entry = e.nextElement();
 			String name = entry.getName();
 			int S1pos = name.toUpperCase().indexOf("_S1");
 			if (S1pos > 0) name = name.substring(0,S1pos)+".sin";
-			MyLogger.getLogger().info("Adding "+name+" to the bundle");
+			logger.info("Adding "+name+" to the bundle");
 		    JarEntry jarAdd = new JarEntry(name);
 	        out.putNextEntry(jarAdd);
 	        InputStream in = entry.getInputStream();
@@ -273,7 +276,7 @@ public final class Bundle {
 	          if (nRead <= 0)
 	            break;
 	          out.write(buffer, 0, nRead);
-	          MyLogger.updateProgress();
+	          LogProgress.updateProgress();
 	        }
 	        in.close();
 	        if (new File(entry.getAbsolutePath()).getParentFile().getName().toUpperCase().equals("BOOT")) {
@@ -282,7 +285,7 @@ public final class Bundle {
 				Enumeration files = xml.getFiles();
 				while (files.hasMoreElements()) {
 					String bootname = (String)files.nextElement();
-					MyLogger.getLogger().info("Adding "+bootname+" to the bundle");
+					logger.info("Adding "+bootname+" to the bundle");
 				    jarAdd = new JarEntry("boot/"+bootname.replace(".sin", ".sinb").replace(".ta", ".tab"));
 			        out.putNextEntry(jarAdd);
 			        InputStream bin = new FileInputStream(new File(folder+File.separator+bootname));
@@ -291,7 +294,7 @@ public final class Bundle {
 			          if (nRead <= 0)
 			            break;
 			          out.write(buffer, 0, nRead);
-			          MyLogger.updateProgress();
+			          LogProgress.updateProgress();
 			        }
 			        bin.close();
 				}
@@ -300,7 +303,7 @@ public final class Bundle {
 		}
 		out.close();
 	    stream.close();
-	    MyLogger.getLogger().info("Creating torrent file : "+ftf.getAbsolutePath()+".torrent");
+	    logger.info("Creating torrent file : "+ftf.getAbsolutePath()+".torrent");
 	    List<URI> l1 = new ArrayList<URI>();
 	    List<URI> l2 = new ArrayList<URI>();
 	    List<URI> l3 = new ArrayList<URI>();
@@ -316,17 +319,17 @@ public final class Bundle {
 	    torrent.save(fout);
 	    fout.flush();
 	    fout.close();
-	    MyLogger.getLogger().info("Torrent file creation finished");
-	    MyLogger.initProgress(0);
+	    logger.info("Torrent file creation finished");
+	    LogProgress.initProgress(0);
 	}
 
 	private void saveEntry(BundleEntry entry, boolean addmeta) throws IOException {
 		if (entry.isJarEntry()) {
-			MyLogger.getLogger().debug("Saving entry "+entry.getName()+" to disk");
+			logger.debug("Saving entry "+entry.getName()+" to disk");
 			InputStream in = entry.getInputStream();
 			String outname = "."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared"+OS.getFileSeparator()+entry.getName();
 			new File(outname).getParentFile().mkdirs();
-			MyLogger.getLogger().debug("Writing Entry to "+outname);
+			logger.debug("Writing Entry to "+outname);
 			OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
 			byte[] buffer = new byte[10240];
 			int len;
@@ -403,7 +406,7 @@ public final class Bundle {
 
 	public boolean open() {
 		try {
-			MyLogger.getLogger().info("Preparing files for flashing");
+			logger.info("Preparing files for flashing");
 			File f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared");
 			if (f.exists()) {
 				File[] f1 = f.listFiles();
@@ -413,7 +416,7 @@ public final class Bundle {
 				if (!f.delete()) throw new Exception("Cannot delete "+f.getAbsolutePath());
 			}
 			f.mkdir();
-			MyLogger.getLogger().debug("Created the "+f.getName()+" folder");
+			logger.debug("Created the "+f.getName()+" folder");
 			Enumeration<String> entries = _meta.getAllEntries(true);
 			while (entries.hasMoreElements()) {
 				String entry = entries.nextElement();
@@ -437,7 +440,7 @@ public final class Bundle {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			MyLogger.getLogger().error(e.getMessage());
+			logger.error(e.getMessage());
 			return false;
 		}
     }

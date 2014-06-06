@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
 import java.util.Vector;
+
+import org.apache.log4j.Logger;
+import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.system.OS;
 
@@ -21,6 +24,7 @@ public class SinFile {
 	long nbchunks = 0;
 	long chunksize = 0;
 	SinFileHeader sinheader;
+	private static Logger logger = Logger.getLogger(SinFile.class);
 	
 	public SinFileHeader getSinHeader() {
 		return sinheader;
@@ -106,7 +110,7 @@ public class SinFile {
 	}
 	
 	public void dumpRaw() throws IOException {
-		MyLogger.getLogger().info("Extracting "+getShortFileName() + " header to " + getRawFileName());
+		logger.info("Extracting "+getShortFileName() + " header to " + getRawFileName());
 		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
 		byte[] chunk = new byte[512*1024];
 		int nbread;
@@ -116,16 +120,16 @@ public class SinFile {
 		fout.flush();
 		fout.close();
 		fin.close();
-		MyLogger.getLogger().info("RAW Extraction finished");
+		logger.info("RAW Extraction finished");
 	}
 
 	public void dumpHeader() throws IOException {
-		MyLogger.getLogger().info("Extracting "+getShortFileName() + " raw data to " + getHeaderFileName());
+		logger.info("Extracting "+getShortFileName() + " raw data to " + getHeaderFileName());
 		FileOutputStream fout = new FileOutputStream(new File(getHeaderFileName()));
 		fout.write(sinheader.getHeader());
 		fout.flush();
 		fout.close();
-		MyLogger.getLogger().info("HEADER Extraction finished");
+		logger.info("HEADER Extraction finished");
 	}
 	
 	public void dumpImage() throws IOException {
@@ -145,15 +149,15 @@ public class SinFile {
 						foutpart.flush();
 						foutpart.close();
 					}		
-					MyLogger.getLogger().info("Generating container file");
+					logger.info("Generating container file");
 					RandomAccessFile fout = OS.generateEmptyFile(getImageFileName(), sinheader.getOutfileLength(), (byte)0xFF);
-					MyLogger.getLogger().info("Finished Generating container file");
+					logger.info("Finished Generating container file");
 					RandomAccessFile findata = new RandomAccessFile(sinfile,"r");		
 					// Positionning in files
-					MyLogger.getLogger().info("Extracting data into container");
+					logger.info("Extracting data into container");
 					findata.seek(sinheader.getHeaderSize());
 					Vector<SinHashBlock> blocks = sinheader.getHashBlocks();
-					MyLogger.initProgress(blocks.size());
+					LogProgress.initProgress(blocks.size());
 					for (int i=0;i<blocks.size();i++) {
 						SinHashBlock b = blocks.elementAt(i);
 						byte[] data = new byte[b.getLength()];
@@ -161,16 +165,16 @@ public class SinFile {
 						b.validate(data);
 						fout.seek(blocks.size()==1?0:b.getOffset());
 						fout.write(data);
-						MyLogger.updateProgress();
+						LogProgress.updateProgress();
 					}
-					MyLogger.initProgress(0);
+					LogProgress.initProgress(0);
 					fout.close();
 					findata.close();
-					MyLogger.getLogger().info("Data Extraction finished");
+					logger.info("Data Extraction finished");
 				}
 				catch (Exception e) {
-					MyLogger.getLogger().error("Error while extracting data : "+e.getMessage());
-					MyLogger.initProgress(0);
+					logger.error("Error while extracting data : "+e.getMessage());
+					LogProgress.initProgress(0);
 					e.printStackTrace();
 				}
 	}
@@ -208,12 +212,12 @@ public class SinFile {
 			}
 		}
 		String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+"."+dhead.computeDataSizeAndType(fin);
-		MyLogger.getLogger().info("Generating empty container file");
+		logger.info("Generating empty container file");
 		RandomAccessFile fout = OS.generateEmptyFile(foutname, dhead.getOutputSize(), (byte)0xFF);
 		if (fout!=null) {
-			MyLogger.getLogger().info("Container generated. Now extracting data to container");
+			logger.info("Container generated. Now extracting data to container");
 			Iterator i = dhead.getAddrs().keySet().iterator();
-			MyLogger.initProgress(progressMax);
+			LogProgress.initProgress(progressMax);
 			int nbloop = 0;
 			while (i.hasNext()) {
 				int key = ((Integer)i.next()).intValue();
@@ -224,7 +228,7 @@ public class SinFile {
 					int nbread = fin.read(chunk);
 					fout.write(chunk);
 					nbloop++;
-					MyLogger.updateProgress();
+					LogProgress.updateProgress();
 				}
 				byte[] finres = new byte[(int)(ad.getDataLength()%chunk.length)];
 				if (finres.length>0) {
@@ -234,16 +238,16 @@ public class SinFile {
 					else
 						fout.write(finres);
 					nbloop++;
-					MyLogger.updateProgress();
+					LogProgress.updateProgress();
 				}
 			}
 			fout.close();
 			fin.close();
-			MyLogger.initProgress(0);
-			MyLogger.getLogger().info("Extraction finished to "+foutname);
+			LogProgress.initProgress(0);
+			logger.info("Extraction finished to "+foutname);
 		}
 		else {
-			MyLogger.getLogger().error("An error occured while generating container");
+			logger.error("An error occured while generating container");
 		}
 	}
 	

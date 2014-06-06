@@ -7,6 +7,7 @@ import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -35,6 +36,7 @@ public class TABackupSelector extends Dialog {
 	protected Shell shlTABackupSelector;
 	private Button btnCancel;
 	private List listTA;
+	private static Logger logger = Logger.getLogger(TABackupSelector.class);
 
 	/**
 	 * Create the dialog.
@@ -141,11 +143,11 @@ public class TABackupSelector extends Dialog {
 						tabackups.add(attr.getValue("timestamp")+ " : " + attr.getValue("build"));
 					}
 					else {
-						MyLogger.getLogger().info("File skipped : "+chld[i].getName()+". Not for your device");
+						logger.info("File skipped : "+chld[i].getName()+". Not for your device");
 					}
 					jf.close();
 				} catch (Exception e) {
-					MyLogger.getLogger().error("This file : " + chld[i].getName()+" is corrupted");
+					logger.error("This file : " + chld[i].getName()+" is corrupted");
 				}
 				
 			}

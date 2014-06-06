@@ -3,6 +3,8 @@ package org.adb;
 import java.util.Enumeration;
 import java.util.Scanner;
 import java.util.Vector;
+
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
@@ -12,6 +14,7 @@ public class FastbootUtility {
 
 	private static String adbpath = OS.getAdbPath();
 	private static String fastbootpath = OS.getFastBootPath();
+	private static Logger logger = Logger.getLogger(FastbootUtility.class);
 	
 	public static void adbRebootFastboot() throws Exception {
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"reboot", "bootloader"},false);
@@ -47,7 +50,7 @@ public class FastbootUtility {
 	}
 
 	public static RunOutputs unlock(String key) throws Exception {
-		MyLogger.getLogger().info("Unlocking phone using key "+key);
+		logger.info("Unlocking phone using key "+key);
 		ProcessBuilderWrapper pbd = new ProcessBuilderWrapper(new String[] {fastbootpath,"-i", "0xfce","oem", "unlock","0x"+key },true);
 		return pbd.getOutputs();
 	}

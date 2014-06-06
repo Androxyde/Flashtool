@@ -4,8 +4,11 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import libusb.LibUsbException;
 import linuxlib.JUsb;
+
+import org.logger.MyLogger;
 import org.system.AWTKillerThread;
 import org.system.OS;
+
 import flashsystem.FlasherConsole;
 
 public class Main {
@@ -15,12 +18,14 @@ public class Main {
 		k.start();
 		try {
 			OptionSet options = parseCmdLine(args);
+			Main.initLinuxUsb();
 			if (options.has("console")) {
-				Main.initLinuxUsb();
+				MyLogger.setLogDest("console");
+				MyLogger.setLevel("info");
 				processConsole(options);
 			}
 			else {
-				Main.initLinuxUsb();
+				MyLogger.setLogDest("textarea");
 				MainSWT window = new MainSWT();
 				window.open();
 			}

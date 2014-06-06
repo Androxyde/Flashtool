@@ -1,9 +1,15 @@
 package win32lib;
 
+import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
+
 import win32lib.SetupApi.HDEVINFO;
+
 import com.sun.jna.platform.win32.SetupApi.SP_DEVICE_INTERFACE_DATA;
+
 import win32lib.SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA;
+
 import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.ptr.IntByReference;
@@ -15,6 +21,7 @@ public class JsetupAPi {
 	static SetupApi setupapi = (SetupApi) Native.loadLibrary("setupapi", SetupApi.class, W32APIOptions.UNICODE_OPTIONS);
     public static GUID USBGuid = new GUID();
     private static SP_DEVINFO_DATA DeviceInfoData = new SP_DEVINFO_DATA();
+    private static Logger logger = Logger.getLogger(JsetupAPi.class);
     
     static {
 	    USBGuid.Data1=0xA5DCBF10;
@@ -44,7 +51,7 @@ public class JsetupAPi {
 			return name;
 		}
 		else {
-			MyLogger.getLogger().error("Error calling SetupDiClassNameFromGuid");
+			logger.error("Error calling SetupDiClassNameFromGuid");
 		}
 		return "";
 	}
@@ -57,7 +64,7 @@ public class JsetupAPi {
 			return ClassGuidList[0];
 		}
 		else {
-			MyLogger.getLogger().error("Error calling SetupDiClassNameFromGuid for "+classname);
+			logger.error("Error calling SetupDiClassNameFromGuid for "+classname);
 		}
 		return null;
 	}

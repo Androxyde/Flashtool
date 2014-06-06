@@ -1,5 +1,6 @@
 package gui;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -14,6 +15,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import flashsystem.SinFile;
 import gui.tools.ExtractSinDataJob;
 import gui.tools.WidgetsTool;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.FormLayout;
@@ -36,7 +38,8 @@ public class SinEditor extends Dialog {
 	private Text sourceFile;
 	private Button button;
 	private FormData fd_btnClose;
-
+	private static Logger logger = Logger.getLogger(SinEditor.class);
+	
 	/**
 	 * Create the dialog.
 	 * @param parent
@@ -171,7 +174,7 @@ public class SinEditor extends Dialog {
 				SinAdvanced sadv = new SinAdvanced(shlSinEditor,SWT.PRIMARY_MODAL | SWT.SHEET);
 				sadv.open(sin);
 				} catch (Exception ex) {
-					MyLogger.getLogger().error(ex.getMessage());
+					logger.error(ex.getMessage());
 				}
 			}
 		});

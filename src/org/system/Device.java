@@ -1,19 +1,26 @@
 package org.system;
 
 import java.util.Enumeration;
+
 import linuxlib.JUsb;
+
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
+
 import com.sun.jna.platform.win32.WinBase;
+
 import win32lib.JsetupAPi;
 import win32lib.SetupApi.HDEVINFO;
+
 import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
 
 public class Device {	
 
 	static DeviceIdent lastid = new DeviceIdent();
 	static String laststatus = "";
+	private static Logger logger = Logger.getLogger(Device.class);
 
 	public static DeviceIdent getLastConnected(boolean force) {
 		if (force) return getConnectedDevice();
@@ -47,7 +54,7 @@ public class Device {
     	DeviceIdent id = new DeviceIdent();
     	HDEVINFO hDevInfo = JsetupAPi.getHandleForConnectedInterfaces();
         if (hDevInfo.equals(WinBase.INVALID_HANDLE_VALUE)) {
-        	MyLogger.getLogger().error("Cannot have device list");
+        	logger.error("Cannot have device list");
         }
         else {
         	SP_DEVINFO_DATA DeviceInfoData;
@@ -69,7 +76,7 @@ public class Device {
         }
     	hDevInfo = JsetupAPi.getHandleForConnectedDevices();
         if (hDevInfo.equals(WinBase.INVALID_HANDLE_VALUE)) {
-        	MyLogger.getLogger().error("Cannot have device list");
+        	logger.error("Cannot have device list");
         }
         else {
         	SP_DEVINFO_DATA DeviceInfoData;
@@ -106,8 +113,8 @@ public class Device {
 	        }
     	}
     	catch (UnsatisfiedLinkError e) {
-    		MyLogger.getLogger().error("libusb-1.0 is not installed");
-    		MyLogger.getLogger().error(e.getMessage());
+    		logger.error("libusb-1.0 is not installed");
+    		logger.error(e.getMessage());
     	}
     	catch (NoClassDefFoundError e1) {
     	}
@@ -115,7 +122,7 @@ public class Device {
     }
 
     public static void CheckAdbDrivers() {
-    	MyLogger.getLogger().info("List of connected devices (Device Id) :");
+    	logger.info("List of connected devices (Device Id) :");
     	DeviceIdent id=getLastConnected(false);
     	String driverstatus;
     	int maxsize = id.getMaxSize();
@@ -123,24 +130,24 @@ public class Device {
     	while (e.hasMoreElements()) {
     		String dev = (String)e.nextElement();
     		String driver = id.getIds().getProperty(dev);
-    		MyLogger.getLogger().info("      - "+String.format("%1$-" + maxsize + "s", dev)+"\tDriver installed : "+driver);
+    		logger.info("      - "+String.format("%1$-" + maxsize + "s", dev)+"\tDriver installed : "+driver);
     	}
-	    MyLogger.getLogger().info("List of ADB devices :");
+	    logger.info("List of ADB devices :");
 	    Enumeration<String> e1 = AdbUtility.getDevices();
 	    if (e1.hasMoreElements()) {
 	    while (e1.hasMoreElements()) {
-	    	MyLogger.getLogger().info("      - "+e1.nextElement());
+	    	logger.info("      - "+e1.nextElement());
 	    }
 	    }
-	    else MyLogger.getLogger().info("      - none");
-	    MyLogger.getLogger().info("List of fastboot devices :");
+	    else logger.info("      - none");
+	    logger.info("List of fastboot devices :");
 	    Enumeration<String> e2 = FastbootUtility.getDevices();
 	    if (e2.hasMoreElements()) {
 	    while (e2.hasMoreElements()) {
-	    	MyLogger.getLogger().info("      - "+e2.nextElement());
+	    	logger.info("      - "+e2.nextElement());
 	    }
 	    }
-	    else MyLogger.getLogger().info("      - none");
+	    else logger.info("      - none");
     }
 
     public static void clean() {

@@ -2,7 +2,9 @@ package org.system;
 
 import java.io.InputStream;
 import java.util.Scanner;
+
 import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
 
 public class AdbPhoneThread extends Thread {
@@ -15,6 +17,7 @@ public class AdbPhoneThread extends Thread {
 	private Scanner sc;
 	private StatusListener listener;
 	boolean first = true;
+	private static Logger logger = Logger.getLogger(AdbPhoneThread.class);
 
 	public void done() {
 		done=true;
@@ -63,7 +66,7 @@ public class AdbPhoneThread extends Thread {
 			    	  }
 			    	  if (!adbok) {
 			    		  Scanner scerr = new Scanner(adb.getErrorStream());
-			    		  while (scerr.hasNextLine()) MyLogger.getLogger().error(scerr.nextLine());
+			    		  while (scerr.hasNextLine()) logger.error(scerr.nextLine());
 			    	  }
 				      
 		    	  }
@@ -84,7 +87,7 @@ public class AdbPhoneThread extends Thread {
 			}
 		}
 		catch (Exception e) {
-			MyLogger.getLogger().error(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 

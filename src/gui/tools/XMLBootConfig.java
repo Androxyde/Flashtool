@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
 
 public class XMLBootConfig {
@@ -15,6 +16,7 @@ public class XMLBootConfig {
 	private Vector<String> files = new Vector<String>();
 	private Properties attributes = new Properties();
 	private String _folder="";
+	private static Logger logger = Logger.getLogger(XMLBootConfig.class);
 
 	public XMLBootConfig(String name) {
 		_configname = name;
@@ -113,18 +115,18 @@ public class XMLBootConfig {
 
 	public boolean isComplete() {
 		if (!new File(getTA()).exists()) {
-			MyLogger.getLogger().error("missing "+getTA());
+			logger.error("missing "+getTA());
 			return false;
 		}
 		if (!new File(getAppsBootFile()).exists()) {
-			MyLogger.getLogger().error("missing "+getAppsBootFile());
+			logger.error("missing "+getAppsBootFile());
 			return false;
 		}
 		Iterator<String> i = getOtherFiles().iterator();
 		while (i.hasNext()) {
 			String f = i.next();
 			if (!new File(f).exists()) {
-				MyLogger.getLogger().error("missing "+f);
+				logger.error("missing "+f);
 				return false;
 			}
 		}

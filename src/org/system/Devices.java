@@ -14,6 +14,7 @@ import java.util.jar.JarFile;
 
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.logger.MyLogger;
@@ -23,7 +24,8 @@ public class Devices  {
 	private static DeviceEntry _current=null;;
 	private static Properties props = null;
 	private static boolean waitforreboot=false;
-
+	private static Logger logger = Logger.getLogger(Devices.class);
+	
 	public static boolean HasOneAdbConnected() {
 		return AdbUtility.isConnected();
 	}
@@ -99,11 +101,11 @@ public class Devices  {
 						DeviceEntry entry = new DeviceEntry(p);
 						if (device.equals(entry.getId()))
 							props.put(device, entry);
-						else MyLogger.getLogger().error(device + " : this bundle is not valid");
+						else logger.error(device + " : this bundle is not valid");
 					}
 				}
 				catch (Exception fne) {
-					MyLogger.getLogger().error(device + " : this bundle is not valid");
+					logger.error(device + " : this bundle is not valid");
 				}
 			}
 		}
@@ -111,9 +113,9 @@ public class Devices  {
 
 	public static void waitForReboot(boolean tobeforced) {
 		if (!tobeforced)
-			MyLogger.getLogger().info("Waiting for device");
+			logger.info("Waiting for device");
 		else
-			MyLogger.getLogger().info("Waiting for device. After 60secs, stop waiting will be forced");
+			logger.info("Waiting for device. After 60secs, stop waiting will be forced");
 		waitforreboot=true;
 		int count=0;
 		while (waitforreboot) {
@@ -121,7 +123,7 @@ public class Devices  {
 			if (tobeforced) {
 				count++;
 				if (Device.getLastConnected(false).getStatus().equals("adb") && count==3000) {
-					MyLogger.getLogger().info("Forced stop waiting.");
+					logger.info("Forced stop waiting.");
 					waitforreboot=false;
 				}
 				else if (count==3000) count=0;
@@ -151,8 +153,8 @@ public class Devices  {
 	public static String identFromRecognition() {
 		Enumeration<Object> e = Devices.listDevices(true);
 		if (!e.hasMoreElements()) {
-			MyLogger.getLogger().error("No device is registered in Flashtool.");
-			MyLogger.getLogger().error("You can only flash devices.");
+			logger.error("No device is registered in Flashtool.");
+			logger.error("You can only flash devices.");
 			return "";
 		}
 		boolean found = false;

@@ -1,6 +1,7 @@
 package gui.tools;
 
 import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -13,7 +14,8 @@ import org.system.FTShell;
 public class BusyboxInstallJob extends Job {
 
 	String bbpath;
-
+	private static Logger logger = Logger.getLogger(BusyboxInstallJob.class);
+	
 	public BusyboxInstallJob(String name) {
 		super(name);
 	}
@@ -30,13 +32,13 @@ public class BusyboxInstallJob extends Job {
     		shell = new FTShell("instbusybox");
 			shell.setProperty("BUSYBOXINSTALLPATH", Devices.getCurrent().getBusyBoxInstallPath());
 			shell.runRoot();
-	        MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(true));
-	        MyLogger.getLogger().info("Finished");
+	        logger.info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(true));
+	        logger.info("Finished");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
     		e.printStackTrace();
-    		MyLogger.getLogger().error(e.getMessage());
+    		logger.error(e.getMessage());
     		return Status.CANCEL_STATUS;
     	}
     }

@@ -29,12 +29,17 @@ import java.util.zip.ZipInputStream;
 
 import javax.crypto.Cipher;
 
+import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
+import org.logger.LogProgress;
 import org.logger.MyLogger;
 
 import flashsystem.HexDump;
 
 public class OS {
 
+	private static Logger logger = Logger.getLogger(OS.class);
+	
 	public static String getName() {
 		  String os = "";
 		  if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
@@ -65,7 +70,7 @@ public class OS {
 			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {getWorkDir()+File.separator+"x10flasher_lib"+File.separator+"unyaffs."+getName(),yaffsfile,folder},false);
 		}
 		catch (Exception e) {
-			MyLogger.getLogger().warn("Failed : "+e.getMessage());
+			logger.warn("Failed : "+e.getMessage());
 		}
 	}
 	
@@ -188,10 +193,10 @@ public class OS {
 		  }
 		  }
 		  catch(FileNotFoundException ex){
-			  MyLogger.getLogger().error(ex.getMessage() + " in the specified directory.");
+			  logger.error(ex.getMessage() + " in the specified directory.");
 		  }
 		  catch(IOException e){
-			  MyLogger.getLogger().error(e.getMessage());  
+			  logger.error(e.getMessage());  
 		  }
 	}
 	
@@ -286,9 +291,9 @@ public class OS {
 		OutputStream outputWriter = null;
 		InputStream inputReader = null;
 		if (cipherMode == Cipher.ENCRYPT_MODE)
-			MyLogger.getLogger().info("Encrypting "+srcFileName+" to "+destFileName);
+			logger.info("Encrypting "+srcFileName+" to "+destFileName);
 		else
-			MyLogger.getLogger().info("Decrypting "+srcFileName+" to "+destFileName);
+			logger.info("Decrypting "+srcFileName+" to "+destFileName);
 		try
 		{
 			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
@@ -389,7 +394,7 @@ public class OS {
 
 	public static RandomAccessFile generateEmptyFile(String fname, long size, byte fill) {
 		// To fill the empty file with FF values
-		MyLogger.getLogger().info("File size : "+size/1024/1024+" Mb");
+		logger.info("File size : "+size/1024/1024+" Mb");
 		try {
 			byte[] empty = new byte[65*1024];
 			for (int i=0; i<empty.length;i++)
@@ -398,16 +403,16 @@ public class OS {
 			File f = new File(fname);
 			f.delete();
 			FileOutputStream fout = new FileOutputStream(f);
-			MyLogger.initProgress(size/empty.length+size%empty.length);
+			LogProgress.initProgress(size/empty.length+size%empty.length);
 			for (long i = 0; i<size/empty.length; i++) {
 				fout.write(empty);
-				MyLogger.updateProgress();
+				LogProgress.updateProgress();
 			}
 			for (long i = 0; i<size%empty.length; i++) {
 				fout.write(fill);
-				MyLogger.updateProgress();
+				LogProgress.updateProgress();
 			}
-			MyLogger.initProgress(0);
+			LogProgress.initProgress(0);
 			fout.flush();
 			fout.close();
 			RandomAccessFile fo = new RandomAccessFile(f,"rw");
@@ -415,7 +420,7 @@ public class OS {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			MyLogger.getLogger().error(e.getMessage());
+			logger.error(e.getMessage());
 			return null;
 		}
 	}

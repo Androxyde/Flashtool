@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ProxySelector;
 
+import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
@@ -25,9 +27,9 @@ public class DevicesGit {
 	private static String remotePath="https://github.com/Androxyde/devices.git";
     private static Repository localRepo;
     private static Git git;
+    private static Logger logger = Logger.getLogger(DevicesGit.class);
     
     public static void gitSync() throws IOException, InvalidRemoteException, org.eclipse.jgit.api.errors.TransportException, GitAPIException {
-    	ProxySelector.setDefault(Proxy.getProxy());
     	SshSessionFactory.setInstance(new JschConfigSessionFactory() {
     		  public void configure(Host hc, Session session) {
     		    session.setConfig("StrictHostKeyChecking", "no");
@@ -35,29 +37,38 @@ public class DevicesGit {
     		}
     	);
     	if (!new File(localPath+File.separator+".git").exists()) {
-    		MyLogger.getLogger().info("This is the first sync with devices on github. Renaming devices to devices.old");
+    		logger.info("This is the first sync with devices on github. Renaming devices to devices.old");
 			new File(localPath).renameTo(new File(localPath+".old"));
     	}
     	if (!new File(localPath).exists()) {
-    		MyLogger.getLogger().info("Cloning devices from github project");
-    		Git.cloneRepository().setURI(remotePath).setDirectory(new File(localPath)).call();
+    		logger.info("Cloning devices from github project");
+    		try {
+    			Git.cloneRepository().setURI(remotePath).setDirectory(new File(localPath)).call();
+    		} catch (Exception e) {
+    			logger.error("Cannot clone devices repository : "+e.getMessage());
+    		}
     	}
     	else {
     		localRepo = new FileRepository(localPath + "/.git");
     		git = new Git(localRepo);
-    		MyLogger.getLogger().info("Checking if changes have been made to devices folder.");
-    		git.add().addFilepattern(".").call();
-    		if (git.status().call().getChanged().size()>0 || git.status().call().getAdded().size()>0 || git.status().call().getModified().size()>0) {
-    			ResetCommand reset = git.reset();
-    			reset.setMode(ResetType.HARD);
-    			reset.setRef(Constants.HEAD);
-    			MyLogger.getLogger().info("Hard reset of devices (removing user modifications)");
-    			reset.call();
+    		logger.info("Pulling changes from github");
+    		try {
+    			git.pull().call();
     		}
-    		MyLogger.getLogger().info("Pulling changes from github");
-    		git.pull().call();
+    		catch (Exception e) {
+        		logger.info("Checking if changes have been made to devices folder.");
+        		git.add().addFilepattern(".").call();
+        		if (git.status().call().getChanged().size()>0 || git.status().call().getAdded().size()>0 || git.status().call().getModified().size()>0) {
+        			ResetCommand reset = git.reset();
+        			reset.setMode(ResetType.HARD);
+        			reset.setRef(Constants.HEAD);
+        			logger.info("Hard reset of devices (removing user modifications)");
+        			reset.call();
+        		}    			
+    			git.pull().call();
+    		}
     	}
-    	MyLogger.getLogger().info("Devices sync finished.");
+    	logger.info("Devices sync finished.");
     }
  
 }

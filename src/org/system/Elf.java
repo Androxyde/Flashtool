@@ -11,7 +11,11 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
+
 import flashsystem.HexDump;
 
 /**
@@ -46,7 +50,8 @@ public class Elf {
 	 * Java doesn't have unsigned types, so the values stored here are larger
 	 * than what are specified in an ELF header.
 	 */
-
+	private static Logger logger = Logger.getLogger(Elf.class);
+	
 	private enum ElfClass {
 		invalid(0), class32(1), class64(2);
 
@@ -322,7 +327,7 @@ public class Elf {
 			fin.seek(phEntries[i].getOffset());
 			byte[] image = new byte[(int)phEntries[i].getProgramSize()];
 			fin.read(image);
-			MyLogger.getLogger().info("Extracting part " + phEntries[i].getName() + " to " +phEntries[i].getFileName());
+			logger.info("Extracting part " + phEntries[i].getName() + " to " +phEntries[i].getFileName());
 			File f = new File(phEntries[i].getFileName());
 			FileOutputStream fout = new FileOutputStream(f);
 			fout.write(image);
@@ -331,7 +336,7 @@ public class Elf {
 			fout.close();
 		}
 		fin.close();
-		MyLogger.getLogger().info("ELF Extraction finished");
+		logger.info("ELF Extraction finished");
 	}
 	
 	public String getFileName() {

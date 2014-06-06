@@ -1,5 +1,6 @@
 package gui.tools;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -13,7 +14,8 @@ public class ExtractSinDataJob extends Job {
 	boolean canceled = false;
 	SinFile sin;
 	private String mode="raw";
-
+	private static Logger logger = Logger.getLogger(ExtractSinDataJob.class);
+	
 	public ExtractSinDataJob(String name) {
 		super(name);
 	}
@@ -29,7 +31,7 @@ public class ExtractSinDataJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
     	try {
     		if (mode.equals("data")) {
-    			MyLogger.getLogger().info("Starting data extraction");
+    			logger.info("Starting data extraction");
     			sin.dumpImage();
     		}
     		else

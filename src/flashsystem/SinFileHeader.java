@@ -3,6 +3,8 @@ package flashsystem;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Vector;
+
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
 
 public class SinFileHeader {
@@ -22,6 +24,7 @@ public class SinFileHeader {
 	private long partitionsize;
 	private int chunksize;
 	private byte[] readarray;
+	private static Logger logger = Logger.getLogger(SinFileHeader.class);
 	
 	public void setChunkSize(int size) {
 		chunksize = size;
@@ -92,7 +95,7 @@ public class SinFileHeader {
 		else {
 			unit = unit+Long.toString(partitionsize/meg)+"."+Long.toString((partitionsize%meg)/1024)+"Mb";
 		}
-		MyLogger.getLogger().debug("Sin version "+getVersion()+" ; Partition block count : " + partitioninfo.getNbPartitionBlocks()+ " ; Partition block size : "+blocksize+" ; Partition size : "+unit);
+		logger.debug("Sin version "+getVersion()+" ; Partition block count : " + partitioninfo.getNbPartitionBlocks()+ " ; Partition block size : "+blocksize+" ; Partition size : "+unit);
 	}
 	
 	public long getOutfileLength() {

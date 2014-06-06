@@ -2,6 +2,7 @@ package org.system;
 
 import flashsystem.BytesUtil;
 import gui.tools.MsgBox;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,6 +12,9 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.logger.MyLogger;
 
@@ -18,6 +22,7 @@ public class FTDEntry {
 
 	File ftdfile;
 	Properties entry = new Properties();
+	private static Logger logger = Logger.getLogger(FTDEntry.class);
 
 	public FTDEntry(String id) throws FileNotFoundException, IOException {
 		ftdfile = new File(OS.getWorkDir()+OS.getFileSeparator()+"devices"+OS.getFileSeparator()+id+".ftd");
@@ -82,7 +87,7 @@ public class FTDEntry {
 	    	return true;
     	}
     	else {
-    		MyLogger.getLogger().info("Import canceled");
+    		logger.info("Import canceled");
     		return false;
     	}
     }

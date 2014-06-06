@@ -1,6 +1,7 @@
 package gui.tools;
 
 import org.adb.FastbootUtility;
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -13,6 +14,7 @@ public class BLUnlockJob extends Job {
 	String ulcode;
 	boolean canceled = false;
 	boolean unlocksuccess = true;
+	private static Logger logger = Logger.getLogger(BLUnlockJob.class);
 
 	public boolean unlockSuccess() {
 		return unlocksuccess;
@@ -33,18 +35,18 @@ public class BLUnlockJob extends Job {
 				if (out.getStdErr().contains("FAIL") || out.getStdOut().contains("FAIL"))
 						unlocksuccess = false;
 				if (unlocksuccess) {
-					MyLogger.getLogger().info("Device will reboot into system now");
+					logger.info("Device will reboot into system now");
 					FastbootUtility.rebootDevice();
 				}
 			}
 			else {
-				MyLogger.getLogger().error("Your device must be in fastboot mode");
-				MyLogger.getLogger().error("Please restart it in fastboot mode");							
+				logger.error("Your device must be in fastboot mode");
+				logger.error("Please restart it in fastboot mode");							
 			}
 			return Status.OK_STATUS;
 		}
 		catch (Exception exc) {
-			MyLogger.getLogger().error(exc.getMessage());
+			logger.error(exc.getMessage());
     		exc.printStackTrace();
     		return Status.CANCEL_STATUS;
 		}    	

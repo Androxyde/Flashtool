@@ -16,6 +16,7 @@ import java.util.zip.Deflater;
 import linuxlib.JUsb;
 
 import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -43,7 +44,10 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.logger.ConsoleAppender;
+import org.logger.LogProgress;
 import org.logger.MyLogger;
+import org.logger.TextAreaAppender;
 import org.system.AdbPhoneThread;
 import org.system.Device;
 import org.system.DeviceChangedListener;
@@ -55,6 +59,7 @@ import org.system.FTDEntry;
 import org.system.FTShell;
 import org.system.GlobalConfig;
 import org.system.OS;
+import org.system.Proxy;
 import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.system.UpdateURL;
@@ -104,6 +109,7 @@ public class MainSWT {
 	protected MenuItem mntmRawBackup;
 	protected MenuItem mntmRawRestore;
 	protected VersionCheckerJob vcheck; 
+	private static Logger logger = Logger.getLogger(ConsoleAppender.class);
 	
 	/**
 	 * Open the window.
@@ -121,30 +127,30 @@ public class MainSWT {
 		StatusListener phoneStatus = new StatusListener() {
 			public void statusChanged(StatusEvent e) {
 				if (!e.isDriverOk()) {
-					MyLogger.getLogger().error("Drivers need to be installed for connected device.");
-					MyLogger.getLogger().error("You can find them in the drivers folder of Flashtool.");
+					logger.error("Drivers need to be installed for connected device.");
+					logger.error("You can find them in the drivers folder of Flashtool.");
 				}
 				else {
 					if (e.getNew().equals("adb")) {
-						MyLogger.getLogger().info("Device connected with USB debugging on");
-						MyLogger.getLogger().debug("Device connected, continuing with identification");
+						logger.info("Device connected with USB debugging on");
+						logger.debug("Device connected, continuing with identification");
 						doIdent();
 					}
 					if (e.getNew().equals("none")) {
-						MyLogger.getLogger().info("Device disconnected");
+						logger.info("Device disconnected");
 						doDisableIdent();
 					}
 					if (e.getNew().equals("flash")) {
-						MyLogger.getLogger().info("Device connected in flash mode");
+						logger.info("Device connected in flash mode");
 						doDisableIdent();
 					}
 					if (e.getNew().equals("fastboot")) {
-						MyLogger.getLogger().info("Device connected in fastboot mode");
+						logger.info("Device connected in fastboot mode");
 						doDisableIdent();
 					}
 					if (e.getNew().equals("normal")) {
-						MyLogger.getLogger().info("Device connected with USB debugging off");
-						MyLogger.getLogger().info("For 2011 devices line, be sure you are not in MTP mode");
+						logger.info("Device connected with USB debugging off");
+						logger.info("For 2011 devices line, be sure you are not in MTP mode");
 						doDisableIdent();
 					}
 				}
@@ -322,7 +328,7 @@ public class MainSWT {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					MyLogger.getLogger().info("Launching Service Menu. Plese check on your phone.");
+					logger.info("Launching Service Menu. Plese check on your phone.");
 					AdbUtility.run("am start -a android.intent.action.MAIN -n com.sonyericsson.android.servicemenu/.ServiceMainMenu");
 				}
 				catch (Exception ex) {
@@ -411,7 +417,7 @@ public class MainSWT {
 						public void done(IJobChangeEvent event) {
 							String result = WidgetTask.openBundleCreator(shlSonyericsson,folder);
 							if (result.equals("Cancel"))
-								MyLogger.getLogger().info("Bundle creation canceled");
+								logger.info("Bundle creation canceled");
 						}
 
 						public void running(IJobChangeEvent event) {
@@ -428,7 +434,7 @@ public class MainSWT {
 					dec.schedule();
 				}
 				else {
-					MyLogger.getLogger().info("Decrypt canceled");
+					logger.info("Decrypt canceled");
 				}
 			}
 		});
@@ -441,7 +447,7 @@ public class MainSWT {
 				BundleCreator cre = new BundleCreator(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 				String result = (String)cre.open();
 				if (result.equals("Cancel"))
-					MyLogger.getLogger().info("Bundle creation canceled");
+					logger.info("Bundle creation canceled");
 			}
 		});
 		mntmBundleCreation.setText("Create");
@@ -453,7 +459,7 @@ public class MainSWT {
 				DBEditor dbe = new DBEditor(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 				String result = (String)dbe.open();
 				if (result.equals("Cancel"))
-					MyLogger.getLogger().info("Bundle creation canceled");
+					logger.info("Bundle creation canceled");
 			}
 		});
 		mntmBundleCreationFrom.setText("Create From Sony DB");*/
@@ -565,14 +571,14 @@ public class MainSWT {
 						models.put(m.getModel(), m);
 						mng.open(models);
 					}
-					else MyLogger.getLogger().warn("This updateurl already exists");
+					else logger.warn("This updateurl already exists");
 					} catch (Exception e1) {
-						MyLogger.getLogger().error(e1.getMessage());
+						logger.error(e1.getMessage());
 						e1.printStackTrace();
 					}
 				}
 				else {
-					MyLogger.getLogger().info("Add update URL canceled");
+					logger.info("Add update URL canceled");
 				}
 			}
 		});
@@ -624,12 +630,12 @@ public class MainSWT {
 				DeviceEntry ent = Devices.getDevice(devid);
         		if (devid.length()>0) {
         			try {
-        				MyLogger.getLogger().info("Beginning export of "+ent.getName());
+        				logger.info("Beginning export of "+ent.getName());
         				doExportDevice(devid);
-        				MyLogger.getLogger().info(ent.getName()+" exported successfully");
+        				logger.info(ent.getName()+" exported successfully");
         			}
         			catch (Exception ex) {
-        				MyLogger.getLogger().error(ex.getMessage());
+        				logger.error(ex.getMessage());
         			}
         		}
 			}
@@ -664,11 +670,11 @@ public class MainSWT {
 							j.schedule();
 						}
 						catch (Exception ex) {
-							MyLogger.getLogger().error(ex.getMessage());
+							logger.error(ex.getMessage());
 						}
 	        		}
 	        		else {
-	        			MyLogger.getLogger().info("Import canceled");
+	        			logger.info("Import canceled");
 	        		}
         		}
         		else {
@@ -694,8 +700,10 @@ public class MainSWT {
 		mntmError.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MyLogger.setLevel("ERROR");
-				GlobalConfig.setProperty("loglevel", "error");
+				if(((MenuItem)e.getSource()).getSelection()) {
+					MyLogger.setLevel("ERROR");
+					GlobalConfig.setProperty("loglevel", "error");
+				}
 			}
 		});
 		mntmError.setText("error");
@@ -704,8 +712,10 @@ public class MainSWT {
 		mntmWarning.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MyLogger.setLevel("WARN");
-				GlobalConfig.setProperty("loglevel", "warn");
+				if(((MenuItem)e.getSource()).getSelection()) {
+					MyLogger.setLevel("WARN");
+					GlobalConfig.setProperty("loglevel", "warn");
+				}
 			}
 		});
 		mntmWarning.setText("warning");
@@ -714,8 +724,10 @@ public class MainSWT {
 		mntmInfo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MyLogger.setLevel("INFO");
-				GlobalConfig.setProperty("loglevel", "info");
+				if(((MenuItem)e.getSource()).getSelection()) {
+					MyLogger.setLevel("INFO");
+					GlobalConfig.setProperty("loglevel", "info");
+				}
 			}
 		});
 		mntmInfo.setText("info");
@@ -724,8 +736,10 @@ public class MainSWT {
 		mntmDebug.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MyLogger.setLevel("DEBUG");
-				GlobalConfig.setProperty("loglevel", "debug");
+				if(((MenuItem)e.getSource()).getSelection()) {
+					MyLogger.setLevel("DEBUG");
+					GlobalConfig.setProperty("loglevel", "debug");
+				}
 			}
 		});
 		mntmDebug.setText("debug");
@@ -825,7 +839,7 @@ public class MainSWT {
 					aij.schedule();
 				}
 				else {
-					MyLogger.getLogger().info("Install APK canceled");
+					logger.info("Install APK canceled");
 				}
 			}
 		});
@@ -844,7 +858,7 @@ public class MainSWT {
 					cj.schedule();
 				}
 				else
-					MyLogger.getLogger().info("Cleaning canceled");
+					logger.info("Cleaning canceled");
 				//WidgetTask.openOKBox(shlSonyericsson, "To be implemented");
 			}
 		});
@@ -866,7 +880,7 @@ public class MainSWT {
 		ProgressBar progressBar = new ProgressBar(shlSonyericsson, SWT.NONE);
 		fd_btnSaveLog.bottom = new FormAttachment(100, -43);
 		progressBar.setState(SWT.NORMAL);
-		MyLogger.registerProgressBar(progressBar);
+		LogProgress.registerProgressBar(progressBar);
 		FormData fd_progressBar = new FormData();
 		fd_progressBar.left = new FormAttachment(0, 10);
 		fd_progressBar.right = new FormAttachment(100, -10);
@@ -884,7 +898,7 @@ public class MainSWT {
 		
 		StyledText logWindow = new StyledText(scrolledComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		logWindow.setEditable(false);
-		MyLogger.appendTextArea(logWindow);
+		TextAreaAppender.setTextArea(logWindow);
 		scrolledComposite.setContent(logWindow);
 		scrolledComposite.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		
@@ -903,15 +917,15 @@ public class MainSWT {
 			}
 		});
 		tltmNewItem.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/paypal.png"));
-		MyLogger.setLevel(GlobalConfig.getProperty("loglevel").toUpperCase());
 /*		try {
 		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
 		} catch (Exception e) {
-			MyLogger.getLogger().info("Language files not installed");
+			logger.info("Language files not installed");
 		}*/
-		MyLogger.getLogger().info("Flashtool "+About.getVersion());
+		logger.info("Flashtool "+About.getVersion());
 		if (JUsb.getVersion().length()>0)
-			MyLogger.getLogger().info(JUsb.getVersion());
+			logger.info(JUsb.getVersion());
+		Proxy.setProxy();
 		vcheck = new VersionCheckerJob("Version Checker Job");
 		vcheck.setMessageFrame(shlSonyericsson);
 		vcheck.schedule();
@@ -936,9 +950,8 @@ public class MainSWT {
 
 	public void exitProgram() {
 		try {
-			MyLogger.disableTextArea();
-			MyLogger.setLevel(MyLogger.curlevel);
-			MyLogger.getLogger().info("Stopping watchdogs and exiting ...");
+			MyLogger.setLogDest("console");
+			logger.info("Stopping watchdogs and exiting ...");
 			if (GlobalConfig.getProperty("killadbonexit").equals("yes")) {
 				killAdbandFastboot();
 			}
@@ -952,8 +965,8 @@ public class MainSWT {
     		String devid = Devices.identFromRecognition();
     		if (devid.length()==0) {
     			if (Devices.listDevices(false).hasMoreElements()) {
-    				MyLogger.getLogger().error("Cannot identify your device.");
-	        		MyLogger.getLogger().info("Selecting from user input");
+    				logger.error("Cannot identify your device.");
+	        		logger.info("Selecting from user input");
 	        		devid=(String)WidgetTask.openDeviceSelector(shlSonyericsson);
 	    			if (devid.length()>0) {
 	        			Devices.setCurrent(devid);
@@ -964,28 +977,28 @@ public class MainSWT {
 	        					Devices.getCurrent().addRecognitionToList(prop);
 	        			}
 	            		if (!Devices.isWaitingForReboot())
-	            			MyLogger.getLogger().info("Connected device : " + Devices.getCurrent().getId());
+	            			logger.info("Connected device : " + Devices.getCurrent().getId());
 	        		}
 	        		else {
-	        			MyLogger.getLogger().error("You can only flash devices.");
+	        			logger.error("You can only flash devices.");
 	        		}
     			}
     		}
     		else {
 	    		Devices.setCurrent(devid);
 				if (!Devices.isWaitingForReboot())
-					MyLogger.getLogger().info("Connected device : " + Devices.getCurrent().getName());
+					logger.info("Connected device : " + Devices.getCurrent().getName());
     		}
     		if (devid.length()>0) {
     			WidgetTask.setEnabled(mntmNoDevice, true);
     			WidgetTask.setMenuName(mntmNoDevice, "My "+Devices.getCurrent().getId());
     			WidgetTask.setEnabled(mntmInstallBusybox,false);
     			if (!Devices.isWaitingForReboot()) {
-    				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
-    				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());
+    				logger.info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
+    				logger.info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());
     			}
     			if (Devices.getCurrent().isRecovery()) {
-    				MyLogger.getLogger().info("Phone in recovery mode");
+    				logger.info("Phone in recovery mode");
     				WidgetTask.setEnabled(tltmRoot,false);
     				WidgetTask.setEnabled(tltmAskRoot,false);
     				WidgetTask.setEnabled(tltmApkInstall,false);
@@ -996,7 +1009,7 @@ public class MainSWT {
     				WidgetTask.setEnabled(tltmRoot, !hasSU);
     				WidgetTask.setEnabled(tltmApkInstall, true);
     				if (hasSU) {
-        				MyLogger.getLogger().info("Checking root access");
+        				logger.info("Checking root access");
     					boolean hasRoot = Devices.getCurrent().hasRoot();
 						doGiveRoot(hasRoot);
     					if (hasRoot) {
@@ -1004,31 +1017,31 @@ public class MainSWT {
     					}	
     				}
     			}
-    			MyLogger.getLogger().debug("Now setting buttons availability - btnRoot");
-    			MyLogger.getLogger().debug("mtmRootzergRush menu");
+    			logger.debug("Now setting buttons availability - btnRoot");
+    			logger.debug("mtmRootzergRush menu");
     			/*mntmRootzergRush.setEnabled(true);
-    			MyLogger.getLogger().debug("mtmRootPsneuter menu");
+    			logger.debug("mtmRootPsneuter menu");
     			mntmRootPsneuter.setEnabled(true);
-    			MyLogger.getLogger().debug("mtmRootEmulator menu");
+    			logger.debug("mtmRootEmulator menu");
     			mntmRootEmulator.setEnabled(true);
-    			MyLogger.getLogger().debug("mtmRootAdbRestore menu");
+    			logger.debug("mtmRootAdbRestore menu");
     			mntmRootAdbRestore.setEnabled(true);
-    			MyLogger.getLogger().debug("mtmUnRoot menu");
+    			logger.debug("mtmUnRoot menu");
     			mntmUnRoot.setEnabled(true);*/
 
     			boolean flash = Devices.getCurrent().canFlash();
-    			MyLogger.getLogger().debug("flashBtn button "+flash);
+    			logger.debug("flashBtn button "+flash);
     			WidgetTask.setEnabled(tltmFlash,flash);
-    			//MyLogger.getLogger().debug("custBtn button");
+    			//logger.debug("custBtn button");
     			//custBtn.setEnabled(true);
-    			MyLogger.getLogger().debug("Now adding plugins");
+    			logger.debug("Now adding plugins");
     			//mnPlugins.removeAll();
     			//addDevicesPlugins();
     			//addGenericPlugins();
-    			MyLogger.getLogger().debug("Stop waiting for device");
+    			logger.debug("Stop waiting for device");
     			if (Devices.isWaitingForReboot())
     				Devices.stopWaitForReboot();
-    			MyLogger.getLogger().debug("End of identification");
+    			logger.debug("End of identification");
     		}
     	}
 	}
@@ -1060,17 +1073,17 @@ public class MainSWT {
 		WidgetTask.setEnabled(tltmAskRoot,!hasRoot);
 		if (!Devices.isWaitingForReboot())
 			if (hasRoot) {
-				MyLogger.getLogger().info("Root Access Allowed");
+				logger.info("Root Access Allowed");
 				AdbUtility.antiRic();
 			}
 			else
-				MyLogger.getLogger().info("Root access denied");
+				logger.info("Root access denied");
     }
 
 	public void doAskRoot() {
 		Job job = new Job("Give Root") {
 			protected IStatus run(IProgressMonitor monitor) {
-				MyLogger.getLogger().warn("Please check your Phone and 'ALLOW' Superuseraccess!");
+				logger.warn("Please check your Phone and 'ALLOW' Superuseraccess!");
         		boolean hasRoot = Devices.getCurrent().hasRoot();
         		doGiveRoot(hasRoot);
         		return Status.OK_STATUS;				
@@ -1083,14 +1096,14 @@ public class MainSWT {
 		try {
 			if (!AdbUtility.exists("/system/flashtool")) {
 				Devices.getCurrent().doBusyboxHelper();
-				MyLogger.getLogger().info("Installing toolbox to device...");
+				logger.info("Installing toolbox to device...");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
 				FTShell ftshell = new FTShell("installftkit");
 				ftshell.runRoot();
 			}
 		}
 		catch (Exception e) {
-			MyLogger.getLogger().error(e.getMessage());
+			logger.error(e.getMessage());
 		}
     }
 
@@ -1102,7 +1115,7 @@ public class MainSWT {
 		else if (select.equals("fastboot"))
 			doFastBoot();
 		else
-			MyLogger.getLogger().info("Flash canceled");
+			logger.info("Flash canceled");
 	}
 	
 	public void doFastBoot() throws Exception {
@@ -1114,7 +1127,7 @@ public class MainSWT {
 		try {
 			FTFSelector ftfsel = new FTFSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
-			MyLogger.getLogger().info("Selected "+bundle);
+			logger.info("Selected "+bundle);
 			if (bundle !=null) {
 				bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
 				final X10flash flash = new X10flash(bundle,shlSonyericsson);
@@ -1125,14 +1138,14 @@ public class MainSWT {
 						fjob.schedule();
 				}
 				catch (Exception e){
-					MyLogger.getLogger().error(e.getMessage());
-					MyLogger.getLogger().info("Flash canceled");
+					logger.error(e.getMessage());
+					logger.info("Flash canceled");
 					if (flash.getBundle()!=null)
 						flash.getBundle().close();
 				}
 			}
 			else
-				MyLogger.getLogger().info("Flash canceled");
+				logger.info("Flash canceled");
 
 		}
 		catch (Exception e) {
@@ -1148,7 +1161,7 @@ public class MainSWT {
 				if (bundle!=null) {
 					X10flash flash=null;
 					try {
-			    		MyLogger.getLogger().info("Preparing files for flashing");
+			    		logger.info("Preparing files for flashing");
 			    		bundle.open();
 				    	bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
 						flash = new X10flash(bundle);
@@ -1164,14 +1177,14 @@ public class MainSWT {
 						}
 					}
 					catch (BundleException ioe) {
-						MyLogger.getLogger().error("Error preparing files");
+						logger.error("Error preparing files");
 					}
 					catch (Exception e) {
-						MyLogger.getLogger().error(e.getMessage());
+						logger.error(e.getMessage());
 					}
 					bundle.close();
 				}
-				else MyLogger.getLogger().info("Flash canceled");
+				else logger.info("Flash canceled");
 				return null;
 			}
 		});*/
@@ -1180,7 +1193,7 @@ public class MainSWT {
 	public void doBLUnlock() {
 		try {
 			final X10flash flash = new X10flash(new Bundle(),shlSonyericsson);
-			MyLogger.getLogger().info("Please connect your device into flashmode.");
+			logger.info("Please connect your device into flashmode.");
 			String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
 			if (result.equals("OK")) {
 				try {
@@ -1209,25 +1222,25 @@ public class MainSWT {
 								String serial = j.getSerial();
 								if (!j.alreadyUnlocked()) {
 									if (!blstatus.equals("ROOTABLE")) {
-										MyLogger.getLogger().info("Your phone bootloader cannot be officially unlocked");
-										MyLogger.getLogger().info("You can now unplug and restart your phone");
+										logger.info("Your phone bootloader cannot be officially unlocked");
+										logger.info("You can now unplug and restart your phone");
 									}
 									else {
-										MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
+										logger.info("Now unplug your device and restart it into fastbootmode");
 										String result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
 										if (result.equals("OK")) {
 											WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, null, "U");
 										}
 										else {
-											MyLogger.getLogger().info("Bootloader unlock canceled");
+											logger.info("Bootloader unlock canceled");
 										}
 									}
 								}
 								else {
 									WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, flash, j.isRelocked()?"U":"R");
 									flash.closeDevice();
-									MyLogger.initProgress(0);
-									MyLogger.getLogger().info("You can now unplug and restart your device");
+									LogProgress.initProgress(0);
+									logger.info("You can now unplug and restart your device");
 									DeviceChangedListener.pause(false);								
 								}
 							}
@@ -1238,16 +1251,16 @@ public class MainSWT {
 			catch (Exception e) {
 				flash.closeDevice();
 				DeviceChangedListener.pause(false);
-				MyLogger.getLogger().info("Bootloader unlock canceled");
-				MyLogger.initProgress(0);
+				logger.info("Bootloader unlock canceled");
+				LogProgress.initProgress(0);
 			}
 		}
 		else {
-			MyLogger.getLogger().info("Bootloader unlock canceled");
+			logger.info("Bootloader unlock canceled");
 		}
 		}
 		catch (Exception e) {
-			MyLogger.getLogger().error(e.getMessage());
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -1289,7 +1302,7 @@ public class MainSWT {
 		bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
 		final X10flash flash = new X10flash(bundle,shlSonyericsson);
 		try {
-			MyLogger.getLogger().info("Please connect your device into flashmode.");
+			logger.info("Please connect your device into flashmode.");
 			String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
 			if (result.equals("OK")) {
 				BackupTAJob fjob = new BackupTAJob("Flash");
@@ -1297,11 +1310,11 @@ public class MainSWT {
 				fjob.schedule();
 			}
 			else
-				MyLogger.getLogger().info("Flash canceled");
+				logger.info("Flash canceled");
 		}
 		catch (Exception e){
-			MyLogger.getLogger().error(e.getMessage());
-			MyLogger.getLogger().info("Flash canceled");
+			logger.error(e.getMessage());
+			logger.info("Flash canceled");
 			if (flash.getBundle()!=null)
 				flash.getBundle().close();
 		}
@@ -1363,6 +1376,6 @@ public class MainSWT {
         	yj.schedule();
         }
         else
-        	MyLogger.getLogger().info("Canceled");
+        	logger.info("Canceled");
 	}
 }

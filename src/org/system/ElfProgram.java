@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
 
 /**
@@ -45,7 +48,7 @@ public class ElfProgram {
 	private String ctype;
 
     /* Nachos variables */
-
+	private static Logger logger = Logger.getLogger(ElfProgram.class);
 
 	public enum ElfProgramType {
 		PT_NULL(0),
@@ -168,7 +171,7 @@ public class ElfProgram {
 			result = String.format(pname+"\tsize : 0x%08x\tLoad address: 0x%08x", this.p_filesz, this.p_vaddr);
 		else
 			result = String.format(pname+"\t\tsize : 0x%08x\tLoad address: 0x%08x", this.p_filesz, this.p_vaddr);
-		MyLogger.getLogger().info(result);
+		logger.info(result);
 		/*System.out.printf("PH entry type: %s\n", this.type);
 		System.out.printf("First byte of segment: 0x%08x\tVirtual address: 0x%08x\n", this.p_offset, this.p_vaddr);
 		System.out.printf("Physical address: 0x%08x\n", this.p_paddr);

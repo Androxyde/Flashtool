@@ -9,7 +9,10 @@ import com.btr.proxy.util.PlatformUtil.Platform;
 
 public class Proxy {
 
-	public static ProxySelector getProxy() {
+	private static ProxySelector dps = null;
+	
+	public static void setProxy() {
+		if (dps==null) dps=ProxySelector.getDefault();
 		ProxySearch proxySearch = new ProxySearch();
         
 		if (PlatformUtil.getCurrentPlattform() == Platform.WIN) {
@@ -24,12 +27,9 @@ public class Proxy {
 		} else {
 		  proxySearch.addStrategy(Strategy.OS_DEFAULT);
 		}
-
-		if (proxySearch.getProxySelector()!=null)
-			return proxySearch.getProxySelector();
-		else
-			return ProxySelector.getDefault();
-
+		ProxySelector ps = proxySearch.getProxySelector();
+		if (ps!=null)
+			ProxySelector.setDefault(ps);
 	}
 	
 	public static boolean canResolve(String uri) {

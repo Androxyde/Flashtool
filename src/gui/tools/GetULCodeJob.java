@@ -1,9 +1,11 @@
 package gui.tools;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.system.DeviceChangedListener;
 import org.system.ULCodeFile;
@@ -23,6 +25,7 @@ public class GetULCodeJob extends Job {
 	String platform = "";
 	boolean alreadyunlocked = false;
 	boolean relocked = false;
+	private static Logger logger = Logger.getLogger(GetULCodeJob.class);
 
 	
 	public String getBLStatus() {
@@ -73,19 +76,19 @@ public class GetULCodeJob extends Job {
 				flash.getCurrentDevice().contains("U20")) {
 				if (blstatus.equals("ROOTED")) {
 					flash.closeDevice();
-					MyLogger.initProgress(0);
+					LogProgress.initProgress(0);
 					DeviceChangedListener.pause(false);
-					MyLogger.getLogger().info("Phone already unlocked");
-					MyLogger.getLogger().info("You can safely reboot in normal mode");
+					logger.info("Phone already unlocked");
+					logger.info("You can safely reboot in normal mode");
 				}
 				else {
-		    		MyLogger.initProgress(1);
+					LogProgress.initProgress(1);
 		    		platform = flash.getCurrentDevice();
 					flash.openTA(2);
 					TaEntry ta=flash.dumpProperty(2129);
 					flash.closeTA();
 					flash.closeDevice();
-					MyLogger.initProgress(0);
+					LogProgress.initProgress(0);
 					DeviceChangedListener.pause(false);
 					if (ta!=null)
 						phonecert = ta.getDataHex().replace(",","").replace("[", "").replace("[", "").trim();
@@ -109,7 +112,7 @@ public class GetULCodeJob extends Job {
 						ulcode="";
 						alreadyunlocked=false;
 						flash.closeDevice();
-						MyLogger.initProgress(0);
+						LogProgress.initProgress(0);
 						DeviceChangedListener.pause(false);
 					}
 				}
@@ -131,7 +134,7 @@ public class GetULCodeJob extends Job {
     	}
     	catch (Exception e) {
     		e.printStackTrace();
-    		MyLogger.getLogger().error(e.getMessage());
+    		logger.error(e.getMessage());
     		return Status.CANCEL_STATUS;
     	}
     }

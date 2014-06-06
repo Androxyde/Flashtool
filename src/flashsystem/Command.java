@@ -1,7 +1,10 @@
 package flashsystem;
 
 import java.io.IOException;
+
+import org.logger.LogProgress;
 import org.logger.MyLogger;
+
 import flashsystem.io.USBFlash;
 
 public class Command {
@@ -108,7 +111,7 @@ public class Command {
     public void send(int cmd, byte data[], boolean ongoing) throws X10FlashException, IOException
     {
     	writeCommand(cmd, data, ongoing);
-    	MyLogger.updateProgress();
+    	LogProgress.updateProgress();
     	if (USBFlash.getLastFlags()==0) {
     		writeCommand(Command.CMD07, Command.VALNULL, false);
     		throw new X10FlashException(getLastReplyString());

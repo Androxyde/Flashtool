@@ -9,6 +9,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
 
 public class ProcessBuilderWrapper {
@@ -17,6 +20,7 @@ public class ProcessBuilderWrapper {
     private StringWriter errors;
     private int status;
     private boolean print = false;
+    private static Logger logger = Logger.getLogger(ProcessBuilderWrapper.class);
 
     public ProcessBuilderWrapper(File directory, List<String> command) throws Exception {
     	run(directory, command);
@@ -87,9 +91,9 @@ public class ProcessBuilderWrapper {
                 	if (line.trim().replaceAll("\n", "").length()>0) {
                 		line = line.replaceAll("\n", "");
 	                	if (print)
-	                		MyLogger.getLogger().info(line);
+	                		logger.info(line);
 	                	else
-	                		MyLogger.getLogger().debug(line);
+	                		logger.debug(line);
 	                    pw.println(line);
                 	}
                 }

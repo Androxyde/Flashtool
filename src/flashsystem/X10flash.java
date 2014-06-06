@@ -12,8 +12,10 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.JDOMException;
+import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.system.Device;
 import org.system.DeviceChangedListener;
@@ -41,6 +43,7 @@ public class X10flash {
     private Shell _curshell;
     private TaEntry _8fdunit = null;
     private TaEntry _8a4unit = null;
+    private static Logger logger = Logger.getLogger(X10flash.class);
 
     public X10flash(Bundle bundle, Shell shell) {
     	_bundle=bundle;
@@ -68,24 +71,24 @@ public class X10flash {
     private void sendTA(File f) throws FileNotFoundException, IOException,X10FlashException {
     	try {
     		TaFile ta = new TaFile(f);
-    		MyLogger.getLogger().info("Flashing "+ta.getName());
+    		logger.info("Flashing "+ta.getName());
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
 				TaEntry tent = entries.get(i);
 				if (tent.getPartition().equals(_8a4unit.getPartition()) && tent.getData().equals(_8a4unit.getData())) {
-					MyLogger.getLogger().info("Custumization reset is now based on UI choice");
+					logger.info("Custumization reset is now based on UI choice");
 				}
 				else
 					sendTAUnit(tent);
 			}
     	}
     	catch (TaParseException tae) {
-    		MyLogger.getLogger().error("Error parsing TA file. Skipping");
+    		logger.error("Error parsing TA file. Skipping");
     	}
     }
 
     private void sendTA(TaFile ta) throws FileNotFoundException, IOException,X10FlashException {
-    		MyLogger.getLogger().info("Flashing "+ta.getName());
+    		logger.info("Flashing "+ta.getName());
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
 				sendTAUnit(entries.get(i));
@@ -93,7 +96,7 @@ public class X10flash {
     }
 
     public void sendTAUnit(TaEntry ta) throws X10FlashException, IOException {
-		MyLogger.getLogger().info("Writing TA unit : "+HexDump.toHex(ta.getWordbyte()));
+		logger.info("Writing TA unit : "+HexDump.toHex(ta.getWordbyte()));
 		if (!_bundle.simulate()) {
 			cmd.send(Command.CMD13, ta.getWordbyte(),false);  
 		} 	
@@ -106,14 +109,14 @@ public class X10flash {
     		sunit = sunit.replace("]", "");
     		sunit = sunit.replace(",", "");
     		sunit = sunit.replace(" ", "");
-    		MyLogger.getLogger().info("Start Reading unit "+sunit);
-	        MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(unit).toString());
+    		logger.info("Start Reading unit "+sunit);
+	        logger.debug((new StringBuilder("%%% read TA property id=")).append(unit).toString());
 	        try {
 	        	cmd.send(Command.CMD12, BytesUtil.getBytesWord(unit, 4),false);
-	        	MyLogger.getLogger().info("Reading TA finished.");
+	        	logger.info("Reading TA finished.");
 	        }
 	        catch (X10FlashException e) {
-	        	MyLogger.getLogger().info("Reading TA finished.");
+	        	logger.info("Reading TA finished.");
 	        	return null;
 	        }
 	        if (cmd.getLastReplyLength()>0) {
@@ -133,8 +136,8 @@ public class X10flash {
     {
     	Vector<TaEntry> v = new Vector();
     	try {
-		    MyLogger.getLogger().info("Start Dumping TA");
-		    MyLogger.initProgress(9789);
+		    logger.info("Start Dumping TA");
+		    LogProgress.initProgress(9789);
 	        for(int i = 0; i < 4920; i++) {
 	        	try {
 	        		cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
@@ -153,13 +156,13 @@ public class X10flash {
 	        	catch (X10FlashException e) {
 	        	}
 	        }
-	        MyLogger.initProgress(0);
-	        MyLogger.getLogger().info("Dumping TA finished.");
+	        LogProgress.initProgress(0);
+	        logger.info("Dumping TA finished.");
 	    }
     	catch (Exception ioe) {
-    		MyLogger.initProgress(0);
-    		MyLogger.getLogger().error(ioe.getMessage());
-    		MyLogger.getLogger().error("Error dumping TA. Aborted");
+    		LogProgress.initProgress(0);
+    		logger.error(ioe.getMessage());
+    		logger.error("Error dumping TA. Aborted");
     		closeDevice();
     	}
     	return v;
@@ -171,14 +174,14 @@ public class X10flash {
     	String folder = OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+getPhoneProperty("MSN")+File.separator+"s1ta"+File.separator+OS.getTimeStamp();
     	new File(folder).mkdirs();
     	TextFile tazone = new TextFile(folder+File.separator+partition+".ta","ISO8859-1");
-    	MyLogger.getLogger().info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
+    	logger.info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
         tazone.open(false);
     	try {
-		    MyLogger.getLogger().info("Start Dumping TA");
-		    MyLogger.initProgress(4920);
+		    logger.info("Start Dumping TA");
+		    LogProgress.initProgress(4920);
 	        for(int i = 0; i < 4920; i++) {
 	        	try {
-		        	MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(i).toString());
+		        	logger.debug((new StringBuilder("%%% read TA property id=")).append(i).toString());
 		        	cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
 		        	String reply = cmd.getLastReplyHex();
 		        	reply = reply.replace("[", "");
@@ -191,16 +194,16 @@ public class X10flash {
 	        	catch (X10FlashException e) {
 	        	}
 	        }
-	        MyLogger.initProgress(0);
+	        LogProgress.initProgress(0);
 	        tazone.close();
 	        closeTA();
 	    }
     	catch (Exception ioe) {
 	        tazone.close();
 	        closeTA();
-    		MyLogger.initProgress(0);
-    		MyLogger.getLogger().error(ioe.getMessage());
-    		MyLogger.getLogger().error("Error dumping TA. Aborted");
+	        LogProgress.initProgress(0);
+    		logger.error(ioe.getMessage());
+    		logger.error("Error dumping TA. Aborted");
     	}
     }
     
@@ -208,16 +211,16 @@ public class X10flash {
     	openTA(2);
     	sendTA(new File(tafile));
 		closeTA();
-		MyLogger.initProgress(0);	    
+		LogProgress.initProgress(0);	    
     }
     
     private void processHeader(SinFile sin) throws X10FlashException {
     	try {
-    		MyLogger.getLogger().info("    Checking header");
+    		logger.info("    Checking header");
     		SinFileHeader header = sin.getSinHeader();
 			for (int j=0;j<header.getNbChunks();j++) {
 				int cur = j+1;
-				MyLogger.getLogger().debug("Sending part "+cur+" of "+header.getNbChunks());
+				logger.debug("Sending part "+cur+" of "+header.getNbChunks());
 				cmd.send(Command.CMD05, header.getChunckBytes(j), !((j+1)==header.getNbChunks()));
 				if (USBFlash.getLastFlags() == 0)
 					getLastError();
@@ -234,22 +237,22 @@ public class X10flash {
     
     private void uploadImage(SinFile sin) throws X10FlashException {
     	try {
-    		MyLogger.getLogger().info("Processing "+sin.getShortFileName());
-    		MyLogger.getLogger().debug(sin);
+    		logger.info("Processing "+sin.getShortFileName());
+    		logger.debug(sin);
 	    	processHeader(sin);
-	    	MyLogger.getLogger().info("    Flashing data");
-	    	MyLogger.getLogger().debug("Number of parts to send : "+sin.getNbChunks()+" / Part size : "+sin.getChunkSize());
+	    	logger.info("    Flashing data");
+	    	logger.debug("Number of parts to send : "+sin.getNbChunks()+" / Part size : "+sin.getChunkSize());
 			for (int j=0;j<sin.getNbChunks();j++) {
 				int cur = j+1;
-				MyLogger.getLogger().debug("Sending part "+cur+" of "+sin.getNbChunks());
+				logger.debug("Sending part "+cur+" of "+sin.getNbChunks());
 				cmd.send(Command.CMD06, sin.getChunckBytes(j), !((j+1)==sin.getNbChunks()));
 				if (USBFlash.getLastFlags() == 0)
 					getLastError();
 			}
-			MyLogger.getLogger().info("Processing of "+sin.getShortFileName()+" finished.");
+			logger.info("Processing of "+sin.getShortFileName()+" finished.");
     	}
     	catch (Exception e) {
-    		MyLogger.getLogger().error("Processing of "+sin.getShortFileName()+" finished with errors.");
+    		logger.error("Processing of "+sin.getShortFileName()+" finished with errors.");
     		e.printStackTrace();
     		throw new X10FlashException (e.getMessage());
     	}
@@ -274,7 +277,7 @@ public class X10flash {
     	if ((nbfound == 0) || (nbfound > 1)) 
     		return "";
     	if (modded_loader)
-			MyLogger.getLogger().info("Using an unofficial loader");
+			logger.info("Using an unofficial loader");
     	return OS.getWorkDir()+loader.substring(1, loader.length());
     }
 
@@ -293,7 +296,7 @@ public class X10flash {
 			if (!new File(loader).exists()) loader="";
 			if (loader.length()==0)
 				if (_bundle.hasLoader()) {
-					MyLogger.getLogger().info("Device loader has not been identified. Using the one from the bundle");
+					logger.info("Device loader has not been identified. Using the one from the bundle");
 					loader = _bundle.getLoader().getAbsolutePath();
 				}
 		}
@@ -383,7 +386,7 @@ public class X10flash {
     public void sendBootDelivery() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TaParseException {
     	try {
     		if (!_bundle.hasBootDelivery()) throw new BootDeliveryException ("No bootdelivery to send");
-    		MyLogger.getLogger().info("Parsing boot delivery");
+    		logger.info("Parsing boot delivery");
     		XMLBootDelivery xml = _bundle.getXMLBootDelivery();
     		if (!xml.mustUpdate(phoneprops.getProperty("BOOTVER"))) throw new BootDeliveryException("Boot delivery up to date. Nothing to do");    			
     		Enumeration<XMLBootConfig> e = xml.getBootConfigs();
@@ -411,7 +414,7 @@ public class X10flash {
 					}
 				}
     		}
-    		MyLogger.getLogger().info("Going to flash boot delivery");
+    		logger.info("Going to flash boot delivery");
     		XMLBootConfig bc=found.get(found.size()-1);
 			bc.setFolder(_bundle.getBootDelivery().getFolder());
 			if (!bc.isComplete()) throw new BootDeliveryException ("Some files are missing from your boot delivery");
@@ -434,7 +437,7 @@ public class X10flash {
 			closeTA();
 			_bundle.setBootDeliveryFlashed(true);
     	} catch (BootDeliveryException e) {
-    		MyLogger.getLogger().info(e.getMessage());
+    		logger.info(e.getMessage());
     	}
     }
 
@@ -448,7 +451,7 @@ public class X10flash {
 				if (!bent.getName().toUpperCase().contains("SIM"))
 					sendTA(new File(bent.getAbsolutePath()));
 				else {
-					MyLogger.getLogger().warn("This file is ignored : "+bent.getName());
+					logger.warn("This file is ignored : "+bent.getName());
 				}
 			}
 			closeTA();
@@ -469,7 +472,7 @@ public class X10flash {
     	info = info + " - "+cmd.getLastReplyString();
     	cmd.send(Command.CMD12, Command.TA_DEVID5, false);
     	info = info + " - "+cmd.getLastReplyString();
-    	MyLogger.getLogger().info(info);
+    	logger.info(info);
     	closeTA();
     }
     
@@ -481,12 +484,12 @@ public class X10flash {
     
     public void flashDevice() {
     	try {
-		    MyLogger.getLogger().info("Start Flashing");
+		    logger.info("Start Flashing");
 		    sendLoader();
 		    maxpacketsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
-		    MyLogger.initProgress(_bundle.getMaxProgress(maxpacketsize));
+		    LogProgress.initProgress(_bundle.getMaxProgress(maxpacketsize));
 		    if (_bundle.hasCmd25()) {
-		    	MyLogger.getLogger().info("Disabling final data verification check");
+		    	logger.info("Disabling final data verification check");
 		    	cmd.send(Command.CMD25, Command.DISABLEFINALVERIF, false);
 		    }
 		    setFlashState(true);
@@ -502,21 +505,21 @@ public class X10flash {
         	setFlashState(false);
         	sendTAFiles();
 		    if (_bundle.hasResetStats()) {
-		    	MyLogger.getLogger().info("Resetting customizations");
+		    	logger.info("Resetting customizations");
 		    	resetStats();
 		    }
         	closeDevice(0x01);
-			MyLogger.getLogger().info("Flashing finished.");
-			MyLogger.getLogger().info("Please unplug and start your phone");
-			MyLogger.getLogger().info("For flashtool, Unknown Sources and Debugging must be checked in phone settings");
-			MyLogger.initProgress(0);
+			logger.info("Flashing finished.");
+			logger.info("Please unplug and start your phone");
+			logger.info("For flashtool, Unknown Sources and Debugging must be checked in phone settings");
+			LogProgress.initProgress(0);
     	}
     	catch (Exception ioe) {
     		ioe.printStackTrace();
     		closeDevice();
-    		MyLogger.getLogger().error(ioe.getMessage());
-    		MyLogger.getLogger().error("Error flashing. Aborted");
-    		MyLogger.initProgress(0);
+    		logger.error(ioe.getMessage());
+    		logger.error("Error flashing. Aborted");
+    		LogProgress.initProgress(0);
     	}
     }
 
@@ -541,12 +544,12 @@ public class X10flash {
     }
 
     public void endSession() throws X10FlashException,IOException {
-    	MyLogger.getLogger().info("Ending flash session");
+    	logger.info("Ending flash session");
     	cmd.send(Command.CMD04,Command.VALNULL,false);
     }
 
     public void endSession(int param) throws X10FlashException,IOException {
-    	MyLogger.getLogger().info("Ending flash session");
+    	logger.info("Ending flash session");
     	cmd.send(Command.CMD04,BytesUtil.getBytesWord(param, 1),false);
     }
 
@@ -571,44 +574,44 @@ public class X10flash {
     public void hookDevice(boolean printProps) throws X10FlashException,IOException {
 		cmd.send(Command.CMD01, Command.VALNULL, false);
 		cmd01string = cmd.getLastReplyString();
-		MyLogger.getLogger().debug(cmd01string);
+		logger.debug(cmd01string);
 		phoneprops.update(cmd01string);
 		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
 		if (printProps) {
-			MyLogger.getLogger().debug("After loader command reply (hook) : "+cmd01string);
-			MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Boot version : "+phoneprops.getProperty("BOOTVER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
+			logger.debug("After loader command reply (hook) : "+cmd01string);
+			logger.info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Boot version : "+phoneprops.getProperty("BOOTVER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
 		}
 		else
-			MyLogger.getLogger().debug("First command reply (hook) : "+cmd01string);
+			logger.debug("First command reply (hook) : "+cmd01string);
     }
 
     public boolean openDevice(boolean simulate) {
     	if (simulate) return true;
-    	MyLogger.initProgress(_bundle.getMaxLoaderProgress());
+    	LogProgress.initProgress(_bundle.getMaxLoaderProgress());
     	boolean found=false;
     	try {
     		USBFlash.open("ADDE");
     		try {
-				MyLogger.getLogger().info("Reading device information");
+				logger.info("Reading device information");
 				USBFlash.readS1Reply();
 				firstRead = new String (USBFlash.getLastReply());
 				phoneprops = new LoaderInfo(firstRead);
 				phoneprops.setProperty("BOOTVER", phoneprops.getProperty("VER"));
 				if (phoneprops.getProperty("VER").startsWith("r"))
 					modded_loader=true;
-				MyLogger.getLogger().debug(firstRead);
+				logger.debug(firstRead);
 				
     		}
     		catch (Exception e) {
     			e.printStackTrace();
-    			MyLogger.getLogger().info("Unable to read from phone after having opened it.");
-    			MyLogger.getLogger().info("trying to continue anyway");
+    			logger.info("Unable to read from phone after having opened it.");
+    			logger.info("trying to continue anyway");
     		}
     	    cmd = new Command(_bundle.simulate());
     	    hookDevice(false);
-    	    MyLogger.getLogger().info("Phone ready for flashmode operations.");
+    	    logger.info("Phone ready for flashmode operations.");
 		    getDevInfo();
 	    	_8fdunit = new TaEntry();
 	    	_8fdunit.setPartition("000008FD");

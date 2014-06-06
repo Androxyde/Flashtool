@@ -16,8 +16,10 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.Deflater;
+
 import org.adb.AdbUtility;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,6 +33,7 @@ public class RawTAJob extends Job {
 
 	String _action = "";
 	Shell _shell;
+	private static Logger logger = Logger.getLogger(RawTAJob.class);
 	
 	public void setAction(String action) {
 		_action = action;
@@ -74,7 +77,7 @@ public class RawTAJob extends Job {
 					throw new Exception("Your phone is not compatible");
 				partition = "/dev/block/"+partition;
 			}
-			MyLogger.getLogger().info("Begin backup of "+partition);
+			logger.info("Begin backup of "+partition);
 			long transferred = AdbUtility.rawBackup(partition, "/mnt/sdcard/ta.dd");
 			if (transferred == 0L)
 				throw new Exception("Erreur when doing raw backup");
@@ -83,9 +86,9 @@ public class RawTAJob extends Job {
 			AdbUtility.pull("/mnt/sdcard/ta.dd", folder);
 			AdbUtility.run("rm -f /mnt/sdcard/ta.dd");
 			hash.setProperty("local", OS.getMD5(new File(folder+File.separator+"ta.dd")).toUpperCase());
-			MyLogger.getLogger().info("End of backup");
+			logger.info("End of backup");
 			if (hash.getProperty("local").equals(hash.getProperty("partition"))) {
-				MyLogger.getLogger().info("Backup is OK");
+				logger.info("Backup is OK");
 				createFTA(partition, folder);
 			}
 			else throw new Exception("Backup is not OK");
@@ -94,7 +97,7 @@ public class RawTAJob extends Job {
 			try {
 				AdbUtility.run("rm -f /mnt/sdcard/ta.dd");
 			} catch (Exception ex1) {}
-			MyLogger.getLogger().error(ex.getMessage()); 
+			logger.error(ex.getMessage()); 
 		}
     }
     
@@ -145,26 +148,26 @@ public class RawTAJob extends Job {
 			hash.setProperty("partitionbefore", AdbUtility.getMD5(partition));
 			if (hash.getProperty("remote").equals(hash.getProperty("partitionbefore")))
 				throw new Exception("Backup and current partition match. Nothing to be done. Aborting");
-			MyLogger.getLogger().info("Making a backup on device before flashing.");
+			logger.info("Making a backup on device before flashing.");
 			long transferred = AdbUtility.rawBackup(partition, "/mnt/sdcard/tabefore.dd");
 			if (transferred == 0)
 				throw new Exception("Failed to take a backup before flashing new TA. Aborting");
-			MyLogger.getLogger().info("Flashing new TA.");
+			logger.info("Flashing new TA.");
 			transferred = AdbUtility.rawBackup("/mnt/sdcard/ta.dd", partition);
 			hash.setProperty("partitionafter", AdbUtility.getMD5(partition));
 			if (!hash.getProperty("remote").equals(hash.getProperty("partitionafter"))) {
-				MyLogger.getLogger().error("Error flashing new TA. Reverting back to the previous TA.");
+				logger.error("Error flashing new TA. Reverting back to the previous TA.");
 				transferred = AdbUtility.rawBackup("/mnt/sdcard/tabefore.dd", partition);
 				if (transferred == 0L)
 					throw new Exception("Failed to restore previous TA");
-				MyLogger.getLogger().info("Restore previous TA OK");
+				logger.info("Restore previous TA OK");
 			}
 			else {
-				MyLogger.getLogger().info("Restore is OK");
+				logger.info("Restore is OK");
 				Devices.getCurrent().reboot();
 			}
 		} catch (Exception e) {
-			MyLogger.getLogger().error(e.getMessage());
+			logger.error(e.getMessage());
 		}
     }
 
@@ -186,7 +189,7 @@ public class RawTAJob extends Job {
 		    FileOutputStream stream = new FileOutputStream(fta);
 		    JarOutputStream out = new JarOutputStream(stream, manifest);
 		    out.setLevel(Deflater.BEST_SPEED);
-			MyLogger.getLogger().info("Creating backupset bundle");
+			logger.info("Creating backupset bundle");
 		    JarEntry jarAdd = new JarEntry("ta.dd");
 	        out.putNextEntry(jarAdd);
 	        InputStream in = new FileInputStream(tadd);
@@ -202,18 +205,18 @@ public class RawTAJob extends Job {
 	        stream.flush();
 		    stream.close();
 		    tadd.delete();
-		    MyLogger.getLogger().info("Bundle "+fta.getAbsolutePath()+" creation finished");
+		    logger.info("Bundle "+fta.getAbsolutePath()+" creation finished");
 		}
 		catch (Exception e) {
-			MyLogger.getLogger().error(e.getMessage());
+			logger.error(e.getMessage());
 		}
     }
 
     private void saveEntry(JarFile jar, JarEntry entry, String folder) throws IOException {
-			MyLogger.getLogger().debug("Saving entry "+entry.getName()+" to disk");
+			logger.debug("Saving entry "+entry.getName()+" to disk");
 			InputStream in = jar.getInputStream(entry);
 			String outname = folder+File.separator+entry.getName();
-			MyLogger.getLogger().debug("Writing Entry to "+outname);
+			logger.debug("Writing Entry to "+outname);
 			OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
 			byte[] buffer = new byte[10240];
 			int len;

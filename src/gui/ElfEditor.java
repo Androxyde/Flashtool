@@ -4,6 +4,7 @@ import gui.tools.WidgetsTool;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -32,7 +33,8 @@ public class ElfEditor extends Dialog {
 	private Text textNbParts;
 	private Elf elfobj;
 	private Button btnExtract;
-
+	private static Logger logger = Logger.getLogger(ElfEditor.class);
+	
 	/**
 	 * Create the dialog.
 	 * @param parent
@@ -114,7 +116,7 @@ public class ElfEditor extends Dialog {
 		        			textNbParts.setText(Integer.toString(elfobj.getNumPrograms()));
 		        			sourceFile.setText(dir);
 		        			btnExtract.setEnabled(true);
-		        			MyLogger.getLogger().info("You can now press the Unpack button to get the elf data content");
+		        			logger.info("You can now press the Unpack button to get the elf data content");
 		        		}
 		        		catch (Exception ex) {
 		        			ex.printStackTrace();
@@ -155,7 +157,7 @@ public class ElfEditor extends Dialog {
 					elfobj.unpack();
 				}
 				catch (Exception ex) {
-					MyLogger.getLogger().error(ex.getMessage());
+					logger.error(ex.getMessage());
 				}
 			}
 		});

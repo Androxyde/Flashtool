@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.JarEntry;
 
+import org.apache.log4j.Logger;
 import org.logger.MyLogger;
 import org.system.OS;
 
@@ -17,6 +18,7 @@ public class BundleEntry {
 	private Bundle _bundle;
 	private String _name;
 	private String _categorie;
+	private static Logger logger = Logger.getLogger(BundleEntry.class);
 	
 	public BundleEntry(File f,String name) {
 		fileentry = f;
@@ -34,11 +36,11 @@ public class BundleEntry {
 	}
 	public InputStream getInputStream() throws FileNotFoundException, IOException {
 		if (fileentry!=null) {
-			MyLogger.getLogger().info("Streaming from file : "+fileentry.getPath());
+			logger.info("Streaming from file : "+fileentry.getPath());
 			return new FileInputStream(fileentry);
 		}
 		else {
-			MyLogger.getLogger().debug("Streaming from jar entry : "+jarentry.getName());
+			logger.debug("Streaming from jar entry : "+jarentry.getName());
 			return _bundle.getImageStream(jarentry);
 		}
 	}

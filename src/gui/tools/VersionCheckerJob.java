@@ -7,6 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.ProxySelector;
 import java.net.URL;
 import java.util.Iterator;
+
+import org.adb.AdbUtility;
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,6 +29,8 @@ public class VersionCheckerJob extends Job {
 	private boolean ended = false;
 	private InputStream ustream=null;
 	private HttpURLConnection uconn=null;
+	private static Logger logger = Logger.getLogger(VersionCheckerJob.class);
+	
 
 	public VersionCheckerJob(String name) {
 		super(name);
@@ -37,19 +42,18 @@ public class VersionCheckerJob extends Job {
 
 	public String getLatestRelease() {
 		try {
-			ProxySelector.setDefault(Proxy.getProxy());
-
 			SAXBuilder builder = new SAXBuilder();
 			Document doc = null;
-			MyLogger.getLogger().debug("Resolving github");
+			logger.debug("Resolving github");
             if  (Proxy.canResolve("github.com")) {
-            	MyLogger.getLogger().debug("Finished resolving github. Result : Success");
+            	logger.debug("Finished resolving github. Result : Success");
             	URL u;
+            	if (About.build==null) throw new Exception("no version");
             	if (About.build.contains("beta"))
             		u = new URL("https://github.com/Androxyde/Flashtool/raw/master/ant/deploy-beta.xml");
             	else
             		u = new URL("https://github.com/Androxyde/Flashtool/raw/master/ant/deploy-release.xml");
-            	MyLogger.getLogger().debug("opening connection");
+            	logger.debug("opening connection");
 				if (!aborted)
 					uconn = (HttpURLConnection) u.openConnection();
 				if (!aborted)
@@ -59,10 +63,10 @@ public class VersionCheckerJob extends Job {
 				if (!aborted)
 					uconn.connect();
 			    
-				MyLogger.getLogger().debug("Getting stream on connection");
+				logger.debug("Getting stream on connection");
 				if (!aborted)
 					ustream = uconn.getInputStream();
-				if (ustream!=null) MyLogger.getLogger().debug("stream opened");
+				if (ustream!=null) logger.debug("stream opened");
 				doc = builder.build(ustream);
 				Iterator<Element> mainitr = doc.getRootElement().getChildren().iterator();
 				while (mainitr.hasNext()) {
@@ -77,12 +81,11 @@ public class VersionCheckerJob extends Job {
 				return "";
             }
             else {
-            	MyLogger.getLogger().debug("Finished resolving github. Result : Failed");
+            	logger.debug("Finished resolving github. Result : Failed");
             	return "";
             }
 		}
 		catch (Exception e) {
-			e.printStackTrace();
 			return "";
 		}
 	}
@@ -91,11 +94,11 @@ public class VersionCheckerJob extends Job {
 		String netrelease = "";
 		int nbretry = 0;
 		while (netrelease.length()==0 && !aborted) {
-			MyLogger.getLogger().debug("Fetching latest release from github");
+			logger.debug("Fetching latest release from github");
 			netrelease = getLatestRelease();
 			if (netrelease.length()==0) {
 				if (!aborted)
-					MyLogger.getLogger().debug("Url content not fetched. Retrying "+nbretry+" of 10");
+					logger.debug("Url content not fetched. Retrying "+nbretry+" of 10");
 				nbretry++;
 				if (nbretry<10) {
 					try {
@@ -106,10 +109,10 @@ public class VersionCheckerJob extends Job {
 					aborted=true;
 			}
 		}
-		MyLogger.getLogger().debug("out of loop");
+		logger.debug("out of loop");
 		final String latest = netrelease;
-		MyLogger.getLogger().debug("Latest : " + latest);
-		MyLogger.getLogger().debug("Current build : "+About.build);
+		logger.debug("Latest : " + latest);
+		logger.debug("Current build : "+About.build);
 		ended = true;
 		if (About.build!=null) {
 			if (latest.length()>0 && !About.build.contains(latest)) {
@@ -130,14 +133,14 @@ public class VersionCheckerJob extends Job {
 	public void done() {
 		if (!ended) {
 			ended = true;
-			MyLogger.getLogger().debug("aborting job");
+			logger.debug("aborting job");
 			aborted=true;
 			if (uconn!=null)
 			try {
-				MyLogger.getLogger().debug("closing connection");
+				logger.debug("closing connection");
 				uconn.disconnect();
 			} catch (Exception e) {
-				MyLogger.getLogger().debug("Error : "+e.getMessage());
+				logger.debug("Error : "+e.getMessage());
 			}
 		}
 	}

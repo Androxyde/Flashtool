@@ -1,6 +1,7 @@
 package gui.tools;
 
 import org.apache.commons.io.monitor.FileEntry;
+import org.apache.log4j.Logger;
 import org.jdom.input.SAXBuilder;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -19,6 +20,7 @@ public class XMLBootDelivery {
 
 	private Vector<XMLBootConfig> bootconfigs = new Vector<XMLBootConfig>();
 	private String bootversion;
+	private static Logger logger = Logger.getLogger(XMLBootDelivery.class);
 
 	public XMLBootDelivery(File xmlsource) throws IOException, JDOMException {
 		SAXBuilder builder = new SAXBuilder();
@@ -43,7 +45,7 @@ public class XMLBootDelivery {
 	}
 
 	public boolean mustUpdate(String bootver) {
-		MyLogger.getLogger().info("Phone boot version : "+bootver+". Boot delivery version : "+getBootVersion());
+		logger.info("Phone boot version : "+bootver+". Boot delivery version : "+getBootVersion());
 		bootver = bootver.toUpperCase();
 		String deliveryver = getBootVersion().toUpperCase();
 		if (bootver.equals(deliveryver)) return false;

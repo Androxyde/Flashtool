@@ -6,6 +6,8 @@ import gui.tools.BLUnlockJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
 import gui.tools.WriteTAJob;
+
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.swt.program.Program;
@@ -35,6 +37,7 @@ public class BLUWizard extends Dialog {
 	private X10flash _flash;
 	private String _action;
 	private String _serial;
+	private static Logger logger = Logger.getLogger(BLUWizard.class);
 
 	/**
 	 * Create the dialog.
@@ -161,7 +164,7 @@ public class BLUWizard extends Dialog {
 						ta.setPartition(2226);
 						//byte[] data = new byte[2];data[0]=0;data[1]=0;
 						//ta.setData(data);
-						MyLogger.getLogger().info("Relocking device");
+						logger.info("Relocking device");
 						WriteTAJob tj = new WriteTAJob("Write TA");
 						tj.addJobChangeListener(new IJobChangeListener() {
 							public void aboutToRun(IJobChangeEvent event) {}
@@ -170,7 +173,7 @@ public class BLUWizard extends Dialog {
 							public void scheduled(IJobChangeEvent event) {}
 							public void sleeping(IJobChangeEvent event) {}
 							public void done(IJobChangeEvent event) {
-								MyLogger.getLogger().info("Relock finished");
+								logger.info("Relock finished");
 								WriteTAJob res = (WriteTAJob) event.getJob();
 								WidgetTask.setEnabled(btnUnlock,!res.writeSuccess());
 							}
@@ -183,7 +186,7 @@ public class BLUWizard extends Dialog {
 						TaEntry ta = new TaEntry();
 						ta.setPartition(2226);
 						ta.setData(textULCODE.getText().getBytes());
-						MyLogger.getLogger().info("Unlocking device");
+						logger.info("Unlocking device");
 						WriteTAJob tj = new WriteTAJob("Write TA");
 						tj.addJobChangeListener(new IJobChangeListener() {
 							public void aboutToRun(IJobChangeEvent event) {}
@@ -192,7 +195,7 @@ public class BLUWizard extends Dialog {
 							public void scheduled(IJobChangeEvent event) {}
 							public void sleeping(IJobChangeEvent event) {}
 							public void done(IJobChangeEvent event) {
-								MyLogger.getLogger().info("Unlock finished");
+								logger.info("Unlock finished");
 								WriteTAJob res = (WriteTAJob) event.getJob();
 								WidgetTask.setEnabled(btnUnlock,!res.writeSuccess());
 							}
