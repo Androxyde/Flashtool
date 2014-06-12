@@ -22,6 +22,5 @@
 	<classpathentry kind="lib" path="libs/js.jar"/>
 	<classpathentry kind="lib" path="libs/jopt-simple-4.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Proxy-Vole"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
