@@ -193,10 +193,11 @@ public class ProxySearch implements ProxySearchStrategy {
 				ProxySelector selector = strat.getProxySelector();
 				if (selector != null) {
 					selector = installBufferingAndFallbackBehaviour(selector);
+					logger.info("Proxy found for "+strat.getName()+" : "+selector);
 					return selector;
 				}
 				else
-					logger.info("Strategy "+strat.getName()+" failed trying next one");
+					logger.info("No proxy found for "+strat.getName()+". Trying next one");
 			} catch (ProxyException e) {
 				logger.info("Strategy "+strat.getName()+" failed trying next one : "+e.getMessage());
 				// Ignore and try next strategy.
