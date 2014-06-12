@@ -13,7 +13,6 @@
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/osgi.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/runtime.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/swt.jar"/>
-	<classpathentry kind="lib" path="libs/jgit-3.3.0.201403021825-r.jar"/>
 	<classpathentry kind="lib" path="libs/hsqldb2_2.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/xstream_1.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.51.jar"/>
@@ -21,6 +20,7 @@
 	<classpathentry kind="lib" path="libs/jna-platform-4.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/js.jar"/>
 	<classpathentry kind="lib" path="libs/jopt-simple-4.6.jar"/>
+	<classpathentry kind="lib" path="libs/jgit-3.4.0.201406041058-rc3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

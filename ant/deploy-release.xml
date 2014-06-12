@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
 	
-	<property name="version" value="0.9.16.0"/>
-	<property name="progtime" value="19-04-2014 19:00:00"/>
+	<property name="version" value="0.9.16.1"/>
+	<property name="progtime" value="06-06-2014 11:30:00"/>
 	
 	<target name="all" depends="core release"/>
 
@@ -12,6 +12,10 @@
     	<delete dir="../../Deploy/FlashTool"/>
 	</target>
 
+	<target name="clone">
+		<git-clone uri="https://github.com/Androxyde/devices.git" dest="../../Deploy/Flashtool/devices" />
+	</target>	
+	
 	<target name="ressources">
         <jar destfile="../../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar">
             <manifest>
@@ -24,7 +28,7 @@
         </jar>
     </target>
 
-	<target name="core release" depends="clean,ressources">
+	<target name="core release" depends="clean,ressources, clone">
         <mkdir dir ="../../Deploy/FlashTool"/>
         <mkdir dir ="../../Deploy/FlashTool/custom/"/>
         <mkdir dir ="../../Deploy/FlashTool/custom/root"/>
@@ -76,5 +80,13 @@
 				excludes="**/.svn"/>
 		</copy>
     </target>
+	
+	<taskdef resource="org/eclipse/jgit/ant/ant-tasks.properties">
+	       <classpath>
+	         <pathelement location="../libs/jgit-3.4.0.201406041058-rc3.jar"/>
+	         <pathelement location="../libs/jgit.ant-3.4.0.201406041058-rc3.jar"/>
+	         <pathelement location="../libs/jsch-0.1.51.jar"/>
+	       </classpath>
+	</taskdef>
 
 </project>
