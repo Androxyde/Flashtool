@@ -47,8 +47,6 @@ then
     fi
     if test -e ${JAVA_HOME}/bin/java
     then
-         ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
-         ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
          ISJAVA8=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.8|wc -l)
          ISJAVA64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bit|wc -l)
 	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0 -o $ISJAVA8 -gt 0
@@ -96,6 +94,16 @@ then
          echo "Set the variable to a valid Java installation"
     fi
 else
+    if test -z "${JAVA_HOME}"
+    then
+        if test "${system64}" = "x86_64"
+        then
+             export JAVA_HOME=./x10flasher_lib/macjre64       
+        else
+             export JAVA_HOME=./x10flasher_lib/macjre32
+        fi
+        echo "JAVA_HOME not set. Using default value : ${JAVA_HOME}"
+    fi
     chmod 755 ./x10flasher_lib/adb.mac
     chmod 755 ./x10flasher_lib/fastboot.mac
     chmod 755 ./x10flasher_lib/unyaffs.mac
@@ -103,20 +111,18 @@ else
     export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$DYLD_LIBRARY_PATH
     ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusbx-1.0.dylib
     ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusbx-1.0.dylib
-    ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
-    ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
-    ISJAVA8=$(java -version 2>&1|grep version|grep 1.8|wc -l)
-    ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
+    ISJAVA8=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.8|wc -l)
+    ISJAVA64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bit|wc -l)
     if test $ISJAVA64 -gt 0
     then
    		ln -sf swt64.jar ./x10flasher_lib/swtmac/swt.jar
     else
         ln -sf swt32.jar ./x10flasher_lib/swtmac/swt.jar
     fi
-    if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0 -o $ISJAVA8  -gt 0
+    if test $ISJAVA8  -gt 0
     then
-    	java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar
+    	$JAVA_HOME/bin/java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar
     else
-		echo "Java version must be 1.6 or 1.7 or 1.8"
+		echo "Java version must be 1.8"
     fi
 fi
