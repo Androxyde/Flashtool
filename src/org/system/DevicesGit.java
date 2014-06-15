@@ -37,11 +37,13 @@ public class DevicesGit {
     		}
     	);
     	if (!new File(localPath+File.separator+".git").exists()) {
-    		logger.info("This is the first sync with devices on github. Renaming devices to devices.old");
-			new File(localPath).renameTo(new File(localPath+".old"));
+    		if (new File(localPath).exists()) {
+    			logger.info("This is the first sync with devices. Renaming devices to devices.old");
+    			new File(localPath).renameTo(new File(localPath+".old"));
+    		}
     	}
     	if (!new File(localPath).exists()) {
-    		logger.info("Cloning devices from github project");
+    		logger.info("Cloning devices repository");
     		try {
     			Git.cloneRepository().setURI(remotePath).setDirectory(new File(localPath)).call();
     		} catch (Exception e) {
@@ -51,7 +53,7 @@ public class DevicesGit {
     	else {
     		localRepo = new FileRepository(localPath + "/.git");
     		git = new Git(localRepo);
-    		logger.info("Pulling changes from github");
+    		logger.info("Pulling changes");
     		try {
     			git.pull().call();
     		}
@@ -68,7 +70,5 @@ public class DevicesGit {
     			git.pull().call();
     		}
     	}
-    	logger.info("Devices sync finished.");
     }
- 
 }
