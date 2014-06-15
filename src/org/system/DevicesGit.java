@@ -2,9 +2,6 @@ package org.system;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ProxySelector;
-
-import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
@@ -17,19 +14,16 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.OpenSshConfig.Host;
 import org.eclipse.jgit.transport.SshSessionFactory;
-import org.logger.MyLogger;
-
 import com.jcraft.jsch.Session;
 
 public class DevicesGit {
 
-	private static String localPath=OS.getWorkDir()+File.separator+"devices";
 	private static String remotePath="https://github.com/Androxyde/devices.git";
     private static Repository localRepo;
     private static Git git;
     private static Logger logger = Logger.getLogger(DevicesGit.class);
     
-    public static void gitSync() throws IOException, InvalidRemoteException, org.eclipse.jgit.api.errors.TransportException, GitAPIException {
+    public static void gitSync(String localPath) throws IOException, InvalidRemoteException, org.eclipse.jgit.api.errors.TransportException, GitAPIException {
     	SshSessionFactory.setInstance(new JschConfigSessionFactory() {
     		  public void configure(Host hc, Session session) {
     		    session.setConfig("StrictHostKeyChecking", "no");
