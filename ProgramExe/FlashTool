@@ -49,7 +49,7 @@ then
     then
          ISJAVA8=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.8|wc -l)
          ISJAVA64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bit|wc -l)
-	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0 -o $ISJAVA8 -gt 0
+	 if test $ISJAVA8 -gt 0
 	 then
          	if test $ISJAVA64 -gt 0
          	then
