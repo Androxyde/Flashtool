@@ -171,10 +171,9 @@ then
          export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64:$LD_LIBRARY_PATH
          ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusbx-1.0.so
          ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
-         ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
-         ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
+         ISJAVA8=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.8|wc -l)
          ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
-	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0
+	 if test $ISJAVA8 -gt 0
 	 then
          	if test $ISJAVA64 -gt 0
          	then
@@ -193,7 +192,7 @@ then
          			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=imei
    			esac
 	 else
-		echo "Java version must be 1.6 or 1.7"
+		echo "Java version must be 1.8"
 	 fi
     else
          echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
@@ -207,8 +206,7 @@ else
     export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$DYLD_LIBRARY_PATH
     ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusbx-1.0.dylib
     ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusbx-1.0.dylib
-    ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
-    ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
+    ISJAVA8=$(java -version 2>&1|grep version|grep 1.8|wc -l)
     ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
     if test $ISJAVA64 -gt 0
     then
@@ -216,19 +214,19 @@ else
     else
         ln -sf swt32.jar ./x10flasher_lib/swtmac/swt.jar
     fi
-    if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0
+    if test $ISJAVA8 -gt 0
     then
  		case $p_action in
   			flash)
-     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
+     			$JAVA_HOME/bin/java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
      		;;
   			extract)
-     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=extract --file=$p_file
+     			$JAVA_HOME/bin/java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=extract --file=$p_file
      		;;
   			imei)
-     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=imei
+     			$JAVA_HOME/bin/java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false -jar x10flasher.jar -console --action=imei
 		esac
     else
-		echo "Java version must be 1.6 or 1.7"
+		echo "Java version must be 1.8"
     fi
 fi

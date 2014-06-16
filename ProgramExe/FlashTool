@@ -87,7 +87,7 @@ then
          	fi
          	$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar -Djsse.enableSNIExtension=false x10flasher.jar
 	 else
-		echo "Java version must be 1.6 or 1.7 or 1.8"
+		echo "Java version must be 1.8"
 	 fi
     else
          echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
