@@ -6,13 +6,6 @@
 	<classpathentry kind="lib" path="libs/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="libs/sony.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/commands.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/equinox.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/jface.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/jobs.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/osgi.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/runtime.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/swt.jar"/>
 	<classpathentry kind="lib" path="libs/hsqldb2_2.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/xstream_1.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.51.jar"/>
@@ -21,6 +14,25 @@
 	<classpathentry kind="lib" path="libs/js.jar"/>
 	<classpathentry kind="lib" path="libs/jopt-simple-4.6.jar"/>
 	<classpathentry kind="lib" path="libs/jgit-3.4.0.201406041058-rc3.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/swt64.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/com.ibm.icu.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/core.commands.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/core.contenttype.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/core.jobs.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/core.runtime.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/equinox.app.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/equinox.common.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/equinox.preferences.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/equinox.registry.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/javax.annotation.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/javax.inject.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/jface.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/jface.text.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/osgi.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/runtime_registry_compatibility.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/text.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/ui.forms.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/ui.workbench.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
