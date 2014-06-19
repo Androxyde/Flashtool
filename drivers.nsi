@@ -6,7 +6,7 @@ RequestExecutionLevel highest
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FlashTool Xperia Driver Pack"
-!define PRODUCT_VERSION "v1.6.1 (20140620"
+!define PRODUCT_VERSION "v1.6.2 (20140620)"
 !define PRODUCT_PUBLISHER "Androxyde & DooMLoRD"
 !define PRODUCT_WEB_SITE "http://www.flashtool.net/"
 
@@ -311,6 +311,10 @@ Section /o "Xperia ZL2 Device Driver" SEC54
   File /r "Drivers\ADB\Xperia ZL2\*"
 SectionEnd
 
+Section /o "Xperia A2 (SO-04F) Device Driver" SEC55
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_A2_SO-04F_driver"
+  File /r "Drivers\ADB\Xperia_A2_SO-04F_driver\*"
+SectionEnd
 
 Section -Post
   SetOutPath "$TEMP\Flashtool"
@@ -381,6 +385,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC52} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC53} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC54} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC55} ""
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function .onInit
