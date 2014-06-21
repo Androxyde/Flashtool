@@ -2,11 +2,14 @@ package com.btr.proxy.search.browser.firefox;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.ini4j.Ini;
 import org.logger.MyLogger;
 
 import com.btr.jna.WinShell;
+
 /*****************************************************************************
  * Finds the Firefox profile on Windows platforms. 
  * On Windows the profiles are located in the users appdata directory under:
@@ -46,27 +49,27 @@ class WinFirefoxProfileSource implements FirefoxProfileSource {
 	public File getProfileFolder() throws IOException {
 		
 		File appDataDir = new File(getAppFolder());
-		File cfgDir = new File(appDataDir, "Mozilla"+File.separator+"Firefox"+File.separator+"Profiles");
 		
-		if (!cfgDir.exists()) {
-			logger.debug("Firefox windows settings folder not found.");
+		File profiles = new File(appDataDir, "Mozilla"+File.separator+"Firefox"+File.separator+"profiles.ini");
+		
+		if (!profiles.exists()) {
+			logger.debug("Firefox windows settings not found.");
 			return null;
 		}
-		File[] profiles = cfgDir.listFiles();
-		if (profiles == null || profiles.length == 0) {
-			logger.debug("Firefox windows settings folder not found.");
-			return null;
-		}
-		for (File p : profiles) {
-			if (p.getName().endsWith(".default")) {
-				logger.debug("Firefox windows settings folder is "+p);
-				return p;
+		String profileFolder=null;
+		Ini profilesIni = new Ini(profiles);
+		Iterator i = profilesIni.keySet().iterator();
+		while (i.hasNext()) {
+			String section = (String)i.next();
+			if ("default".equals(profilesIni.get(section).get("Name"))) {
+				if ("1".equals(profilesIni.get(section).get("IsRelative")))
+					profileFolder = profiles.getParentFile().getAbsolutePath()+File.separator+profilesIni.get(section).get("Path");
 			}
 		}
-		
-		// Fall back -> take the first one found.
-		logger.debug("Firefox windows settings folder is "+profiles[0]);
-		return profiles[0];
+		if (profileFolder!=null) {
+			logger.debug("Firefox windows settings folder is "+profileFolder);
+			return new File(profileFolder);
+		}
+		return null;
 	}
-
 }
