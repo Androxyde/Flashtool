@@ -299,6 +299,15 @@ public class MainSWT {
 		});
 		mntmRunRootShell.setText("Force Run Root Shell");
 		
+		MenuItem mntmTowelroot = new MenuItem(menu_10, SWT.NONE);
+		mntmTowelroot.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doRoot("doRootTowelroot");
+			}
+		});
+		mntmTowelroot.setText("Force towelroot");
+		
 		MenuItem mntmBackupSystemApps = new MenuItem(menu_8, SWT.NONE);
 		mntmBackupSystemApps.addSelectionListener(new SelectionAdapter() {
 			@Override

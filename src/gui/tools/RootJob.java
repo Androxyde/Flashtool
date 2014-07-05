@@ -57,6 +57,8 @@ public class RootJob extends Job {
     			doRootServiceMenu();
     		if (_action.equals("doRootRunRootShell"))
     			doRootRunRootShell();
+    		if (_action.equals("doRootTowelroot"))
+    			doRootTowelroot();
     		return Status.OK_STATUS;
     	}
     	catch (Exception e) {
@@ -328,6 +330,62 @@ public class RootJob extends Job {
 			}
 		}
 		catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	}
+
+	public void doRootTowelroot() {
+		try {
+			if (pck.length()>0) {
+				doPushRootFiles(pck,false);
+				String tr=OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"tr_mod.apk";
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"zxz.sh", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/zxz.sh");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"wp_mod.ko", "/data/local/tmp/");
+				AdbUtility.run("chmod 644 /data/local/tmp/wp_mod.ko");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"writekmem", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/writekmem");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"findricaddr", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/findricaddr");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"install_root.sh", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/install_root.sh");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"install_root.sh", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/install_root.sh");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"antiric", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/antiric");
+				AdbUtility.install(tr);
+				AdbUtility.run("am start -n com.geohot.towelroot/.TowelRoot");
+				logger.info("Click the Make it ra1n button on your phone. Waiting for root");
+				while (!AdbUtility.hasRootPerms()) {
+					Thread.sleep(1000);
+				}
+				AdbUtility.uninstall("com.geohot.towelroot", false);
+				logger.info("Installing latest su binaries");
+				AdbUtility.run("/system/xbin/su -c '/data/local/tmp/install_root.sh'");
+				logger.info("Root done. Cleaning files");
+				AdbUtility.run("rm /data/local/tmp/99SuperSUDaemon");
+				AdbUtility.run("rm /data/local/tmp/Superuser.apk");
+				AdbUtility.run("rm /data/local/tmp/chattr");
+				AdbUtility.run("rm /data/local/tmp/install-recovery.sh");
+				AdbUtility.run("rm /data/local/tmp/install_root.sh");
+				AdbUtility.run("rm /data/local/tmp/kernelmodule_patch.sh");
+				AdbUtility.run("rm /data/local/tmp/su");
+				AdbUtility.run("rm /data/local/tmp/wp_mod.ko");
+				//AdbUtility.run("rm /data/local/tmp/zxz.sh");
+				AdbUtility.run("rm /data/local/tmp/writekmem");
+				AdbUtility.run("rm /data/local/tmp/findricaddr");
+				AdbUtility.run("rm /data/local/tmp/busybox");
+				AdbUtility.run("rm /data/local/tmp/ricaddr");
+				AdbUtility.run("rm /data/local/tmp/zxz_run");
+				logger.info("Rebooting device");
+				//Devices.getCurrent().reboot();
+			}
+			else {
+				logger.info("Canceled");
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
 	}
