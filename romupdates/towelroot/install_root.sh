@@ -4,6 +4,8 @@
 # Part of Easy Rooting Toolkit by DooMLoRD@XDA
 #
 
+/data/local/tmp/antiric
+
 mount -o remount,rw /system
 
 export BUSYBOX=/data/local/tmp/busybox
@@ -24,23 +26,34 @@ ch_con() {
 echo ---------------------------------------------------------------
 echo   Launching final rooting process...
 echo ---------------------------------------------------------------
-echo "--- Rooting!"
 
-
-echo "--- Installing busybox"
+echo "--- Installing busybox and latest su binaries"
 $BIN/dd if=/data/local/tmp/busybox of=/system/xbin/busybox
 set_perm 0 2000 0755 /system/xbin/busybox
 ch_con /system/xbin/busybox
 $XBIN/busybox busybox --install -s /system/xbin
 
-$XBIN/busybox chattr -i /system/xbin/su
-$XBIN/busybox chattr -i /system/xbin/daemonsu
-$XBIN/busybox chattr -i /system/bin/.ext/.su
-$XBIN/busybox chattr -i /system/etc/install-recovery.sh
+if [ -e /system/xbin/su ]; then
+	$XBIN/busybox chattr -i /system/xbin/su
+fi
+
+if [ -e /system/xbin/daemonsu ]; then
+	$XBIN/busybox chattr -i /system/xbin/daemonsu
+fi
+
+if [ -e /system/bin/.ext/.su ]; then
+	$XBIN/busybox chattr -i /system/bin/.ext/.su
+fi
+
+if [ -e /system/etc/install-recovery.sh ]; then
+	$XBIN/busybox chattr -i /system/etc/install-recovery.sh
+fi
 
 $XBIN/busybox rm -f /system/bin/su
 $XBIN/busybox rm -f /system/xbin/su
 $XBIN/busybox rm -f /system/xbin/daemonsu
+$XBIN/busybox rm -f /system/xbin/sugote
+$XBIN/busybox rm -f /system/xbin/sugote-mksh
 $XBIN/busybox rm -rf /system/bin/.ext
 $XBIN/busybox rm -f /system/etc/install-recovery.sh
 $XBIN/busybox rm -f /system/etc/init.d/99SuperSUDaemon
@@ -73,10 +86,12 @@ $XBIN/busybox rm -f /data/app/com.koushikdutta.superuser-*
 $XBIN/busybox rm -f /data/app/com.mgyun.shua.su-*
 $XBIN/busybox rm -f /data/app/eu.chainfire.supersu-*
 
-$XBIN/busybox mkdir $BIN/.ext
-$XBIN/busybox mkdir /system/etc/init.d
+$XBIN/busybox mkdir -p $BIN/.ext
+$XBIN/busybox mkdir -p /system/etc/init.d
 $XBIN/busybox cp /data/local/tmp/su /system/xbin/daemonsu
 $XBIN/busybox cp /data/local/tmp/su /system/xbin/su
+$XBIN/busybox cp /data/local/tmp/su /system/xbin/sugote
+$XBIN/busybox cp /data/local/tmp/sugote-mksh /system/xbin/sugote-mksh
 $XBIN/busybox cp /data/local/tmp/su /system/bin/.ext/.su
 $XBIN/busybox cp /data/local/tmp/Superuser.apk /system/app/Superuser.apk
 $XBIN/busybox cp /data/local/tmp/install-recovery.sh /system/etc/install-recovery.sh
@@ -90,11 +105,12 @@ $XBIN/busybox echo 1 > /system/etc/.installed_su_daemon
 set_perm 0 0 0777 /system/bin/.ext
 set_perm 0 0 06755 /system/bin/.ext/.su
 set_perm 0 0 06755 /system/xbin/su
-set_perm 0 0 06755 /system/xbin/antiric
-set_perm 0 0 06755 /system/xbin/writekmem
-set_perm 0 0 06755 /system/xbin/findricaddr
+set_perm 0 0 0755 /system/xbin/antiric
+set_perm 0 0 0755 /system/xbin/writekmem
+set_perm 0 0 0755 /system/xbin/findricaddr
 set_perm 0 0 0644 /system/lib/modules/wp_mod.ko
 set_perm 0 0 06755 /system/xbin/daemonsu
+set_perm 0 0 06755 /system/xbin/sugote
 set_perm 0 0 0755 /system/etc/install-recovery.sh
 set_perm 0 0 0755 /system/etc/init.d/99SuperSUDaemon
 set_perm 0 0 0644 /system/etc/.installed_su_daemon
@@ -103,10 +119,19 @@ set_perm 0 0 0644 /system/app/Superuser.apk
 ch_con /system/bin/.ext/.su
 ch_con /system/xbin/su
 ch_con /system/xbin/daemonsu
+ch_con /system/xbin/sugote
+ch_con /system/xbin/sugote-mksh
 ch_con /system/etc/install-recovery.sh
 ch_con /system/etc/init.d/99SuperSUDaemon
 ch_con /system/etc/.installed_su_daemon
 ch_con /system/app/Superuser.apk
 
+ANTIRIC=$(cat /system/etc/install-recovery.sh|grep antiric)
+
+if [ -z "$ANTIRIC" ]; then
+	echo "/system/xbin/antiric" >> /system/etc/install-recovery.sh
+fi
+
 echo "--- DONE!"
+
 exit

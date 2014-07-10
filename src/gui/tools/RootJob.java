@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
-import org.logger.MyLogger;
 import org.system.Devices;
 import org.system.FTShell;
 import org.system.GlobalConfig;
@@ -361,6 +360,8 @@ public class RootJob extends Job {
 				}
 				AdbUtility.uninstall("com.geohot.towelroot", false);
 				logger.info("Installing latest su binaries");
+				AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
+				AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 				AdbUtility.run("/system/xbin/su -c '/data/local/tmp/install_root.sh'");
 				logger.info("Root done. Cleaning files");
 				AdbUtility.run("rm /data/local/tmp/99SuperSUDaemon");
@@ -370,15 +371,17 @@ public class RootJob extends Job {
 				AdbUtility.run("rm /data/local/tmp/install_root.sh");
 				AdbUtility.run("rm /data/local/tmp/kernelmodule_patch.sh");
 				AdbUtility.run("rm /data/local/tmp/su");
+				AdbUtility.run("rm /data/local/tmp/sugote-mksh");
 				AdbUtility.run("rm /data/local/tmp/wp_mod.ko");
-				//AdbUtility.run("rm /data/local/tmp/zxz.sh");
+				AdbUtility.run("rm /data/local/tmp/zxz.sh");
 				AdbUtility.run("rm /data/local/tmp/writekmem");
 				AdbUtility.run("rm /data/local/tmp/findricaddr");
 				AdbUtility.run("rm /data/local/tmp/busybox");
 				AdbUtility.run("rm /data/local/tmp/ricaddr");
 				AdbUtility.run("rm /data/local/tmp/zxz_run");
+				AdbUtility.run("rm /data/local/tmp/antiric");
 				logger.info("Rebooting device");
-				//Devices.getCurrent().reboot();
+				Devices.getCurrent().reboot();
 			}
 			else {
 				logger.info("Canceled");
@@ -399,6 +402,7 @@ public class RootJob extends Job {
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"chattr", GlobalConfig.getProperty("deviceworkdir")+"/chattr");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"install-recovery.sh", GlobalConfig.getProperty("deviceworkdir")+"/install-recovery.sh");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"99SuperSUDaemon", GlobalConfig.getProperty("deviceworkdir")+"/99SuperSUDaemon");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"sugote-mksh", GlobalConfig.getProperty("deviceworkdir")+"/sugote-mksh");
 				AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/chattr",true);
 			}
 			AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
