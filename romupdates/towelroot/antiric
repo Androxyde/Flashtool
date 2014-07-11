@@ -74,4 +74,7 @@ fi
 
 export PATH=$SAVE_PATH
 
+rm -f /data/local/tmp/ricaddr
+rm -f /data/local/tmp/zxz_run
+
 exit

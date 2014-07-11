@@ -1349,11 +1349,15 @@ public class MainSWT {
 					else {
 						if (Devices.getCurrent().getVersion().contains("4.1")) {
 							rj.setAction("doRootServiceMenu");							
-						/*}
+						}
 						else
 							if (Devices.getCurrent().getVersion().contains("4.2")) {
-								rj.setAction("doRootPerfEvent");*/			
+								rj.setAction("doRootPerfEvent");			
 							}
+							else
+								if (Devices.getCurrent().getVersion().contains("4.3") || Devices.getCurrent().getVersion().contains("4.4")) {
+									rj.setAction("doRootTowelroot");			
+								}								
 							else {
 								MessageBox mb = new MessageBox(shlSonyericsson,SWT.ICON_ERROR|SWT.OK);
 								mb.setText("Errorr");
