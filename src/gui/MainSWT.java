@@ -299,6 +299,15 @@ public class MainSWT {
 		});
 		mntmRunRootShell.setText("Force Run Root Shell");
 		
+		MenuItem mntmTowelroot = new MenuItem(menu_10, SWT.NONE);
+		mntmTowelroot.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doRoot("doRootTowelroot");
+			}
+		});
+		mntmTowelroot.setText("Force towelroot");
+		
 		MenuItem mntmBackupSystemApps = new MenuItem(menu_8, SWT.NONE);
 		mntmBackupSystemApps.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -1325,34 +1334,25 @@ public class MainSWT {
 		RootJob rj = new RootJob("Root device");
 		rj.setRootPackage(pck);
 		rj.setParentShell(shlSonyericsson);
-		if (Devices.getCurrent().getVersion().contains("2.3")) {
-			rj.setAction("doRootzergRush");
-		}
+		if (Devices.getCurrent().getVersion().contains("4.3") || Devices.getCurrent().getVersion().contains("4.4"))
+			rj.setAction("doRootTowelroot");
 		else
-			if (!Devices.getCurrent().getVersion().contains("4.0") && !Devices.getCurrent().getVersion().contains("4.1"))
-				rj.setAction("doRootpsneuter");
-			else {
-				if (Devices.getCurrent().getVersion().contains("4.0.3"))
-					rj.setAction("doRootEmulator");
+			if (Devices.getCurrent().getVersion().contains("4.2"))
+				rj.setAction("doRootPerfEvent");			
+			else
+				if (Devices.getCurrent().getVersion().contains("4.1"))
+					rj.setAction("doRootServiceMenu");
 				else
-					if (Devices.getCurrent().getVersion().contains("4.0"))
-						rj.setAction("doRootAdbRestore");
-					else {
-						if (Devices.getCurrent().getVersion().contains("4.1")) {
-							rj.setAction("doRootServiceMenu");							
-						/*}
+					if (Devices.getCurrent().getVersion().contains("4.0.3"))
+						rj.setAction("doRootEmulator");
+					else
+						if (Devices.getCurrent().getVersion().contains("4.0"))
+							rj.setAction("doRootAdbRestore");
 						else
-							if (Devices.getCurrent().getVersion().contains("4.2")) {
-								rj.setAction("doRootPerfEvent");*/			
-							}
-							else {
-								MessageBox mb = new MessageBox(shlSonyericsson,SWT.ICON_ERROR|SWT.OK);
-								mb.setText("Errorr");
-								mb.setMessage("No root exploit for your device");
-								int result = mb.open();
-							}
-					}
-			}
+							if (Devices.getCurrent().getVersion().contains("2.3"))
+								rj.setAction("doRootzergRush");
+							else
+								rj.setAction("doRootpsneuter");					
 		rj.schedule();
 	}
 	

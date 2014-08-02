@@ -1,0 +1,80 @@
+#!/system/bin/sh
+
+export SAVE_PATH=$PATH
+export PATH=/system/bin:/system/xbin:/data/local/tmp
+
+if [ -e /data/local/tmp/busybox ]
+then
+	BUSYBOX=/data/local/tmp/busybox
+else
+	BUSYBOX=/system/xbin/busybox
+fi
+
+if [ -e /data/local/tmp/writekmem ]
+then
+	WRITEKMEM=/data/local/tmp/writekmem
+else
+	WRITEKMEM=/system/xbin/writekmem
+fi
+
+if [ -e /data/local/tmp/findricaddr ]
+then
+	FINDRICADDR=/data/local/tmp/findricaddr
+else
+	FINDRICADDR=/system/xbin/findricaddr
+fi
+
+if [ ! -e ${BUSYBOX} ]
+then
+	echo "No busybox"
+	exit 1
+fi
+
+if [ ! -e ${WRITEKMEM} ]
+then
+	echo "No writekmem"
+	exit 1
+fi
+
+if [ ! -e $FINDRICADDR ]
+then
+	echo "No findricaddr"
+	exit 1
+fi
+
+if [ -e /dev/kmem ]; then
+	touch /data/local/tmp/zxz_run
+	touch /data/local/tmp/ricaddr
+	chmod 777 /data/local/tmp/ricaddr
+	findricaddr=$(${FINDRICADDR})
+	if [ "$?" = "0" ]; then
+		echo "${findricaddr}" | ${BUSYBOX} tail -n1 | ${BUSYBOX} cut -d= -f2 > /data/local/tmp/ricaddr
+	else
+		echo 0 > /proc/sys/kernel/kptr_restrict
+		kallsyms_RIC=$(${BUSYBOX} cat /proc/kallsyms | ${BUSYBOX} grep "sony_ric_enabled" | ${BUSYBOX} grep "T" | ${BUSYBOX} cut -d' ' -f1)
+		RIC_dump=$(dd if=/dev/kmem skip=$(( 0x$kallsyms_RIC )) bs=1 count=16 | ${BUSYBOX} hexdump)
+		echo -n $(echo $RIC_dump | ${BUSYBOX} cut -d' ' -f9) > /data/local/tmp/ricaddr
+		echo $(echo $RIC_dump | ${BUSYBOX} cut -d' ' -f8) >> /data/local/tmp/ricaddr
+	fi
+	${WRITEKMEM} $(${BUSYBOX} cat /data/local/tmp/ricaddr) 0 > /dev/null
+else
+	kernelver=$(${BUSYBOX} uname -r)
+	if [ -e /data/local/tmp/wp_mod.ko ]; then
+		echo "$kernelver" | dd of=/data/local/tmp/wp_mod.ko conv=notrunc obs=476 seek=1 ibs=${#kernelver} count=1 > /dev/null 2>&1
+	fi
+	insmod /data/local/tmp/wp_mod.ko > /dev/null 2>&1
+	if [ $? -gt 0 ]; then
+		if [ -e /sbin/ric ]; then
+			mount -o remount,rw / && mv /sbin/ric /sbin/ricc && mount -o remount,ro / && ${BUSYBOX} pkill /sbin/ric
+		elif [ -e /system/bin/ric ]; then
+			mount -o remount,rw /system && mv /system/bin/ric /system/bin/ricc && mount -o remount,ro /system && ${BUSYBOX} pkill /system/bin/ric
+		fi
+ 	fi
+fi
+
+export PATH=$SAVE_PATH
+
+rm -f /data/local/tmp/ricaddr
+rm -f /data/local/tmp/zxz_run
+
+exit

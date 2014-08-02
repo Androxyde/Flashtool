@@ -226,6 +226,11 @@ public class AdbUtility  {
 		return set;		
 	}
 	
+	public static void pushExe(String source, String destfolder, String destname) throws Exception {
+		AdbUtility.push(source, destfolder+"/"+destname);
+		AdbUtility.run("chmod 755 "+destfolder+"/"+destname);
+	}
+	
 	public static void uninstall(String apk, boolean silent) throws Exception {
 		if (!silent)
 			logger.info("Uninstalling "+apk);
