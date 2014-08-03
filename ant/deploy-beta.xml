@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool Beta">
 	
-	<property name="version" value="0.9.16.0beta1"/>
-	<property name="progtime" value="11-04-2014 08:07:00"/>
+	<property name="version" value="0.9.16.2beta1"/>
+	<property name="progtime" value="06-16-2014 23:00:00"/>
 	
 	<target name="all" depends="core release"/>
 
@@ -12,6 +12,10 @@
     	<delete dir="../../Deploy/FlashTool"/>
 	</target>
 
+	<target name="clone">
+		<git-clone uri="https://github.com/Androxyde/devices.git" dest="../../Deploy/Flashtool/devices" />
+	</target>	
+	
 	<target name="ressources">
         <jar destfile="../../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar">
             <manifest>
@@ -76,5 +80,13 @@
 				excludes="**/.svn"/>
 		</copy>
     </target>
+	
+	<taskdef resource="org/eclipse/jgit/ant/ant-tasks.properties">
+	       <classpath>
+	         <pathelement location="../libs/jgit.jar"/>
+	         <pathelement location="../libs/jgit.ant.jar"/>
+	         <pathelement location="../libs/jsch-0.1.51.jar"/>
+	       </classpath>
+	</taskdef>
 
 </project>

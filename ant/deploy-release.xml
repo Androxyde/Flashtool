@@ -83,8 +83,8 @@
 	
 	<taskdef resource="org/eclipse/jgit/ant/ant-tasks.properties">
 	       <classpath>
-	         <pathelement location="../libs/jgit-3.4.0.201406041058-rc3.jar"/>
-	         <pathelement location="../libs/jgit.ant-3.4.0.201406041058-rc3.jar"/>
+	         <pathelement location="../libs/jgit.jar"/>
+	         <pathelement location="../libs/jgit.ant.jar"/>
 	         <pathelement location="../libs/jsch-0.1.51.jar"/>
 	       </classpath>
 	</taskdef>
