@@ -13,7 +13,7 @@
 	</target>
 
 	<target name="clone">
-		<git-clone uri="https://github.com/Androxyde/devices.git" dest="../../Deploy/Flashtool/devices" />
+		<git-clone uri="https://github.com/Androxyde/devices.git" dest="../../Deploy/FlashTool/devices" />
 	</target>	
 	
 	<target name="ressources">
