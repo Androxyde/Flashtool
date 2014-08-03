@@ -10,7 +10,7 @@
 	
    <target name="dodrivers">
         <property environment="env"/>
-        <nsis script="../drivers.nsi" path="${env.ProgramFiles}\NSIS\Unicode"/>
+        <nsis script="../drivers.nsi" path="${env.ProgramFiles}\NSIS"/>
    </target>
     
 	<taskdef name="nsis" classname="com.danielreese.nsisant.Task">
