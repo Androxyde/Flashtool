@@ -61,7 +61,7 @@
 	
 	   <target name="dodrivers">
 	   	    <property environment="env"/>
-	        <nsis script="../drivers.nsi" path="${env.ProgramFiles}\NSIS\Unicode"/>
+	        <nsis script="../drivers.nsi" path="${env.ProgramFiles}\NSIS"/>
 	    </target>
 
 	<target name="binaries" depends="clean, main_lib, JRE">
@@ -83,7 +83,7 @@
 		<delete file="../setup_new.nsi"/>
 		<copy file="../setup.nsi" tofile="../setup_new.nsi"/>
 		<replace file="../setup_new.nsi" token="FLASHTOOLVERSION" value="${Internal-Version}"/>
-		<nsis script="../setup_new.nsi" path="${env.ProgramFiles}\NSIS\Unicode"/>
+		<nsis script="../setup_new.nsi" path="${env.ProgramFiles}\NSIS"/>
 		<delete file="../setup_new.nsi"/>
 	</target>
 
