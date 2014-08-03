@@ -91,7 +91,7 @@
 			<arg value="flashtool-${Internal-Version}-linux.tar"/>
 			<arg value="FlashTool"/>
 		</exec>
-		<exec executable="7zr" dir="../../Deploy">
+		<exec executable="7z" dir="../../Deploy">
 			<arg value="a"/>
 			<arg value="-t7z"/>
 			<arg value="-m0=lzma"/>
