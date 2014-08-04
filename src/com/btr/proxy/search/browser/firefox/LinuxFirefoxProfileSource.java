@@ -26,7 +26,6 @@ class LinuxFirefoxProfileSource implements FirefoxProfileSource {
 		File userDir = new File(System.getProperty("user.home"));
 
 		File profiles = new File(userDir, ".mozilla"+File.separator+"firefox"+File.separator+"profiles.ini");
-		
 		if (!profiles.exists()) {
 			logger.debug("Firefox linux settings not found.");
 			return null;
@@ -36,7 +35,7 @@ class LinuxFirefoxProfileSource implements FirefoxProfileSource {
 		Iterator i = profilesIni.keySet().iterator();
 		while (i.hasNext()) {
 			String section = (String)i.next();
-			if ("1".equals(profilesIni.get(section).get("Default"))) {
+			if ("default".equals(profilesIni.get(section).get("Name"))) {
 				if ("1".equals(profilesIni.get(section).get("IsRelative")))
 					profileFolder = profiles.getParentFile().getAbsolutePath()+File.separator+profilesIni.get(section).get("Path");
 			}
