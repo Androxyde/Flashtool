@@ -26,7 +26,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.iagucool.encoding.Base64;
 import com.sonyericsson.cs.ma3.common.communication.ng.NGHash;
 import com.sonyericsson.cs.ma3.common.data.ng.DistributedFileInfo;
 import com.sonyericsson.cs.ma3.common.data.ng.ServiceContent;
