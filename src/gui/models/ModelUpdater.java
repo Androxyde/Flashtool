@@ -18,6 +18,7 @@ import org.system.TextFile;
 import org.system.UpdateURL;
 
 import com.iagucool.xperifirm.CDFInfoLoader;
+import com.iagucool.xperifirm.FileSet;
 
 public class ModelUpdater {
 
@@ -74,7 +75,7 @@ public class ModelUpdater {
 		}
 	}
 
-	public Vector<String> getFilesOf(String custid) {
+	public Vector<FileSet> getFilesOf(String custid) {
 			CDFInfoLoader cdf = (CDFInfoLoader)cdfinfos.get(custid);
 			return cdf.getFiles();
 	}

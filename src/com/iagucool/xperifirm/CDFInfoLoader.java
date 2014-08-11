@@ -209,8 +209,8 @@ public class CDFInfoLoader
 		return size;
 	}
 	
-	public Vector<String> getFiles() {
-		Vector<String> list = new Vector<String>();
+	public Vector<FileSet> getFiles() {
+		Vector<FileSet> list = new Vector<FileSet>();
 		NodeList nl = doc.getFirstChild().getFirstChild().getChildNodes();
 		long size=0;
 		for (int i=0;i<nl.getLength();i++) {
@@ -222,15 +222,21 @@ public class CDFInfoLoader
 			if (e.getAttribute("parts").equals("1")) {
 				filepath = "common/1/file/"+folder+"/"+e.getAttribute("id");
 				filepath = filepath + "_"+ NGHash.generateHash(filepath);
-				list.add("http://software.sonymobile.com/ns/"+filepath+".bin");
+				FileSet f = new FileSet();
+				f.setName("FILESET_"+id);
+				f.addUrl("http://software.sonymobile.com/ns/"+filepath+".bin");
+				list.add(f);
 			}
 			else {
+				FileSet f = new FileSet();
+				f.setName("FILESET_"+id);
 				for (int j=1; j<=Integer.parseInt(e.getAttribute("parts")); j++) {
 					filepath = "common/1/file/"+folder+"/"+e.getAttribute("id")+"_"+e.getAttribute("chunk")+"_"+j;
 					filepath = filepath + "_"+ NGHash.generateHash(filepath);
-					list.add("http://software.sonymobile.com/ns/"+filepath+".bin");
+					f.addUrl("http://software.sonymobile.com/ns/"+filepath+".bin");
+					
 				}
-				
+				list.add(f);
 			}
 		}
 		return list;

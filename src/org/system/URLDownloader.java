@@ -35,7 +35,6 @@ public class URLDownloader {
             connection.connect();
             mDownloaded = 0;
             mFileLength = connection.getContentLength();
-            logger.info("File length : "+mFileLength);
             strLastModified = connection.getHeaderField("Last-Modified");
         }
         Map<String, List<String>> map = connection.getHeaderFields();
@@ -59,7 +58,6 @@ public class URLDownloader {
             if (mDownloaded >= mFileLength)
                 break;
         }
-        logger.info("Real parts count : "+i);
         // Close streams.
         outFile.close();
         input.close();
