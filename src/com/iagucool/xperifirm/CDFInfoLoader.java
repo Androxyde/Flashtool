@@ -9,7 +9,9 @@ import java.util.HashSet;
 //import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
+import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,19 +47,22 @@ public class CDFInfoLoader
 	private static final String nsFileExtension = ".ser.gz";
 	private Document doc;
 	private Element rootNode;
+	private Properties userinfo;
 
-	public CDFInfoLoader(String username, String tac8, String cda) throws ParserConfigurationException {
+	public CDFInfoLoader(String tac8, String cda) throws ParserConfigurationException,IOException {
+		userinfo = new Properties(); 
+		userinfo.load(new URL("http://software.sonymobile.com/ns/omsi/1/common/userinfo/user.properties").openStream());
+		userinfo.setProperty("user.name", userinfo.getProperty("user.name").toLowerCase());
 		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		rootNode=doc.createElement("XperiFirm");
 		doc.appendChild(rootNode);
-		load(username, tac8, cda);
+		load(tac8, cda);
 	}
 
-	private void load(String username, String tac8, String cda)
+	private void load(String tac8, String cda)
 	{
-		String filepath = username.toLowerCase() + "/2/script/search/TAC8=" + tac8 + "/CDA=" + cda;
+		String filepath = userinfo.getProperty("user.name") + "/2/script/search/TAC8=" + tac8 + "/CDA=" + cda;
 		String ngHash = NGHash.generateHash(filepath);
-		System.out.println(nsDomain + "/" + nsRootPath + filepath + "_" + ngHash + nsFileExtension);
 			try (InputStream is = new URL(nsDomain + "/" + nsRootPath + filepath + "_" + ngHash + nsFileExtension).openStream())
 			{
 				GZIPInputStream gzip_is = new GZIPInputStream(is);
@@ -202,5 +207,32 @@ public class CDFInfoLoader
 			size+=Long.parseLong(e.getAttribute("length"));
 		}
 		return size;
+	}
+	
+	public Vector<String> getFiles() {
+		Vector<String> list = new Vector<String>();
+		NodeList nl = doc.getFirstChild().getFirstChild().getChildNodes();
+		long size=0;
+		for (int i=0;i<nl.getLength();i++) {
+			Element e = (Element)nl.item(i);
+			size+=Long.parseLong(e.getAttribute("length"));
+			String id = e.getAttribute("id");
+			String folder = id.substring(id.length()-3);
+			String filepath = "";
+			if (e.getAttribute("parts").equals("1")) {
+				filepath = "common/1/file/"+folder+"/"+e.getAttribute("id");
+				filepath = filepath + "_"+ NGHash.generateHash(filepath);
+				list.add("http://software.sonymobile.com/ns/"+filepath+".bin");
+			}
+			else {
+				for (int j=1; j<=Integer.parseInt(e.getAttribute("parts")); j++) {
+					filepath = "common/1/file/"+folder+"/"+e.getAttribute("id")+"_"+e.getAttribute("chunk")+"_"+j;
+					filepath = filepath + "_"+ NGHash.generateHash(filepath);
+					list.add("http://software.sonymobile.com/ns/"+filepath+".bin");
+				}
+				
+			}
+		}
+		return list;
 	}
 }

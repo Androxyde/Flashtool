@@ -135,7 +135,6 @@ public class CustIdManager extends Dialog {
 						    public void menuAboutToShow(IMenuManager manager) {
 						    	manager.add(new Action("Add") {
 						            public void run() {
-						            	System.out.println(m.getModel());
 										AddCustId add = new AddCustId(shlDeviceUpdateChecker,SWT.PRIMARY_MODAL | SWT.SHEET);
 										CustIdItem item = (CustIdItem)add.open(m);
 										if (item != null) {

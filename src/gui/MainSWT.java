@@ -564,7 +564,7 @@ public class MainSWT {
 		Menu menu_7 = new Menu(mntmEditor);
 		mntmEditor.setMenu(menu_7);
 		
-		MenuItem mntmNewItem_2 = new MenuItem(menu_7, SWT.NONE);
+/*		MenuItem mntmNewItem_2 = new MenuItem(menu_7, SWT.NONE);
 		mntmNewItem_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -591,7 +591,7 @@ public class MainSWT {
 				}
 			}
 		});
-		mntmNewItem_2.setText("Add Update URL");
+		mntmNewItem_2.setText("Add Update URL");*/
 		
 		MenuItem mntmCdfidManager = new MenuItem(menu_7, SWT.NONE);
 		mntmCdfidManager.addSelectionListener(new SelectionAdapter() {
@@ -601,8 +601,9 @@ public class MainSWT {
 				Enumeration<Object> list = Devices.listDevices(false);
 				while (list.hasMoreElements()) {
 					DeviceEntry entry = Devices.getDevice((String)list.nextElement());
-					if (entry.canHandleUpdates())
+					if (entry.canHandleUpdates()) {
 						p.setProperty(entry.getId(), entry.getName());
+					}
 				}
 				String result = WidgetTask.openDeviceSelector(shlSonyericsson, p);
 				if (result.length()>0) {

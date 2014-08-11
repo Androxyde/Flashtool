@@ -56,6 +56,22 @@ public class LogProgress {
 		MyLogger.lastaction="progress";
 	}
 
+	public static void updateProgressValue(int value) {
+		if (MainSWT.guimode) {
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					_bar.setSelection(value);
+				}
+			});
+		}
+		else {
+			currentstepconsole=value;
+			double result = (double)currentstepconsole/(double)maxstepsconsole*100.0;
+			LogProgress.printProgBar((int)result);
+		}
+		MyLogger.lastaction="progress";
+	}
+
 	public static void printProgBar(long percent){
 		if (percent <=100) {
 		    StringBuilder bar = new StringBuilder("[");

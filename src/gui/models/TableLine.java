@@ -13,6 +13,10 @@ public class TableLine {
 	    return line.get(index);
 	  }
 	  
+	  public void setValueOf(int index, String value) {
+		  line.set(index, value);
+	  }
+	  
 	  public void add(String value) {
 		  line.add(value);
 	  }

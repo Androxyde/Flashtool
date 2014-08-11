@@ -194,6 +194,22 @@ public class DeviceEntry {
 		return variant;
 	}
 	
+	public void clearVariants() {
+		_entry.setProperty("variant", "");
+		_entry.write("ISO-8859-1");
+	}
+
+	public void addVariantToList(String model) {
+		String current = _entry.getProperty("variant");
+		if (current==null) current="";
+		if (current.length()==0) _entry.setProperty("variant", model);
+		else {
+			current = current + ","+model;
+			_entry.setProperty("variant", current);
+		}
+		_entry.write("ISO-8859-1");
+	}
+	
 	public void addRecognitionToList(String recog) {
 		String current = _entry.getProperty("recognition");
 		current = current + ","+recog;

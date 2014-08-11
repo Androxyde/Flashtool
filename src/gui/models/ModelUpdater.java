@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.logger.MyLogger;
@@ -16,20 +17,18 @@ import org.system.PropertiesFile;
 import org.system.TextFile;
 import org.system.UpdateURL;
 
+import com.iagucool.xperifirm.CDFInfoLoader;
+
 public class ModelUpdater {
 
-	UpdateURL _url;
 	PropertiesFile _custid = new PropertiesFile();
 	Properties _versions = new Properties();
 	boolean tosave = false;
 	String _model = "";
+	String tac8 = "";
+	Properties cdfinfos = new Properties();
 	private static Logger logger = Logger.getLogger(ModelUpdater.class);
 
-	public ModelUpdater(UpdateURL u) {
-		_url = u;
-		_model = u.getVariant();
-		init(Devices.getDevice(u.getDeviceID()),u.getVariant());
-	}
 
 	public ModelUpdater(DeviceEntry entry, String model) {
 		init(entry, model);
@@ -37,13 +36,13 @@ public class ModelUpdater {
 	
 	public void init(DeviceEntry entry, String model) {
 		try {
-			if (new File(entry.getDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"updateurl").exists()) {
-				TextFile tf = new TextFile(entry.getDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"updateurl","ISO8859-15");
-				_url = new UpdateURL(tf.getLines().iterator().next());
+			if (new File(entry.getDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"tac").exists()) {
+				TextFile tf = new TextFile(entry.getDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"tac","ISO8859-15");
+				tac8 = tf.getLines().iterator().next();
 			}
-			else if (new File(entry.getCustomDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"updateurl").exists()) {
-				TextFile tf = new TextFile(entry.getCustomDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"updateurl","ISO8859-15");
-				_url = new UpdateURL(tf.getLines().iterator().next());			
+			else if (new File(entry.getCustomDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"tac").exists()) {
+				TextFile tf = new TextFile(entry.getCustomDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"tac","ISO8859-15");
+				tac8 = tf.getLines().iterator().next();			
 			}
 			if (new File(entry.getDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"custlist.properties").exists()) {
 				PropertiesFile pf = new PropertiesFile();
@@ -56,25 +55,28 @@ public class ModelUpdater {
 				_custid.getProperties().clear();
 				_custid.mergeWith(pf);
 			}
-			if (_url!=null) {
-				_model = _url.getVariant();
-			}
-			else _model = model;
+			_model = model;
 		} catch (Exception ioe) {
 			ioe.printStackTrace();
 		}	
 	}
 
-
-	public void addURL(String url) {
+	public String getReleaseOf(String custid) {
 		try {
-			_url = new UpdateURL(url);
-			_url.dumpToFile();			
+			CDFInfoLoader cdf = (CDFInfoLoader)cdfinfos.get(custid);
+			if (cdf==null) {
+				cdf = new CDFInfoLoader(tac8,custid);
+				cdfinfos.put(custid, cdf);
+			}
+		return cdf.getRelease();
+		} catch (Exception e) {
+			return "N/A";
 		}
-		catch (Exception e) {
-			logger.warn(e.getMessage());
-			e.printStackTrace();
-		}
+	}
+
+	public Vector<String> getFilesOf(String custid) {
+			CDFInfoLoader cdf = (CDFInfoLoader)cdfinfos.get(custid);
+			return cdf.getFiles();
 	}
 
 	public void checkUpdates() {
@@ -84,21 +86,8 @@ public class ModelUpdater {
 			String line="";
 			final String custid=(String)clist.next();
 			try {
-				_url.setParameter("cdfId", custid);
-				_url.setParameter("cdfVer", "R1A");
-				u = new URL(_url.getFullURL());
-				Scanner sc = new Scanner(u.openStream());
-				while (sc.hasNextLine()) {
-					line = line+sc.nextLine();
-				}
-				try {
-					String latest = line.substring(line.indexOf("<swVersion>")+11, line.indexOf("</swVersion>"));
-					_versions.setProperty(_custid.getProperty(custid), latest);
-				}
-				catch (Exception e) {
-					_versions.setProperty(_custid.getProperty(custid), "N/A");
-					logger.warn("Cannot check update for "+custid+" ("+_custid.getProperty(custid)+")");
-				}
+				CDFInfoLoader cdf = new CDFInfoLoader(tac8,custid);
+				_versions.setProperty(_custid.getProperty(custid), cdf.getRelease());
 			}
 			catch (Exception e1) {
 				_versions.setProperty(_custid.getProperty(custid), "N/A");
@@ -139,7 +128,7 @@ public class ModelUpdater {
 	}
 	
 	public boolean canCheck(boolean withemptycustid) {
-		return (_url!=null && (_custid.getProperties().size()>0 || withemptycustid));
+		return (tac8.length()>0 && (_custid.getProperties().size()>0 || withemptycustid));
 	}
 
 	public boolean hasIds() {

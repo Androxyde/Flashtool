@@ -201,5 +201,14 @@ public class Devices  {
 		}
 		return variant;
 	}
+	
+	public static String getIdFromRecognition(String variant) {
+		Enumeration<Object> e = Devices.listDevices(true);
+		while (e.hasMoreElements()) {
+			DeviceEntry current = Devices.getDevice((String)e.nextElement());
+			if (current.getRecognitionList().contains(variant)) return current.getId();
+		}
+		return "N/A";
+	}
 
 }
