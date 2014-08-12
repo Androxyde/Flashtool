@@ -155,23 +155,15 @@ public class DeviceUpdates extends Dialog {
 								    	if (tl.getValueOf(2).length()==0) {
 									    	manager.add(new Action("Check release") {
 									            public void run() {
-									            		tl.setValueOf(2, mu.getReleaseOf(tl.getValueOf(0)));
-									            		tableViewer.getTable().getColumn(2).pack();
-										            	tableViewer.refresh();
+									            	doCheck(tableViewer,tl,mu);
 									            }
 									        });
 								    	}
 								    	else {
 									    	manager.add(new Action("Download") {
 									            public void run() {
-									            	DownloadJob dj = new DownloadJob("Download FW");
-									            	dj.setCDF(tl.getValueOf(0));
-									            	String path = OS.getWorkDir()+File.separator+"firmwares"+File.separator+"Downloads"+File.separator+mu.getModel()+"_"+tl.getValueOf(1).replaceAll(" ","_") + "_" + mu.getReleaseOf(tl.getValueOf(0));
-									            	dj.setPath(path);
-									            	dj.setUpdater(mu);
-									            	dj.schedule();
-										            tableViewer.refresh();
-									            	}
+									            	doDownload(tl,mu);
+									            }
 									        });
 								    	}
 						    	  }
@@ -199,21 +191,12 @@ public class DeviceUpdates extends Dialog {
 						      public void handleEvent(Event e) {
 						    	  if (closeButton.isEnabled()) {
 							    	  TableLine tl = (TableLine)tableViewer.getTable().getSelection()[0].getData();
-								    	if (tl.getValueOf(2).length()==0) {
-								    		tl.setValueOf(2, mu.getReleaseOf(tl.getValueOf(0)));
-								    		int lastsize = tableViewer.getControl().getSize().x-tableViewer.getTable().getColumn(0).getWidth()-tableViewer.getTable().getColumn(1).getWidth();
-								    		tableViewer.getTable().getColumn(2).setWidth(lastsize-20);
-										    tableViewer.refresh();
-									     }
-								    	else {
-							            	DownloadJob dj = new DownloadJob("Download FW");
-							            	dj.setCDF(tl.getValueOf(0));
-							            	String path = OS.getWorkDir()+File.separator+"firmwares"+File.separator+"Downloads"+File.separator+mu.getModel()+"_"+tl.getValueOf(1).replaceAll(" ","_") + "_" + mu.getReleaseOf(tl.getValueOf(0));
-							            	dj.setPath(path);
-							            	dj.setUpdater(mu);
-							            	dj.schedule();
-								            tableViewer.refresh();
-								    	}
+							    	  if (tl.getValueOf(2).length()==0) {
+							    		  	doCheck(tableViewer,tl,mu);
+									  }
+							    	  else {
+							    		  	doDownload(tl,mu);
+							    	  }
 						    	  }
 						      }
 						    });
@@ -240,6 +223,23 @@ public class DeviceUpdates extends Dialog {
 				}
 		);
 		
+	}
+
+	public void doDownload(TableLine tl, ModelUpdater mu) {
+    	DownloadJob dj = new DownloadJob("Download FW");
+    	dj.setCDF(tl.getValueOf(0));
+    	String path = OS.getWorkDir()+File.separator+"firmwares"+File.separator+"Downloads"+File.separator+mu.getModel()+"_"+tl.getValueOf(1).replaceAll(" ","_") + "_" + mu.getReleaseOf(tl.getValueOf(0));
+    	dj.setPath(path);
+    	dj.setUpdater(mu);
+    	dj.schedule();		
+	}
+
+	public void doCheck(TableViewer tableViewer, TableLine tl, ModelUpdater mu) {
+		CheckJob cj = new CheckJob("Release checker");
+		cj.setTableLine(tl);
+		cj.setTableViewer(tableViewer);
+		cj.setModelUpdater(mu);
+		cj.schedule();
 	}
 	
 	public void fillTab() {
@@ -292,6 +292,73 @@ public class DeviceUpdates extends Dialog {
 	    }
 	}
 
+	class CheckJob extends Job {
+
+		boolean canceled = false;
+		TableLine tl=null;
+		TableViewer tableViewer=null;
+		ModelUpdater mu=null;
+
+		public void setTableLine(TableLine ptl) {
+			tl = ptl;
+		}
+		
+		public void setTableViewer(TableViewer ptv) {
+			tableViewer = ptv;
+		}
+		
+		public void setModelUpdater(ModelUpdater pmu) {
+			mu = pmu;
+		}
+		
+		public CheckJob(String name) {
+			super(name);
+			this.addJobChangeListener(new JobChangeAdapter(){
+				public void done(IJobChangeEvent event) {
+					Display.getDefault().asyncExec(
+							new Runnable() {
+								public void run() {
+									closeButton.setEnabled(true);
+								}
+							}
+					);
+					LogProgress.initProgress(0);
+				}
+			});
+		}
+		
+		public void stopSearch() {
+			canceled=true;
+		}
+		
+		public void setUpdater(ModelUpdater pmu) {
+			mu=pmu;
+		}
+		
+	    protected IStatus run(IProgressMonitor monitor) {
+			Display.getDefault().asyncExec(
+					new Runnable() {
+						public void run() {
+							closeButton.setEnabled(false);
+						}
+					}
+			);
+	    	String release = mu.getReleaseOf(tl.getValueOf(0));
+			Display.getDefault().asyncExec(
+					new Runnable() {
+						public void run() {
+							closeButton.setEnabled(false);
+							tl.setValueOf(2, release);
+							int lastsize = tableViewer.getControl().getSize().x-tableViewer.getTable().getColumn(0).getWidth()-tableViewer.getTable().getColumn(1).getWidth();
+							tableViewer.getTable().getColumn(2).setWidth(lastsize-20);
+						    tableViewer.refresh();
+						}
+					}
+			);
+			return Status.OK_STATUS;
+	    }
+	}
+	
 	class DownloadJob extends Job {
 
 		boolean canceled = false;
@@ -348,7 +415,7 @@ public class DeviceUpdates extends Dialog {
             			f.download();
             		}
             		
-            	} catch (IOException ioe) {}
+            	} catch (IOException ioe) {ioe.printStackTrace();}
 			    return Status.OK_STATUS;
 	    }
 	}
