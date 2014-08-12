@@ -22,6 +22,7 @@ public class FileSet {
 	int nbparts=0;
 	String FSName="";
 	String destFolder = "";
+	int id;
 	TreeMap<Integer, String> map = new TreeMap<Integer, String>();
 	private static Logger logger = Logger.getLogger(FileSet.class);
 	
@@ -30,10 +31,15 @@ public class FileSet {
 		map.put(nbparts, url);
 	}
 
-	public void setName(String name) {
-		FSName=name;
+	public void setId(int lid) {
+		id=lid;
+		FSName="FILESET_"+lid;
 	}
-
+	
+	public int getId() {
+		return 0;
+	}
+	
 	public void setFolder(String folder) {
 		destFolder=folder;
 	}

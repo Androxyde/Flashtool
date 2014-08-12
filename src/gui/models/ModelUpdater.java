@@ -75,7 +75,7 @@ public class ModelUpdater {
 		}
 	}
 
-	public Vector<FileSet> getFilesOf(String custid) {
+	public com.iagucool.xperifirm.Firmware getFilesOf(String custid) {
 			CDFInfoLoader cdf = (CDFInfoLoader)cdfinfos.get(custid);
 			return cdf.getFiles();
 	}

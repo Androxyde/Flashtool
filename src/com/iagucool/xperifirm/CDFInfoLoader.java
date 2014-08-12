@@ -11,8 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
+
+import javafx.collections.transformation.SortedList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.sonyericsson.cs.ma3.common.communication.ng.NGHash;
@@ -48,6 +52,7 @@ public class CDFInfoLoader
 	private Document doc;
 	private Element rootNode;
 	private Properties userinfo;
+	private TreeMap<Integer,Firmware> releases;
 
 	public CDFInfoLoader(String tac8, String cda) throws ParserConfigurationException,IOException {
 		userinfo = new Properties(); 
@@ -57,6 +62,36 @@ public class CDFInfoLoader
 		rootNode=doc.createElement("XperiFirm");
 		doc.appendChild(rootNode);
 		load(tac8, cda);
+		NodeList nl = rootNode.getChildNodes();
+		for (int i=0;i<nl.getLength();i++) {
+			Node release = nl.item(i);
+			Firmware f = new Firmware(((Element)release).getAttribute("ver"));
+			NodeList files = release.getChildNodes();
+			for (int j=0;j<files.getLength();j++) {
+				Element file = (Element)files.item(j);
+				String id = file.getAttribute("id");
+				String folder = id.substring(id.length()-3);
+				String filepath = "";
+				if (file.getAttribute("parts").equals("1")) {
+					filepath = "common/1/file/"+folder+"/"+file.getAttribute("id");
+					filepath = filepath + "_"+ NGHash.generateHash(filepath);
+					FileSet fs = new FileSet();
+					fs.setId(Integer.parseInt(id));
+					fs.addUrl("http://software.sonymobile.com/ns/"+filepath+".bin");
+					f.addFileSet(fs);
+				}
+				else {
+					FileSet fs = new FileSet();
+					fs.setId(Integer.parseInt(id));
+					for (int k=1; k<=Integer.parseInt(file.getAttribute("parts")); k++) {
+						filepath = "common/1/file/"+folder+"/"+file.getAttribute("id")+"_"+file.getAttribute("chunk")+"_"+k;
+						filepath = filepath + "_"+ NGHash.generateHash(filepath);
+						fs.addUrl("http://software.sonymobile.com/ns/"+filepath+".bin");
+					}
+					f.addFileSet(fs);;
+				}
+			}
+		}
 	}
 
 	private void load(String tac8, String cda)
@@ -195,8 +230,11 @@ public class CDFInfoLoader
 	}
 	
 	public String getRelease() {
-		Element e = (Element)doc.getFirstChild().getFirstChild();
-		return e.getAttribute("ver");
+		return releases.lastEntry().getValue().getRelease();
+	}
+
+	public Firmware getFiles() {
+		return releases.lastEntry().getValue();
 	}
 	
 	public long getSize() {
@@ -209,36 +247,4 @@ public class CDFInfoLoader
 		return size;
 	}
 	
-	public Vector<FileSet> getFiles() {
-		Vector<FileSet> list = new Vector<FileSet>();
-		NodeList nl = doc.getFirstChild().getFirstChild().getChildNodes();
-		long size=0;
-		for (int i=0;i<nl.getLength();i++) {
-			Element e = (Element)nl.item(i);
-			size+=Long.parseLong(e.getAttribute("length"));
-			String id = e.getAttribute("id");
-			String folder = id.substring(id.length()-3);
-			String filepath = "";
-			if (e.getAttribute("parts").equals("1")) {
-				filepath = "common/1/file/"+folder+"/"+e.getAttribute("id");
-				filepath = filepath + "_"+ NGHash.generateHash(filepath);
-				FileSet f = new FileSet();
-				f.setName("FILESET_"+id);
-				f.addUrl("http://software.sonymobile.com/ns/"+filepath+".bin");
-				list.add(f);
-			}
-			else {
-				FileSet f = new FileSet();
-				f.setName("FILESET_"+id);
-				for (int j=1; j<=Integer.parseInt(e.getAttribute("parts")); j++) {
-					filepath = "common/1/file/"+folder+"/"+e.getAttribute("id")+"_"+e.getAttribute("chunk")+"_"+j;
-					filepath = filepath + "_"+ NGHash.generateHash(filepath);
-					f.addUrl("http://software.sonymobile.com/ns/"+filepath+".bin");
-					
-				}
-				list.add(f);
-			}
-		}
-		return list;
-	}
 }

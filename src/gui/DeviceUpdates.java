@@ -11,6 +11,7 @@ import gui.tools.WidgetTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -49,6 +50,7 @@ import org.logger.LogProgress;
 
 import com.iagucool.xperifirm.CDFInfoLoader;
 import com.iagucool.xperifirm.FileSet;
+import com.iagucool.xperifirm.Firmware;
 
 public class DeviceUpdates extends Dialog {
 
@@ -407,10 +409,11 @@ public class DeviceUpdates extends Dialog {
 						}
 					}
 			);
-            	Vector<FileSet> v = mu.getFilesOf(cdfval);
+            	Firmware v = mu.getFilesOf(cdfval);
+            	Iterator<FileSet> i = v.getFileSets().iterator();
             	try {
-            		for (int i=0;i<v.size();i++) {
-            			FileSet f = v.get(i);
+            		while (i.hasNext()) {
+            			FileSet f = i.next();
             			f.setFolder(_path);
             			f.download();
             		}

@@ -14,6 +14,5 @@ public class Test {
 		CDFInfoLoader cdf = new CDFInfoLoader("35809105", "1276-5833");
 		System.out.println(cdf.getRelease());
 		System.out.println(cdf.getSize()/1024);
-		System.out.println(cdf.getFiles());
     }
 }
