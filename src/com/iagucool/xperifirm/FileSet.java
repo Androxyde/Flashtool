@@ -19,12 +19,16 @@ import org.system.URLDownloader;
 
 public class FileSet {
 
-	int nbparts=0;
-	String FSName="";
-	String destFolder = "";
-	int id;
-	TreeMap<Integer, String> map = new TreeMap<Integer, String>();
+	private int nbparts=0;
+	private String FSName="";
+	private String destFolder = "";
+	private int id;
+	private TreeMap<Integer, String> map = new TreeMap<Integer, String>();
 	private static Logger logger = Logger.getLogger(FileSet.class);
+	
+	public String getName() {
+		return FSName;
+	}
 	
 	public void addUrl(String url) {
 		nbparts++;
@@ -37,7 +41,7 @@ public class FileSet {
 	}
 	
 	public int getId() {
-		return 0;
+		return id;
 	}
 	
 	public void setFolder(String folder) {
@@ -49,8 +53,19 @@ public class FileSet {
 	}
 	
 	public void download() throws IOException {
+		if (new File(destFolder+File.separator+FSName).exists()) {
+			logger.info("This FILESET is already downloaded");
+			return;
+		}
 		logger.info("Downloading "+FSName);
 		new File(destFolder).mkdirs();
+		new File(destFolder+File.separator+FSName).delete();
+		new File(destFolder+File.separator+FSName+"_1").delete();
+		new File(destFolder+File.separator+FSName+"_2").delete();
+		new File(destFolder+File.separator+FSName+"_3").delete();
+		new File(destFolder+File.separator+FSName+"_4").delete();
+		new File(destFolder+File.separator+FSName+"_5").delete();
+		new File(destFolder+File.separator+FSName+"_6").delete();
 		Iterator<Integer> i = map.keySet().iterator();
 		while (i.hasNext()) {
 			Integer key = i.next();

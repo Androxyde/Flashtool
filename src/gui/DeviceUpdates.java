@@ -7,6 +7,7 @@ import gui.models.TableLine;
 import gui.models.TableSorter;
 import gui.models.VectorContentProvider;
 import gui.models.VectorLabelProvider;
+import gui.tools.DecryptJob;
 import gui.tools.WidgetTask;
 
 import java.io.File;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
@@ -321,6 +323,7 @@ public class DeviceUpdates extends Dialog {
 							new Runnable() {
 								public void run() {
 									closeButton.setEnabled(true);
+									lblInfo.setText("");
 								}
 							}
 					);
@@ -342,6 +345,7 @@ public class DeviceUpdates extends Dialog {
 					new Runnable() {
 						public void run() {
 							closeButton.setEnabled(false);
+							lblInfo.setText("Checking latest release. Please wait ...");
 						}
 					}
 			);
@@ -349,7 +353,6 @@ public class DeviceUpdates extends Dialog {
 			Display.getDefault().asyncExec(
 					new Runnable() {
 						public void run() {
-							closeButton.setEnabled(false);
 							tl.setValueOf(2, release);
 							int lastsize = tableViewer.getControl().getSize().x-tableViewer.getTable().getColumn(0).getWidth()-tableViewer.getTable().getColumn(1).getWidth();
 							tableViewer.getTable().getColumn(2).setWidth(lastsize-20);
@@ -376,6 +379,7 @@ public class DeviceUpdates extends Dialog {
 							new Runnable() {
 								public void run() {
 									closeButton.setEnabled(true);
+									lblInfo.setText("");
 								}
 							}
 					);
@@ -406,19 +410,54 @@ public class DeviceUpdates extends Dialog {
 					new Runnable() {
 						public void run() {
 							closeButton.setEnabled(false);
+							lblInfo.setText("Downloading latest release. Please wait ...");
 						}
 					}
 			);
             	Firmware v = mu.getFilesOf(cdfval);
             	Iterator<FileSet> i = v.getFileSets().iterator();
             	try {
+            		Vector result = new Vector();
             		while (i.hasNext()) {
             			FileSet f = i.next();
             			f.setFolder(_path);
             			f.download();
+            			result.add(new File(_path+File.separator+f.getName()));	
             		}
-            		
-            	} catch (IOException ioe) {ioe.printStackTrace();}
+            		System.out.println(result);
+    				//Decrypt decrypt = new Decrypt(shlDeviceUpdateChecker,SWT.PRIMARY_MODAL | SWT.SHEET);
+    				if (result!=null) {
+    					DecryptJob dec = new DecryptJob("Decrypt");
+    					dec.addJobChangeListener(new IJobChangeListener() {
+    						public void aboutToRun(IJobChangeEvent event) {
+    						}
+
+    						public void awake(IJobChangeEvent event) {
+    						}
+
+    						public void done(IJobChangeEvent event) {
+    							String result = WidgetTask.openBundleCreator(shlDeviceUpdateChecker,_path);
+    							if (result.equals("Cancel"))
+    								logger.info("Bundle creation canceled");
+    						}
+
+    						public void running(IJobChangeEvent event) {
+    						}
+
+    						public void scheduled(IJobChangeEvent event) {
+    						}
+
+    						public void sleeping(IJobChangeEvent event) {
+    						}
+    					});
+
+    					dec.setFiles(result);
+    					dec.schedule();
+    				}
+            	}
+            	catch (IOException ioe) {
+            		ioe.printStackTrace();
+            	}
 			    return Status.OK_STATUS;
 	    }
 	}

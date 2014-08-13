@@ -52,7 +52,7 @@ public class CDFInfoLoader
 	private Document doc;
 	private Element rootNode;
 	private Properties userinfo;
-	private TreeMap<Integer,Firmware> releases;
+	private TreeMap<Integer,Firmware> releases = new TreeMap<Integer, Firmware>();
 
 	public CDFInfoLoader(String tac8, String cda) throws ParserConfigurationException,IOException {
 		userinfo = new Properties(); 
@@ -91,6 +91,7 @@ public class CDFInfoLoader
 					f.addFileSet(fs);;
 				}
 			}
+			releases.put(f.getId(), f);
 		}
 	}
 
