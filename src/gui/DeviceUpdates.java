@@ -66,6 +66,8 @@ public class DeviceUpdates extends Dialog {
 	//private Table tableDevice;
 	//private TableViewer tableViewer;
 	protected Models models;
+	boolean decryptDone = false;
+	String bundleResult="";
 	private static Logger logger = Logger.getLogger(DeviceUpdates.class);
 
 	/**
@@ -424,9 +426,7 @@ public class DeviceUpdates extends Dialog {
             			f.download();
             			result.add(new File(_path+File.separator+f.getName()));	
             		}
-            		System.out.println(result);
-    				//Decrypt decrypt = new Decrypt(shlDeviceUpdateChecker,SWT.PRIMARY_MODAL | SWT.SHEET);
-    				if (result!=null) {
+            		
     					DecryptJob dec = new DecryptJob("Decrypt");
     					dec.addJobChangeListener(new IJobChangeListener() {
     						public void aboutToRun(IJobChangeEvent event) {
@@ -436,9 +436,21 @@ public class DeviceUpdates extends Dialog {
     						}
 
     						public void done(IJobChangeEvent event) {
-    							String result = WidgetTask.openBundleCreator(shlDeviceUpdateChecker,_path);
-    							if (result.equals("Cancel"))
+    							Display.getDefault().syncExec(
+    									new Runnable() {
+    										public void run() {
+    								    		BundleCreator cre = new BundleCreator(shlDeviceUpdateChecker,SWT.PRIMARY_MODAL | SWT.SHEET);
+    								    		cre.setBranding(mu.getCustIds().getProperty(cdfval));
+    								    		cre.setVariant(mu.getDevice().getName().replaceAll(" ", "_"), mu.getModel());
+    								    		cre.setVersion(mu.getReleaseOf(cdfval));
+    								    		bundleResult = (String)cre.open(_path);    											
+    										}
+    									}
+    							);
+
+    							if (bundleResult.equals("Cancel"))
     								logger.info("Bundle creation canceled");
+    							decryptDone = true;
     						}
 
     						public void running(IJobChangeEvent event) {
@@ -450,10 +462,9 @@ public class DeviceUpdates extends Dialog {
     						public void sleeping(IJobChangeEvent event) {
     						}
     					});
-
     					dec.setFiles(result);
     					dec.schedule();
-    				}
+    					while (!decryptDone);
             	}
             	catch (IOException ioe) {
             		ioe.printStackTrace();

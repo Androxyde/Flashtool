@@ -53,7 +53,6 @@ public class BundleCreator extends Dialog {
 	protected Shell shlBundler;
 	private Text sourceFolder;
 	private Text device;
-	private String deviceId="";
 	private Text branding;
 	private Text version;
 	Vector files = new Vector();
@@ -72,7 +71,24 @@ public class BundleCreator extends Dialog {
 	Button btnNoFinalVerification;
 	private Label lblNewLabel_3;
 	private FormData fd_lblNewLabel;
+	private String _branding = "";
+	private String _version = "";
+	private String _deviceName="";
+	private String _variant = "";
 
+	public void setBranding(String lbranding) {
+		_branding = lbranding;
+	}
+	
+	public void setVersion(String lversion) {
+		_version = lversion;
+	}
+	
+	public void setVariant(String lid, String lvariant) {
+		_deviceName=lid;
+		_variant = lvariant;
+	}
+	
 	/**
 	 * Create the dialog.
 	 * @param parent
@@ -248,14 +264,14 @@ public class BundleCreator extends Dialog {
 					showErrorMessageBox("Device, Versio, Branding : all fields must be set");
 					return;
 				}
-				File f = new File(OS.getWorkDir()+File.separator+"firmwares"+File.separator+deviceId+"_"+version.getText()+"_"+branding.getText()+".ftf");
+				File f = new File(OS.getWorkDir()+File.separator+"firmwares"+File.separator+_variant+"_"+version.getText()+"_"+branding.getText()+".ftf");
 				if (f.exists()) {
 					showErrorMessageBox("This bundle name already exists");
 					return;
 				}
 				Bundle b = new Bundle();
 				b.setMeta(meta);
-				b.setDevice(deviceId);
+				b.setDevice(_variant);
 				b.setVersion(version.getText());
 				b.setBranding(branding.getText());
 				b.setCmd25(btnNoFinalVerification.getSelection()?"true":"false");
@@ -463,7 +479,7 @@ public class BundleCreator extends Dialog {
 					DeviceEntry ent = new DeviceEntry(result);
 					String variant = WidgetTask.openVariantSelector(ent.getId(),shlBundler);
 					device.setText(ent.getName() + " ("+variant+")");
-					deviceId=variant;
+					_variant=variant;
 				}
 			}
 		});
@@ -501,6 +517,11 @@ public class BundleCreator extends Dialog {
 		fd_lblFirmwareContent.left = new FormAttachment(composite_5, 0, SWT.LEFT);
 		lblFirmwareContent.setLayoutData(fd_lblFirmwareContent);
 		lblFirmwareContent.setText("Firmware content :");
+		
+		branding.setText(_branding);
+		version.setText(_version);
+		if (_deviceName.length()>0)
+			device.setText(_deviceName + " ("+_variant+")");
 
 	}
 	

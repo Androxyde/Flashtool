@@ -24,27 +24,17 @@ public class URLDownloader {
         URLConnection connection = url.openConnection();
         
         File fdest = new File(filedest);
-        if (fdest.exists() && (mDownloaded==-1)) fdest.delete();
-        mDownloaded = fdest.length();
-        if (mDownloaded > 0) {
-            connection.setRequestProperty("Range", "bytes=" + mDownloaded + "-");
-            connection.setRequestProperty("If-Range", strLastModified);
-            connection.connect();
-        }
-        else {
-            connection.connect();
-            mDownloaded = 0;
-            mFileLength = connection.getContentLength();
-            strLastModified = connection.getHeaderField("Last-Modified");
-        }
+        connection.connect();
+        mDownloaded = 0;
+        mFileLength = connection.getContentLength();
+        strLastModified = connection.getHeaderField("Last-Modified");
         Map<String, List<String>> map = connection.getHeaderFields();
 
         // Setup streams and buffers.
         int chunk = 131072;
         BufferedInputStream input = new BufferedInputStream(connection.getInputStream(), chunk);
         RandomAccessFile outFile = new RandomAccessFile(fdest, "rw");
-        if (mDownloaded > 0)  
-            outFile.seek(mDownloaded);
+        outFile.seek(fdest.length());
         
         byte data[] = new byte[chunk];
         LogProgress.initProgress(100);

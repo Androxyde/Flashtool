@@ -59,29 +59,17 @@ public class FileSet {
 		}
 		logger.info("Downloading "+FSName);
 		new File(destFolder).mkdirs();
-		new File(destFolder+File.separator+FSName).delete();
-		new File(destFolder+File.separator+FSName+"_1").delete();
-		new File(destFolder+File.separator+FSName+"_2").delete();
-		new File(destFolder+File.separator+FSName+"_3").delete();
-		new File(destFolder+File.separator+FSName+"_4").delete();
-		new File(destFolder+File.separator+FSName+"_5").delete();
-		new File(destFolder+File.separator+FSName+"_6").delete();
 		Iterator<Integer> i = map.keySet().iterator();
+		URLDownloader ud = new URLDownloader();
 		while (i.hasNext()) {
 			Integer key = i.next();
 			String url = map.get(key);
-			URLDownloader ud = new URLDownloader();
 			String f = url.substring(url.lastIndexOf("/")+1);
 			if (map.size()>1)
 			logger.info("   Downloading part "+key+" of "+map.size());
-			ud.Download(url,destFolder+File.separator+FSName+"_"+key);
-			map.put(key, destFolder+File.separator+FSName+"_"+key);
+			ud.Download(url,destFolder+File.separator+FSName+"_temp");
 		}
-		if (map.size()>1)
-			mergeFiles();
-		else {
-			FileUtils.moveFile(new File(map.get(1)), new File(destFolder+File.separator+FSName));
-		}
+		FileUtils.moveFile(new File(destFolder+File.separator+FSName+"_temp"), new File(destFolder+File.separator+FSName));
 	}
 	
 	public void mergeFiles() {
