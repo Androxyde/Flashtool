@@ -2,6 +2,7 @@ package gui;
 
 import gui.tools.WidgetsTool;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -22,6 +23,7 @@ public class About extends Dialog {
 	protected Object result;
 	protected Shell shlAbout;
 	public static String build = About.class.getPackage().getImplementationVersion();
+	private static Logger logger = Logger.getLogger(About.class);
 
 	/**
 	 * Create the dialog.
@@ -47,7 +49,7 @@ public class About extends Dialog {
 		FormData fd_lblNewLabel = new FormData();
 		fd_lblNewLabel.left = new FormAttachment(0, 10);
 		lblNewLabel.setLayoutData(fd_lblNewLabel);
-		lblNewLabel.setText("Xperia flashing tool");
+		lblNewLabel.setText("Xperia flashing tool "+OS.getChannel());
 		
 		Label lblNewLabel_1 = new Label(shlAbout, SWT.NONE);
 		lblNewLabel_1.setAlignment(SWT.CENTER);

@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -24,6 +26,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -35,6 +38,7 @@ import org.logger.LogProgress;
 import org.logger.MyLogger;
 
 import flashsystem.HexDump;
+import gui.About;
 
 public class OS {
 
@@ -486,5 +490,43 @@ public class OS {
         for (int i=0; i<ng; i++) {
             listThreads(groups[i], indent + "  ");
         }
+    }
+    
+    public static Manifest getManifest( Class<?> cl ) {
+        InputStream inputStream = null;
+        try {
+          URLClassLoader classLoader = (URLClassLoader)cl.getClassLoader();
+          String classFilePath = cl.getName().replace('.','/')+".class";
+          URL classUrl = classLoader.getResource(classFilePath);
+          if ( classUrl==null ) return null;
+          String classUri = classUrl.toString();
+          if ( !classUri.startsWith("jar:") ) return null;
+          int separatorIndex = classUri.lastIndexOf('!');
+          if ( separatorIndex<=0 ) return null;
+          String manifestUri = classUri.substring(0,separatorIndex+2)+"META-INF/MANIFEST.MF";
+          URL url = new URL(manifestUri);
+          inputStream = url.openStream();
+          return new Manifest( inputStream );
+        } catch ( Throwable e ) {
+          // handle errors
+          //...
+          return null;
+        } finally {
+          if ( inputStream!=null ) {
+            try {
+              inputStream.close();
+            } catch ( Throwable e ) {
+              // ignore
+            }
+          }
+        }
+      }
+    
+    public static String getChannel() {
+    	try {
+    		return OS.getManifest(About.class).getMainAttributes().getValue("Internal-Channel");
+    	} catch (Exception e) {
+    		return "";
+    	}
     }
 }

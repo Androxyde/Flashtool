@@ -20,6 +20,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.logger.MyLogger;
 import org.system.DNSResolver;
+import org.system.OS;
 import org.system.Proxy;
 
 public class VersionCheckerJob extends Job {
@@ -49,7 +50,7 @@ public class VersionCheckerJob extends Job {
             	logger.debug("Finished resolving github. Result : Success");
             	URL u;
             	if (About.build==null) throw new Exception("no version");
-            	if (About.build.contains("beta"))
+            	if (OS.getChannel().equals("beta"))
             		u = new URL("https://github.com/Androxyde/Flashtool/raw/master/ant/deploy-beta.xml");
             	else
             		u = new URL("https://github.com/Androxyde/Flashtool/raw/master/ant/deploy-release.xml");
