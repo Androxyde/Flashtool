@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool Beta">
 	
-	<property name="version" value="0.9.16.2beta1"/>
-	<property name="progtime" value="06-16-2014 23:00:00"/>
+	<property name="version" value="0.9.17.1"/>
+	<property name="progtime" value="08-14-2014 16:00:00"/>
 	
 	<target name="all" depends="core release"/>
 
@@ -23,6 +23,7 @@
             	<attribute name="Implementation-Date" value="${progtime}"/>
             	<attribute name="Internal-Version" value="${version}"/>
             	<attribute name="Internal-Date" value="${progtime}"/>
+            	<attribute name="Internal-Channel" value="beta"/>
             </manifest>
         	<fileset dir="../bin" includes="/gui/ressources/icons/**"/>
         </jar>

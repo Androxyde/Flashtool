@@ -10,7 +10,7 @@
                 <attribute name="Main-Class" value="gui.Main"/>
                 <attribute name="Implementation-Version" value="Version ${Internal-Version} built on ${Internal-Date}"/>
             	<attribute name="Internal-Version" value="${Internal-Version}"/>
-            	<attribute name="Internal-Channel" value="release"/>
+            	<attribute name="Internal-Channel" value="${Internal-Channel}"/>
             </manifest>
         	<fileset dir="../bin" excludes="/gui/ressources/icons/**"/>
         </jar>

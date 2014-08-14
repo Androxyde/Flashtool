@@ -23,6 +23,7 @@
             	<attribute name="Implementation-Date" value="${progtime}"/>
             	<attribute name="Internal-Version" value="${version}"/>
             	<attribute name="Internal-Date" value="${progtime}"/>
+            	<attribute name="Internal-Channel" value="release"/>
             </manifest>
         	<fileset dir="../bin" includes="/gui/ressources/icons/**"/>
         </jar>
