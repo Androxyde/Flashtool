@@ -66,7 +66,6 @@ public class DeviceUpdates extends Dialog {
 	//private Table tableDevice;
 	//private TableViewer tableViewer;
 	protected Models models;
-	boolean decryptDone = false;
 	String bundleResult="";
 	private static Logger logger = Logger.getLogger(DeviceUpdates.class);
 
@@ -375,19 +374,6 @@ public class DeviceUpdates extends Dialog {
 
 		public DownloadJob(String name) {
 			super(name);
-			this.addJobChangeListener(new JobChangeAdapter(){
-				public void done(IJobChangeEvent event) {
-					Display.getDefault().asyncExec(
-							new Runnable() {
-								public void run() {
-									closeButton.setEnabled(true);
-									lblInfo.setText("");
-								}
-							}
-					);
-					LogProgress.initProgress(0);
-				}
-			});
 		}
 		
 		public void stopSearch() {
@@ -424,9 +410,16 @@ public class DeviceUpdates extends Dialog {
             			FileSet f = i.next();
             			f.setFolder(_path);
             			f.download();
+    					LogProgress.initProgress(0);
             			result.add(new File(_path+File.separator+f.getName()));	
             		}
-            		
+        			Display.getDefault().asyncExec(
+        					new Runnable() {
+        						public void run() {
+        							lblInfo.setText("Decrypting FileSets. Please wait ...");
+        						}
+        					}
+        			);            		
     					DecryptJob dec = new DecryptJob("Decrypt");
     					dec.addJobChangeListener(new IJobChangeListener() {
     						public void aboutToRun(IJobChangeEvent event) {
@@ -439,18 +432,20 @@ public class DeviceUpdates extends Dialog {
     							Display.getDefault().syncExec(
     									new Runnable() {
     										public void run() {
+    											lblInfo.setText("Creating Bundle. Please wait ...");
     								    		BundleCreator cre = new BundleCreator(shlDeviceUpdateChecker,SWT.PRIMARY_MODAL | SWT.SHEET);
-    								    		cre.setBranding(mu.getCustIds().getProperty(cdfval));
-    								    		cre.setVariant(mu.getDevice().getName().replaceAll(" ", "_"), mu.getModel());
+    								    		cre.setBranding(mu.getCustIds().getProperty(cdfval).replaceAll(" ", "_"));
+    								    		cre.setVariant(mu.getDevice().getName(), mu.getModel());
     								    		cre.setVersion(mu.getReleaseOf(cdfval));
-    								    		bundleResult = (String)cre.open(_path);    											
+    								    		bundleResult = (String)cre.open(_path);
+    								    		lblInfo.setText("");
+    	    									closeButton.setEnabled(true);
     										}
     									}
     							);
 
     							if (bundleResult.equals("Cancel"))
     								logger.info("Bundle creation canceled");
-    							decryptDone = true;
     						}
 
     						public void running(IJobChangeEvent event) {
@@ -464,7 +459,6 @@ public class DeviceUpdates extends Dialog {
     					});
     					dec.setFiles(result);
     					dec.schedule();
-    					while (!decryptDone);
             	}
             	catch (IOException ioe) {
             		ioe.printStackTrace();

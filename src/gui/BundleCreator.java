@@ -43,6 +43,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.system.DeviceEntry;
+import org.system.Devices;
 import org.system.OS;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -276,9 +277,9 @@ public class BundleCreator extends Dialog {
 				b.setBranding(branding.getText());
 				b.setCmd25(btnNoFinalVerification.getSelection()?"true":"false");
 				if (!b.hasLoader()) {
-					String result = WidgetTask.openDeviceSelector(shlBundler);
-					if (result.length()>0) {
-						DeviceEntry ent = new DeviceEntry(result);
+					String result = Devices.getIdFromVariant(_variant);
+					DeviceEntry ent = new DeviceEntry(result);
+					System.out.println(ent.getLoader());
 						if (ent.hasUnlockedLoader()) {
 							String res = WidgetTask.openLoaderSelect(shlBundler);
 							if (res.equals("U"))
@@ -295,11 +296,6 @@ public class BundleCreator extends Dialog {
 						else {
 							b.setLoader(new File(ent.getLoader()));
 						}
-					}
-					else {
-						showErrorMessageBox("This bundle must contain a loader");
-						return;						
-					}
 				}
 				createFTFJob j = new createFTFJob("Create FTF");
 				j.setBundle(b);

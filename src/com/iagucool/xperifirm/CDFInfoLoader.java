@@ -54,7 +54,8 @@ public class CDFInfoLoader
 	private Properties userinfo;
 	private TreeMap<Integer,Firmware> releases = new TreeMap<Integer, Firmware>();
 
-	public CDFInfoLoader(String tac8, String cda) throws ParserConfigurationException,IOException {
+	public CDFInfoLoader(String tac8, String cda) {
+		try {
 		userinfo = new Properties(); 
 		userinfo.load(new URL("http://software.sonymobile.com/ns/omsi/1/common/userinfo/user.properties").openStream());
 		userinfo.setProperty("user.name", userinfo.getProperty("user.name").toLowerCase());
@@ -62,10 +63,11 @@ public class CDFInfoLoader
 		rootNode=doc.createElement("XperiFirm");
 		doc.appendChild(rootNode);
 		load(tac8, cda);
+		System.out.println(this);
 		NodeList nl = rootNode.getChildNodes();
 		for (int i=0;i<nl.getLength();i++) {
 			Node release = nl.item(i);
-			Firmware f = new Firmware(((Element)release).getAttribute("ver"));
+			Firmware f = new Firmware(((Element)release).getAttribute("swVer"));
 			NodeList files = release.getChildNodes();
 			for (int j=0;j<files.getLength();j++) {
 				Element file = (Element)files.item(j);
@@ -92,6 +94,9 @@ public class CDFInfoLoader
 				}
 			}
 			releases.put(f.getId(), f);
+		}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -125,9 +130,10 @@ public class CDFInfoLoader
 	}
 	
 	private void buildXML(ServiceSearchHistory obj)
-	{	
+	{
+		
 			
-			Set<String> iAppSWVers = new HashSet<String>();
+			Set<String> versions = new HashSet<String>();
 			
 			List<ServiceSearchHistoryEntry> sshEntries = obj.getServiceSearchHistoryList();
 			for (Iterator<ServiceSearchHistoryEntry> sshEntriesIt = sshEntries.iterator(); sshEntriesIt.hasNext();)
@@ -137,37 +143,36 @@ public class CDFInfoLoader
 				{
 					ServiceSearchResultEntry ssrEntry = ssrEntriesIt.next();
 					List<ScriptSearchInfo> ssiEntries = ssrEntry.getScriptSearchInfoList().getScripts();
-					if (!ssiEntries.isEmpty()) {
+					if (!ssiEntries.isEmpty())
+					{
 						ScriptSearchInfo ssiEntry = ssiEntries.get(0);
 						Set<DataIdentifier> di = ssiEntry.getRevisionIdentifiers();
 						
 						String iAppSWVer = null;
-						//String iCDFVer = null;
+						String iCDFVer = null;
 						
 						for (Iterator<DataIdentifier> diItr = di.iterator(); diItr.hasNext();)
 						{
 							DataIdentifier diEntry = diItr.next();
-							if (diEntry.getCategory().equals("AppSWVer") || diEntry.getCategory().equals("SoftwareRev"))
-							{
-								iAppSWVer = diEntry.getValue();
-								break;
-							}
-							/*switch (diEntry.getCategory())
+							switch (diEntry.getCategory())
 							{
 								case "AppSWVer":
+								case "SoftwareRev":
 									iAppSWVer = diEntry.getValue();
 									break;
 								case "CDFVer":
 									iCDFVer = diEntry.getValue();
 									break;
-							}*/
+							}
 						}
-						if (iAppSWVer != null && !iAppSWVers.contains(iAppSWVer)/* && iCDFVer != null*/)
+						if (iAppSWVer == null || iCDFVer == null)
+							continue;
+						String verEntry = iAppSWVer + "/" + iCDFVer;
+						if (!versions.contains(verEntry))
 						{
 							Element cdfNode = doc.createElement("release");
-							//cdfNode.setAttribute("cdfVer", iCDFVer);
-							//cdfNode.setAttribute("swVer", iAppSWVer);
-							cdfNode.setAttribute("ver", iAppSWVer);
+							cdfNode.setAttribute("cdfVer", iCDFVer);
+							cdfNode.setAttribute("swVer", iAppSWVer);
 							
 							//HashMap<Long, String> files = new HashMap<Long, String>();
 							
@@ -186,7 +191,7 @@ public class CDFInfoLoader
 								long fileId = dfiEntry.getFileContentInfoId();
 								//String fileName = files.get(fileId);
 								long fileLength = dfiEntry.getLength();
-								//long fileChecksum = dfiEntry.getChecksum();
+								long fileChecksum = dfiEntry.getChecksum();
 								long fileChunkSize = dfiEntry.getChunkSize();
 								int filePartsCount = dfiEntry.getFilePartsCount();
 								
@@ -194,7 +199,7 @@ public class CDFInfoLoader
 								fileNode.setAttribute("id", String.valueOf(fileId));
 								//fileNode.setAttribute("name", String.valueOf(fileName));
 								fileNode.setAttribute("length", String.valueOf(fileLength));
-								//fileNode.setAttribute("checksum", String.valueOf(fileChecksum));
+								fileNode.setAttribute("checksum", String.valueOf(fileChecksum));
 								if (filePartsCount > 1)
 									fileNode.setAttribute("chunk", String.valueOf(fileChunkSize));
 								fileNode.setAttribute("parts", String.valueOf(filePartsCount));
@@ -203,11 +208,12 @@ public class CDFInfoLoader
 							}
 							
 							rootNode.appendChild(cdfNode);
-							iAppSWVers.add(iAppSWVer);
+							versions.add(verEntry);
 						}
 					}
 				}
-			}			
+			}
+			
 	}
 	
 	public String toString() {
