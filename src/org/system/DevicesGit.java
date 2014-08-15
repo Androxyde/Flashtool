@@ -47,22 +47,17 @@ public class DevicesGit {
     	else {
     		localRepo = new FileRepository(localPath + "/.git");
     		git = new Git(localRepo);
-    		logger.info("Pulling changes");
-    		try {
-    			git.pull().call();
+    		logger.info("Scanning devices folder for changes.");
+    		git.add().addFilepattern(".").call();
+    		if (git.status().call().getChanged().size()>0 || git.status().call().getAdded().size()>0 || git.status().call().getModified().size()>0) {
+        		logger.info("Changes have been found. Doing a hard reset (removing user modifications).");
+    			ResetCommand reset = git.reset();
+    			reset.setMode(ResetType.HARD);
+    			reset.setRef(Constants.HEAD);
+    			reset.call();
     		}
-    		catch (Exception e) {
-        		logger.info("Checking if changes have been made to devices folder.");
-        		git.add().addFilepattern(".").call();
-        		if (git.status().call().getChanged().size()>0 || git.status().call().getAdded().size()>0 || git.status().call().getModified().size()>0) {
-        			ResetCommand reset = git.reset();
-        			reset.setMode(ResetType.HARD);
-        			reset.setRef(Constants.HEAD);
-        			logger.info("Hard reset of devices (removing user modifications)");
-        			reset.call();
-        		}    			
-    			git.pull().call();
-    		}
+    		logger.info("Pulling changes from github.");
+			git.pull().call();
     	}
     }
 }
