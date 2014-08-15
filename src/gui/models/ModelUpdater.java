@@ -69,9 +69,9 @@ public class ModelUpdater {
 				cdf = new CDFInfoLoader(tac8,custid);
 				cdfinfos.put(custid, cdf);
 			}
-		return cdf.getRelease();
+			return cdf.getRelease();
 		} catch (Exception e) {
-			return "N/A";
+			return "";
 		}
 	}
 

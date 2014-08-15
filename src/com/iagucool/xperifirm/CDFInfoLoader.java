@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 //import java.util.HashMap;
@@ -42,6 +43,7 @@ import com.sonyericsson.cs.ma3.common.data.ng.us.ScriptSearchInfo;
 //import com.sonyericsson.cs.ma3.common.data.serviceclient.DataFile;
 import com.sonyericsson.cs.ma3.common.data.serviceclient.DataIdentifier;
 import com.sonymobile.cs.generic.charset.StandardCharset;
+import com.sun.javafx.animation.TickCalculation;
 
 public class CDFInfoLoader
 {
@@ -52,10 +54,9 @@ public class CDFInfoLoader
 	private Document doc;
 	private Element rootNode;
 	private Properties userinfo;
-	private TreeMap<Integer,Firmware> releases = new TreeMap<Integer, Firmware>();
-
-	public CDFInfoLoader(String tac8, String cda) {
-		try {
+	private Firmware latest=null;
+	
+	public CDFInfoLoader(String tac8, String cda) throws MalformedURLException, IOException, ParserConfigurationException {
 		userinfo = new Properties(); 
 		userinfo.load(new URL("http://software.sonymobile.com/ns/omsi/1/common/userinfo/user.properties").openStream());
 		userinfo.setProperty("user.name", userinfo.getProperty("user.name").toLowerCase());
@@ -63,11 +64,11 @@ public class CDFInfoLoader
 		rootNode=doc.createElement("XperiFirm");
 		doc.appendChild(rootNode);
 		load(tac8, cda);
-		System.out.println(this);
+		FirmwaresList flist = new FirmwaresList();
 		NodeList nl = rootNode.getChildNodes();
 		for (int i=0;i<nl.getLength();i++) {
 			Node release = nl.item(i);
-			Firmware f = new Firmware(((Element)release).getAttribute("swVer"));
+			Firmware f = new Firmware(((Element)release).getAttribute("swVer"),((Element)release).getAttribute("cdfVer"));
 			NodeList files = release.getChildNodes();
 			for (int j=0;j<files.getLength();j++) {
 				Element file = (Element)files.item(j);
@@ -80,6 +81,7 @@ public class CDFInfoLoader
 					FileSet fs = new FileSet();
 					fs.setId(Integer.parseInt(id));
 					fs.addUrl("http://software.sonymobile.com/ns/"+filepath+".bin");
+					fs.setCheckSum(Long.parseLong(file.getAttribute("checksum")));
 					f.addFileSet(fs);
 				}
 				else {
@@ -90,14 +92,14 @@ public class CDFInfoLoader
 						filepath = filepath + "_"+ NGHash.generateHash(filepath);
 						fs.addUrl("http://software.sonymobile.com/ns/"+filepath+".bin");
 					}
+					fs.setCheckSum(Long.parseLong(file.getAttribute("checksum")));
 					f.addFileSet(fs);;
 				}
 			}
-			releases.put(f.getId(), f);
+			
+			flist.add(f);
 		}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		latest = flist.getLatest();
 	}
 
 	private void load(String tac8, String cda)
@@ -199,7 +201,7 @@ public class CDFInfoLoader
 								fileNode.setAttribute("id", String.valueOf(fileId));
 								//fileNode.setAttribute("name", String.valueOf(fileName));
 								fileNode.setAttribute("length", String.valueOf(fileLength));
-								fileNode.setAttribute("checksum", String.valueOf(fileChecksum));
+								fileNode.setAttribute("checksum", Long.toString(fileChecksum));
 								if (filePartsCount > 1)
 									fileNode.setAttribute("chunk", String.valueOf(fileChunkSize));
 								fileNode.setAttribute("parts", String.valueOf(filePartsCount));
@@ -237,11 +239,11 @@ public class CDFInfoLoader
 	}
 	
 	public String getRelease() {
-		return releases.lastEntry().getValue().getRelease();
+		return latest.getRelease();
 	}
 
 	public Firmware getFiles() {
-		return releases.lastEntry().getValue();
+		return latest;
 	}
 	
 	public long getSize() {

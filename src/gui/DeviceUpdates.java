@@ -403,16 +403,8 @@ public class DeviceUpdates extends Dialog {
 					}
 			);
             	Firmware v = mu.getFilesOf(cdfval);
-            	Iterator<FileSet> i = v.getFileSets().iterator();
-            	try {
-            		Vector result = new Vector();
-            		while (i.hasNext()) {
-            			FileSet f = i.next();
-            			f.setFolder(_path);
-            			f.download();
-    					LogProgress.initProgress(0);
-            			result.add(new File(_path+File.separator+f.getName()));	
-            		}
+            	Vector result = v.download(_path);
+            	if (v.isDownloaded()) { 
         			Display.getDefault().asyncExec(
         					new Runnable() {
         						public void run() {
@@ -459,9 +451,6 @@ public class DeviceUpdates extends Dialog {
     					});
     					dec.setFiles(result);
     					dec.schedule();
-            	}
-            	catch (IOException ioe) {
-            		ioe.printStackTrace();
             	}
 			    return Status.OK_STATUS;
 	    }

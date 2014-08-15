@@ -40,6 +40,13 @@ import org.logger.MyLogger;
 import flashsystem.HexDump;
 import gui.About;
 
+import java.util.zip.CheckedInputStream;
+import java.util.zip.Adler32;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public class OS {
 
 	private static Logger logger = Logger.getLogger(OS.class);
@@ -204,6 +211,22 @@ public class OS {
 		  }
 	}
 	
+	public static long getAlder32(File f) {
+		try {
+			FileInputStream inputStream = new FileInputStream(f);
+			Adler32 adlerChecksum = new Adler32();
+			CheckedInputStream cinStream = new CheckedInputStream(inputStream, adlerChecksum);
+			byte[] b = new byte[128];
+			while (cinStream.read(b) >= 0) {
+			}
+			long checksum = cinStream.getChecksum().getValue();
+			cinStream.close();
+			return checksum;
+		} catch (IOException e) {
+			return 0;
+		}
+	}
+
 	public static String getMD5(File f) {
 		byte[] buffer = new byte[8192];
 		int read = 0;

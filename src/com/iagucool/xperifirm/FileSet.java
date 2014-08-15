@@ -15,6 +15,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.system.OS;
 import org.system.URLDownloader;
 
 public class FileSet {
@@ -25,6 +26,7 @@ public class FileSet {
 	private int id;
 	private TreeMap<Integer, String> map = new TreeMap<Integer, String>();
 	private static Logger logger = Logger.getLogger(FileSet.class);
+	private long FSChecksum = 0;
 	
 	public String getName() {
 		return FSName;
@@ -48,14 +50,19 @@ public class FileSet {
 		destFolder=folder;
 	}
 	
+	public void setCheckSum(long lsum) {
+		FSChecksum=lsum;
+	}
+
 	public int getNbFiles() {
 		return nbparts;
 	}
 	
-	public void download() throws IOException {
+	public boolean download() {
+		try {
 		if (new File(destFolder+File.separator+FSName).exists()) {
 			logger.info("This FILESET is already downloaded");
-			return;
+			return true;
 		}
 		logger.info("Downloading "+FSName);
 		new File(destFolder).mkdirs();
@@ -70,6 +77,13 @@ public class FileSet {
 			ud.Download(url,destFolder+File.separator+FSName+"_temp");
 		}
 		FileUtils.moveFile(new File(destFolder+File.separator+FSName+"_temp"), new File(destFolder+File.separator+FSName));
+		long checksum = OS.getAlder32(new File(destFolder+File.separator+FSName));
+		if (checksum!=FSChecksum) new File(destFolder+File.separator+FSName).delete();
+		return (checksum==FSChecksum);
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 	
 	public void mergeFiles() {
