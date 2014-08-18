@@ -6,10 +6,12 @@ import java.io.ObjectInputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 //import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -40,6 +42,8 @@ import com.sonyericsson.cs.ma3.common.data.ng.ServiceSearchHistory;
 import com.sonyericsson.cs.ma3.common.data.ng.ServiceSearchHistoryEntry;
 import com.sonyericsson.cs.ma3.common.data.ng.ServiceSearchResultEntry;
 import com.sonyericsson.cs.ma3.common.data.ng.us.ScriptSearchInfo;
+import com.sonyericsson.cs.ma3.common.data.serviceclient.DataFile;
+import com.sonyericsson.cs.ma3.common.data.serviceclient.DataFileProperty;
 //import com.sonyericsson.cs.ma3.common.data.serviceclient.DataFile;
 import com.sonyericsson.cs.ma3.common.data.serviceclient.DataIdentifier;
 import com.sonymobile.cs.generic.charset.StandardCharset;
@@ -64,6 +68,7 @@ public class CDFInfoLoader
 		rootNode=doc.createElement("XperiFirm");
 		doc.appendChild(rootNode);
 		load(tac8, cda);
+		System.out.println(this);
 		FirmwaresList flist = new FirmwaresList();
 		NodeList nl = rootNode.getChildNodes();
 		for (int i=0;i<nl.getLength();i++) {
@@ -100,6 +105,7 @@ public class CDFInfoLoader
 			flist.add(f);
 		}
 		latest = flist.getLatest();
+		System.out.println(latest.getRelease()+ " / "+latest.getRevision());
 	}
 
 	private void load(String tac8, String cda)
@@ -131,91 +137,109 @@ public class CDFInfoLoader
 			}
 	}
 	
-	private void buildXML(ServiceSearchHistory obj)
+	private void buildXML(ServiceSearchHistory ssh)
 	{
+		Set<String> versions = new HashSet<String>();
 		
-			
-			Set<String> versions = new HashSet<String>();
-			
-			List<ServiceSearchHistoryEntry> sshEntries = obj.getServiceSearchHistoryList();
-			for (Iterator<ServiceSearchHistoryEntry> sshEntriesIt = sshEntries.iterator(); sshEntriesIt.hasNext();)
+		List<ServiceSearchHistoryEntry> sshEntries = ssh.getServiceSearchHistoryList();
+		for (Iterator<ServiceSearchHistoryEntry> sshEntriesIt = sshEntries.iterator(); sshEntriesIt.hasNext();)
+		{
+			List<ServiceSearchResultEntry> ssrEntries = sshEntriesIt.next().getServiceSearchResult().getServiceSearchResultEntryList();
+			for (Iterator<ServiceSearchResultEntry> ssrEntriesIt = ssrEntries.iterator(); ssrEntriesIt.hasNext();)
 			{
-				List<ServiceSearchResultEntry> ssrEntries = sshEntriesIt.next().getServiceSearchResult().getServiceSearchResultEntryList();
-				for (Iterator<ServiceSearchResultEntry> ssrEntriesIt = ssrEntries.iterator(); ssrEntriesIt.hasNext();)
+				ServiceSearchResultEntry ssrEntry = ssrEntriesIt.next();
+				List<ScriptSearchInfo> ssiEntries = ssrEntry.getScriptSearchInfoList().getScripts();
+				if (!ssiEntries.isEmpty())
 				{
-					ServiceSearchResultEntry ssrEntry = ssrEntriesIt.next();
-					List<ScriptSearchInfo> ssiEntries = ssrEntry.getScriptSearchInfoList().getScripts();
-					if (!ssiEntries.isEmpty())
+					ScriptSearchInfo ssiEntry = ssiEntries.get(0);
+					//Set<DataIdentifier> di = ssiEntry.getRevisionIdentifiers();
+					Set<DataFile> df = ssiEntry.getDataFiles();
+					
+					String iAppSWVer = null;
+					String iCDFVer = null;
+					String iLangRegion = null;
+					
+					/*for (Iterator<DataIdentifier> diItr = di.iterator(); diItr.hasNext();)
 					{
-						ScriptSearchInfo ssiEntry = ssiEntries.get(0);
-						Set<DataIdentifier> di = ssiEntry.getRevisionIdentifiers();
-						
-						String iAppSWVer = null;
-						String iCDFVer = null;
-						
-						for (Iterator<DataIdentifier> diItr = di.iterator(); diItr.hasNext();)
+						DataIdentifier diEntry = diItr.next();
+						switch (diEntry.getCategory())
 						{
-							DataIdentifier diEntry = diItr.next();
-							switch (diEntry.getCategory())
-							{
-								case "AppSWVer":
-								case "SoftwareRev":
-									iAppSWVer = diEntry.getValue();
-									break;
-								case "CDFVer":
-									iCDFVer = diEntry.getValue();
-									break;
-							}
+							case "AppSWVer":
+							case "SoftwareRev":
+								iAppSWVer = diEntry.getValue();
+								break;
+							case "CDFVer":
+								iCDFVer = diEntry.getValue();
+								break;
 						}
-						if (iAppSWVer == null || iCDFVer == null)
-							continue;
-						String verEntry = iAppSWVer + "/" + iCDFVer;
-						if (!versions.contains(verEntry))
+					}*/
+					for (Iterator<DataFile> dfItr = df.iterator(); dfItr.hasNext();)
+					{
+						DataFile dfEntry = dfItr.next();
+						String dfName = dfEntry.getFileName();
+						if (dfName != null && dfName.indexOf("FSP") == 0)
 						{
-							Element cdfNode = doc.createElement("release");
-							cdfNode.setAttribute("cdfVer", iCDFVer);
-							cdfNode.setAttribute("swVer", iAppSWVer);
+							Map<String, String> fileProps = new HashMap<String, String>();
 							
-							//HashMap<Long, String> files = new HashMap<Long, String>();
+							DataFileProperty[] dfp = dfEntry.getFileProperties();
+							int dfpLength = dfp.length;
+							for (int dfpIdx = 0; dfpIdx < dfpLength; ++dfpIdx)
+								fileProps.put(dfp[dfpIdx].getFilePropertyCategoryName(), dfp[dfpIdx].getFilePropertyValue());
 							
-							ServiceContent sc = (ServiceContent)ssrEntry.getServiceContent().values().toArray()[0];
-							//Set<DataFile> df = sc.getFiles();
-							//for (Iterator<DataFile> dfItr = df.iterator(); dfItr.hasNext();)
-							//{
-							//	DataFile dfEntry = dfItr.next();
-							//	files.put(dfEntry.getFileContentInfoId(), dfEntry.getFileName());
-							//}
-							
-							Set<DistributedFileInfo> dfi = sc.getDistributedFileInfos();
-							for (Iterator<DistributedFileInfo> dfiItr = dfi.iterator(); dfiItr.hasNext();)
-							{
-								DistributedFileInfo dfiEntry = dfiItr.next();
-								long fileId = dfiEntry.getFileContentInfoId();
-								//String fileName = files.get(fileId);
-								long fileLength = dfiEntry.getLength();
-								long fileChecksum = dfiEntry.getChecksum();
-								long fileChunkSize = dfiEntry.getChunkSize();
-								int filePartsCount = dfiEntry.getFilePartsCount();
-								
-								Element fileNode = doc.createElement("file");
-								fileNode.setAttribute("id", String.valueOf(fileId));
-								//fileNode.setAttribute("name", String.valueOf(fileName));
-								fileNode.setAttribute("length", String.valueOf(fileLength));
-								fileNode.setAttribute("checksum", Long.toString(fileChecksum));
-								if (filePartsCount > 1)
-									fileNode.setAttribute("chunk", String.valueOf(fileChunkSize));
-								fileNode.setAttribute("parts", String.valueOf(filePartsCount));
-								
-								cdfNode.appendChild(fileNode);
-							}
-							
-							rootNode.appendChild(cdfNode);
-							versions.add(verEntry);
+							iAppSWVer = fileProps.get("FSVer");
+							iCDFVer = fileProps.get("CDFVer");
+							iLangRegion = fileProps.get("LangRegion");
 						}
+					}
+					if (iAppSWVer == null || iCDFVer == null)
+						continue; // This shouldn't happen
+					String verEntry = iAppSWVer + "/" + iCDFVer;
+					if (!versions.contains(verEntry))
+					{
+						Element cdfNode = doc.createElement("release");
+						cdfNode.setAttribute("langRegion", iLangRegion);
+						cdfNode.setAttribute("cdfVer", iCDFVer);
+						cdfNode.setAttribute("swVer", iAppSWVer);
+						
+						//Map<Long, String> files = new HashMap<Long, String>();
+						
+						ServiceContent sc = (ServiceContent)ssrEntry.getServiceContent().values().toArray()[0];
+						//Set<DataFile> df = sc.getFiles();
+						//for (Iterator<DataFile> dfItr = df.iterator(); dfItr.hasNext();)
+						//{
+						//	DataFile dfEntry = dfItr.next();
+						//	files.put(dfEntry.getFileContentInfoId(), dfEntry.getFileName());
+						//}
+						
+						Set<DistributedFileInfo> dfi = sc.getDistributedFileInfos();
+						for (Iterator<DistributedFileInfo> dfiItr = dfi.iterator(); dfiItr.hasNext();)
+						{
+							DistributedFileInfo dfiEntry = dfiItr.next();
+							long fileId = dfiEntry.getFileContentInfoId();
+							//String fileName = files.get(fileId);
+							long fileLength = dfiEntry.getLength();
+							long fileChecksum = dfiEntry.getChecksum();
+							long fileChunkSize = dfiEntry.getChunkSize();
+							int filePartsCount = dfiEntry.getFileParts().size();
+							
+							Element fileNode = doc.createElement("file");
+							fileNode.setAttribute("id", String.valueOf(fileId));
+							//fileNode.setAttribute("name", String.valueOf(fileName));
+							fileNode.setAttribute("length", String.valueOf(fileLength));
+							fileNode.setAttribute("checksum", String.valueOf(fileChecksum));
+							if (filePartsCount > 1)
+								fileNode.setAttribute("chunk", String.valueOf(fileChunkSize));
+							fileNode.setAttribute("parts", String.valueOf(filePartsCount));
+							
+							cdfNode.appendChild(fileNode);
+						}
+						
+						rootNode.appendChild(cdfNode);
+						versions.add(verEntry);
 					}
 				}
 			}
-			
+		}
 	}
 	
 	public String toString() {

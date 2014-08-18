@@ -71,6 +71,7 @@ public class ModelUpdater {
 			}
 			return cdf.getRelease();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return "";
 		}
 	}
