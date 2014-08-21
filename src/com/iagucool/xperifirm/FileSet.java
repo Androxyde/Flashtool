@@ -62,7 +62,7 @@ public class FileSet {
 	public void cancelDownload() {
 		try {
 			ud.Cancel();
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (Exception e) {}
 	}
 	
 	public boolean download() {
@@ -91,45 +91,5 @@ public class FileSet {
 		catch (Exception e) {
 			return false;
 		}
-	}
-	
-	public void mergeFiles() {
-		 
-		FileWriter fstream = null;
-		BufferedWriter out = null;
-		try {
-			fstream = new FileWriter(destFolder+File.separator+FSName, true);
-			 out = new BufferedWriter(fstream);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
-		Iterator<Integer> i = map.keySet().iterator();
-		while (i.hasNext()) {
-			FileInputStream fis;
-			try {
-				File f = new File(map.get(i.next()));
-				fis = new FileInputStream(f);
-				BufferedReader in = new BufferedReader(new InputStreamReader(fis));
- 
-				String aLine;
-				while ((aLine = in.readLine()) != null) {
-					out.write(aLine);
-					out.newLine();
-				}
- 
-				in.close();
-				f.delete();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
- 
-		try {
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
- 
 	}
 }

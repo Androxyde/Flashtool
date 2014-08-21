@@ -75,5 +75,9 @@ public class Firmware {
 	public boolean isDownloaded() {
 		return isDownloaded;
 	}
+	
+	public void resetCancelation() {
+		isDownloadCanceled=false;
+	}
 
 }

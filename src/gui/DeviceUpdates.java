@@ -416,6 +416,7 @@ public class DeviceUpdates extends Dialog {
 					}
 			);
             	firm = mu.getFilesOf(cdfval);
+            	firm.resetCancelation();
             	Vector result = firm.download(_path);
             	if (firm.isDownloaded()) { 
         			Display.getDefault().asyncExec(
