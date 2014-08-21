@@ -68,7 +68,6 @@ public class CDFInfoLoader
 		rootNode=doc.createElement("XperiFirm");
 		doc.appendChild(rootNode);
 		load(tac8, cda);
-		System.out.println(this);
 		FirmwaresList flist = new FirmwaresList();
 		NodeList nl = rootNode.getChildNodes();
 		for (int i=0;i<nl.getLength();i++) {
@@ -105,7 +104,6 @@ public class CDFInfoLoader
 			flist.add(f);
 		}
 		latest = flist.getLatest();
-		System.out.println(latest.getRelease()+ " / "+latest.getRevision());
 	}
 
 	private void load(String tac8, String cda)
