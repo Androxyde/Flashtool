@@ -16,6 +16,8 @@ public class Firmware {
 	TreeMap<Integer, FileSet> map = new TreeMap<Integer, FileSet>();
 	private static Logger logger = Logger.getLogger(FileSet.class);
 	boolean isDownloaded = false;
+	boolean isDownloadCanceled = false;
+	FileSet currentFileset = null;
 	
 	public Firmware(String lversion, String lrevision) {
 		version = lversion;
@@ -51,18 +53,23 @@ public class Firmware {
     	Iterator<FileSet> i = getFileSets().iterator();
 		Vector result = new Vector();
 		boolean localDownloaded = true;
-		while (i.hasNext()) {
-			FileSet f = i.next();
-			f.setFolder(path);
-			if (f.download()) result.add(new File(path+File.separator+f.getName()));
+		while (i.hasNext() && !isDownloadCanceled) {
+			currentFileset = i.next();
+			currentFileset.setFolder(path);
+			if (currentFileset.download()) result.add(new File(path+File.separator+currentFileset.getName()));
 			else {
-				logger.error("Error downloading "+f.getName());
+				logger.error("Error downloading "+currentFileset.getName());
 				localDownloaded = false;
 			}
 			LogProgress.initProgress(0);
 		}
 		isDownloaded = localDownloaded;
 		return result;
+	}
+	
+	public void cancelDownload() {
+		currentFileset.cancelDownload();
+		isDownloadCanceled = true;
 	}
 	
 	public boolean isDownloaded() {

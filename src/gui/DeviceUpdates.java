@@ -68,6 +68,8 @@ public class DeviceUpdates extends Dialog {
 	protected Models models;
 	String bundleResult="";
 	private static Logger logger = Logger.getLogger(DeviceUpdates.class);
+	private DownloadJob dj;
+	private CheckJob cj;
 
 	/**
 	 * Create the dialog.
@@ -121,6 +123,11 @@ public class DeviceUpdates extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				if (closeButton.getText().equals("Close"))
 					shlDeviceUpdateChecker.dispose();
+				else if (closeButton.getText().equals("Cancel")) {
+					dj.Cancel();
+				}
+					
+
 			}
 		});
 		closeButton.setBounds(359, 239, 75, 25);
@@ -232,7 +239,7 @@ public class DeviceUpdates extends Dialog {
 	}
 
 	public void doDownload(TableLine tl, ModelUpdater mu) {
-    	DownloadJob dj = new DownloadJob("Download FW");
+    	dj = new DownloadJob("Download FW");
     	dj.setCDF(tl.getValueOf(0));
     	String path = OS.getWorkDir()+File.separator+"firmwares"+File.separator+"Downloads"+File.separator+mu.getModel()+"_"+tl.getValueOf(1).replaceAll(" ","_") + "_" + mu.getReleaseOf(tl.getValueOf(0));
     	dj.setPath(path);
@@ -241,7 +248,7 @@ public class DeviceUpdates extends Dialog {
 	}
 
 	public void doCheck(TableViewer tableViewer, TableLine tl, ModelUpdater mu) {
-		CheckJob cj = new CheckJob("Release checker");
+		cj = new CheckJob("Release checker");
 		cj.setTableLine(tl);
 		cj.setTableViewer(tableViewer);
 		cj.setModelUpdater(mu);
@@ -372,6 +379,7 @@ public class DeviceUpdates extends Dialog {
 		String cdfval;
 		ModelUpdater mu=null;
 		String _path = "";
+		Firmware firm;
 
 		public DownloadJob(String name) {
 			super(name);
@@ -389,6 +397,10 @@ public class DeviceUpdates extends Dialog {
 			cdfval = cdf;
 		}
 		
+		public void Cancel() {
+			firm.cancelDownload();
+		}
+		
 		public void setPath(String path) {
 			_path = path;
 			logger.info("Saving firmware to " + _path);
@@ -403,9 +415,9 @@ public class DeviceUpdates extends Dialog {
 						}
 					}
 			);
-            	Firmware v = mu.getFilesOf(cdfval);
-            	Vector result = v.download(_path);
-            	if (v.isDownloaded()) { 
+            	firm = mu.getFilesOf(cdfval);
+            	Vector result = firm.download(_path);
+            	if (firm.isDownloaded()) { 
         			Display.getDefault().asyncExec(
         					new Runnable() {
         						public void run() {
@@ -452,6 +464,16 @@ public class DeviceUpdates extends Dialog {
     					});
     					dec.setFiles(result);
     					dec.schedule();
+            	}
+            	else {
+					Display.getDefault().syncExec(
+							new Runnable() {
+								public void run() {
+						    		lblInfo.setText("");
+									closeButton.setText("Close");
+								}
+							}
+					);            		
             	}
 			    return Status.OK_STATUS;
 	    }

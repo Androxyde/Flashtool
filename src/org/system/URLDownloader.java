@@ -16,6 +16,8 @@ public class URLDownloader {
 	long mFileLength = 0;
 	long mDownloaded = -1;
 	String strLastModified = "";
+	BufferedInputStream input = null;
+	boolean canceled = false;
 	private static Logger logger = Logger.getLogger(URLDownloader.class);
 	
 	public void Download(String strurl, String filedest) throws IOException {
@@ -32,7 +34,7 @@ public class URLDownloader {
 
         // Setup streams and buffers.
         int chunk = 131072;
-        BufferedInputStream input = new BufferedInputStream(connection.getInputStream(), chunk);
+        input = new BufferedInputStream(connection.getInputStream(), chunk);
         RandomAccessFile outFile = new RandomAccessFile(fdest, "rw");
         outFile.seek(fdest.length());
         
@@ -47,9 +49,15 @@ public class URLDownloader {
             LogProgress.updateProgressValue((int) (mDownloaded * 100 / mFileLength));
             if (mDownloaded >= mFileLength)
                 break;
+            if (canceled) break;
         }
         // Close streams.
         outFile.close();
         input.close();
+        if (canceled) throw new IOException("Job canceled");
+	}
+	
+	public void Cancel() {
+		canceled = true;
 	}
 }

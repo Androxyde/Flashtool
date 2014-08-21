@@ -27,6 +27,7 @@ public class FileSet {
 	private TreeMap<Integer, String> map = new TreeMap<Integer, String>();
 	private static Logger logger = Logger.getLogger(FileSet.class);
 	private long FSChecksum = 0;
+	URLDownloader ud=null;
 	
 	public String getName() {
 		return FSName;
@@ -58,28 +59,34 @@ public class FileSet {
 		return nbparts;
 	}
 	
+	public void cancelDownload() {
+		try {
+			ud.Cancel();
+		} catch (Exception e) {e.printStackTrace();}
+	}
+	
 	public boolean download() {
 		try {
-		if (new File(destFolder+File.separator+FSName).exists()) {
-			logger.info("This FILESET is already downloaded");
-			return true;
-		}
-		logger.info("Downloading "+FSName);
-		new File(destFolder).mkdirs();
-		Iterator<Integer> i = map.keySet().iterator();
-		URLDownloader ud = new URLDownloader();
-		while (i.hasNext()) {
-			Integer key = i.next();
-			String url = map.get(key);
-			String f = url.substring(url.lastIndexOf("/")+1);
-			if (map.size()>1)
-			logger.info("   Downloading part "+key+" of "+map.size());
-			ud.Download(url,destFolder+File.separator+FSName+"_temp");
-		}
-		FileUtils.moveFile(new File(destFolder+File.separator+FSName+"_temp"), new File(destFolder+File.separator+FSName));
-		long checksum = OS.getAlder32(new File(destFolder+File.separator+FSName));
-		if (checksum!=FSChecksum) new File(destFolder+File.separator+FSName).delete();
-		return (checksum==FSChecksum);
+			if (new File(destFolder+File.separator+FSName).exists()) {
+				logger.info("This FILESET is already downloaded");
+				return true;
+			}
+			logger.info("Downloading "+FSName);
+			new File(destFolder).mkdirs();
+			Iterator<Integer> i = map.keySet().iterator();
+			ud = new URLDownloader();
+			while (i.hasNext()) {
+				Integer key = i.next();
+				String url = map.get(key);
+				String f = url.substring(url.lastIndexOf("/")+1);
+				if (map.size()>1)
+				logger.info("   Downloading part "+key+" of "+map.size());
+				ud.Download(url,destFolder+File.separator+FSName+"_temp");
+			}
+			FileUtils.moveFile(new File(destFolder+File.separator+FSName+"_temp"), new File(destFolder+File.separator+FSName));
+			long checksum = OS.getAlder32(new File(destFolder+File.separator+FSName));
+			if (checksum!=FSChecksum) new File(destFolder+File.separator+FSName).delete();
+			return (checksum==FSChecksum);
 		}
 		catch (Exception e) {
 			return false;
