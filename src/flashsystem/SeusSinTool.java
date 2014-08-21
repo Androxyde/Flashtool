@@ -5,6 +5,9 @@ import java.io.*;
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
 
+import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
+import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
+
 public class SeusSinTool {
 
 	public static void decrypt(String sinfile) {
@@ -12,7 +15,8 @@ public class SeusSinTool {
 		try {
 			String folder = new File((new File(sinfile)).getParent()).getAbsolutePath();
 			FileInputStream f = new FileInputStream(sinfile);
-			com.sonyericsson.cs.ma3.common.security.a in = new com.sonyericsson.cs.ma3.common.security.a(f);
+			//DecodeInputStream in = new DecodeInputStream(f);
+			RC4DecryptingInputStream in = new RC4DecryptingInputStream(f);
 	        String basefile = sinfile+"_dek";
 	        OutputStream out = new FileOutputStream(basefile+".zip.gz");
 	        int len;
@@ -71,7 +75,9 @@ public class SeusSinTool {
 	        	OS.ZipExplode(folder+File.separator+"boot.zip");
 	        	new File(folder+File.separator+"boot.zip").delete();
 	        }
-	      } catch(IOException e) {}
+	      } catch(IOException e) {
+	    	  e.printStackTrace();
+	      }
 	}
 
 	  public static void encrypt(String tgzfile) {
@@ -79,7 +85,7 @@ public class SeusSinTool {
 	      try {
 	    	  String outname = tgzfile.replaceAll(".tgz", ".sin");
 	    	  FileInputStream in = new FileInputStream(tgzfile);
-	    	  com.sonyericsson.cs.ma3.common.security.b out = new com.sonyericsson.cs.ma3.common.security.b(new FileOutputStream(outname));
+	    	  RC4EncryptingOutputStream out = new RC4EncryptingOutputStream(new FileOutputStream(outname));
 	    	  int len;
 	    	  while((len = in.read(buf)) >= 0) {
 	    		  if (len > 0)
