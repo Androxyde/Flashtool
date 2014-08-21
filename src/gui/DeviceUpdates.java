@@ -104,7 +104,7 @@ public class DeviceUpdates extends Dialog {
 		shlDeviceUpdateChecker = new Shell(getParent(), getStyle());
 		shlDeviceUpdateChecker.addListener(SWT.Close, new Listener() {
 		      public void handleEvent(Event event) {
-		    	  event.doit=closeButton.isEnabled();
+		    	  event.doit=closeButton.getText().equals("Close");
 		      }
 		    });
 
@@ -119,7 +119,8 @@ public class DeviceUpdates extends Dialog {
 		closeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				shlDeviceUpdateChecker.dispose();
+				if (closeButton.getText().equals("Close"))
+					shlDeviceUpdateChecker.dispose();
 			}
 		});
 		closeButton.setBounds(359, 239, 75, 25);
@@ -155,7 +156,7 @@ public class DeviceUpdates extends Dialog {
 						  menuMgr.addMenuListener(new IMenuListener() {
 						    @Override
 						    public void menuAboutToShow(IMenuManager manager) {
-						    	  if (closeButton.isEnabled()) {
+						    	  if (closeButton.getText().equals("Close")) {
 								    	TableLine tl = (TableLine)tableViewer.getTable().getSelection()[0].getData();
 								    	if (tl.getValueOf(2).length()==0) {
 									    	manager.add(new Action("Check release") {
@@ -194,7 +195,7 @@ public class DeviceUpdates extends Dialog {
 						tableViewer.setInput(result);
 						tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
 						      public void handleEvent(Event e) {
-						    	  if (closeButton.isEnabled()) {
+						    	  if (closeButton.getText().equals("Close")) {
 							    	  TableLine tl = (TableLine)tableViewer.getTable().getSelection()[0].getData();
 							    	  if (tl.getValueOf(2).length()==0) {
 							    		  	doCheck(tableViewer,tl,mu);
@@ -323,7 +324,7 @@ public class DeviceUpdates extends Dialog {
 					Display.getDefault().asyncExec(
 							new Runnable() {
 								public void run() {
-									closeButton.setEnabled(true);
+									closeButton.setText("Close");
 									lblInfo.setText("");
 								}
 							}
@@ -345,7 +346,7 @@ public class DeviceUpdates extends Dialog {
 			Display.getDefault().asyncExec(
 					new Runnable() {
 						public void run() {
-							closeButton.setEnabled(false);
+							closeButton.setText("Cancel");
 							lblInfo.setText("Checking latest release. Please wait ...");
 						}
 					}
@@ -397,7 +398,7 @@ public class DeviceUpdates extends Dialog {
 			Display.getDefault().asyncExec(
 					new Runnable() {
 						public void run() {
-							closeButton.setEnabled(false);
+							closeButton.setText("Cancel");
 							lblInfo.setText("Downloading latest release. Please wait ...");
 						}
 					}
@@ -431,7 +432,7 @@ public class DeviceUpdates extends Dialog {
     								    		cre.setVersion(mu.getReleaseOf(cdfval));
     								    		bundleResult = (String)cre.open(_path);
     								    		lblInfo.setText("");
-    	    									closeButton.setEnabled(true);
+    	    									closeButton.setText("Close");
     										}
     									}
     							);
