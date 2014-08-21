@@ -33,7 +33,7 @@
 	<classpathentry kind="lib" path="libs/ui.workbench.jar"/>
 	<classpathentry kind="lib" path="libs/ini4j-0.5.2.jar"/>
 	<classpathentry kind="lib" path="libs/jgit.jar"/>
-	<classpathentry kind="lib" path="libs/sony.zip"/>
+	<classpathentry kind="lib" path="libs/sony.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
