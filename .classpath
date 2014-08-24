@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="libs/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-4.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/js.jar"/>
-	<classpathentry kind="lib" path="libs/jopt-simple-4.6.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/swt64.jar"/>
 	<classpathentry kind="lib" path="libs/com.ibm.icu.jar"/>
 	<classpathentry kind="lib" path="libs/core.commands.jar"/>
@@ -34,6 +33,7 @@
 	<classpathentry kind="lib" path="libs/ini4j-0.5.2.jar"/>
 	<classpathentry kind="lib" path="libs/jgit.jar"/>
 	<classpathentry kind="lib" path="libs/sony.jar"/>
+	<classpathentry kind="lib" path="libs/jopt-simple-4.7.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
