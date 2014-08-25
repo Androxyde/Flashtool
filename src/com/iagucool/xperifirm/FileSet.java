@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.system.OS;
+import org.system.TextFile;
 import org.system.URLDownloader;
 
 public class FileSet {
@@ -75,13 +76,30 @@ public class FileSet {
 			new File(destFolder).mkdirs();
 			Iterator<Integer> i = map.keySet().iterator();
 			ud = new URLDownloader();
+			long seek=0;
 			while (i.hasNext()) {
 				Integer key = i.next();
 				String url = map.get(key);
 				String f = url.substring(url.lastIndexOf("/")+1);
-				if (map.size()>1)
-				logger.info("   Downloading part "+key+" of "+map.size());
-				ud.Download(url,destFolder+File.separator+FSName+"_temp");
+				if (map.size()>1) {
+					if (!new File(destFolder+File.separator+"Part_"+key+".flag").exists()) {
+						logger.info("   Downloading part "+key+" of "+map.size());
+						long downloaded  = ud.Download(url,destFolder+File.separator+FSName+"_temp",seek);
+						seek+=downloaded;
+						TextFile tf = new TextFile(destFolder+File.separator+"Part_"+key+".flag","ISO8859-1");
+						tf.open(false);
+						tf.write(Long.toString(seek));
+						tf.close();
+					}
+					else {
+						logger.info("Part "+key+" of "+map.size()+" already downloaded");
+						TextFile tf = new TextFile(destFolder+File.separator+"Part_"+key+".flag","ISO8859-1");
+						String sseek = tf.getLines().iterator().next();
+						seek = new Long(sseek);
+					}
+				}
+				else
+					ud.Download(url,destFolder+File.separator+FSName+"_temp",seek);
 			}
 			FileUtils.moveFile(new File(destFolder+File.separator+FSName+"_temp"), new File(destFolder+File.separator+FSName));
 			long checksum = OS.getAlder32(new File(destFolder+File.separator+FSName));
