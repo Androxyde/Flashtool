@@ -92,7 +92,7 @@ public class FileSet {
 						tf.close();
 					}
 					else {
-						logger.info("Part "+key+" of "+map.size()+" already downloaded");
+						logger.info("   Part "+key+" of "+map.size()+" already downloaded");
 						TextFile tf = new TextFile(destFolder+File.separator+"Part_"+key+".flag","ISO8859-1");
 						String sseek = tf.getLines().iterator().next();
 						seek = new Long(sseek);
@@ -104,6 +104,11 @@ public class FileSet {
 			FileUtils.moveFile(new File(destFolder+File.separator+FSName+"_temp"), new File(destFolder+File.separator+FSName));
 			long checksum = OS.getAlder32(new File(destFolder+File.separator+FSName));
 			if (checksum!=FSChecksum) new File(destFolder+File.separator+FSName).delete();
+			Iterator<Integer> it = map.keySet().iterator();
+			while (it.hasNext()) {
+				Integer key = it.next();
+				new File(destFolder+File.separator+"Part_"+key+".flag").delete();
+			}
 			return (checksum==FSChecksum);
 		}
 		catch (Exception e) {
