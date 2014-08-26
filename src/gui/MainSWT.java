@@ -121,10 +121,10 @@ public class MainSWT {
 		WidgetsTool.setSize(shlSonyericsson);
 		guimode=true;
 		shlSonyericsson.open();
-		WidgetTask.setMenuName(mntmAdvanced,GlobalConfig.getProperty("devfeatures").equals("yes")?"Advanced":"");
 		shlSonyericsson.layout();
 		WaitForDevicesSync sync = new WaitForDevicesSync(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 		sync.open();
+		WidgetTask.setEnabled(mntmAdvanced,GlobalConfig.getProperty("devfeatures").equals("yes"));
 		StatusListener phoneStatus = new StatusListener() {
 			public void statusChanged(StatusEvent e) {
 				if (!e.isDriverOk()) {
@@ -214,8 +214,20 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				boolean ispro = GlobalConfig.getProperty("devfeatures").equals("yes");
     			GlobalConfig.setProperty("devfeatures", ispro?"no":"yes");
-    			WidgetTask.setMenuName(mntmAdvanced,ispro?"":"Advanced");
-    			mntmSwitchPro.setText(!ispro?"Switch Simple":"Switch Pro");
+				ispro = GlobalConfig.getProperty("devfeatures").equals("yes");
+    			WidgetTask.setEnabled(mntmAdvanced,ispro);
+    			if (ispro) {
+	    			if (Devices.HasOneAdbConnected()) {
+	    				boolean hasRoot = Devices.getCurrent().hasRoot();
+	    				WidgetTask.setEnabled(mntmRawRestore,hasRoot);
+	    				WidgetTask.setEnabled(mntmRawBackup,hasRoot);
+	    			}
+	    			else {
+	    				WidgetTask.setEnabled(mntmRawRestore,false);
+	    				WidgetTask.setEnabled(mntmRawBackup,false);	    				
+	    			}
+    			}
+    			mntmSwitchPro.setText(ispro?"Switch Simple":"Switch Pro");
     			//mnDev.setVisible(!ispro);
     			//mntmSwitchPro.setText(Language.getMessage(mntmSwitchPro.getName()));
     		    //mnDev.setText(Language.getMessage(mnDev.getName()));
@@ -1077,8 +1089,10 @@ public class MainSWT {
 		WidgetTask.setEnabled(mntmInstallBusybox,hasRoot);
 		WidgetTask.setEnabled(tltmClean,hasRoot);
 		WidgetTask.setEnabled(tltmRecovery,hasRoot&&Devices.getCurrent().canRecovery());
-		WidgetTask.setEnabled(mntmRawRestore,hasRoot);
-		WidgetTask.setEnabled(mntmRawBackup,hasRoot);
+		if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
+			WidgetTask.setEnabled(mntmRawRestore,hasRoot);
+			WidgetTask.setEnabled(mntmRawBackup,hasRoot);
+		}
 		WidgetTask.setEnabled(tltmAskRoot,!hasRoot);
 		if (!Devices.isWaitingForReboot())
 			if (hasRoot) {

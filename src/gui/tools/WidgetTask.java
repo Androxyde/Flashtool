@@ -39,7 +39,7 @@ public class WidgetTask {
 	}
 
 	public static void setMenuName(final MenuItem item, final String text) {
-		Display.getDefault().asyncExec(
+		Display.getDefault().syncExec(
 				new Runnable() {
 					public void run() {
 						item.setText(text);
