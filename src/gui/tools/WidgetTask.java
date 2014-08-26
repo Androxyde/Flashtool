@@ -52,10 +52,19 @@ public class WidgetTask {
 		Display.getDefault().asyncExec(
 				new Runnable() {
 					public void run() {
-						item.setEnabled(status);
+						WidgetTask.setMenuEnabled(item, status);
 					}
 				}
 		);
+	}
+
+	private static void setMenuEnabled(MenuItem item, boolean status) {
+		if (item.getMenu()!=null) {;
+		MenuItem[] mit = item.getMenu().getItems();
+		for (int i=0;i<mit.length;i++)
+			WidgetTask.setMenuEnabled(mit[i],status);
+		}
+		item.setEnabled(status);	
 	}
 
 	public static void setEnabled(final Button item, final boolean status) {

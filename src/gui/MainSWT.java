@@ -121,6 +121,7 @@ public class MainSWT {
 		WidgetsTool.setSize(shlSonyericsson);
 		guimode=true;
 		shlSonyericsson.open();
+		WidgetTask.setMenuName(mntmAdvanced,GlobalConfig.getProperty("devfeatures").equals("yes")?"Advanced":"");
 		shlSonyericsson.layout();
 		WaitForDevicesSync sync = new WaitForDevicesSync(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 		sync.open();
@@ -213,7 +214,7 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				boolean ispro = GlobalConfig.getProperty("devfeatures").equals("yes");
     			GlobalConfig.setProperty("devfeatures", ispro?"no":"yes");
-    			mntmAdvanced.setEnabled(!ispro);
+    			WidgetTask.setMenuName(mntmAdvanced,ispro?"":"Advanced");
     			mntmSwitchPro.setText(!ispro?"Switch Simple":"Switch Pro");
     			//mnDev.setVisible(!ispro);
     			//mntmSwitchPro.setText(Language.getMessage(mntmSwitchPro.getName()));
@@ -235,11 +236,10 @@ public class MainSWT {
 		mntmNoDevice = new MenuItem(menu, SWT.CASCADE);
 		mntmNoDevice.setText("No Device");
 		mntmNoDevice.setEnabled(false);
+		Menu menu_device = new Menu(mntmNoDevice);
+		mntmNoDevice.setMenu(menu_device);
 		
-		Menu menu_8 = new Menu(mntmNoDevice);
-		mntmNoDevice.setMenu(menu_8);
-		
-		MenuItem mntmRoot = new MenuItem(menu_8, SWT.CASCADE);
+		MenuItem mntmRoot = new MenuItem(menu_device, SWT.CASCADE);
 		mntmRoot.setText("Root");
 		
 		Menu menu_10 = new Menu(mntmRoot);
@@ -308,7 +308,7 @@ public class MainSWT {
 		});
 		mntmTowelroot.setText("Force towelroot");
 		
-		MenuItem mntmBackupSystemApps = new MenuItem(menu_8, SWT.NONE);
+		MenuItem mntmBackupSystemApps = new MenuItem(menu_device, SWT.NONE);
 		mntmBackupSystemApps.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -318,7 +318,7 @@ public class MainSWT {
 		});
 		mntmBackupSystemApps.setText("Backup system apps");
 		
-		mntmInstallBusybox = new MenuItem(menu_8, SWT.NONE);
+		mntmInstallBusybox = new MenuItem(menu_device, SWT.NONE);
 		mntmInstallBusybox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -332,7 +332,7 @@ public class MainSWT {
 		});
 		mntmInstallBusybox.setText("Install busybox");
 		
-		MenuItem mntmLaunchServicemenu = new MenuItem(menu_8, SWT.NONE);
+		MenuItem mntmLaunchServicemenu = new MenuItem(menu_device, SWT.NONE);
 		mntmLaunchServicemenu.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -346,7 +346,7 @@ public class MainSWT {
 		});
 		mntmLaunchServicemenu.setText("Launch ServiceMenu");
 		
-		MenuItem mntmReboot = new MenuItem(menu_8, SWT.NONE);
+		MenuItem mntmReboot = new MenuItem(menu_device, SWT.NONE);
 		mntmReboot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -521,7 +521,6 @@ public class MainSWT {
 		});
 		mntmRawRestore.setText("Restore");
 		mntmRawRestore.setEnabled(false);
-		mntmAdvanced.setEnabled(GlobalConfig.getProperty("devfeatures").equals("yes"));
 		MenuItem mntmDevices = new MenuItem(menu, SWT.CASCADE);
 		mntmDevices.setText("Devices");
 		
