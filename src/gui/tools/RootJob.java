@@ -338,6 +338,7 @@ public class RootJob extends Job {
 			if (pck.length()>0) {
 				doPushRootFiles(pck,false);
 				String tr=OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"tr_mod.apk";
+				OS.decrypt(new File(tr+".enc"));
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"zxz.sh", "/data/local/tmp/");
 				AdbUtility.run("chmod 755 /data/local/tmp/zxz.sh");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"wp_mod.ko", "/data/local/tmp/");
@@ -346,6 +347,8 @@ public class RootJob extends Job {
 				AdbUtility.run("chmod 755 /data/local/tmp/writekmem");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"findricaddr", "/data/local/tmp/");
 				AdbUtility.run("chmod 755 /data/local/tmp/findricaddr");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"modulecrcpatch", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/modulecrcpatch");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"install_root.sh", "/data/local/tmp/");
 				AdbUtility.run("chmod 755 /data/local/tmp/install_root.sh");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"towelroot"+File.separator+"install_root.sh", "/data/local/tmp/");
@@ -380,6 +383,7 @@ public class RootJob extends Job {
 				AdbUtility.run("rm /data/local/tmp/ricaddr");
 				AdbUtility.run("rm /data/local/tmp/zxz_run");
 				AdbUtility.run("rm /data/local/tmp/antiric");
+				AdbUtility.run("rm /data/local/tmp/modulecrcpatch");
 				logger.info("Rebooting device");
 				Devices.getCurrent().reboot();
 			}
@@ -399,11 +403,8 @@ public class RootJob extends Job {
 			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"su", GlobalConfig.getProperty("deviceworkdir")+"/su");
 			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"Superuser.apk", GlobalConfig.getProperty("deviceworkdir")+"/Superuser.apk");
 			if (rootpackage.toLowerCase().equals("supersu")) {
-				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"chattr", GlobalConfig.getProperty("deviceworkdir")+"/chattr");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"install-recovery.sh", GlobalConfig.getProperty("deviceworkdir")+"/install-recovery.sh");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"99SuperSUDaemon", GlobalConfig.getProperty("deviceworkdir")+"/99SuperSUDaemon");
-				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"sugote-mksh", GlobalConfig.getProperty("deviceworkdir")+"/sugote-mksh");
-				AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/chattr",true);
 			}
 			AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 			
