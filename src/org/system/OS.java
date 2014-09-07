@@ -37,6 +37,9 @@ import org.apache.log4j.Logger;
 import org.logger.LogProgress;
 import org.logger.MyLogger;
 
+import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
+import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
+
 import flashsystem.HexDump;
 import gui.About;
 
@@ -288,80 +291,6 @@ public class OS {
 	    return fileTree;
 	}
 
-	public static void decrypt(File in) throws Exception {
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		FileInputStream keyfis = new FileInputStream(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"keys"+File.separator+"privkey");
-		byte[] encKey = new byte[keyfis.available()];
-		keyfis.read(encKey);
-		keyfis.close();
-		PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(encKey);
-		PrivateKey privKey = keyFactory.generatePrivate(privKeySpec);
-		encryptDecryptFile(in.getAbsolutePath(),in.getAbsolutePath()+".dec",privKey, Cipher.DECRYPT_MODE);
-	}
-
-	public static void encrypt(File in) throws Exception {
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		FileInputStream keyfis = new FileInputStream(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"keys"+File.separator+"pubkey");
-		byte[] decKey = new byte[keyfis.available()];
-		keyfis.read(decKey);
-		keyfis.close();
-		X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(decKey);
-		PublicKey pubKey = keyFactory.generatePublic(pubKeySpec);
-		encryptDecryptFile(in.getAbsolutePath(),in.getAbsolutePath()+".enc",pubKey, Cipher.ENCRYPT_MODE);
-	}
-
-	public static void encryptDecryptFile(String srcFileName, String destFileName, Key key, int cipherMode) throws Exception
-	{
-		if (srcFileName.endsWith(".enc")) {
-			destFileName=srcFileName.substring(0, srcFileName.lastIndexOf(".enc"));
-		}
-		OutputStream outputWriter = null;
-		InputStream inputReader = null;
-		if (cipherMode == Cipher.ENCRYPT_MODE)
-			logger.info("Encrypting "+srcFileName+" to "+destFileName);
-		else
-			logger.info("Decrypting "+srcFileName+" to "+destFileName);
-		try
-		{
-			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-			String textLine = null;
-			
-			byte[] buf = cipherMode == Cipher.ENCRYPT_MODE? new byte[100] : new byte[128];
-			int bufl;
-			// init the Cipher object for Encryption...
-			cipher.init(cipherMode, key);
-			
-			// start FileIO
-			outputWriter = new FileOutputStream(destFileName);
-			inputReader = new FileInputStream(srcFileName);
-			while ( (bufl = inputReader.read(buf)) != -1)
-			{
-				byte[] encText = null;
-				if (cipherMode == Cipher.ENCRYPT_MODE)
-					encText = encrypt(copyBytes(buf,bufl),(PublicKey)key);
-				else
-					encText = decrypt(copyBytes(buf,bufl),(PrivateKey)key);
-				outputWriter.write(encText);
-			}
-			outputWriter.flush();
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
-		finally
-		{
-			try
-			{
-				if (outputWriter != null)
-					outputWriter.close();
-				if (inputReader != null)
-					inputReader.close();
-			}
-			catch (Exception e)
-			{} 
-		}
-	}
 	
 	public static byte[] copyBytes(byte[] arr, int length)
 	{
@@ -377,46 +306,6 @@ public class OS {
 			}
 		}
 		return newArr;
-	}
-	
-	public static byte[] encrypt(byte[] text, PublicKey key) throws Exception
-	{
-		byte[] cipherText = null;
-		try
-		{
-			// get an RSA cipher object and print the provider
-			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-			
-			// encrypt the plaintext using the public key
-			cipher.init(Cipher.ENCRYPT_MODE, key );
-			cipherText = cipher.doFinal(text);
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
-		return cipherText;
-	}
-	
-	public static byte[] decrypt(byte[] text, PrivateKey key) throws Exception
-	{
-		byte[] dectyptedText = null;
-		try
-		{
-			// decrypt the text using the private key
-			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-			cipher.init(Cipher.DECRYPT_MODE, key);
-			try {
-				dectyptedText = cipher.doFinal(text);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
-		return dectyptedText;
 	}
 
 	public static RandomAccessFile generateEmptyFile(String fname, long size, byte fill) {
@@ -552,4 +441,43 @@ public class OS {
     		return "";
     	}
     }
+
+    public static void decrypt(File infile) {
+		byte[] buf = new byte[1024];
+		try {
+			if (!infile.getName().endsWith(".enc")) throw new IOException("Bad filename");
+			RC4DecryptingInputStream in = new RC4DecryptingInputStream(new FileInputStream(infile));
+			File outfile = new File(infile.getAbsolutePath().substring(0, infile.getAbsolutePath().length()-4));
+	        OutputStream out = new FileOutputStream(outfile);
+	        int len;
+	        while((len = in.read(buf)) >= 0) {
+	            out.write(buf, 0, len);
+	        }
+	        out.flush();
+	        out.close();
+	        in.close();
+	      } catch(IOException e) {
+	    	  e.printStackTrace();
+	      }
+	}
+
+	  public static void encrypt(File infile) {
+		  byte[] buf = new byte[1024];
+	      try {
+	    	  String outname = infile.getAbsolutePath()+".enc";
+	    	  FileInputStream in = new FileInputStream(infile);
+	    	  RC4EncryptingOutputStream out = new RC4EncryptingOutputStream(new FileOutputStream(outname));
+	    	  int len;
+	    	  while((len = in.read(buf)) >= 0) {
+	    		  if (len > 0)
+	    			  out.write(buf, 0, len);
+	    	  }
+	    	  out.flush();
+	    	  out.close();
+	    	  in.close();
+	      } catch(IOException e) {
+	        e.printStackTrace();
+	      }
+	  }
+
 }
