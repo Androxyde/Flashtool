@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Create Mac Package">
 
-	<target name="all" depends="loadprops, binaries, dotar"/>
+	<target name="all" depends="loadprops, binaries, dobundle"/>
 
 	<target name="main_lib" depends="loadprops">
         <jar destfile="../../Deploy/FlashTool/x10flasher.jar">
@@ -82,7 +82,7 @@
 	</target>
 
 	
-	<target name="dotar">
+	<target name="dobundle" depends="loadprops">
 		<delete dir="../../Deploy/FlashTool.app"/>
 		<copy todir="../../Deploy/FlashTool.app">
             <fileset dir="../ProgramExe/FlashTool.app"
@@ -93,14 +93,18 @@
 		        <include name="**/*" />
 		    </fileset>
 		</move>
-		<exec executable="hdiutil" dir="../../Deploy">
-		    <arg value="create"/>
-			<arg value="flashtool-${Internal-Version}-mac.dmg"/>
-			<arg value="-srcFolder"/>
-			<arg value="FlashTool.app"/>
-		</exec>
 	</target>
-	   
+	
+	<target name="dodmg">
+	<exec executable="hdiutil" dir="../../Deploy">
+	    <arg value="create"/>
+		<arg value="flashtool-${Internal-Version}-mac.dmg"/>
+		<arg value="-srcFolder"/>
+		<arg value="FlashTool.app"/>
+	</exec>
+	</target>
+
+
 	<!--
 	    Loads entries from a manifest file.
 	    @jar     The jar from where to read
