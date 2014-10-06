@@ -3,21 +3,19 @@ package org.system;
 import gui.models.ModelUpdater;
 import gui.models.Models;
 import gui.tools.WidgetTask;
-
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.adb.AdbUtility;
 import org.eclipse.swt.widgets.Display;
 
 public class DeviceEntry {
 
-
 	PropertiesFile _entry;
 	private static String fsep = OS.getFileSeparator();
 	private Boolean hasBusybox=null;
 	private boolean isRecoveryMode=false;
+	private HashSet<DeviceEntryModel> models = new HashSet<DeviceEntryModel>();
 	
 	public void queryAll() {
 		setVersion();
@@ -96,9 +94,10 @@ public class DeviceEntry {
 		_entry = new PropertiesFile();
 		try {
 			String path = OS.getWorkDir()+File.separator+"devices"+File.separator+Id+File.separator+Id+".properties";
-			_entry.open("",path);
+			_entry.open("",path);			
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 		}
 		                     
 	}
@@ -324,5 +323,15 @@ public class DeviceEntry {
 			}
 		}
 		return m;
+    }
+    
+    public HashSet<DeviceEntryModel> getModels() {
+    	if (models.size()==0) {
+			Iterator<String> ivariants = getVariantList().iterator();
+			while (ivariants.hasNext()) {
+				models.add(new DeviceEntryModel(this,ivariants.next()));
+			}
+    	}
+    	return models;
     }
 }

@@ -110,6 +110,7 @@ public class CDFInfoLoader
 	{
 		String filepath = userinfo.getProperty("user.name") + "/2/script/search/TAC8=" + tac8 + "/CDA=" + cda;
 		String ngHash = NGHash.generateHash(filepath);
+		//ProductInfoLoader pi = new ProductInfoLoader(userinfo.getProperty("user.name"));
 			try (InputStream is = new URL(nsDomain + "/" + nsRootPath + filepath + "_" + ngHash + nsFileExtension).openStream())
 			{
 				GZIPInputStream gzip_is = new GZIPInputStream(is);

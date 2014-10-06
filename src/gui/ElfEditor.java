@@ -22,7 +22,6 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.logger.MyLogger;
 import org.system.Elf;
 
 public class ElfEditor extends Dialog {

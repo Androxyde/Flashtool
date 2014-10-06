@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 public class AdbPhoneThread extends Thread {
 	

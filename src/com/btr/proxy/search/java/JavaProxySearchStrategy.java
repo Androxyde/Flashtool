@@ -3,7 +3,6 @@ package com.btr.proxy.search.java;
 import java.net.ProxySelector;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 import com.btr.proxy.search.ProxySearchStrategy;
 import com.btr.proxy.selector.fixed.FixedProxySelector;

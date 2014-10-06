@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.logger.MyLogger;
 
 public class TABackupSelector extends Dialog {
 

@@ -16,7 +16,6 @@ import java.util.jar.JarFile;
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
-import org.logger.MyLogger;
 
 public class FTDEntry {
 

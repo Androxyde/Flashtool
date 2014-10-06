@@ -23,7 +23,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.logger.MyLogger;
 import org.system.ULCodeFile;
 
 public class BLUWizard extends Dialog {

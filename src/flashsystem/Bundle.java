@@ -26,7 +26,6 @@ import java.util.zip.Deflater;
 
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
-import org.logger.MyLogger;
 import org.system.Devices;
 import org.system.OS;
 

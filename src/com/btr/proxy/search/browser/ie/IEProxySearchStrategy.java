@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 import com.btr.jna.LibWinHttp;
 import com.btr.jna.Win32IESettings;

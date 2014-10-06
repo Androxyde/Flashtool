@@ -22,7 +22,6 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.GridData;
-import org.logger.MyLogger;
 
 public class SinEditor extends Dialog {
 

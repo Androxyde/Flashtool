@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 /*****************************************************************************
  * Parser for the KDE settings file.

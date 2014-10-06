@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 /**
  * Responsible for describing an entry in the program header table

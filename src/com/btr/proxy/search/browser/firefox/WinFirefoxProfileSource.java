@@ -6,7 +6,6 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.ini4j.Ini;
-import org.logger.MyLogger;
 
 import com.btr.jna.WinShell;
 

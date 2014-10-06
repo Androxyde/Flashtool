@@ -17,12 +17,11 @@ import org.adb.FastbootUtility;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-import org.logger.MyLogger;
 
 public class Devices  {
 
 	private static DeviceEntry _current=null;;
-	private static Properties props = null;
+	public static Properties props = null;
 	private static boolean waitforreboot=false;
 	private static Logger logger = Logger.getLogger(Devices.class);
 	
@@ -199,7 +198,7 @@ public class Devices  {
 			DeviceEntry current = Devices.getDevice((String)e.nextElement());
 			if (current.getVariantList().contains(variant)) return current.getId();
 		}
-		return variant;
+		return "";
 	}
 	
 	public static String getIdFromRecognition(String variant) {

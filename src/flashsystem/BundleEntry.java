@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.util.jar.JarEntry;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 import org.system.OS;
 
 public class BundleEntry {

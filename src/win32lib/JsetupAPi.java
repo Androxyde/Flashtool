@@ -2,7 +2,6 @@ package win32lib;
 
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 import win32lib.SetupApi.HDEVINFO;
 

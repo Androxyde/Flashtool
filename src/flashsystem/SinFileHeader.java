@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 public class SinFileHeader {
 

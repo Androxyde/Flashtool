@@ -7,7 +7,6 @@ import linuxlib.JUsb;
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 import com.sun.jna.platform.win32.WinBase;
 

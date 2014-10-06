@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.JDOMException;
 import org.logger.LogProgress;
-import org.logger.MyLogger;
 import org.system.Device;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;

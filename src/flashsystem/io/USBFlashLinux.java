@@ -6,7 +6,6 @@ import flashsystem.X10FlashException;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 import linuxlib.JUsb;
 

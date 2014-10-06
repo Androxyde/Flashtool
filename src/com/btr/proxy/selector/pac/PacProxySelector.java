@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 import com.btr.proxy.util.ProxyUtil;
 

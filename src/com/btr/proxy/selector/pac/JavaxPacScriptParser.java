@@ -7,7 +7,6 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 /*****************************************************************************
  * PAC parser using the Rhino JavaScript engine bundled with Java 1.6<br/>

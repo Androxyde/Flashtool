@@ -35,7 +35,6 @@ import javax.crypto.Cipher;
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
-import org.logger.MyLogger;
 
 import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
 import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;

@@ -7,7 +7,6 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 public class XMLBootConfig {
 

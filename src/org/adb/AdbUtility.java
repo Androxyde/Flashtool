@@ -11,7 +11,6 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 import org.system.Devices;
 import org.system.GlobalConfig;
 import org.system.OS;

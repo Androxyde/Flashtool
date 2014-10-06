@@ -19,7 +19,6 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 /***************************************************************************
  * Implementation of PAC JavaScript functions.
