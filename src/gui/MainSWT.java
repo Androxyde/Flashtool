@@ -12,9 +12,7 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.Deflater;
-
 import linuxlib.JUsb;
-
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,7 +47,6 @@ import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.logger.TextAreaAppender;
 import org.system.AdbPhoneThread;
-import org.system.Device;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.DeviceProperties;
@@ -63,12 +60,9 @@ import org.system.Proxy;
 import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.system.UpdateURL;
-
 import flashsystem.Bundle;
 import flashsystem.SinFile;
 import flashsystem.X10flash;
-import gui.models.ModelUpdater;
-import gui.models.Models;
 import gui.tools.APKInstallJob;
 import gui.tools.BackupSystemJob;
 import gui.tools.BackupTAJob;
@@ -543,7 +537,7 @@ public class MainSWT {
 		mntmCheckDrivers.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Device.CheckAdbDrivers();
+				Devices.CheckAdbDrivers();
 			}
 		});
 		mntmCheckDrivers.setText("Check Drivers");
@@ -620,14 +614,7 @@ public class MainSWT {
 				if (result.length()>0) {
 					DeviceEntry entry = new DeviceEntry(result);
 					CustIdManager mng = new CustIdManager(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-					Iterator iv = entry.getVariantList().iterator();
-					Models models = new Models(entry);
-					while (iv.hasNext()) {
-						ModelUpdater m = new ModelUpdater(entry,(String)iv.next());
-						if (m.canCheck(true))
-							models.put(m.getModel(), m);
-					}
-					mng.open(models);
+					mng.open(entry);
 				}
 			}
 		});

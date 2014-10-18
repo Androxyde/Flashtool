@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.logger.LogProgress;
 import org.logger.MyLogger;
+import org.util.HexDump;
 
 import flashsystem.io.USBFlash;
 

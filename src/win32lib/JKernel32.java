@@ -1,7 +1,10 @@
 package win32lib;
 
 import java.io.IOException;
-import org.system.Device;
+
+import org.system.Devices;
+import org.util.BytesUtil;
+
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinBase;
@@ -10,7 +13,6 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
 
-import flashsystem.BytesUtil;
 
 public class JKernel32 {
 
@@ -23,7 +25,7 @@ public class JKernel32 {
         int shareMode = WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE;
         int Access = WinNT.GENERIC_WRITE | WinNT.GENERIC_READ;
 		HandleToDevice = Kernel32.INSTANCE.CreateFile(
-                Device.getConnectedDeviceWin32().getDevPath(), 
+                Devices.getConnectedDeviceWin32().getDevPath(), 
                 Access, 
                 shareMode, 
                 null, 
@@ -39,7 +41,7 @@ public class JKernel32 {
         int shareMode = WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE;
         int Access = WinNT.GENERIC_WRITE | WinNT.GENERIC_READ;
 		HandleToDevice = Kernel32.INSTANCE.CreateFile(
-                Device.getConnectedDeviceWin32().getDevPath(), 
+                Devices.getConnectedDeviceWin32().getDevPath(), 
                 Access, 
                 shareMode, 
                 null, 

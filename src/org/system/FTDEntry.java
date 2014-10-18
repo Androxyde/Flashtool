@@ -1,6 +1,5 @@
 package org.system;
 
-import flashsystem.BytesUtil;
 import gui.tools.MsgBox;
 
 import java.io.File;
@@ -16,6 +15,7 @@ import java.util.jar.JarFile;
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
+import org.util.BytesUtil;
 
 public class FTDEntry {
 

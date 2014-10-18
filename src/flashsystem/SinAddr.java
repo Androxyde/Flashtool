@@ -1,6 +1,6 @@
 package flashsystem;
 
-import flashsystem.BytesUtil;
+import org.util.BytesUtil;
 
 public class SinAddr {
 

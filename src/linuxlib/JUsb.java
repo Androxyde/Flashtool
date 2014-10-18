@@ -2,11 +2,12 @@ package linuxlib;
 
 import java.io.ByteArrayInputStream;
 
+import org.util.BytesUtil;
+
 import libusb.LibUsbException;
 import libusb.UsbDevList;
 import libusb.UsbDevice;
 import libusb.UsbSystem;
-import flashsystem.BytesUtil;
 
 public class JUsb {
 	

@@ -1,6 +1,8 @@
 package flashsystem;
 
 import org.system.OS;
+import org.util.BytesUtil;
+import org.util.HexDump;
 
 public class SinHashBlock {
 

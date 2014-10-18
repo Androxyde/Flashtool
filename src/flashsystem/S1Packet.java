@@ -2,6 +2,9 @@ package flashsystem;
 
 import java.io.FileOutputStream;
 
+import org.util.BytesUtil;
+import org.util.HexDump;
+
 
 public class S1Packet {
 

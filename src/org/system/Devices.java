@@ -1,22 +1,29 @@
 package org.system;
 
-import gui.tools.WidgetTask;
-
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
 import org.apache.log4j.Logger;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
+
+
+//import org.eclipse.swt.SWT;
+//import org.eclipse.swt.widgets.Shell;
+import java.util.Enumeration;
+
+import linuxlib.JUsb;
+
+import com.sun.jna.platform.win32.WinBase;
+
+import win32lib.JsetupAPi;
+import win32lib.SetupApi.HDEVINFO;
+
+import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
 
 public class Devices  {
 
@@ -24,7 +31,9 @@ public class Devices  {
 	public static Properties props = null;
 	private static boolean waitforreboot=false;
 	private static Logger logger = Logger.getLogger(Devices.class);
-	
+	static DeviceIdent lastid = new DeviceIdent();
+	static String laststatus = "";
+
 	public static boolean HasOneAdbConnected() {
 		return AdbUtility.isConnected();
 	}
@@ -121,7 +130,7 @@ public class Devices  {
 			sleep(20);
 			if (tobeforced) {
 				count++;
-				if (Device.getLastConnected(false).getStatus().equals("adb") && count==3000) {
+				if (Devices.getLastConnected(false).getStatus().equals("adb") && count==3000) {
 					logger.info("Forced stop waiting.");
 					waitforreboot=false;
 				}
@@ -209,5 +218,143 @@ public class Devices  {
 		}
 		return "N/A";
 	}
+
+	public static DeviceIdent getLastConnected(boolean force) {
+		if (force) return getConnectedDevice();
+		DeviceIdent id = null;
+		synchronized (lastid) {
+			id = new DeviceIdent(lastid);
+		}
+		return id;
+	}
+
+	public static synchronized DeviceIdent getConnectedDevice() {
+		DeviceIdent id;
+		if (OS.getName().equals("windows")) id=getConnectedDeviceWin32();
+		else id=getConnectedDeviceLinux();
+		int count=0;
+		while (!id.isDriverOk()) {
+			try {
+				Thread.sleep(200);
+			}
+			catch (Exception e) {
+			}
+			if (OS.getName().equals("windows")) id=getConnectedDeviceWin32();
+			else id=getConnectedDeviceLinux();
+			count++;
+			if (count==5) break;
+		}
+		return id;
+	}
+	
+    public static DeviceIdent getConnectedDeviceWin32() {
+    	DeviceIdent id = new DeviceIdent();
+    	HDEVINFO hDevInfo = JsetupAPi.getHandleForConnectedInterfaces();
+        if (hDevInfo.equals(WinBase.INVALID_HANDLE_VALUE)) {
+        	logger.error("Cannot have device list");
+        }
+        else {
+        	SP_DEVINFO_DATA DeviceInfoData;
+        	int index = 0;
+	        do {
+	        	DeviceInfoData = JsetupAPi.enumDevInfo(hDevInfo, index);
+	            String devid = JsetupAPi.getDevId(hDevInfo, DeviceInfoData);
+	            if (devid.contains("VID_0FCE")) {
+	            	id.addDevPath(JsetupAPi.getDevicePath(hDevInfo, DeviceInfoData));
+	            	id.addDevId(devid);
+	            	if (!JsetupAPi.isInstalled(hDevInfo, DeviceInfoData))
+	            		id.setDriverOk(devid,false);
+	            	else
+	            		id.setDriverOk(devid,true);
+	            }
+	            index++;
+	        } while (DeviceInfoData!=null);
+	        JsetupAPi.destroyHandle(hDevInfo);
+        }
+    	hDevInfo = JsetupAPi.getHandleForConnectedDevices();
+        if (hDevInfo.equals(WinBase.INVALID_HANDLE_VALUE)) {
+        	logger.error("Cannot have device list");
+        }
+        else {
+        	SP_DEVINFO_DATA DeviceInfoData;
+        	int index = 0;
+	        do {
+	        	DeviceInfoData = JsetupAPi.enumDevInfo(hDevInfo, index);
+	            String devid = JsetupAPi.getDevId(hDevInfo, DeviceInfoData);
+	            if (devid.contains("VID_0FCE")) {
+	            	id.addDevId(devid);
+	            	if (!JsetupAPi.isInstalled(hDevInfo, DeviceInfoData))
+	            		id.setDriverOk(devid,false);
+	            	else
+	            		id.setDriverOk(devid,true);
+	            }
+	            index++;
+	        } while (DeviceInfoData!=null);
+	        JsetupAPi.destroyHandle(hDevInfo);
+        }
+        synchronized (lastid) {
+    		lastid=id;
+    	}
+    	return id;
+    }
+
+    public static DeviceIdent getConnectedDeviceLinux() {
+    	DeviceIdent id = new DeviceIdent();
+    	try {
+    		JUsb.fillDevice(true);
+    		if (JUsb.getVendorId().equals("0FCE")) {
+	    		id.addDevId(JUsb.getVendorId(),JUsb.getProductId(),JUsb.getSerial());
+	        }
+	        synchronized (lastid) {
+	        	lastid=id;
+	        }
+    	}
+    	catch (UnsatisfiedLinkError e) {
+    		logger.error("libusb-1.0 is not installed");
+    		logger.error(e.getMessage());
+    	}
+    	catch (NoClassDefFoundError e1) {
+    	}
+    	return id;
+    }
+
+    public static void CheckAdbDrivers() {
+    	logger.info("List of connected devices (Device Id) :");
+    	DeviceIdent id=getLastConnected(false);
+    	String driverstatus;
+    	int maxsize = id.getMaxSize();
+    	Enumeration e = id.getIds().keys();
+    	while (e.hasMoreElements()) {
+    		String dev = (String)e.nextElement();
+    		String driver = id.getIds().getProperty(dev);
+    		logger.info("      - "+String.format("%1$-" + maxsize + "s", dev)+"\tDriver installed : "+driver);
+    	}
+	    logger.info("List of ADB devices :");
+	    Enumeration<String> e1 = AdbUtility.getDevices();
+	    if (e1.hasMoreElements()) {
+	    while (e1.hasMoreElements()) {
+	    	logger.info("      - "+e1.nextElement());
+	    }
+	    }
+	    else logger.info("      - none");
+	    logger.info("List of fastboot devices :");
+	    Enumeration<String> e2 = FastbootUtility.getDevices();
+	    if (e2.hasMoreElements()) {
+	    while (e2.hasMoreElements()) {
+	    	logger.info("      - "+e2.nextElement());
+	    }
+	    }
+	    else logger.info("      - none");
+    }
+
+    public static void clean() {
+    	if (!OS.getName().equals("windows"))
+			try {
+				JUsb.cleanup();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+    }
 
 }

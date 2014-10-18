@@ -14,8 +14,8 @@ import java.util.Map;
 
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
+import org.util.HexDump;
 
-import flashsystem.HexDump;
 
 /**
  * Describes an ELF32 binary. Ultimately intended for usage with Nachos 5.0j to

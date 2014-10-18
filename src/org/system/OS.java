@@ -29,25 +29,14 @@ import java.util.TimeZone;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import javax.crypto.Cipher;
-
-import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
-
+import org.util.HexDump;
 import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
 import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
-
-import flashsystem.HexDump;
-import gui.About;
-
 import java.util.zip.CheckedInputStream;
 import java.util.zip.Adler32;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class OS {
 
@@ -435,7 +424,7 @@ public class OS {
     
     public static String getChannel() {
     	try {
-    		return OS.getManifest(About.class).getMainAttributes().getValue("Internal-Channel");
+    		return OS.getManifest(OS.class).getMainAttributes().getValue("Internal-Channel");
     	} catch (Exception e) {
     		return "";
     	}

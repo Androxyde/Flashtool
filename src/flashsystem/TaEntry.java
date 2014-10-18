@@ -2,6 +2,9 @@ package flashsystem;
 
 import java.lang.Byte;
 
+import org.util.BytesUtil;
+import org.util.HexDump;
+
 public class TaEntry {
 
 	String _partition="";

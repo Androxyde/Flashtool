@@ -1,21 +1,13 @@
 package gui;
 
-import gui.models.CustIdItem;
-import gui.models.ModelUpdater;
-import gui.models.Models;
 import gui.models.TableLine;
 import gui.models.TableSorter;
 import gui.models.VectorContentProvider;
 import gui.models.VectorLabelProvider;
 import gui.tools.DecryptJob;
-import gui.tools.WidgetTask;
-
 import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
-
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -36,22 +28,18 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.system.DeviceEntry;
+import org.system.DeviceEntryModel;
+import org.system.DeviceEntryModelUpdater;
 import org.system.OS;
-import org.system.URLDownloader;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.logger.LogProgress;
-
-import com.iagucool.xperifirm.CDFInfoLoader;
-import com.iagucool.xperifirm.FileSet;
 import com.iagucool.xperifirm.Firmware;
 
 public class DeviceUpdates extends Dialog {
@@ -65,7 +53,6 @@ public class DeviceUpdates extends Dialog {
 	//protected CTabItem tabItem;
 	//private Table tableDevice;
 	//private TableViewer tableViewer;
-	protected Models models;
 	String bundleResult="";
 	private static Logger logger = Logger.getLogger(DeviceUpdates.class);
 	private DownloadJob dj;
@@ -136,23 +123,20 @@ public class DeviceUpdates extends Dialog {
 		lblInfo = new Label(shlDeviceUpdateChecker, SWT.NONE);
 		lblInfo.setBounds(11, 244, 342, 15);
 
-		fillMap();
 		FillJob fj = new FillJob("Update Search");
 		fj.schedule();
 	}
 
-	public void fillMap() {
-		models = _entry.getUpdatableModels(false);
-	}
 
-	public void addTab(final String tabtitle) {
+	public void addTab(final DeviceEntryModel model) {
+		if (model.canShowUpdates()) {
 		Display.getDefault().asyncExec(
 				new Runnable() {
 					public void run() {
 						Vector<TableLine> result = new Vector<TableLine>();
-						ModelUpdater mu = (ModelUpdater)models.get(tabtitle);
+						DeviceEntryModelUpdater mu = model.getUpdater();
 						CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
-						tabItem.setText(tabtitle.length()>0?tabtitle:_entry.getId());
+						tabItem.setText(model.getId());
 						TableViewer tableViewer = new TableViewer(tabFolder,SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.SINGLE);						
 						tableViewer.setContentProvider(new VectorContentProvider());
 						tableViewer.setLabelProvider(new VectorLabelProvider());
@@ -235,10 +219,10 @@ public class DeviceUpdates extends Dialog {
 					}
 				}
 		);
-		
+		}
 	}
 
-	public void doDownload(TableLine tl, ModelUpdater mu) {
+	public void doDownload(TableLine tl, DeviceEntryModelUpdater mu) {
     	dj = new DownloadJob("Download FW");
     	dj.setCDF(tl.getValueOf(0));
     	String path = OS.getWorkDir()+File.separator+"firmwares"+File.separator+"Downloads"+File.separator+mu.getModel()+"_"+tl.getValueOf(1).replaceAll(" ","_") + "_" + mu.getReleaseOf(tl.getValueOf(0));
@@ -247,7 +231,7 @@ public class DeviceUpdates extends Dialog {
     	dj.schedule();		
 	}
 
-	public void doCheck(TableViewer tableViewer, TableLine tl, ModelUpdater mu) {
+	public void doCheck(TableViewer tableViewer, TableLine tl, DeviceEntryModelUpdater mu) {
 		cj = new CheckJob("Release checker");
 		cj.setTableLine(tl);
 		cj.setTableViewer(tableViewer);
@@ -256,9 +240,9 @@ public class DeviceUpdates extends Dialog {
 	}
 	
 	public void fillTab() {
-		Iterator imodels = models.keySet().iterator();
+		Iterator<DeviceEntryModel> imodels = _entry.getModels().iterator();
 		while (imodels.hasNext()) {
-			addTab((String)imodels.next());
+			addTab(imodels.next());
 		}
 		Display.getDefault().asyncExec(
 				new Runnable() {
@@ -310,7 +294,7 @@ public class DeviceUpdates extends Dialog {
 		boolean canceled = false;
 		TableLine tl=null;
 		TableViewer tableViewer=null;
-		ModelUpdater mu=null;
+		DeviceEntryModelUpdater mu=null;
 
 		public void setTableLine(TableLine ptl) {
 			tl = ptl;
@@ -320,7 +304,7 @@ public class DeviceUpdates extends Dialog {
 			tableViewer = ptv;
 		}
 		
-		public void setModelUpdater(ModelUpdater pmu) {
+		public void setModelUpdater(DeviceEntryModelUpdater pmu) {
 			mu = pmu;
 		}
 		
@@ -345,7 +329,7 @@ public class DeviceUpdates extends Dialog {
 			canceled=true;
 		}
 		
-		public void setUpdater(ModelUpdater pmu) {
+		public void setUpdater(DeviceEntryModelUpdater pmu) {
 			mu=pmu;
 		}
 		
@@ -377,7 +361,7 @@ public class DeviceUpdates extends Dialog {
 
 		boolean canceled = false;
 		String cdfval;
-		ModelUpdater mu=null;
+		DeviceEntryModelUpdater mu=null;
 		String _path = "";
 		Firmware firm;
 
@@ -389,7 +373,7 @@ public class DeviceUpdates extends Dialog {
 			canceled=true;
 		}
 		
-		public void setUpdater(ModelUpdater pmu) {
+		public void setUpdater(DeviceEntryModelUpdater pmu) {
 			mu=pmu;
 		}
 		

@@ -11,6 +11,8 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
 import org.system.OS;
+import org.util.BytesUtil;
+import org.util.HexDump;
 
 
 public class SinFile {

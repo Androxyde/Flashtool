@@ -1,4 +1,4 @@
-package flashsystem;
+package org.util;
 
 import java.io.*;
 import java.text.DecimalFormat;
