@@ -1,12 +1,12 @@
 package gui;
 
 import java.util.Iterator;
-import gui.models.CustIdItem;
-import gui.models.ModelUpdater;
-import gui.models.Models;
+import java.util.Properties;
+
 import gui.models.TableLine;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -19,19 +19,19 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.system.DeviceEntry;
+import org.system.DeviceEntryModel;
+import org.system.DeviceEntryModelUpdater;
 import org.eclipse.swt.widgets.Combo;
 
 public class AddCustId extends Dialog {
 
-	protected CustIdItem result;
-	protected TableLine line = null;
 	protected Shell shlAddCdfID;
 	private Text textID;
 	private Combo comboModel;
-	private boolean showothermodels = true;
-	private Models _models;
 	private Text textName;
 	private DeviceEntry _entry;
+	private DeviceEntryModelUpdater _model;
+	Properties result=new Properties();
 
 	/**
 	 * Create the dialog.
@@ -47,30 +47,22 @@ public class AddCustId extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	public Object open(ModelUpdater m) {
-		_models = new Models(m.getDevice());
-		_models.put(m.getModel(), m);
-		showothermodels=false;
+	public Object open(DeviceEntryModelUpdater m) {
+		_model=m;
 		_entry = m.getDevice();
 		return commonOpen();
 	}
 
-	public Object open(ModelUpdater m, CustIdItem i) {
-		result=i;
-		_models = new Models(m.getDevice());
-		_models.put(m.getModel(), m);
+	public Object open(DeviceEntryModelUpdater m,String cda, String region) {
+		_model=m;
 		_entry = m.getDevice();
-		showothermodels=false;
+		result.setProperty("CDA", cda);
+		result.setProperty("REGION", region);
 		return commonOpen();
 	}
 
-	/**
-	 * Open the dialog.
-	 * @return the result
-	 */
-	public Object open(Models models) {
-		_models = models;
-		 _entry = _models.getDevice();
+	public Object open(DeviceEntry e) {
+		_entry = e;
 		return commonOpen();
 	}
 
@@ -84,22 +76,21 @@ public class AddCustId extends Dialog {
 		
 		textID = new Text(shlAddCdfID, SWT.BORDER);
 		textID.setBounds(10, 65, 194, 21);
-		if (result!=null) textID.setText(result.getDef().getValueOf(0));
+		//if (result!=null) textID.setText(result.getDef().getValueOf(0));
 		
 		comboModel = new Combo(shlAddCdfID, SWT.NONE);
 		comboModel.setBounds(60, 15, 144, 23);
 
-		if (!showothermodels) {
-			comboModel.add(((ModelUpdater)_models.values().iterator().next()).getModel());
+		if (_model!=null) {
+			comboModel.add(_model.getModel());
 			comboModel.select(0);
 			comboModel.setEnabled(false);
 		}
 		else {
-			Iterator imodel =_entry.getVariantList().iterator();
+			Iterator<DeviceEntryModel> imodel =_entry.getModels().iterator();
 			while (imodel.hasNext()) {
-				String model = (String)imodel.next();
-				if (!_models.containsKey(model))
-					comboModel.add(model);
+				String model = imodel.next().getId();
+				comboModel.add(model);
 			}
 		}
 		
@@ -113,12 +104,11 @@ public class AddCustId extends Dialog {
 		
 		textName = new Text(shlAddCdfID, SWT.BORDER);
 		textName.setBounds(10, 113, 194, 21);
-		if (result!=null) textName.setText(result.getDef().getValueOf(1));
-	
-		if (line != null) {
-			textID.setText(line.getValueOf(0));
-			textName.setText(line.getValueOf(1));
-		}
+		
+		if (result.getProperty("CDA")!=null)
+			textID.setText(result.getProperty("CDA"));
+		if (result.getProperty("REGION")!=null)
+			textName.setText(result.getProperty("REGION"));
 		
 		shlAddCdfID.open();
 		shlAddCdfID.layout();
@@ -139,7 +129,7 @@ public class AddCustId extends Dialog {
 		shlAddCdfID = new Shell(getParent(), getStyle());
 		shlAddCdfID.addListener(SWT.Close, new Listener() {
 		      public void handleEvent(Event event) {
-		    	  result = null;
+		    	  result.clear();
 		    	  event.doit = true;
 		      }
 		    });
@@ -150,7 +140,7 @@ public class AddCustId extends Dialog {
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				result = null;
+				result.clear();
 				shlAddCdfID.dispose();
 			}
 		});
@@ -167,8 +157,9 @@ public class AddCustId extends Dialog {
 					TableLine l = new TableLine();
 					l.add(textID.getText());
 					l.add(textName.getText());
+					result.setProperty("CDA",textID.getText());
+					result.setProperty("REGION",textName.getText());
 
-					result = new CustIdItem(comboModel.getText(),l);
 					shlAddCdfID.dispose();
 				}
 			}

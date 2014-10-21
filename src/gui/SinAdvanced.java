@@ -11,13 +11,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import flashsystem.HexDump;
 import flashsystem.SinFile;
 import gui.tools.CreateSinAsJob;
 import gui.tools.WidgetsTool;
+
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
+import org.util.HexDump;
 
 public class SinAdvanced extends Dialog {
 

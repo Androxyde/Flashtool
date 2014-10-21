@@ -1,9 +1,5 @@
 package org.system;
 
-import org.system.Device;
-import org.system.DeviceIdent;
-import org.system.StatusEvent;
-import org.system.StatusListener;
 
 public class PhoneThread extends Thread {
 
@@ -21,7 +17,7 @@ public class PhoneThread extends Thread {
 		DeviceIdent id=null;
 		while (!done) {
 			if (!paused) {
-				id = Device.getConnectedDevice();
+				id = Devices.getConnectedDevice();
 				if (id.getPid().equals("ADDE"))
 					GlobalState.setState(id.getSerial(), id.getPid(), "flash");
 				else if (id.getPid().equals("0DDE"))
@@ -48,7 +44,7 @@ public class PhoneThread extends Thread {
 				count = 0;					
 			} catch (Exception e) {}
 		}
-		Device.clean();
+		Devices.clean();
 	}
 
 	public void pause(boolean ppaused) {

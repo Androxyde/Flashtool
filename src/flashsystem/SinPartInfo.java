@@ -1,5 +1,7 @@
 package flashsystem;
 
+import org.util.BytesUtil;
+
 public class SinPartInfo {
 
 	byte[] partinfo=null;

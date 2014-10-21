@@ -3,6 +3,9 @@ package flashsystem;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import org.util.BytesUtil;
+import org.util.HexDump;
+
 public class SinDataHeader {
 
 	public byte[] mmcfmagic = new byte[4];

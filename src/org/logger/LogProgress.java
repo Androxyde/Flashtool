@@ -1,9 +1,8 @@
 package org.logger;
 
-import gui.MainSWT;
-
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.system.GlobalState;
 
 public class LogProgress {
 
@@ -25,7 +24,7 @@ public class LogProgress {
 	}
 
 	public static void initProgress(final int max) {
-					if (MainSWT.guimode) {
+					if (GlobalState.isGUI()) {
 						Display.getDefault().syncExec(new Runnable() {
 							public void run() {
 								_bar.setMinimum(0);
@@ -41,7 +40,7 @@ public class LogProgress {
 	}
 
 	public static void updateProgress() {
-		if (MainSWT.guimode) {
+		if (GlobalState.isGUI()) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
 					_bar.setSelection(_bar.getSelection()+1);
@@ -57,7 +56,7 @@ public class LogProgress {
 	}
 
 	public static void updateProgressValue(int value) {
-		if (MainSWT.guimode) {
+		if (GlobalState.isGUI()) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
 					_bar.setSelection(value);

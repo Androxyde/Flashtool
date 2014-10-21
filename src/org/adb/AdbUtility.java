@@ -1,7 +1,5 @@
 package org.adb;
 
-import gui.BLUWizard;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Enumeration;
@@ -9,9 +7,7 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Vector;
-
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 import org.system.Devices;
 import org.system.GlobalConfig;
 import org.system.OS;

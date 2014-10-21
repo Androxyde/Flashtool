@@ -1,13 +1,14 @@
 package gui;
 
-import gui.models.CustIdItem;
-import gui.models.ModelUpdater;
-import gui.models.Models;
+
 import gui.models.PropertiesFileContentProvider;
 import gui.models.TableLine;
 import gui.models.TableSorter;
 import gui.models.VectorLabelProvider;
+
 import java.util.Iterator;
+import java.util.Properties;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -26,6 +27,10 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.system.DeviceEntry;
+import org.system.DeviceEntryModel;
+import org.system.DeviceEntryModelUpdater;
+
 import gui.tools.WidgetsTool;
 
 public class CustIdManager extends Dialog {
@@ -34,8 +39,8 @@ public class CustIdManager extends Dialog {
 	protected Shell shlDeviceUpdateChecker;
 	protected CTabFolder tabFolder;
 	protected Label lblInfo;
-	protected Models models;
 	protected Button btnApply;
+	protected DeviceEntry entry;
 
 	/**
 	 * Create the dialog.
@@ -52,8 +57,8 @@ public class CustIdManager extends Dialog {
 	 * @return the result
 	 */
 	
-	public Object open(Models m) {
-		models=m;
+	public Object open(DeviceEntry e) {
+		entry=e;
 		createContents();
 		WidgetsTool.setSize(shlDeviceUpdateChecker);
 		shlDeviceUpdateChecker.open();
@@ -95,9 +100,9 @@ public class CustIdManager extends Dialog {
 		btnApply.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Iterator i = models.keySet().iterator();
+				Iterator<DeviceEntryModel> i = entry.getModels().iterator();
 				while (i.hasNext()) {
-					ModelUpdater mu = (ModelUpdater)models.get(i.next());
+					DeviceEntryModelUpdater mu = i.next().getUpdater();
 					if (mu.isModified())
 						mu.save();
 					btnApply.setEnabled(false);
@@ -107,20 +112,18 @@ public class CustIdManager extends Dialog {
 		btnApply.setBounds(279, 272, 75, 25);
 		btnApply.setText("Apply");
 		btnApply.setEnabled(false);
-		parseMap();
+		parseModels();
 	}
 
-	public void parseMap() {
-		Iterator keys = models.keySet().iterator();
-		while (keys.hasNext()) {
-			String key = (String)keys.next();
-			ModelUpdater m = (ModelUpdater)models.get(key);
+	public void parseModels() {
+		Iterator<DeviceEntryModel> models = entry.getModels().iterator();
+		while (models.hasNext()) {
+			DeviceEntryModelUpdater m = models.next().getUpdater();
 			addTab(m);
 		}
 	}
 	
-	public void addTab(final ModelUpdater m) {
-		models.put(m.getModel(), m);
+	public void addTab(final DeviceEntryModelUpdater m) {
 		final TableViewer tableViewer = new TableViewer(tabFolder,SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.SINGLE);
 		Display.getDefault().syncExec(
 				new Runnable() {
@@ -136,9 +139,9 @@ public class CustIdManager extends Dialog {
 						    	manager.add(new Action("Add") {
 						            public void run() {
 										AddCustId add = new AddCustId(shlDeviceUpdateChecker,SWT.PRIMARY_MODAL | SWT.SHEET);
-										CustIdItem item = (CustIdItem)add.open(m);
-										if (item != null) {
-											m.AddCustId(item);
+										Properties item = (Properties)add.open(m);
+										if (item.getProperty("CDA") != null) {
+											m.AddCustId(item.getProperty("CDA"),item.getProperty("REGION"));
 											btnApply.setEnabled(true);
 							            	tableViewer.refresh();
 										}
@@ -149,11 +152,12 @@ public class CustIdManager extends Dialog {
 							            public void run() {
 											AddCustId add = new AddCustId(shlDeviceUpdateChecker,SWT.PRIMARY_MODAL | SWT.SHEET);
 											TableLine line = (TableLine)tableViewer.getTable().getSelection()[0].getData();
-											CustIdItem i = new CustIdItem(m.getModel(),line);
-											m.RemoveCustId(line.getValueOf(0));
-											CustIdItem item = (CustIdItem)add.open(m,i);
-											if (item != null) {
-												m.AddCustId(item);
+											Properties item = (Properties)add.open(m,line.getValueOf(0),line.getValueOf(1));
+											if (item.getProperty("CDA") != null) {
+												m.RemoveCustId(line.getValueOf(0));
+												m.AddCustId(item.getProperty("CDA"),item.getProperty("REGION"));
+												line.setValueOf(0, item.getProperty("CDA"));
+												line.setValueOf(1, item.getProperty("REGION"));
 												btnApply.setEnabled(true);
 								            	tableViewer.refresh();
 											}

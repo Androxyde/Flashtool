@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.logger.MyLogger;
 import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.FTShell;

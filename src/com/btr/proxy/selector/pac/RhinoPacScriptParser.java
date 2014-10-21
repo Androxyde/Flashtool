@@ -3,7 +3,6 @@ package com.btr.proxy.selector.pac;
 import java.util.Calendar;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Scriptable;

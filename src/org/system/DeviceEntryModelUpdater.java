@@ -1,4 +1,4 @@
-package gui.models;
+package org.system;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,6 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.PropertiesFile;
@@ -20,7 +19,7 @@ import org.system.UpdateURL;
 import com.iagucool.xperifirm.CDFInfoLoader;
 import com.iagucool.xperifirm.FileSet;
 
-public class ModelUpdater {
+public class DeviceEntryModelUpdater {
 
 	PropertiesFile _custid = new PropertiesFile();
 	Properties _versions = new Properties();
@@ -28,10 +27,10 @@ public class ModelUpdater {
 	String _model = "";
 	String tac8 = "";
 	Properties cdfinfos = new Properties();
-	private static Logger logger = Logger.getLogger(ModelUpdater.class);
+	private static Logger logger = Logger.getLogger(DeviceEntryModelUpdater.class);
 
 
-	public ModelUpdater(DeviceEntry entry, String model) {
+	public DeviceEntryModelUpdater(DeviceEntry entry, String model) {
 		init(entry, model);
 	}
 	
@@ -110,8 +109,8 @@ public class ModelUpdater {
 		return _model;
 	}
 	
-	public void AddCustId(CustIdItem ci) {
-		_custid.setProperty(ci.getDef().getValueOf(0), ci.getDef().getValueOf(1));
+	public void AddCustId(String cda, String name) {
+		_custid.setProperty(cda,name);
 		tosave=true;
 	}
 

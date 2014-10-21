@@ -132,7 +132,7 @@ public class About extends Dialog {
 		fd_lblDevshaft.left = new FormAttachment(lblNewLabel, 0, SWT.LEFT);
 		fd_lblDevshaft.top = new FormAttachment(lblManyThanksTo, 6);
 		lblDevshaft.setLayoutData(fd_lblDevshaft);
-		lblDevshaft.setText("DevShaft");
+		lblDevshaft.setText("DevShaft, IaguCool");
 		shlAbout.open();
 		shlAbout.layout();
 		Display display = getParent().getDisplay();

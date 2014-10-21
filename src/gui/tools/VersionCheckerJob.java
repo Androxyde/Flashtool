@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Display;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-import org.logger.MyLogger;
 import org.system.DNSResolver;
 import org.system.OS;
 import org.system.Proxy;

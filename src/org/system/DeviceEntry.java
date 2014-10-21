@@ -1,23 +1,19 @@
 package org.system;
 
-import gui.models.ModelUpdater;
-import gui.models.Models;
-import gui.tools.WidgetTask;
-
+//import gui.tools.WidgetTask;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.adb.AdbUtility;
 import org.eclipse.swt.widgets.Display;
 
 public class DeviceEntry {
 
-
 	PropertiesFile _entry;
 	private static String fsep = OS.getFileSeparator();
 	private Boolean hasBusybox=null;
 	private boolean isRecoveryMode=false;
+	private HashSet<DeviceEntryModel> models = new HashSet<DeviceEntryModel>();
 	
 	public void queryAll() {
 		setVersion();
@@ -96,9 +92,10 @@ public class DeviceEntry {
 		_entry = new PropertiesFile();
 		try {
 			String path = OS.getWorkDir()+File.separator+"devices"+File.separator+Id+File.separator+Id+".properties";
-			_entry.open("",path);
+			_entry.open("",path);			
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 		}
 		                     
 	}
@@ -258,7 +255,7 @@ public class DeviceEntry {
 		String version="";
 		if (!select) version = _entry.getProperty("busyboxhelper");
 		else {
-			version = WidgetTask.openBusyboxSelector(Display.getCurrent().getActiveShell());
+			//version = WidgetTask.openBusyboxSelector(Display.getCurrent().getActiveShell());
 			//BusyBoxSelectGUI sel = new BusyBoxSelectGUI(getId());
 			//version = sel.getVersion();
 		}
@@ -307,22 +304,28 @@ public class DeviceEntry {
     }
     
     public boolean canHandleUpdates() {
-    	return getUpdatableModels(true).size()>0;
+    	Iterator<DeviceEntryModel> i = getModels().iterator();
+    	while (i.hasNext()) {
+    		if (i.next().getTac().length()>0) return true;
+    	}
+    	return false;
     }
     
     public boolean canShowUpdates() {
-    	return getUpdatableModels(false).size()>0;
+    	Iterator<DeviceEntryModel> i = getModels().iterator();
+    	while (i.hasNext()) {
+    		if (i.next().getCDA().getProperties().size()>0) return true;
+    	}
+    	return false;
     }
-
-    public Models getUpdatableModels(boolean withemptycustid) {
-    	Models m = new Models(this);
-		Iterator ivariants = getVariantList().iterator();
-		while (ivariants.hasNext()) {
-			ModelUpdater mu = new ModelUpdater(this,(String)ivariants.next());
-			if (mu.canCheck(withemptycustid)) {
-				m.put(mu.getModel(), mu);
+    
+    public HashSet<DeviceEntryModel> getModels() {
+    	if (models.size()==0) {
+			Iterator<String> ivariants = getVariantList().iterator();
+			while (ivariants.hasNext()) {
+				models.add(new DeviceEntryModel(this,ivariants.next()));
 			}
-		}
-		return m;
+    	}
+    	return models;
     }
 }

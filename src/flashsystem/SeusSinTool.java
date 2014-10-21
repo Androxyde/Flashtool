@@ -4,6 +4,7 @@ import java.io.*;
 
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
+import org.util.HexDump;
 
 import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
 import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;

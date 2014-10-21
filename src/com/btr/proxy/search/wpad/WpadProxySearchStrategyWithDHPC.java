@@ -10,7 +10,6 @@ import java.net.UnknownHostException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 import com.btr.proxy.search.ProxySearchStrategy;
 import com.btr.proxy.search.wpad.dhcp.DHCPMessage;

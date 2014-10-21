@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
-import org.logger.MyLogger;
 
 public class AdbPhoneThread extends Thread {
 	
@@ -42,15 +41,15 @@ public class AdbPhoneThread extends Thread {
 			    		  if (line.contains("State")) {
 				    		  if (line.contains("device")) {
 				    			  DeviceProperties.reload();
-				    			  id = Device.getLastConnected(first);
-				    			  newid = Device.getLastConnected(first);
+				    			  id = Devices.getLastConnected(first);
+				    			  newid = Devices.getLastConnected(first);
 				    			  if (!GlobalState.getState(newid.getSerial(), newid.getPid()).equals("adb")) {
 				    				  int count=0;
 				    				  if (first) count=19;
 				    				  while (newid.getPid().equals(id.getPid())) {
 				    					  Sleep(100);
 				    					  count++;
-				    					  newid = Device.getLastConnected(first);
+				    					  newid = Devices.getLastConnected(first);
 				    					  if (count==20) break;
 				    				  }
 				    				  GlobalState.setState(newid.getSerial(), newid.getPid(), "adb");

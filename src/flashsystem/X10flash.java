@@ -1,6 +1,5 @@
 package flashsystem;
 
-import flashsystem.HexDump;
 import flashsystem.io.USBFlash;
 import gui.tools.WidgetTask;
 import gui.tools.XMLBootConfig;
@@ -16,13 +15,13 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.JDOMException;
 import org.logger.LogProgress;
-import org.logger.MyLogger;
-import org.system.Device;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.OS;
 import org.system.TextFile;
+import org.util.BytesUtil;
+import org.util.HexDump;
 
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -535,7 +534,7 @@ public class X10flash {
     	boolean found = false;
     	try {
 			Thread.sleep(500);
-			found = Device.getLastConnected(false).getPid().equals("ADDE");
+			found = Devices.getLastConnected(false).getPid().equals("ADDE");
 		}
 		catch (Exception e) {
 	    	found = false;

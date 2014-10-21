@@ -1,13 +1,10 @@
 package gui.tools;
 
-import org.apache.commons.io.monitor.FileEntry;
 import org.apache.log4j.Logger;
 import org.jdom.input.SAXBuilder;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.Element;
-import org.logger.MyLogger;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

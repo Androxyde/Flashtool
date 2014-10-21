@@ -6,7 +6,7 @@ RequestExecutionLevel highest
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FlashTool Xperia Driver Pack"
-!define PRODUCT_VERSION "v1.6.2 (20140620)"
+!define PRODUCT_VERSION "v1.7 (20140920)"
 !define PRODUCT_PUBLISHER "Androxyde & DooMLoRD"
 !define PRODUCT_WEB_SITE "http://www.flashtool.net/"
 
@@ -316,12 +316,23 @@ Section /o "Xperia A2 (SO-04F) Device Driver" SEC55
   File /r "Drivers\ADB\Xperia_A2_SO-04F_driver\*"
 SectionEnd
 
+Section /o "Xperia Z3 Device Driver" SEC56
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Z3"
+  File /r "Drivers\ADB\Xperia_Z3\*"
+SectionEnd
+
+Section /o "Xperia Z3 Compact Device Driver" SEC57
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Z3_Compact"
+  File /r "Drivers\ADB\Xperia_Z3_Compact\*"
+SectionEnd
+
 Section -Post
   SetOutPath "$TEMP\Flashtool"
   File "Drivers\dpinst.xml"
   File "Drivers\DPInst32.exe"
   File "Drivers\DPInst64.exe"
-  ${If} ${RunningX64}
+  
+${If} ${RunningX64}
      ExecWait '"$TEMP\Flashtool\dpinst64.exe"'
   ${Else}
      ExecWait '"$TEMP\Flashtool\dpinst32.exe"'
@@ -386,6 +397,8 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC53} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC54} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC55} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC56} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC57} ""
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function .onInit
