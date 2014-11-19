@@ -12,7 +12,9 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.Deflater;
+
 import linuxlib.JUsb;
+
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,11 +57,13 @@ import org.system.DevicesGit;
 import org.system.FTDEntry;
 import org.system.FTShell;
 import org.system.GlobalConfig;
+import org.system.GlobalState;
 import org.system.OS;
 import org.system.Proxy;
 import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.system.UpdateURL;
+
 import flashsystem.Bundle;
 import flashsystem.SinFile;
 import flashsystem.X10flash;
@@ -907,6 +911,8 @@ public class MainSWT {
 		StyledText logWindow = new StyledText(scrolledComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		logWindow.setEditable(false);
 		TextAreaAppender.setTextArea(logWindow);
+		MyLogger.setLogDest("textarea");
+		GlobalState.setGUI();
 		scrolledComposite.setContent(logWindow);
 		scrolledComposite.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		

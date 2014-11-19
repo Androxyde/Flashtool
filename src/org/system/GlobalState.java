@@ -27,7 +27,7 @@ public class GlobalState {
 		return isgui;
 	}
 
-	public synchronized void setGUI() {
+	public synchronized static void setGUI() {
 		isgui=true;
 	}
 
