@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.sinfile.parsers.v3.AddrBlock;
 import org.sinfile.parsers.v3.AddrBlocks;
+import org.sinfile.parsers.v3.DataHeader;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
@@ -33,10 +34,10 @@ public class SinFile {
         );
 		
 		JBBPParser hashBlocksV2 = JBBPParser.prepare(
-	            "hashBlock[_] {int offset;"
+	            "block[_] {int offset;"
               + "int length;"
-              + "byte hashlength;"
-              + "byte[hashlength] crc;}"
+              + "byte hashLen;"
+              + "byte[hashLen] crc;}"
 		);
 		
 		JBBPParser sinParserV3 = JBBPParser.prepare(
@@ -51,13 +52,23 @@ public class SinFile {
               + "byte[certLen] cert;"
         );
 
-		JBBPParser addrBlocks = JBBPParser.prepare(
+		JBBPParser dataHeader = JBBPParser.prepare(
 				"byte[4] mmcfMagic;"
 			  + "int mmcfLen;"
               + "byte[4] gptpMagic;"
 			  + "int gptpLen;"
               + "byte[16] uuid;"
               + "byte[mmcfLen-gptpLen] addrList;"
+        );
+
+		JBBPParser addrBlocks = JBBPParser.prepare(
+				"addrBlocks[_] {byte[4] addrMagic;"
+			  + "int addrLen;"
+			  + ">long dataOffset;"
+              + ">long dataLen;"
+			  + ">long fileOffset;"
+              + "int hashType;"
+              + "byte[addrLen-36] crc;}"
         );
 
 		JBBPBitInputStream sinStream = new JBBPBitInputStream(new FileInputStream(sinfile));
@@ -75,20 +86,12 @@ public class SinFile {
 	              + "byte["+hashv3len[sin.hashType]+"] crc;}"
 			);
 			org.sinfile.parsers.v3.HashBlocks blocks = hashBlocksV3.parse(sin.hashBlocks).mapTo(org.sinfile.parsers.v3.HashBlocks.class);
-			byte[] addrs = sinStream.readByteArray(blocks.blocks[0].length);
-			System.out.println(new String(addrs));
-			AddrBlocks addrblocks = addrBlocks.parse(addrs).mapTo(AddrBlocks.class);
-			JBBPParser addrList = JBBPParser.prepare(
-					"byte[4] addrMagic;"
-				  + "<long offset;"
-	              + "<long length;"
-				  + "<long dest;"
-	              + "byte hashType;"
-	              + "byte[32] crc;"
-	        );
-			AddrBlock addrblock = addrList.parse(addrblocks.addrList).mapTo(AddrBlock.class);
+			// First hash block seems to be Data header (addr map)
+			byte[] dheader = sinStream.readByteArray(blocks.blocks[0].length);
+			DataHeader dh = dataHeader.parse(dheader).mapTo(DataHeader.class);
+			AddrBlocks addrblocks = addrBlocks.parse(dh.addrList).mapTo(AddrBlocks.class);
 			System.out.println("Version : "+version+"\nMagic : "+new String(sin.magic)+"\nHeader Length : "+sin.headerLen+"\nPayLoad Type : "+sin.payloadType+"\nHash type : "+sin.hashType+"\nReserved : "+sin.reserved+"\nHashList Length : "+sin.hashLen+" ("+blocks.blocks.length+" hashblocks) \nCert len : "+sin.certLen);
-			System.out.println(addrblock.offset);
+			System.out.println(addrblocks.addrBlocks[0].dataLen);
 		}
 	}
 

@@ -5,9 +5,10 @@ import com.igormaznitsa.jbbp.mapper.Bin;
 @Bin
 public class AddrBlock {
 	public byte[] addrMagic;
-	public long offset;
-	public long length;
-	public long dest;
-	public byte hashType;
+	public int addrLen;
+	public long dataOffset;
+	public long fileOffset;
+	public long dataLen;
+	public int hashType;
 	public byte[] crc;
 }
