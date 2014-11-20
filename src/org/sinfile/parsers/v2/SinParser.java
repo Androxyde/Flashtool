@@ -11,7 +11,7 @@ public class SinParser {
 	  public byte memId;
 	  public byte compression;
 	  public int hashLen;
-	  public byte[] hashblocks;
+	  public byte[] hashBlocks;
 	  public int certLen;
 	  public byte[] cert;
 }

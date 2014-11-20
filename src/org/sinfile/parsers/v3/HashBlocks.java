@@ -4,5 +4,5 @@ import com.igormaznitsa.jbbp.mapper.Bin;
 
 @Bin  
 public class HashBlocks {
-    public HashBlock [] hashblock;
+    public HashBlock [] blocks;
 }
