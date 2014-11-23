@@ -15,7 +15,9 @@ public class SinFile {
 
 	File sinfile=null;
 	int version=0;
-	byte[] hashv3len = {0, 0, 32};
+	
+	org.sinfile.parsers.v2.SinParser sinv2 = null;
+	org.sinfile.parsers.v3.SinParser sinv3 = null;
 	
 	public SinFile(File f) throws IOException {
 		sinfile = f;
@@ -52,46 +54,17 @@ public class SinFile {
               + "byte[certLen] cert;"
         );
 
-		JBBPParser dataHeader = JBBPParser.prepare(
-				"byte[4] mmcfMagic;"
-			  + "int mmcfLen;"
-              + "byte[4] gptpMagic;"
-			  + "int gptpLen;"
-              + "byte[16] uuid;"
-              + "byte[mmcfLen-gptpLen] addrList;"
-        );
-
-		JBBPParser addrBlocks = JBBPParser.prepare(
-				"addrBlocks[_] {byte[4] addrMagic;"
-			  + "int addrLen;"
-			  + ">long dataOffset;"
-              + ">long dataLen;"
-			  + ">long fileOffset;"
-              + "int hashType;"
-              + "byte[addrLen-36] crc;}"
-        );
 
 		JBBPBitInputStream sinStream = new JBBPBitInputStream(new FileInputStream(sinfile));
 		version = sinStream.readByte();
 		if (version==2) {
-			org.sinfile.parsers.v2.SinParser sin = sinParserV2.parse(sinStream).mapTo(org.sinfile.parsers.v2.SinParser.class);
-			org.sinfile.parsers.v2.HashBlocks blocks = hashBlocksV2.parse(sin.hashBlocks).mapTo(org.sinfile.parsers.v2.HashBlocks.class);
-			System.out.println("Version : "+version+"\nMultiple Headers : "+sin.multipleHeaders+"\nHeader Length : "+sin.headerLen+"\nPayLoad Type : "+sin.payloadType+"\nMem Id : "+sin.memId+"\nCompressoin : "+sin.compression+"\nHash Length : "+sin.hashLen);
-			System.out.println(sin.certLen);
+			sinv2 = sinParserV2.parse(sinStream).mapTo(org.sinfile.parsers.v2.SinParser.class);
+			org.sinfile.parsers.v2.HashBlocks blocks = hashBlocksV2.parse(sinv2.hashBlocks).mapTo(org.sinfile.parsers.v2.HashBlocks.class);
 		}
 		if (version==3) {
-			org.sinfile.parsers.v3.SinParser sin = sinParserV3.parse(sinStream).mapTo(org.sinfile.parsers.v3.SinParser.class);
-			JBBPParser hashBlocksV3 = JBBPParser.prepare(
-		            "blocks[_] {int length;"
-	              + "byte["+hashv3len[sin.hashType]+"] crc;}"
-			);
-			org.sinfile.parsers.v3.HashBlocks blocks = hashBlocksV3.parse(sin.hashBlocks).mapTo(org.sinfile.parsers.v3.HashBlocks.class);
-			// First hash block seems to be Data header (addr map)
-			byte[] dheader = sinStream.readByteArray(blocks.blocks[0].length);
-			DataHeader dh = dataHeader.parse(dheader).mapTo(DataHeader.class);
-			AddrBlocks addrblocks = addrBlocks.parse(dh.addrList).mapTo(AddrBlocks.class);
-			System.out.println("Version : "+version+"\nMagic : "+new String(sin.magic)+"\nHeader Length : "+sin.headerLen+"\nPayLoad Type : "+sin.payloadType+"\nHash type : "+sin.hashType+"\nReserved : "+sin.reserved+"\nHashList Length : "+sin.hashLen+" ("+blocks.blocks.length+" hashblocks) \nCert len : "+sin.certLen);
-			System.out.println(addrblocks.addrBlocks[0].dataLen);
+			sinv3 = sinParserV3.parse(sinStream).mapTo(org.sinfile.parsers.v3.SinParser.class);
+			sinv3.parseHash();
+			sinv3.parseDataHeader(sinStream);
 		}
 	}
 
@@ -103,4 +76,16 @@ public class SinFile {
 		return version;
 	}
 
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		if (version==2) {
+			builder.append("Version : "+version+"\nMultiple Headers : "+sinv2.multipleHeaders+"\nHeader Length : "+sinv2.headerLen+"\nPayLoad Type : "+sinv2.payloadType+"\nMem Id : "+sinv2.memId+"\nCompressoin : "+sinv2.compression+"\nHash Length : "+sinv2.hashLen+"\n");
+			builder.append(sinv2.certLen+"\n");
+		}
+		if (version==3) {
+			builder.append("Version : "+version+"\nMagic : "+new String(sinv3.magic)+"\nHeader Length : "+sinv3.headerLen+"\nPayLoad Type : "+sinv3.payloadType+"\nHash type : "+sinv3.hashType+"\nReserved : "+sinv3.reserved+"\nHashList Length : "+sinv3.hashLen+" ("+sinv3.blocks.blocks.length+" hashblocks) \nCert len : "+sinv3.certLen+"\n");
+			builder.append(sinv3.addrBlocks.addrBlocks[0].dataLen+"\n");
+		}
+		return builder.toString();
+	}
 }
