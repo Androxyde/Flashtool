@@ -49,9 +49,6 @@ public class SinFile {
               + "int hashType;"
               + "int reserved;"
               + "int hashLen;"
-              + "byte[hashLen] hashBlocks;"
-              + "int certLen;"
-              + "byte[certLen] cert;"
         );
 
 
@@ -63,7 +60,7 @@ public class SinFile {
 		}
 		if (version==3) {
 			sinv3 = sinParserV3.parse(sinStream).mapTo(org.sinfile.parsers.v3.SinParser.class);
-			sinv3.parseHash();
+			sinv3.parseHash(sinStream);
 			sinv3.parseDataHeader(sinStream);
 		}
 	}

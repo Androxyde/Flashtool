@@ -4,31 +4,38 @@ import java.io.IOException;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
+import com.igormaznitsa.jbbp.io.JBBPByteOrder;
 import com.igormaznitsa.jbbp.mapper.Bin;
 
 
 public class SinParser {
+	static byte[] hashv3len = {0, 0, 32};
 	@Bin public byte[] magic;
 	@Bin public int headerLen;
 	@Bin public int payloadType;
 	@Bin public int hashType;
 	@Bin public int reserved;
 	@Bin public int hashLen;
-	@Bin public byte[] hashBlocks;
-	@Bin public int certLen;
-	@Bin public byte[] cert;
-	static byte[] hashv3len = {0, 0, 32};
+	public byte[] hashBlocks;
+	public int certLen;
+	public byte[] cert;
 	public HashBlocks blocks;
 	public DataHeader dataHeader;
 	public AddrBlocks addrBlocks;
 	
 	  
-	  public void parseHash() throws IOException {
-			JBBPParser hashBlocksV3 = JBBPParser.prepare(
+	  public void parseHash(JBBPBitInputStream sinStream) throws IOException {
+
+		  hashBlocks = sinStream.readByteArray(hashLen);
+		  certLen = sinStream.readInt(JBBPByteOrder.BIG_ENDIAN);
+		  cert = sinStream.readByteArray(certLen);
+		  
+		  JBBPParser hashBlocksV3 = JBBPParser.prepare(
 		            "blocks[_] {int length;"
 	              + "byte["+hashv3len[hashType]+"] crc;}"
-			);
-			blocks = hashBlocksV3.parse(hashBlocks).mapTo(org.sinfile.parsers.v3.HashBlocks.class);
+	      );
+		  blocks = hashBlocksV3.parse(hashBlocks).mapTo(org.sinfile.parsers.v3.HashBlocks.class);
+
 	  }
 	  
 	  public void parseDataHeader(JBBPBitInputStream sinStream) throws IOException {
