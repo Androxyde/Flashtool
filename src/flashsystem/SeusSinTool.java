@@ -1,6 +1,8 @@
 package flashsystem;
 
 import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
@@ -12,14 +14,14 @@ import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
 public class SeusSinTool {
 
 	public static void decrypt(String sinfile) {
-		byte[] buf = new byte[1024];
+		byte[] buf = new byte[4096];
 		try {
 			String folder = new File((new File(sinfile)).getParent()).getAbsolutePath();
 			FileInputStream f = new FileInputStream(sinfile);
 			//DecodeInputStream in = new DecodeInputStream(f);
 			RC4DecryptingInputStream in = new RC4DecryptingInputStream(f);
 	        String basefile = sinfile+"_dek";
-	        OutputStream out = new FileOutputStream(basefile+".zip.gz");
+	        OutputStream out = new FileOutputStream(basefile);
 	        int len;
 	        while((len = in.read(buf)) >= 0) {
 	            out.write(buf, 0, len);
@@ -27,24 +29,32 @@ public class SeusSinTool {
 	        out.flush();
 	        out.close();
 	        in.close();
-	        
+	        try {
+	        	ZipInputStream zis =  new ZipInputStream(new FileInputStream(basefile));
+	        	ZipEntry ze = zis.getNextEntry();
+	        	while (ze!=null) {
+	        		System.out.println(ze.getName());
+	        		ze=zis.getNextEntry();
+	        	}
+	        } catch (Exception zipe){
+	        	zipe.printStackTrace();
+	        }
 	        byte[] magic = new byte[2];
-        	FileInputStream fload = new FileInputStream(new File(basefile+".zip.gz"));
+        	FileInputStream fload = new FileInputStream(new File(basefile));
         	fload.read(magic);
         	fload.close();
-
         	if (HexDump.toHex(magic).equals("[1F, 8B]")) {
 		        File fxml = new File(folder+"\\update.xml");
 		        if (fxml.isFile()) fxml.renameTo(new File(folder+"\\update1.xml"));
 		        try {
 			        if (OS.getName().equals("windows")) {
-			        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {OS.get7z(),"e", "-y", basefile+".zip.gz", "-o"+folder},false);
+			        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {OS.get7z(),"e", "-y", basefile, "-o"+folder},false);
 			        }
 			        else {
-			        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {"gunzip", basefile+".zip.gz"},false);
+			        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {"gunzip", basefile},false);
 			        }
-		        } catch (Exception e) {}
-	        	fload = new FileInputStream(new File(basefile+".zip"));
+		        } catch (Exception e) {e.printStackTrace();}
+	        	fload = new FileInputStream(new File(basefile));
 	        	fload.read(magic);
 	        	fload.close();
 	        	if (HexDump.toHex(magic).equals("[50, 4B]")) {
@@ -56,7 +66,7 @@ public class SeusSinTool {
 				        	ProcessBuilderWrapper run1 = new ProcessBuilderWrapper(new String[] {"unzip", "-o", basefile+".zip","-d",folder},false);
 				        }
 	        		}
-	        		catch (Exception e1) {}	        		
+	        		catch (Exception e1) {e1.printStackTrace();}	        		
 	        	}
 	        	else if (HexDump.toHex(magic).equals("[2F, 2F]")) {
 	        		File fl = new File(basefile+".zip");
