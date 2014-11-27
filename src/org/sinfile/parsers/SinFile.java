@@ -94,4 +94,16 @@ public class SinFile {
 		}
 		return builder.toString();
 	}
+	
+	public String getType() {
+		if (sinv2!=null) {
+			if (new String(sinv2.cert).contains("S1_Loader")) return "LOADER";
+			if (new String(sinv2.cert).contains("S1_Boot")) return "BOOT";
+		}
+		if (sinv3!=null) {
+			if (new String(sinv3.cert).contains("S1_Loader")) return "LOADER";
+			if (new String(sinv3.cert).contains("S1_Boot")) return "BOOT";
+		}
+		return "";
+	}
 }

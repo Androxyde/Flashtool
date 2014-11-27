@@ -7,10 +7,18 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.GZIPInputStream;
 
+import org.sinfile.parsers.SinFileException;
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
 import org.util.HexDump;
@@ -21,25 +29,46 @@ import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
 public class SeusSinTool {
 
 	public static void decrypt(String sinfile) throws FileNotFoundException,IOException {
-		byte[] buf = new byte[4096];
 		String folder = new File((new File(sinfile)).getParent()).getAbsolutePath();
-		GZIPInputStream gzip_in = new GZIPInputStream(new RC4DecryptingInputStream(new FileInputStream(sinfile)));
+		ByteBuffer buffer = ByteBuffer.allocate(20480000);
+	    ReadableByteChannel channel = Channels.newChannel(new GZIPInputStream(new RC4DecryptingInputStream(new FileInputStream(sinfile))));
 	    String basefile = sinfile+"_dek";
-	    OutputStream out = new FileOutputStream(new File(basefile));
-	    int len;
-	    while((len = gzip_in.read(buf)) >= 0) {
-	    	out.write(buf, 0, len);
-	    }
-	    out.flush();
-	    out.close();
-	    gzip_in.close();
-	    	ZipInputStream zip_in = new ZipInputStream(new FileInputStream(new File(basefile)));
-	    	ZipEntry ze = zip_in.getNextEntry();
-	    	if (ze==null) System.out.println("Not a zip : "+basefile);
-	    	while (ze!=null) {
-	    		System.out.println(ze.getName());
-	    		ze = zip_in.getNextEntry();
+	    FileChannel out = new RandomAccessFile (basefile,"rw").getChannel();
+	    out.truncate(0L);
+	    while (channel.read(buffer)>0) {
+	    	buffer.flip();
+	    	while(buffer.hasRemaining()) {
+	    	    out.write(buffer);
 	    	}
+	    	buffer.clear();
+	    }
+	    channel.close();
+	    out.close();
+	    
+	    ZipFile file=null;
+	    try {
+	    	 file = new ZipFile(basefile);
+	    	 Enumeration<? extends ZipEntry> entries = file.entries();
+	    	 while ( entries.hasMoreElements() ) {
+	    		 ZipEntry entry = entries.nextElement();
+	    		 System.out.println( entry.getName() );
+	    		 //use entry input stream:
+	    		 //readInputStream( file.getInputStream( entry ) )
+	    	 }
+	    } catch (Exception e) {
+	    	try {
+	    		org.sinfile.parsers.SinFile sf = new org.sinfile.parsers.SinFile(new File(basefile));
+	    		System.out.println(basefile + " is " + sf.getType());
+	    	} catch (SinFileException sine) {
+	    		System.out.println(basefile+" is not a sin file");
+	    	}
+	    }
+	    finally {
+	    	try {
+	    		file.close();
+	    	} catch (Exception e) {}
+	    }
+
 	}
 /*
  * final ZipFile file = new ZipFile( FILE_NAME );

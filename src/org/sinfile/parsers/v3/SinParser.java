@@ -1,5 +1,6 @@
 package org.sinfile.parsers.v3;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import com.igormaznitsa.jbbp.JBBPParser;
@@ -45,7 +46,6 @@ public class SinParser {
 	              + "byte[4] gptpMagic;"
 				  + "int gptpLen;"
 	              + "byte[16] uuid;"
-	              + "byte[mmcfLen-gptpLen] addrList;"
 	        );
 
 			JBBPParser addrBlocksParser = JBBPParser.prepare(
@@ -60,8 +60,12 @@ public class SinParser {
 
 		    // First hash block seems to be Data header (addr map)
 			byte[] dheader = sinStream.readByteArray(blocks.blocks[0].length);
-			dataHeader = dataHeaderParser.parse(dheader).mapTo(DataHeader.class);
-			addrBlocks = addrBlocksParser.parse(dataHeader.addrList).mapTo(AddrBlocks.class);
+			JBBPBitInputStream dheaderStream = new JBBPBitInputStream(new ByteArrayInputStream(dheader));
+			dataHeader = dataHeaderParser.parse(dheaderStream).mapTo(DataHeader.class);
+			if (new String(dataHeader.mmcfMagic).equals("MMCF")) {
+				dataHeader.addrList = dheaderStream.readByteArray(dataHeader.gptpLen-dataHeader.mmcfLen);
+				addrBlocks = addrBlocksParser.parse(dataHeader.addrList).mapTo(AddrBlocks.class);
+			}
 		  
 	  }
 }

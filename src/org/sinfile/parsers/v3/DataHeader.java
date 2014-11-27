@@ -2,12 +2,12 @@ package org.sinfile.parsers.v3;
 
 import com.igormaznitsa.jbbp.mapper.Bin;
 
-@Bin
+
 public class DataHeader {
-	public byte[] mmcfMagic;
-	public int mmcfLen;
-	public byte[] gptpMagic;
-	public int gptpLen;
-	public byte[] uuid;
+	@Bin public byte[] mmcfMagic;
+	@Bin public int mmcfLen;
+	@Bin public byte[] gptpMagic;
+	@Bin public int gptpLen;
+	@Bin public byte[] uuid;
 	public byte[] addrList;
 }
