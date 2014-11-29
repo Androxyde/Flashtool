@@ -107,7 +107,7 @@ public class MainSWT {
 	protected MenuItem mntmRawBackup;
 	protected MenuItem mntmRawRestore;
 	protected VersionCheckerJob vcheck; 
-	private static Logger logger = Logger.getLogger(ConsoleAppender.class);
+	private static Logger logger = Logger.getLogger(MainSWT.class);
 	
 	/**
 	 * Open the window.
