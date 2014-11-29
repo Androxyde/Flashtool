@@ -1,6 +1,8 @@
 package flashsystem;
 
 
+import gui.MainSWT;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,9 +20,12 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.log4j.Logger;
 import org.sinfile.parsers.SinFileException;
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
+import org.ta.parsers.TAFileParseException;
+import org.ta.parsers.TAFileParser;
 import org.util.HexDump;
 
 import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
@@ -28,6 +33,8 @@ import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
 
 public class SeusSinTool {
 
+	private static Logger logger = Logger.getLogger(SeusSinTool.class);
+	
 	public static void decrypt(String sinfile) throws FileNotFoundException,IOException {
 		String folder = new File((new File(sinfile)).getParent()).getAbsolutePath();
 		ByteBuffer buffer = ByteBuffer.allocate(20480000);
@@ -44,7 +51,7 @@ public class SeusSinTool {
 	    }
 	    channel.close();
 	    out.close();
-	    
+	    logger.info("Identifying fileset content");
 	    ZipFile file=null;
 	    try {
 	    	 file = new ZipFile(basefile);
@@ -60,7 +67,12 @@ public class SeusSinTool {
 	    		org.sinfile.parsers.SinFile sf = new org.sinfile.parsers.SinFile(new File(basefile));
 	    		System.out.println(basefile + " is " + sf.getType());
 	    	} catch (SinFileException sine) {
-	    		System.out.println(basefile+" is not a sin file");
+	    		try {
+	    			TAFileParser ta = new TAFileParser(new FileInputStream(basefile));
+	    			System.out.println(basefile + " is TA file");
+	    		} catch(TAFileParseException tae) {
+	    			System.out.println(basefile + " is unrecognizable");
+	    		}
 	    	}
 	    }
 	    finally {
@@ -68,7 +80,6 @@ public class SeusSinTool {
 	    		file.close();
 	    	} catch (Exception e) {}
 	    }
-
 	}
 /*
  * final ZipFile file = new ZipFile( FILE_NAME );

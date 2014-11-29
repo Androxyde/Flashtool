@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -13,21 +12,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TAFileParser {
-    private static final String TAB_OR_SPACE_STRING = "(?: |\\t)";
-    private static final String UNIT_ID_STRING = "\\p{XDigit}{8}";
-    private static final String UNIT_SIZE_STRING = "\\p{XDigit}{4,8}";
-    private static final String UNIT_DATA_STRING = "\\p{XDigit}{2}";
-    private static final String BLANK_LINE_STRING = "^[\\s]*$";
-    private static final String COMMENT_LINE_STRING = "^//.*";
-    private static final String PARTITION_LINE_STRING = "^\\p{XDigit}{2}$";
-    private static final String CONTINUATION_DATA_LINE_STRING = "^((?:(?: |\\t)+\\p{XDigit}{2})+)\\s*$";
-    private static final String DATA_LINE_STRING = "^(\\p{XDigit}{8})(?: |\\t)+(\\p{XDigit}{4,8})((?:(?: |\\t)+\\p{XDigit}{2}{2})*)\\s*$";
     private static final Pattern COMMENT_LINE_PATTERN = Pattern.compile("^//.*");
     private static final Pattern BLANK_LINE_PATTERN = Pattern.compile("^[\\s]*$");
     private static final Pattern PARTITION_LINE_PATTERN = Pattern.compile("^\\p{XDigit}{2}$");
     private static final Pattern DATA_LINE_PATTERN = Pattern.compile("^(\\p{XDigit}{8})(?: |\\t)+(\\p{XDigit}{4,8})((?:(?: |\\t)+\\p{XDigit}{2}{2})*)\\s*$");
     private static final Pattern CONTINUATION_DATA_LINE_PATTERN = Pattern.compile("^((?:(?: |\\t)+\\p{XDigit}{2})+)\\s*$");
-    private static final int INVALIDA_PARTITION_NUMBER = -1;
     private BufferedReader aReader;
     protected int aPartition;
     private long aUnit;
@@ -40,21 +29,19 @@ public class TAFileParser {
     public TAFileParser() {
     }
 
-    public TAFileParser(InputStream inputStream) {
+    public TAFileParser(InputStream inputStream) throws TAFileParseException, IOException {
         this.parse(inputStream);
     }
 
 
-    public void parse(InputStream inputStream) {
+    public void parse(InputStream inputStream) throws TAFileParseException, IOException {
         this.aReader = new BufferedReader(new InputStreamReader(inputStream));
         this.aPartition = -1;
         this.aFoundPartition = false;
         this.aContinuationData = false;
-        try {
-            this.parsePartition();
-        }
-        catch (Exception var2_2) {
-            throw new IllegalArgumentException("Failed to parse partition number.", var2_2);
+        this.parsePartition();
+        while (getNextUnit()>0) {
+        	this.getUnitData();
         }
     }
 

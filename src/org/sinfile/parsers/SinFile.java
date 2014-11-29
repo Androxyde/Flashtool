@@ -1,9 +1,12 @@
 package org.sinfile.parsers;
 
+import gui.MainSWT;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.sinfile.parsers.v3.AddrBlock;
 import org.sinfile.parsers.v3.AddrBlocks;
 import org.sinfile.parsers.v3.DataHeader;
@@ -18,6 +21,7 @@ public class SinFile {
 	
 	org.sinfile.parsers.v2.SinParser sinv2 = null;
 	org.sinfile.parsers.v3.SinParser sinv3 = null;
+	private static Logger logger = Logger.getLogger(SinFile.class);
 	
 	public SinFile(File f) throws SinFileException {
 		sinfile = f;
