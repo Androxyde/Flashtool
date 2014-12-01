@@ -434,7 +434,7 @@ public class MainSWT {
 						}
 
 						public void done(IJobChangeEvent event) {
-							String result = WidgetTask.openBundleCreator(shlSonyericsson,folder);
+							String result = WidgetTask.openBundleCreator(shlSonyericsson,folder+File.separator+"decrypted");
 							if (result.equals("Cancel"))
 								logger.info("Bundle creation canceled");
 						}

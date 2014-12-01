@@ -18,6 +18,8 @@ public class SinFile {
 
 	File sinfile=null;
 	int version=0;
+	JBBPBitInputStream sinStream = null;
+	FileInputStream fin = null;
 	
 	org.sinfile.parsers.v2.SinParser sinv2 = null;
 	org.sinfile.parsers.v3.SinParser sinv3 = null;
@@ -45,16 +47,16 @@ public class SinFile {
               + "int hashLen;"
         );
 
-		JBBPBitInputStream sinStream=null;
 		try {
-			sinStream = new JBBPBitInputStream(new FileInputStream(sinfile));
+			fin=new FileInputStream(sinfile);
+			sinStream = new JBBPBitInputStream(fin);
 			version = sinStream.readByte();
 			if (version!=2 && version!=3) throw new SinFileException("Not a sin file");
 			if (version==2) {
 				sinv2 = sinParserV2.parse(sinStream).mapTo(org.sinfile.parsers.v2.SinParser.class);
 				if (sinv2.hashLen>sinv2.headerLen) throw new SinFileException("Error parsing sin file");
 				sinv2.parseHash(sinStream);
-				sinStream.close();
+				closeStreams();
 			}
 			if (version==3) {
 				sinv3 = sinParserV3.parse(sinStream).mapTo(org.sinfile.parsers.v3.SinParser.class);
@@ -62,16 +64,25 @@ public class SinFile {
 				if (sinv3.hashLen>sinv3.headerLen) throw new SinFileException("Error parsing sin file");
 				sinv3.parseHash(sinStream);
 				sinv3.parseDataHeader(sinStream);
-				sinStream.close();
+				closeStreams();
 			}
-		} catch (IOException ioe) {
-			try {
-				sinStream.close();
-			} catch (Exception e) {}
+		} catch (Exception ioe) {
+			closeStreams();
 			throw new SinFileException(ioe.getMessage());
 		}
 	}
 
+	public void closeStreams() {
+		try {
+			sinStream.close();
+		} catch (Exception e) {
+		}
+		try {
+			fin.close();
+		} catch (Exception e) {
+		}		
+	}
+	
 	public String getName() {
 		return sinfile.getName();
 	}

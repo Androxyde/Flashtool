@@ -31,6 +31,7 @@ public class TAFileParser {
 
     public TAFileParser(InputStream inputStream) throws TAFileParseException, IOException {
         this.parse(inputStream);
+        inputStream.close();
     }
 
 
