@@ -69,6 +69,7 @@ public class SeusSinTool {
 	public static void dumpStreamTo(InputStream in, String file, String folder) throws IOException {
 		new File(folder).mkdirs();
 		String fullpath = folder+File.separator+file;
+		getFile(new File(fullpath));
 		ByteBuffer buffer = ByteBuffer.allocate(20480000);
 	    ReadableByteChannel channel = Channels.newChannel(in);
 	    RandomAccessFile afile = new RandomAccessFile (fullpath,"rw");
@@ -109,6 +110,24 @@ public class SeusSinTool {
 	      } catch(IOException e) {
 	        e.printStackTrace();
 	      }
+	}
+	
+	public static File getFile(File file) {
+		if (file.exists()) {
+			int i=1;
+			String folder = file.getParent();
+			int point = file.getName().lastIndexOf(".");
+			if (point==-1) return file;
+			String name = file.getName().substring(0,point);
+			String ext = file.getName().substring(point+1);
+			System.out.println(name);
+			System.out.println(ext);
+			while (new File(folder+File.separator+name+i+"."+ext).exists()) {
+				i++;
+			}
+			return new File(folder+File.separator+name+i+"."+ext);
+		}
+		else return file;
 	}
 
 }
