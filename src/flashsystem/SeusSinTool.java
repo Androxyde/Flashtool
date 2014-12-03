@@ -30,18 +30,21 @@ public class SeusSinTool {
 	private static Logger logger = Logger.getLogger(SeusSinTool.class);
 	
 	public static void decryptAndExtract(String FILESET) throws FileNotFoundException,IOException {
-		decrypt(FILESET);
-		String folder = new File((new File(FILESET)).getParent()).getAbsolutePath()+File.separator+"decrypted";
+		File enc= new File(FILESET);
+		File dec = new File(enc.getParent()+File.separator+"decrypted_"+enc.getName());
+		decrypt(enc);
+		String folder = enc.getParentFile().getAbsolutePath()+File.separator+"decrypted";
 		new File(folder).mkdirs();
-		String basefile = FILESET+"_dek";
 	    logger.info("Identifying fileset content");
 	    ZipFile file=null;
 	    try {
-	    	 file = new ZipFile(basefile);
+	    	 file = new ZipFile(dec.getAbsolutePath());
 	    	 Enumeration<? extends ZipEntry> entries = file.entries();
 	    	 while ( entries.hasMoreElements() ) {
 	    		 ZipEntry entry = entries.nextElement();
-	    		 dumpStreamTo(file.getInputStream(entry),entry.getName(),folder);
+	    		 File f = getFile(new File(folder+File.separator+entry.getName()));
+	    		 dumpStreamTo(file.getInputStream(entry),f.getName(),folder);
+	    		 
 	    	 }
 	    	 file.close();
 	    } catch (Exception e) {
@@ -49,27 +52,27 @@ public class SeusSinTool {
 	    		file.close();
 	    	} catch (Exception ex) {}
 	    	try {
-	    		org.sinfile.parsers.SinFile sf = new org.sinfile.parsers.SinFile(new File(basefile));
+	    		org.sinfile.parsers.SinFile sf = new org.sinfile.parsers.SinFile(new File(dec.getAbsolutePath()));
 	    		if (sf.getType().equals("LOADER"))
-	    			new File(basefile).renameTo(new File(folder+File.separator+"loader.sin"));
+	    			dec.renameTo(getFile(new File(folder+File.separator+"loader.sin")));
 	    		if (sf.getType().equals("BOOT"))
-	    			new File(basefile).renameTo(new File(folder+File.separator+"boot.sin"));
+	    			dec.renameTo(getFile(new File(folder+File.separator+"boot.sin")));
 	    	} catch (SinFileException sine) {
 	    		try {
-	    			TAFileParser ta = new TAFileParser(new FileInputStream(basefile));
-	    			new File(basefile).renameTo(new File(folder+File.separator+"preset.ta"));
+	    			TAFileParser ta = new TAFileParser(new FileInputStream(dec.getAbsolutePath()));
+	    			dec.renameTo(getFile(new File(folder+File.separator+"preset.ta")));
 	    		} catch(TAFileParseException tae) {
-	    			logger.error(basefile + " is unrecognizable");
+	    			logger.error(dec.getAbsolutePath() + " is unrecognizable");
 	    		}
 	    	}
 	    }
-	    new File(FILESET+"_dek").delete();
+	    dec.delete();
 	}
 
 	public static void dumpStreamTo(InputStream in, String file, String folder) throws IOException {
 		new File(folder).mkdirs();
 		String fullpath = folder+File.separator+file;
-		getFile(new File(fullpath));
+		//getFile(new File(fullpath));
 		ByteBuffer buffer = ByteBuffer.allocate(20480000);
 	    ReadableByteChannel channel = Channels.newChannel(in);
 	    RandomAccessFile afile = new RandomAccessFile (fullpath,"rw");
@@ -88,8 +91,7 @@ public class SeusSinTool {
 	    afile.close();
 	}
 	
-	public static void decrypt(String encrypted) throws FileNotFoundException, IOException {
-		File enc = new File(encrypted);
+	public static void decrypt(File enc) throws FileNotFoundException, IOException {
 		dumpStreamTo(new GZIPInputStream(new RC4DecryptingInputStream(new FileInputStream(enc))),"decrypted_"+enc.getName(),enc.getParent());
 	}
 
@@ -120,8 +122,6 @@ public class SeusSinTool {
 			if (point==-1) return file;
 			String name = file.getName().substring(0,point);
 			String ext = file.getName().substring(point+1);
-			System.out.println(name);
-			System.out.println(ext);
 			while (new File(folder+File.separator+name+i+"."+ext).exists()) {
 				i++;
 			}
