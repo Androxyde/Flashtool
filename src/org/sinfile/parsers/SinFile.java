@@ -28,6 +28,16 @@ public class SinFile {
 	public SinFile(File f) throws SinFileException {
 		sinfile = f;
 
+		JBBPParser sinParserV1 = JBBPParser.prepare(
+			    "byte multipleHeaders;"
+              + "int headerLen;"
+              + "byte payloadType;"
+              + "short unknown;"
+              + "byte memId;"
+              + "byte compression;"
+              + "int hashLen;"
+        );		
+
 		JBBPParser sinParserV2 = JBBPParser.prepare(
 			    "byte multipleHeaders;"
               + "int headerLen;"

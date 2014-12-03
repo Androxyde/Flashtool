@@ -42,9 +42,20 @@ public class SeusSinTool {
 	    	 Enumeration<? extends ZipEntry> entries = file.entries();
 	    	 while ( entries.hasMoreElements() ) {
 	    		 ZipEntry entry = entries.nextElement();
-	    		 File f = getFile(new File(folder+File.separator+entry.getName()));
-	    		 dumpStreamTo(file.getInputStream(entry),f.getName(),folder);
-	    		 
+	    		 File out = getFile(new File(folder+File.separator+entry.getName()));
+	    		 dumpStreamTo(file.getInputStream(entry),out);
+	    		 if (entry.getName().endsWith(".zip")) {
+	    			 String subfolder = folder + File.separator+entry.getName().substring(0,entry.getName().lastIndexOf("."));
+	    			 ZipFile subzip = new ZipFile(out); 
+	    			 Enumeration<? extends ZipEntry> subentries = subzip.entries();
+	    			 while ( subentries.hasMoreElements() ) {
+	    				 ZipEntry subentry = subentries.nextElement();
+	    	    		 File subout = getFile(new File(subfolder+File.separator+subentry.getName()));
+	    	    		 dumpStreamTo(subzip.getInputStream(subentry),subout);
+	    			 }
+	    			 subzip.close();
+	    			 out.delete();
+	    		 }
 	    	 }
 	    	 file.close();
 	    } catch (Exception e) {
@@ -69,30 +80,28 @@ public class SeusSinTool {
 	    dec.delete();
 	}
 
-	public static void dumpStreamTo(InputStream in, String file, String folder) throws IOException {
-		new File(folder).mkdirs();
-		String fullpath = folder+File.separator+file;
-		//getFile(new File(fullpath));
+	public static void dumpStreamTo(InputStream in, File out) throws IOException {
+		out.getParentFile().mkdirs();
 		ByteBuffer buffer = ByteBuffer.allocate(20480000);
 	    ReadableByteChannel channel = Channels.newChannel(in);
-	    RandomAccessFile afile = new RandomAccessFile (fullpath,"rw");
-	    FileChannel out = afile.getChannel();
-	    out.truncate(0L);
+	    RandomAccessFile afile = new RandomAccessFile (out,"rw");
+	    FileChannel cout = afile.getChannel();
+	    cout.truncate(0L);
 	    while (channel.read(buffer)>0) {
 	    	buffer.flip();
 	    	while(buffer.hasRemaining()) {
-	    	    out.write(buffer);
+	    	    cout.write(buffer);
 	    	}
 	    	buffer.clear();
 	    }
 	    channel.close();
 	    in.close();
-	    out.close();
+	    cout.close();
 	    afile.close();
 	}
 	
 	public static void decrypt(File enc) throws FileNotFoundException, IOException {
-		dumpStreamTo(new GZIPInputStream(new RC4DecryptingInputStream(new FileInputStream(enc))),"decrypted_"+enc.getName(),enc.getParent());
+		dumpStreamTo(new GZIPInputStream(new RC4DecryptingInputStream(new FileInputStream(enc))),new File(enc.getParent()+File.separator+"decrypted_"+enc.getName()));
 	}
 
 	public static void encrypt(String tgzfile) {
