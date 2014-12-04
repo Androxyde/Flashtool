@@ -21,6 +21,7 @@ public class SinFile {
 	JBBPBitInputStream sinStream = null;
 	FileInputStream fin = null;
 	
+	org.sinfile.parsers.v1.SinParser sinv1 = null;
 	org.sinfile.parsers.v2.SinParser sinv2 = null;
 	org.sinfile.parsers.v3.SinParser sinv3 = null;
 	private static Logger logger = Logger.getLogger(SinFile.class);
@@ -61,7 +62,13 @@ public class SinFile {
 			fin=new FileInputStream(sinfile);
 			sinStream = new JBBPBitInputStream(fin);
 			version = sinStream.readByte();
-			if (version!=2 && version!=3) throw new SinFileException("Not a sin file");
+			if (version!=1 && version!=2 && version!=3) throw new SinFileException("Not a sin file");
+			if (version==1) {
+				sinv1 = sinParserV1.parse(sinStream).mapTo(org.sinfile.parsers.v1.SinParser.class);
+				if (sinv1.hashLen>sinv1.headerLen) throw new SinFileException("Error parsing sin file");
+				sinv1.parseHash(sinStream);
+				closeStreams();
+			}
 			if (version==2) {
 				sinv2 = sinParserV2.parse(sinStream).mapTo(org.sinfile.parsers.v2.SinParser.class);
 				if (sinv2.hashLen>sinv2.headerLen) throw new SinFileException("Error parsing sin file");
@@ -103,13 +110,23 @@ public class SinFile {
 
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
+		if (version==1) {
+			builder.append("Version : "+version+"\n"
+					     + "Multiple Headers : "+sinv1.multipleHeaders+"\n"
+						 + "Header Length : "+sinv1.headerLen+"\n"
+						 + "PayLoad Type : "+sinv1.payloadType+"\n"
+					     + "Mem Id : "+sinv1.memId+"\n"
+					     + "Compression : "+sinv1.compression+"\n"
+					     + "Hash Length : "+sinv1.hashLen+"\n"
+			             + "Cert Length "+sinv1.certLen+"\n");
+		}
 		if (version==2) {
 			builder.append("Version : "+version+"\n"
 					     + "Multiple Headers : "+sinv2.multipleHeaders+"\n"
 						 + "Header Length : "+sinv2.headerLen+"\n"
 						 + "PayLoad Type : "+sinv2.payloadType+"\n"
 					     + "Mem Id : "+sinv2.memId+"\n"
-					     + "Compressoin : "+sinv2.compression+"\n"
+					     + "Compression : "+sinv2.compression+"\n"
 					     + "Hash Length : "+sinv2.hashLen+"\n"
 			             + "Cert Length "+sinv2.certLen+"\n");
 		}
@@ -121,6 +138,10 @@ public class SinFile {
 	}
 	
 	public String getType() {
+		if (sinv1!=null) {
+			if (new String(sinv1.cert).contains("S1_Loader")) return "LOADER";
+			if (new String(sinv1.cert).contains("S1_Boot")) return "BOOT";
+		}
 		if (sinv2!=null) {
 			if (new String(sinv2.cert).contains("S1_Loader")) return "LOADER";
 			if (new String(sinv2.cert).contains("S1_Boot")) return "BOOT";

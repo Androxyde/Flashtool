@@ -44,7 +44,6 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.logger.ConsoleAppender;
 import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.logger.TextAreaAppender;
@@ -53,7 +52,6 @@ import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.DeviceProperties;
 import org.system.Devices;
-import org.system.DevicesGit;
 import org.system.FTDEntry;
 import org.system.FTShell;
 import org.system.GlobalConfig;
@@ -62,10 +60,7 @@ import org.system.OS;
 import org.system.Proxy;
 import org.system.StatusEvent;
 import org.system.StatusListener;
-import org.system.UpdateURL;
-
 import flashsystem.Bundle;
-import flashsystem.SinFile;
 import flashsystem.X10flash;
 import gui.tools.APKInstallJob;
 import gui.tools.BackupSystemJob;
@@ -113,6 +108,7 @@ public class MainSWT {
 	 * Open the window.
 	 */
 	public void open() {
+		if (GlobalConfig.getProperty("gitauto")==null) GlobalConfig.setProperty("gitauto", "true");
 		Display.setAppName("Flashtool");
 		Display display = Display.getDefault();
 		createContents();
@@ -120,8 +116,10 @@ public class MainSWT {
 		guimode=true;
 		shlSonyericsson.open();
 		shlSonyericsson.layout();
-		WaitForDevicesSync sync = new WaitForDevicesSync(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-		sync.open();
+		if (GlobalConfig.getProperty("gitauto").equals("true")) {
+			WaitForDevicesSync sync = new WaitForDevicesSync(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+			sync.open();
+		}
 		WidgetTask.setEnabled(mntmAdvanced,GlobalConfig.getProperty("devfeatures").equals("yes"));
 		StatusListener phoneStatus = new StatusListener() {
 			public void statusChanged(StatusEvent e) {
@@ -536,6 +534,48 @@ public class MainSWT {
 		
 		Menu menu_6 = new Menu(mntmDevices);
 		mntmDevices.setMenu(menu_6);
+		
+		MenuItem mntmNewSubmenu_1 = new MenuItem(menu_6, SWT.CASCADE);
+		mntmNewSubmenu_1.setText("Devices Sync");
+		
+		Menu menu_8 = new Menu(mntmNewSubmenu_1);
+		mntmNewSubmenu_1.setMenu(menu_8);
+		
+		MenuItem mntmSyncFromGit = new MenuItem(menu_8, SWT.NONE);
+		mntmSyncFromGit.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				WaitForDevicesSync sync = new WaitForDevicesSync(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				sync.open();
+			}
+		});
+		mntmSyncFromGit.setText("Manual Sync");
+		
+		MenuItem mntmAutoSync = new MenuItem(menu_8, SWT.CASCADE);
+		mntmAutoSync.setText("Auto Sync");
+		
+		Menu menu_11 = new Menu(mntmAutoSync);
+		mntmAutoSync.setMenu(menu_11);
+		
+		MenuItem mntmOn = new MenuItem(menu_11, SWT.RADIO);
+		mntmOn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				GlobalConfig.setProperty("gitauto", "true");
+			}
+		});
+		mntmOn.setText("On");
+		mntmOn.setSelection((GlobalConfig.getProperty("gitauto").equals("true")));
+		
+		MenuItem mntmOff = new MenuItem(menu_11, SWT.RADIO);
+		mntmOff.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				GlobalConfig.setProperty("gitauto", "false");
+			}
+		});
+		mntmOff.setText("Off");
+		mntmOff.setSelection((GlobalConfig.getProperty("gitauto").equals("false")));
 		
 		MenuItem mntmCheckDrivers = new MenuItem(menu_6, SWT.NONE);
 		mntmCheckDrivers.addSelectionListener(new SelectionAdapter() {

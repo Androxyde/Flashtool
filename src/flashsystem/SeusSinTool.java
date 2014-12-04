@@ -1,6 +1,5 @@
 package flashsystem;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,6 +38,7 @@ public class SeusSinTool {
 	    ZipFile file=null;
 	    try {
 	    	 file = new ZipFile(dec.getAbsolutePath());
+	    	 logger.info("Found zip file. Extracting content");
 	    	 Enumeration<? extends ZipEntry> entries = file.entries();
 	    	 while ( entries.hasMoreElements() ) {
 	    		 ZipEntry entry = entries.nextElement();
@@ -64,13 +64,18 @@ public class SeusSinTool {
 	    	} catch (Exception ex) {}
 	    	try {
 	    		org.sinfile.parsers.SinFile sf = new org.sinfile.parsers.SinFile(new File(dec.getAbsolutePath()));
-	    		if (sf.getType().equals("LOADER"))
+	    		if (sf.getType().equals("LOADER")) {
+	    			logger.info("Found sin loader. Moving file to loader.sin");
 	    			dec.renameTo(getFile(new File(folder+File.separator+"loader.sin")));
-	    		if (sf.getType().equals("BOOT"))
+	    		}
+	    		if (sf.getType().equals("BOOT")) {
+	    			logger.info("Found sin boot. Moving file to boot.sin");
 	    			dec.renameTo(getFile(new File(folder+File.separator+"boot.sin")));
+	    		}
 	    	} catch (SinFileException sine) {
 	    		try {
 	    			TAFileParser ta = new TAFileParser(new FileInputStream(dec.getAbsolutePath()));
+	    			logger.info("Found ta file. Moving file to preset.ta");
 	    			dec.renameTo(getFile(new File(folder+File.separator+"preset.ta")));
 	    		} catch(TAFileParseException tae) {
 	    			logger.error(dec.getAbsolutePath() + " is unrecognizable");
