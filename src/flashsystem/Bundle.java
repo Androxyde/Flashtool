@@ -241,7 +241,7 @@ public final class Bundle {
 	}
 	
 	public void createFTF() throws Exception {
-		File ftf = new File(OS.getWorkDir()+"/firmwares/"+_device+"_"+_version+"_"+_branding+".ftf");
+		File ftf = new File(OS.getFirmwaresFolder()+File.separator+_device+"_"+_version+"_"+_branding+".ftf");
 		byte buffer[] = new byte[10240];
 		StringBuffer sbuf = new StringBuffer();
 		sbuf.append("Manifest-Version: 1.0\n");
@@ -326,7 +326,7 @@ public final class Bundle {
 		if (entry.isJarEntry()) {
 			logger.debug("Saving entry "+entry.getName()+" to disk");
 			InputStream in = entry.getInputStream();
-			String outname = "."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared"+OS.getFileSeparator()+entry.getName();
+			String outname = OS.getFirmwaresPreparedFolder()+File.separator+entry.getName();
 			new File(outname).getParentFile().mkdirs();
 			logger.debug("Writing Entry to "+outname);
 			OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
@@ -406,7 +406,7 @@ public final class Bundle {
 	public boolean open() {
 		try {
 			logger.info("Preparing files for flashing");
-			File f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared");
+			File f = new File(OS.getFirmwaresPreparedFolder());
 			if (f.exists()) {
 				File[] f1 = f.listFiles();
 				for (int i = 0;i<f1.length;i++) {
@@ -450,7 +450,7 @@ public final class Bundle {
 			Enumeration<JarEntry> e=_firmware.entries();
 			while (e.hasMoreElements()) {
 				JarEntry entry = e.nextElement();
-				String outname = "."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared"+OS.getFileSeparator()+entry.getName();
+				String outname = OS.getFirmwaresPreparedFolder()+File.separator+entry.getName();
 				if (entry.getName().toUpperCase().endsWith(".SINB") || entry.getName().toUpperCase().endsWith(".TAB")) {
 					outname = outname.replace(".sinb", ".sin").replace(".tab", ".ta");
 				}
@@ -458,10 +458,10 @@ public final class Bundle {
 				if (f.exists())
 					f.delete();
 			}
-			f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared"+File.separator+"boot");
+			f = new File(OS.getFirmwaresPreparedFolder()+File.separator+"boot");
 			if (f.exists())
 				f.delete();
-			f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared");
+			f = new File(OS.getFirmwaresPreparedFolder());
 			if (f.exists())
 				f.delete();
 			try {

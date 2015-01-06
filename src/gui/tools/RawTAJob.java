@@ -103,7 +103,7 @@ public class RawTAJob extends Job {
     public void doRestore() {
 		String serial = Devices.getCurrent().getSerial();
 		String folder = OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+serial+File.separator+"rawta";
-		String folderprepared = folder+File.separator+"prepared"; 
+		String folderprepared = folder+File.separator+"prepared";
     	try {
 			if (!Devices.getCurrent().isBusyboxInstalled(false))
 				Devices.getCurrent().doBusyboxHelper();

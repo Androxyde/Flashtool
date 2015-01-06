@@ -11,14 +11,8 @@ import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.Key;
-import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -29,7 +23,6 @@ import java.util.TimeZone;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.crypto.Cipher;
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
 import org.util.HexDump;
@@ -486,6 +479,25 @@ public class OS {
 	      } catch(IOException e) {
 	        e.printStackTrace();
 	      }
+	  }
+
+	  public static String getUserHome() {
+		  	return System.getProperty("user.home");
+ 	  }
+	  
+	  public static String getFirmwaresFolder() {
+		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares").mkdirs();
+		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares";
+	  }
+
+	  public static String getFirmwaresPreparedFolder() {
+		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"prepared").mkdirs();
+		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"prepared";
+	  }
+
+	  public static String getFirmwaresDownloadedFolder() {
+		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads").mkdirs();
+		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads";
 	  }
 
 }

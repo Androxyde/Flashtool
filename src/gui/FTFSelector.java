@@ -268,7 +268,7 @@ public class FTFSelector extends Dialog {
 				sourceFolder.setLayoutData(gd_sourceFolder);
 				sourceFolder.setEditable(false);
 				if (pathname.length()==0) {
-					sourceFolder.setText(OS.getWorkDir()+File.separator+"firmwares");
+					sourceFolder.setText(OS.getFirmwaresFolder());
 				}
 				else sourceFolder.setText(pathname);
 

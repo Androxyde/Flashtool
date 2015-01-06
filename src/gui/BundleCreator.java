@@ -11,6 +11,7 @@ import gui.tools.WidgetsTool;
 import gui.tools.createFTFJob;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -265,10 +266,22 @@ public class BundleCreator extends Dialog {
 					showErrorMessageBox("Device, Versio, Branding : all fields must be set");
 					return;
 				}
-				File f = new File(OS.getWorkDir()+File.separator+"firmwares"+File.separator+_variant+"_"+version.getText()+"_"+branding.getText()+".ftf");
+				File f = new File(OS.getFirmwaresFolder()+File.separator+_variant+"_"+version.getText()+"_"+branding.getText()+".ftf");
 				if (f.exists()) {
 					showErrorMessageBox("This bundle name already exists");
 					return;
+				}
+				try {
+					if (f.createNewFile()) 
+						f.delete();
+					else {
+						showErrorMessageBox("The built filename from variant, version and branding is not valid. Choose another name");
+						return;
+					}
+				}
+				catch (IOException ioe) {
+					showErrorMessageBox("The built filename from variant, version and branding is not valid. Choose another name");
+					return;						
 				}
 				Bundle b = new Bundle();
 				b.setMeta(meta);
@@ -279,7 +292,6 @@ public class BundleCreator extends Dialog {
 				if (!b.hasLoader()) {
 					String result = Devices.getIdFromVariant(_variant);
 					DeviceEntry ent = new DeviceEntry(result);
-					System.out.println(ent.getLoader());
 						if (ent.hasUnlockedLoader()) {
 							String res = WidgetTask.openLoaderSelect(shlBundler);
 							if (res.equals("U"))
