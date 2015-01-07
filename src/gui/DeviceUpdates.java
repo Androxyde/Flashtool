@@ -229,7 +229,7 @@ public class DeviceUpdates extends Dialog {
 	public void doDownload(TableLine tl, DeviceEntryModelUpdater mu) {
     	dj = new DownloadJob("Download FW");
     	dj.setCDF(tl.getValueOf(0));
-    	String path = OS.getFirmwaresDownloadedFolder()+File.separator+mu.getModel()+"_"+tl.getValueOf(1).replaceAll(" ","_") + "_" + mu.getReleaseOf(tl.getValueOf(0));
+    	String path = OS.getFolderFirmwaresDownloaded()+File.separator+mu.getModel()+"_"+tl.getValueOf(1).replaceAll(" ","_") + "_" + mu.getReleaseOf(tl.getValueOf(0));
     	dj.setPath(path);
     	dj.setUpdater(mu);
     	dj.schedule();		

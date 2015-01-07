@@ -266,7 +266,7 @@ public class BundleCreator extends Dialog {
 					showErrorMessageBox("Device, Versio, Branding : all fields must be set");
 					return;
 				}
-				File f = new File(OS.getFirmwaresFolder()+File.separator+_variant+"_"+version.getText()+"_"+branding.getText()+".ftf");
+				File f = new File(OS.getFolderFirmwares()+File.separator+_variant+"_"+version.getText()+"_"+branding.getText()+".ftf");
 				if (f.exists()) {
 					showErrorMessageBox("This bundle name already exists");
 					return;

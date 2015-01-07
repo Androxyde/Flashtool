@@ -117,15 +117,15 @@ public class DeviceEntry {
 	}
 
 	public String getCustomDeviceDir() {
-		return Devices.getCustomDevicesDir()+fsep+getId();
+		return OS.getFolderMyDevices()+fsep+getId();
 	}
 	
 	public String getCleanDir() {
-		return OS.getWorkDir()+fsep+"custom"+fsep+"mydevices"+fsep+getSerial()+fsep+"clean"+fsep+getBuildId();
+		return OS.getFolderMyDevices()+fsep+getSerial()+fsep+"clean"+fsep+getBuildId();
 	}
 
 	public String getAppsDir() {
-		return OS.getWorkDir()+fsep+"custom"+fsep+"mydevices"+fsep+getSerial()+fsep+"apps"+fsep+getBuildId();
+		return OS.getFolderMyDevices()+fsep+getSerial()+fsep+"apps"+fsep+getBuildId();
 	}
 	
 	public String getBuildProp() {

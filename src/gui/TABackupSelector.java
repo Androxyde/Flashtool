@@ -128,9 +128,10 @@ public class TABackupSelector extends Dialog {
 	          return ((String)element);
 	        }
 		});
+
 		Vector<String> tabackups = new Vector();
 		String serial = Devices.getCurrent().getSerial();
-		String folder = OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+serial+File.separator+"rawta";
+		String folder = OS.getFolderMyDevices()+File.separator+serial+File.separator+"rawta";
 		File srcdir = new File(folder);
 		File[] chld = srcdir.listFiles();
 		for(int i = 0; i < chld.length; i++) {

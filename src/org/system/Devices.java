@@ -51,9 +51,6 @@ public class Devices  {
 		return OS.getWorkDir()+File.separator+"devices";
 	}
 	
-	public static String getCustomDevicesDir() {
-		return OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+"config";
-	}
 	public static DeviceEntry getDevice(String device) {
 		try {
 			if (props.containsKey(device))

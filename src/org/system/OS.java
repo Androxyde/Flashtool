@@ -484,20 +484,35 @@ public class OS {
 	  public static String getUserHome() {
 		  	return System.getProperty("user.home");
  	  }
-	  
-	  public static String getFirmwaresFolder() {
+
+	  public static String getFolderFirmwares() {
 		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares").mkdirs();
 		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares";
 	  }
 
-	  public static String getFirmwaresPreparedFolder() {
+	  public static String getFolderFirmwaresPrepared() {
 		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"prepared").mkdirs();
 		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"prepared";
 	  }
 
-	  public static String getFirmwaresDownloadedFolder() {
+	  public static String getFolderFirmwaresDownloaded() {
 		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads").mkdirs();
 		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads";
+	  }
+
+	  public static String getFolderFirmwaresSinExtracted() {
+		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"sinExtracted").mkdirs();
+		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads";
+	  }
+
+	  public static String getFolderCustomDevices() {
+		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"devices").mkdirs();
+		  return getUserHome()+File.separator+"FlashTool"+File.separator+"devices";		  
+	  }
+
+	  public static String getFolderMyDevices() {
+		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"registeredDevices").mkdirs();
+		  return getUserHome()+File.separator+"FlashTool"+File.separator+"registeredDevices";
 	  }
 
 }

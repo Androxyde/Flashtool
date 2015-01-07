@@ -16,10 +16,13 @@ import flashsystem.FlasherConsole;
 public class Main {
 
 	public static void main(String[] args) {
-		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"Firmwares"+File.separator+"Downloads").mkdirs();
+		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads").mkdirs();
+		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"prepared").mkdirs();
+		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"sinExtracted").mkdirs();
 		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"devices").mkdirs();
 		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"registeredDevices").mkdirs();
 		AWTKillerThread k = new AWTKillerThread();
+		
 		k.start();
 		try {
 			OptionSet options = parseCmdLine(args);
