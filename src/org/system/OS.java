@@ -485,6 +485,10 @@ public class OS {
 		  	return System.getProperty("user.home");
  	  }
 
+	  public static String getFolderCustom() {
+		  return getWorkDir()+File.separator+"custom";
+	  }
+
 	  public static String getFolderFirmwares() {
 		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares").mkdirs();
 		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares";

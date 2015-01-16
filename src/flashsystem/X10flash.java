@@ -277,7 +277,7 @@ public class X10flash {
     		return "";
     	if (modded_loader)
 			logger.info("Using an unofficial loader");
-    	return OS.getWorkDir()+loader.substring(1, loader.length());
+    	return loader;
     }
 
     public void sendLoader() throws FileNotFoundException, IOException, X10FlashException {

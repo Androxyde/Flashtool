@@ -10,7 +10,6 @@ import org.eclipse.swt.widgets.Display;
 public class DeviceEntry {
 
 	PropertiesFile _entry;
-	private static String fsep = OS.getFileSeparator();
 	private Boolean hasBusybox=null;
 	private boolean isRecoveryMode=false;
 	private HashSet<DeviceEntryModel> models = new HashSet<DeviceEntryModel>();
@@ -109,23 +108,23 @@ public class DeviceEntry {
 	}
 	
 	public String getWorkDir() {
-		return Devices.getDevicesDir()+fsep+getId()+fsep+"work";
+		return Devices.getDevicesDir()+File.separator+getId()+File.separator+"work";
 	}
 	
 	public String getDeviceDir() {
-		return Devices.getDevicesDir()+fsep+getId();
+		return Devices.getDevicesDir()+File.separator+getId();
 	}
 
 	public String getCustomDeviceDir() {
-		return OS.getFolderMyDevices()+fsep+getId();
+		return OS.getFolderMyDevices()+File.separator+getId();
 	}
 	
 	public String getCleanDir() {
-		return OS.getFolderMyDevices()+fsep+getSerial()+fsep+"clean"+fsep+getBuildId();
+		return OS.getFolderMyDevices()+File.separator+getSerial()+File.separator+"clean"+File.separator+getBuildId();
 	}
 
 	public String getAppsDir() {
-		return OS.getFolderMyDevices()+fsep+getSerial()+fsep+"apps"+fsep+getBuildId();
+		return OS.getFolderMyDevices()+File.separator+getSerial()+File.separator+"apps"+File.separator+getBuildId();
 	}
 	
 	public String getBuildProp() {
@@ -215,11 +214,11 @@ public class DeviceEntry {
 	}
 	
 	public String getLoader() {
-		return "./devices/"+_entry.getProperty("internalname")+"/loader.sin";
+		return this.getDeviceDir()+"/loader.sin";
 	}
 
 	public String getLoaderUnlocked() {
-		return "./devices/"+_entry.getProperty("internalname")+"/loader_unlocked.sin";
+		return this.getDeviceDir()+"/loader_unlocked.sin";
 	}
 	
 	private void setVersion () {
@@ -260,19 +259,19 @@ public class DeviceEntry {
 			//version = sel.getVersion();
 		}
 		if (version.length()==0) return "";
-		else return "."+fsep+"devices"+fsep+"busybox"+fsep+version+fsep+"busybox";
+		else return Devices.getDevicesDir()+File.separator+"busybox"+File.separator+version+File.separator+"busybox";
 	}
 	
 	public String getOptimize() {
-		return "./devices/"+_entry.getProperty("internalname")+"/optimize.tar";
+		return getDeviceDir()+"/optimize.tar";
 	}
 	
 	public String getBuildMerge() {
-		return "./devices/"+_entry.getProperty("internalname")+"/build.prop";
+		return getDeviceDir()+"/build.prop";
 	}
 
 	public String getCharger() {
-		return "./devices/"+_entry.getProperty("internalname")+"/charger";
+		return getDeviceDir()+"/charger";
 	}
 
 	public boolean isBusyboxInstalled(boolean force) {
