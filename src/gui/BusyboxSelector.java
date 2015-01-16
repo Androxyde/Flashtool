@@ -126,7 +126,7 @@ public class BusyboxSelector extends Dialog {
 	        }
 		});
 		Vector<File> folders = new Vector();
-		File srcdir = new File(Devices.getDevicesDir()+File.separator+"busybox");
+		File srcdir = new File(OS.getFolderDevices()+File.separator+"busybox");
 		File[] chld = srcdir.listFiles();
 		for(int i = 0; i < chld.length; i++) {
 			if (chld[i].isDirectory())

@@ -23,11 +23,14 @@ import java.util.TimeZone;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
 import org.util.HexDump;
+
 import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
 import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
+
 import java.util.zip.CheckedInputStream;
 import java.util.zip.Adler32;
 
@@ -487,6 +490,10 @@ public class OS {
 
 	  public static String getFolderCustom() {
 		  return getWorkDir()+File.separator+"custom";
+	  }
+
+	  public static String getFolderDevices() {
+			return OS.getWorkDir()+File.separator+"devices";
 	  }
 
 	  public static String getFolderFirmwares() {

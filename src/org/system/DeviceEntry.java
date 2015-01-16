@@ -4,6 +4,7 @@ package org.system;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
+
 import org.adb.AdbUtility;
 import org.eclipse.swt.widgets.Display;
 
@@ -107,12 +108,8 @@ public class DeviceEntry {
 		return _entry.getProperty("realname");
 	}
 	
-	public String getWorkDir() {
-		return Devices.getDevicesDir()+File.separator+getId()+File.separator+"work";
-	}
-	
 	public String getDeviceDir() {
-		return Devices.getDevicesDir()+File.separator+getId();
+		return OS.getFolderDevices()+File.separator+getId();
 	}
 
 	public String getCustomDeviceDir() {
@@ -259,7 +256,7 @@ public class DeviceEntry {
 			//version = sel.getVersion();
 		}
 		if (version.length()==0) return "";
-		else return Devices.getDevicesDir()+File.separator+"busybox"+File.separator+version+File.separator+"busybox";
+		else return OS.getFolderDevices()+File.separator+"busybox"+File.separator+version+File.separator+"busybox";
 	}
 	
 	public String getOptimize() {

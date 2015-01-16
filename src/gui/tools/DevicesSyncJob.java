@@ -27,7 +27,7 @@ public class DevicesSyncJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
 		try {
 			logger.info("Syncing devices from github");
-			DevicesGit.gitSync(Devices.getDevicesDir());
+			DevicesGit.gitSync(OS.getFolderDevices());
 	    	logger.info("Devices sync finished.");
 			return Status.OK_STATUS;
 		}

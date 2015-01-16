@@ -13,8 +13,8 @@ public class DeviceProperties {
 	public static void reload() {
 		devprops.clear();
 		try {
-			AdbUtility.pull("/system/build.prop", OS.getWorkDir()+fsep+"custom"+fsep+"root"+fsep+"build.prop",false);
-			File build = new File(OS.getWorkDir()+fsep+"custom"+fsep+"root"+fsep+"build.prop");
+			AdbUtility.pull("/system/build.prop", OS.getFolderCustom()+fsep+"root"+fsep+"build.prop",false);
+			File build = new File(OS.getFolderCustom()+fsep+"root"+fsep+"build.prop");
 			FileInputStream fis = new FileInputStream(build);
 			devprops.load(fis);
 			fis.close();
