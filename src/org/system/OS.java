@@ -496,6 +496,11 @@ public class OS {
 			return OS.getWorkDir()+File.separator+"devices";
 	  }
 
+	  public static String getFolderUserFlashtool() {
+		  new File(getUserHome()+File.separator+"FlashTool").mkdirs();
+		  return getUserHome()+File.separator+"FlashTool";
+	  }
+
 	  public static String getFolderFirmwares() {
 		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares").mkdirs();
 		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares";

@@ -91,7 +91,7 @@ public class DeviceEntry {
 	public DeviceEntry(String Id) {
 		_entry = new PropertiesFile();
 		try {
-			String path = OS.getWorkDir()+File.separator+"devices"+File.separator+Id+File.separator+Id+".properties";
+			String path = OS.getFolderDevices()+File.separator+Id+File.separator+Id+".properties";
 			_entry.open("",path);			
 		}
 		catch (Exception e) {

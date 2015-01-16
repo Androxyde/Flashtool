@@ -1105,7 +1105,7 @@ public class MainSWT {
 		mntmInstallBusybox.setEnabled(true);
 		mntmClearCache.setEnabled(true);
 		mntmBuildpropEditor.setEnabled(true);
-		if (new File(OS.getWorkDir()+fsep+"devices"+fsep+Devices.getCurrent().getId()+fsep+"rebrand").isDirectory())
+		if (new File(Devices.getCurrent().getDeviceDir()+fsep+"rebrand").isDirectory())
 			mntmBuildpropRebrand.setEnabled(true);
 		mntmRebootIntoRecoveryT.setEnabled(Devices.getCurrent().canRecovery());
 		mntmRebootDefaultRecovery.setEnabled(true);
@@ -1153,7 +1153,7 @@ public class MainSWT {
 			if (!AdbUtility.exists("/system/flashtool")) {
 				Devices.getCurrent().doBusyboxHelper();
 				logger.info("Installing toolbox to device...");
-				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
+				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
 				FTShell ftshell = new FTShell("installftkit");
 				ftshell.runRoot();
 			}
