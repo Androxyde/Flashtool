@@ -12,7 +12,7 @@ public class StringBuilderAppender extends WriterAppender {
 	private static StringBuilder content = new StringBuilder();
 	
 	public static void writeFile(String timestamp) {
-		String logname=OS.getWorkDir()+File.separator+"flashtool_"+timestamp+".log";
+		String logname=OS.getFolderUserFlashtool()+File.separator+"flashtool_"+timestamp+".log";
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter(new File(logname));

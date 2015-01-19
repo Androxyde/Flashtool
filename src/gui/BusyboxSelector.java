@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
+import org.system.Devices;
 import org.system.OS;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -125,7 +126,7 @@ public class BusyboxSelector extends Dialog {
 	        }
 		});
 		Vector<File> folders = new Vector();
-		File srcdir = new File(OS.getWorkDir()+File.separator+"devices"+File.separator+"busybox");
+		File srcdir = new File(OS.getFolderDevices()+File.separator+"busybox");
 		File[] chld = srcdir.listFiles();
 		for(int i = 0; i < chld.length; i++) {
 			if (chld[i].isDirectory())

@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.system.Devices;
 import org.system.DevicesGit;
 import org.system.OS;
 
@@ -26,7 +27,7 @@ public class DevicesSyncJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
 		try {
 			logger.info("Syncing devices from github");
-			DevicesGit.gitSync(OS.getWorkDir()+File.separator+"devices");
+			DevicesGit.gitSync(OS.getFolderDevices());
 	    	logger.info("Devices sync finished.");
 			return Status.OK_STATUS;
 		}

@@ -4,13 +4,13 @@ package org.system;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
+
 import org.adb.AdbUtility;
 import org.eclipse.swt.widgets.Display;
 
 public class DeviceEntry {
 
 	PropertiesFile _entry;
-	private static String fsep = OS.getFileSeparator();
 	private Boolean hasBusybox=null;
 	private boolean isRecoveryMode=false;
 	private HashSet<DeviceEntryModel> models = new HashSet<DeviceEntryModel>();
@@ -91,7 +91,7 @@ public class DeviceEntry {
 	public DeviceEntry(String Id) {
 		_entry = new PropertiesFile();
 		try {
-			String path = OS.getWorkDir()+File.separator+"devices"+File.separator+Id+File.separator+Id+".properties";
+			String path = OS.getFolderDevices()+File.separator+Id+File.separator+Id+".properties";
 			_entry.open("",path);			
 		}
 		catch (Exception e) {
@@ -108,24 +108,20 @@ public class DeviceEntry {
 		return _entry.getProperty("realname");
 	}
 	
-	public String getWorkDir() {
-		return Devices.getDevicesDir()+fsep+getId()+fsep+"work";
-	}
-	
 	public String getDeviceDir() {
-		return Devices.getDevicesDir()+fsep+getId();
+		return OS.getFolderDevices()+File.separator+getId();
 	}
 
 	public String getCustomDeviceDir() {
-		return Devices.getCustomDevicesDir()+fsep+getId();
+		return OS.getFolderMyDevices()+File.separator+getId();
 	}
 	
 	public String getCleanDir() {
-		return OS.getWorkDir()+fsep+"custom"+fsep+"mydevices"+fsep+getSerial()+fsep+"clean"+fsep+getBuildId();
+		return OS.getFolderMyDevices()+File.separator+getSerial()+File.separator+"clean"+File.separator+getBuildId();
 	}
 
 	public String getAppsDir() {
-		return OS.getWorkDir()+fsep+"custom"+fsep+"mydevices"+fsep+getSerial()+fsep+"apps"+fsep+getBuildId();
+		return OS.getFolderMyDevices()+File.separator+getSerial()+File.separator+"apps"+File.separator+getBuildId();
 	}
 	
 	public String getBuildProp() {
@@ -215,11 +211,11 @@ public class DeviceEntry {
 	}
 	
 	public String getLoader() {
-		return "./devices/"+_entry.getProperty("internalname")+"/loader.sin";
+		return this.getDeviceDir()+"/loader.sin";
 	}
 
 	public String getLoaderUnlocked() {
-		return "./devices/"+_entry.getProperty("internalname")+"/loader_unlocked.sin";
+		return this.getDeviceDir()+"/loader_unlocked.sin";
 	}
 	
 	private void setVersion () {
@@ -260,19 +256,19 @@ public class DeviceEntry {
 			//version = sel.getVersion();
 		}
 		if (version.length()==0) return "";
-		else return "."+fsep+"devices"+fsep+"busybox"+fsep+version+fsep+"busybox";
+		else return OS.getFolderDevices()+File.separator+"busybox"+File.separator+version+File.separator+"busybox";
 	}
 	
 	public String getOptimize() {
-		return "./devices/"+_entry.getProperty("internalname")+"/optimize.tar";
+		return getDeviceDir()+"/optimize.tar";
 	}
 	
 	public String getBuildMerge() {
-		return "./devices/"+_entry.getProperty("internalname")+"/build.prop";
+		return getDeviceDir()+"/build.prop";
 	}
 
 	public String getCharger() {
-		return "./devices/"+_entry.getProperty("internalname")+"/charger";
+		return getDeviceDir()+"/charger";
 	}
 
 	public boolean isBusyboxInstalled(boolean force) {

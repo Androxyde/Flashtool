@@ -47,19 +47,13 @@ public class Devices  {
 		return props.keys();
 	}
 	
-	public static String getDevicesDir() {
-		return OS.getWorkDir()+File.separator+"devices";
-	}
 	
-	public static String getCustomDevicesDir() {
-		return OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+"config";
-	}
 	public static DeviceEntry getDevice(String device) {
 		try {
 			if (props.containsKey(device))
 				return (DeviceEntry)props.get(device);
 			else {
-				File f = new File(Devices.getDevicesDir()+File.separator+device+".ftd");
+				File f = new File(OS.getFolderDevices()+File.separator+device+".ftd");
 				if (f.exists()) {
 					DeviceEntry ent=null;
 					JarFile jar = new JarFile(f);
@@ -97,7 +91,7 @@ public class Devices  {
 	private static void load() {
 		if (props==null) props=new Properties();
 		else props.clear();
-		File[] list = (new File(Devices.getDevicesDir()).listFiles());
+		File[] list = (new File(OS.getFolderDevices()).listFiles());
 		if (list==null) return;
 		for (int i=0;i<list.length;i++) {
 			if (list[i].isDirectory()) {

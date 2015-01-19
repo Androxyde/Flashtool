@@ -700,7 +700,7 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				Devices.listDevices(true);
         		Properties list = new Properties();
-        		File[] lfiles = new File(Devices.getDevicesDir()).listFiles();
+        		File[] lfiles = new File(OS.getFolderDevices()).listFiles();
         		for (int i=0;i<lfiles.length;i++) {
         			if (lfiles[i].getName().endsWith(".ftd")) {
         				String name = lfiles[i].getName();
@@ -1105,7 +1105,7 @@ public class MainSWT {
 		mntmInstallBusybox.setEnabled(true);
 		mntmClearCache.setEnabled(true);
 		mntmBuildpropEditor.setEnabled(true);
-		if (new File(OS.getWorkDir()+fsep+"devices"+fsep+Devices.getCurrent().getId()+fsep+"rebrand").isDirectory())
+		if (new File(Devices.getCurrent().getDeviceDir()+fsep+"rebrand").isDirectory())
 			mntmBuildpropRebrand.setEnabled(true);
 		mntmRebootIntoRecoveryT.setEnabled(Devices.getCurrent().canRecovery());
 		mntmRebootDefaultRecovery.setEnabled(true);
@@ -1153,7 +1153,7 @@ public class MainSWT {
 			if (!AdbUtility.exists("/system/flashtool")) {
 				Devices.getCurrent().doBusyboxHelper();
 				logger.info("Installing toolbox to device...");
-				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
+				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
 				FTShell ftshell = new FTShell("installftkit");
 				ftshell.runRoot();
 			}
@@ -1322,12 +1322,12 @@ public class MainSWT {
 	}
 
 	public void doExportDevice(String device) throws Exception {
-		File ftd = new File(Devices.getDevicesDir()+File.separator+device+".ftd");
+		File ftd = new File(OS.getFolderDevices()+File.separator+device+".ftd");
 		byte buffer[] = new byte[10240];
 	    FileOutputStream stream = new FileOutputStream(ftd);
 	    JarOutputStream out = new JarOutputStream(stream);
 	    out.setLevel(Deflater.BEST_SPEED);
-	    File root = new File(Devices.getDevicesDir()+File.separator+device);
+	    File root = new File(OS.getFolderDevices()+File.separator+device);
 	    int rootindex = root.getAbsolutePath().length();
 		Collection<File> c = OS.listFileTree(root);
 		Iterator<File> i = c.iterator();
