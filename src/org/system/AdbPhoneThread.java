@@ -25,7 +25,7 @@ public class AdbPhoneThread extends Thread {
 	public void run() {
 		this.setName("AdbPhoneThread");
 		try {
-			builder = new ProcessBuilder(OS.getAdbPath(), "status-window");
+			builder = new ProcessBuilder(OS.getPathAdb(), "status-window");
 			final Process adb = builder.start();
 		    Thread t = new Thread() {
 		    	  public void run() {

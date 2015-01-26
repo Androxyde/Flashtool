@@ -11,8 +11,8 @@ import org.system.RunOutputs;
 
 public class FastbootUtility {
 
-	private static String adbpath = OS.getAdbPath();
-	private static String fastbootpath = OS.getFastBootPath();
+	private static String adbpath = OS.getPathAdb();
+	private static String fastbootpath = OS.getPathFastBoot();
 	private static Logger logger = Logger.getLogger(FastbootUtility.class);
 	
 	public static void adbRebootFastboot() throws Exception {

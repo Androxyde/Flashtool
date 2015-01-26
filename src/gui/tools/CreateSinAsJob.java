@@ -38,10 +38,10 @@ public class CreateSinAsJob extends Job {
 				logger.info("Generating sin file to "+file+".sin");
 				logger.info("Please wait");
 				if (spareinfo.equals("09")) {
-					ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getBin2SinPath(),file, partition, "0x"+spareinfo,"0x20000"},false);
+					ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getPathBin2Sin(),file, partition, "0x"+spareinfo,"0x20000"},false);
 				}
 				else {
-					ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getBin2SinPath(),file, partition, "0x"+spareinfo,"0x20000", "0x1000"},false);
+					ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getPathBin2Sin(),file, partition, "0x"+spareinfo,"0x20000", "0x1000"},false);
 				}
 				logger.info("Sin file creation finished");
 	    		return Status.OK_STATUS;

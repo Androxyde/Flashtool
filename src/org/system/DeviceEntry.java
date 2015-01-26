@@ -291,7 +291,7 @@ public class DeviceEntry {
 	    	s.runRoot(false);
     	}
     	else {
-    		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getAdbPath(),"reboot"},false);
+    		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getPathAdb(),"reboot"},false);
     	}
     }
     
