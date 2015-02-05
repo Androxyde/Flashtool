@@ -72,7 +72,11 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 					LibWinHttp.WINHTTP_AUTO_DETECT_TYPE_DHCP+
 					LibWinHttp.WINHTTP_AUTO_DETECT_TYPE_DNS_A, pac);
 		}
-		String pacUrl = pac.getValue();
+		String pacUrl=null;
+		try {
+			pacUrl = pac.getValue();
+		} catch (Exception e) {
+		}
 		
 		if (pacUrl == null) {
 			pacUrl = ieSettings.getAutoConfigUrl();
