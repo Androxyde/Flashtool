@@ -112,10 +112,14 @@ public class MainSWT {
 		guimode=true;
 		shlSonyericsson.open();
 		shlSonyericsson.layout();
-		while (new File(OS.getWorkDir()+File.separator+"firmwares").list().length>0)
-			WidgetTask.openOKBox(shlSonyericsson, "Please move "+OS.getWorkDir()+File.separator+"firmwares content to "+OS.getFolderFirmwares());
-		while (new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices").list().length>0)
-			WidgetTask.openOKBox(shlSonyericsson, "Please move "+OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices content to "+OS.getFolderMyDevices());
+		try {
+			while (new File(OS.getWorkDir()+File.separator+"firmwares").list().length>0)
+				WidgetTask.openOKBox(shlSonyericsson, "Please move "+OS.getWorkDir()+File.separator+"firmwares content to "+OS.getFolderFirmwares());
+		} catch (NullPointerException npe) {}
+		try {
+			while (new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices").list().length>0)
+				WidgetTask.openOKBox(shlSonyericsson, "Please move "+OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices content to "+OS.getFolderMyDevices());
+		} catch (NullPointerException npe) {}
 		if (GlobalConfig.getProperty("gitauto").equals("true")) {
 			WaitForDevicesSync sync = new WaitForDevicesSync(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			sync.open();
