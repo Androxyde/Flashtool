@@ -1,16 +1,12 @@
 package gui;
 
-import java.io.File;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import libusb.LibUsbException;
 import linuxlib.JUsb;
-
 import org.logger.MyLogger;
 import org.system.AWTKillerThread;
 import org.system.OS;
-
 import flashsystem.FlasherConsole;
 
 public class Main {
@@ -22,7 +18,6 @@ public class Main {
 		OS.getFolderCustomDevices();
 		OS.getFolderMyDevices();
 		AWTKillerThread k = new AWTKillerThread();
-		
 		k.start();
 		try {
 			OptionSet options = parseCmdLine(args);
