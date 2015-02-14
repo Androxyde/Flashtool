@@ -60,6 +60,7 @@ public class CDFInfoLoader
 	private Properties userinfo;
 	private Firmware latest=null;
 	
+	
 	public CDFInfoLoader(String tac8, String cda) throws MalformedURLException, IOException, ParserConfigurationException {
 		userinfo = new Properties(); 
 		userinfo.load(new URL("http://software.sonymobile.com/ns/omsi/1/common/userinfo/user.properties").openStream());
@@ -135,12 +136,12 @@ public class CDFInfoLoader
 				rootNode.appendChild(error);
 			}
 	}
-	
-	private void buildXML(ServiceSearchHistory ssh)
+
+	private void buildXML(ServiceSearchHistory obj)
 	{
 		Set<String> versions = new HashSet<String>();
 		
-		List<ServiceSearchHistoryEntry> sshEntries = ssh.getServiceSearchHistoryList();
+		List<ServiceSearchHistoryEntry> sshEntries = obj.getServiceSearchHistoryList();
 		for (Iterator<ServiceSearchHistoryEntry> sshEntriesIt = sshEntries.iterator(); sshEntriesIt.hasNext();)
 		{
 			List<ServiceSearchResultEntry> ssrEntries = sshEntriesIt.next().getServiceSearchResult().getServiceSearchResultEntryList();
@@ -151,43 +152,40 @@ public class CDFInfoLoader
 				if (!ssiEntries.isEmpty())
 				{
 					ScriptSearchInfo ssiEntry = ssiEntries.get(0);
-					//Set<DataIdentifier> di = ssiEntry.getRevisionIdentifiers();
 					Set<DataFile> df = ssiEntry.getDataFiles();
-					
 					String iAppSWVer = null;
 					String iCDFVer = null;
-					String iLangRegion = null;
-					
-					/*for (Iterator<DataIdentifier> diItr = di.iterator(); diItr.hasNext();)
-					{
-						DataIdentifier diEntry = diItr.next();
-						switch (diEntry.getCategory())
-						{
-							case "AppSWVer":
-							case "SoftwareRev":
-								iAppSWVer = diEntry.getValue();
-								break;
-							case "CDFVer":
-								iCDFVer = diEntry.getValue();
-								break;
-						}
-					}*/
+					String iNetwork = null;
+					Map<Long, DataFile> files = new HashMap<Long, DataFile>();
 					for (Iterator<DataFile> dfItr = df.iterator(); dfItr.hasNext();)
 					{
 						DataFile dfEntry = dfItr.next();
-						String dfName = dfEntry.getFileName();
-						if (dfName != null && dfName.indexOf("FSP") == 0)
+						if (!dfEntry.getFileName().isEmpty())
 						{
-							Map<String, String> fileProps = new HashMap<String, String>();
-							
+							// Discard dummy files
+							if (dfEntry.getFileName().contains("Dummy File"))
+								continue;
+							if (dfEntry.getFileName().contains("@Template"))
+								continue;
 							DataFileProperty[] dfp = dfEntry.getFileProperties();
 							int dfpLength = dfp.length;
 							for (int dfpIdx = 0; dfpIdx < dfpLength; ++dfpIdx)
-								fileProps.put(dfp[dfpIdx].getFilePropertyCategoryName(), dfp[dfpIdx].getFilePropertyValue());
-							
-							iAppSWVer = fileProps.get("FSVer");
-							iCDFVer = fileProps.get("CDFVer");
-							iLangRegion = fileProps.get("LangRegion");
+							{
+								DataFileProperty dfpEntry = dfp[dfpIdx];
+								switch (dfpEntry.getFilePropertyCategoryName())
+								{
+									case "FSVer":
+										iAppSWVer = dfpEntry.getFilePropertyValue();
+										break;
+									case "CDFVer":
+										iCDFVer = dfpEntry.getFilePropertyValue();
+										break;
+									case "LangRegion":
+										iNetwork = dfpEntry.getFilePropertyValue();
+										break;
+								}
+							}
+							files.put(dfEntry.getFileContentInfoId(), dfEntry);
 						}
 					}
 					if (iAppSWVer == null || iCDFVer == null)
@@ -195,50 +193,85 @@ public class CDFInfoLoader
 					String verEntry = iAppSWVer + "/" + iCDFVer;
 					if (!versions.contains(verEntry))
 					{
+						// <release swVer="" cdfVer="" network="">
 						Element cdfNode = doc.createElement("release");
-						cdfNode.setAttribute("langRegion", iLangRegion);
+						cdfNode.setAttribute("network", iNetwork);
 						cdfNode.setAttribute("cdfVer", iCDFVer);
 						cdfNode.setAttribute("swVer", iAppSWVer);
-						
-						//Map<Long, String> files = new HashMap<Long, String>();
-						
+						// Add release files
 						ServiceContent sc = (ServiceContent)ssrEntry.getServiceContent().values().toArray()[0];
-						//Set<DataFile> df = sc.getFiles();
-						//for (Iterator<DataFile> dfItr = df.iterator(); dfItr.hasNext();)
-						//{
-						//	DataFile dfEntry = dfItr.next();
-						//	files.put(dfEntry.getFileContentInfoId(), dfEntry.getFileName());
-						//}
-						
 						Set<DistributedFileInfo> dfi = sc.getDistributedFileInfos();
 						for (Iterator<DistributedFileInfo> dfiItr = dfi.iterator(); dfiItr.hasNext();)
 						{
 							DistributedFileInfo dfiEntry = dfiItr.next();
 							long fileId = dfiEntry.getFileContentInfoId();
-							//String fileName = files.get(fileId);
-							long fileLength = dfiEntry.getLength();
-							long fileChecksum = dfiEntry.getChecksum();
-							long fileChunkSize = dfiEntry.getChunkSize();
-							int filePartsCount = dfiEntry.getFileParts().size();
-							
-							Element fileNode = doc.createElement("file");
-							fileNode.setAttribute("id", String.valueOf(fileId));
-							//fileNode.setAttribute("name", String.valueOf(fileName));
-							fileNode.setAttribute("length", String.valueOf(fileLength));
-							fileNode.setAttribute("checksum", String.valueOf(fileChecksum));
-							if (filePartsCount > 1)
-								fileNode.setAttribute("chunk", String.valueOf(fileChunkSize));
-							fileNode.setAttribute("parts", String.valueOf(filePartsCount));
-							
-							cdfNode.appendChild(fileNode);
+							if (files.containsKey(fileId))
+							{
+								DataFile file = files.get(fileId);
+								String fileName = getFileName(file);
+								String internFileName = file.getFileName();
+								String internCategory = file.getFileTypeTag();
+								long fileLength = dfiEntry.getLength();
+								long fileChecksum = dfiEntry.getChecksum();
+								int filePartsCount = dfiEntry.getFileParts().size();
+								long fileChunkSize = dfiEntry.getChunkSize();
+								// <file id="" name="" length="" length="" checksum="" parts="" chunk="" />
+								Element fileNode = doc.createElement("file");
+								if (filePartsCount > 1)
+									fileNode.setAttribute("chunk", String.valueOf(fileChunkSize));
+								fileNode.setAttribute("parts", String.valueOf(filePartsCount));
+								fileNode.setAttribute("checksum", String.valueOf(fileChecksum));
+								fileNode.setAttribute("length", String.valueOf(fileLength));
+								fileNode.setAttribute("name", fileName);
+								fileNode.setAttribute("internalname", internFileName);
+								fileNode.setAttribute("internalcategory", internCategory);
+								fileNode.setAttribute("id", String.valueOf(fileId));
+								cdfNode.appendChild(fileNode);
+							}
 						}
-						
 						rootNode.appendChild(cdfNode);
 						versions.add(verEntry);
 					}
 				}
 			}
 		}
+	}
+
+	private String getFileName(DataFile dfEntry) {
+		String dfName = dfEntry.getFileName();
+		// Rename files for the unpacker
+		switch (dfEntry.getFileTypeTag())
+		{
+			case "SIN_FILE_SET":
+				dfName = dfName.split("_")[0];
+				if (dfName.equals("FSP"))
+				{
+				}
+				dfName = dfName.toLowerCase().concat(".zip");
+				break;
+			case "LOADER":
+				dfName = dfName.contains("TEST") ? "loader-test.sin" : "loader.sin";
+				break;
+			case "SOFTWARE":
+				dfName = dfName.contains("TEST") ? "boot-test.sin" : "boot.sin";
+				break;
+			case "TA":
+				switch (dfName)
+				{
+					case "S1_TA_ResetCustomizationSelector":
+						dfName = "cust-reset.ta";
+						break;
+					case "S1_TA_Tamsui_FlashStartupShutdownResult":
+						dfName = "tamsui-fssr.ta";
+						break;
+					default:
+						if (!dfName.endsWith(".ta"))
+							dfName = dfName.concat(".ta");
+						break;
+				}
+				break;
+		}
+		return dfName;
 	}
 	
 	public String toString() {
