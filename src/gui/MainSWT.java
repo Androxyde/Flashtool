@@ -12,9 +12,7 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.Deflater;
-
 import linuxlib.JUsb;
-
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,7 +25,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
@@ -80,7 +77,6 @@ import gui.tools.VersionCheckerJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
 import gui.tools.Yaffs2Job;
-
 import org.eclipse.swt.custom.ScrolledComposite;
 
 public class MainSWT {
@@ -116,6 +112,14 @@ public class MainSWT {
 		guimode=true;
 		shlSonyericsson.open();
 		shlSonyericsson.layout();
+		try {
+			while (new File(OS.getWorkDir()+File.separator+"firmwares").list().length>0)
+				WidgetTask.openOKBox(shlSonyericsson, "Please move "+OS.getWorkDir()+File.separator+"firmwares content to "+OS.getFolderFirmwares());
+		} catch (NullPointerException npe) {}
+		try {
+			while (new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices").list().length>0)
+				WidgetTask.openOKBox(shlSonyericsson, "Please move "+OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices content to "+OS.getFolderMyDevices());
+		} catch (NullPointerException npe) {}
 		if (GlobalConfig.getProperty("gitauto").equals("true")) {
 			WaitForDevicesSync sync = new WaitForDevicesSync(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			sync.open();
@@ -700,7 +704,7 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				Devices.listDevices(true);
         		Properties list = new Properties();
-        		File[] lfiles = new File(OS.getFolderDevices()).listFiles();
+        		File[] lfiles = new File(OS.getFolderCustomDevices()).listFiles();
         		for (int i=0;i<lfiles.length;i++) {
         			if (lfiles[i].getName().endsWith(".ftd")) {
         				String name = lfiles[i].getName();
@@ -1322,7 +1326,7 @@ public class MainSWT {
 	}
 
 	public void doExportDevice(String device) throws Exception {
-		File ftd = new File(OS.getFolderDevices()+File.separator+device+".ftd");
+		File ftd = new File(OS.getFolderCustomDevices()+File.separator+device+".ftd");
 		byte buffer[] = new byte[10240];
 	    FileOutputStream stream = new FileOutputStream(ftd);
 	    JarOutputStream out = new JarOutputStream(stream);

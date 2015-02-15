@@ -1,28 +1,23 @@
 package gui;
 
-import java.io.File;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import libusb.LibUsbException;
 import linuxlib.JUsb;
-
 import org.logger.MyLogger;
 import org.system.AWTKillerThread;
 import org.system.OS;
-
 import flashsystem.FlasherConsole;
 
 public class Main {
 
 	public static void main(String[] args) {
-		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads").mkdirs();
-		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"prepared").mkdirs();
-		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"sinExtracted").mkdirs();
-		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"devices").mkdirs();
-		new File(System.getProperty("user.home")+File.separator+"FlashTool"+File.separator+"registeredDevices").mkdirs();
+		OS.getFolderFirmwaresDownloaded();
+		OS.getFolderFirmwaresPrepared();
+		OS.getFolderFirmwaresSinExtracted();
+		OS.getFolderCustomDevices();
+		OS.getFolderMyDevices();
 		AWTKillerThread k = new AWTKillerThread();
-		
 		k.start();
 		try {
 			OptionSet options = parseCmdLine(args);

@@ -1,6 +1,8 @@
 package org.system;
 
 //import gui.tools.WidgetTask;
+import gui.tools.WidgetTask;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -251,7 +253,7 @@ public class DeviceEntry {
 		String version="";
 		if (!select) version = _entry.getProperty("busyboxhelper");
 		else {
-			//version = WidgetTask.openBusyboxSelector(Display.getCurrent().getActiveShell());
+			version = WidgetTask.openBusyboxSelector(Display.getCurrent().getActiveShell());
 			//BusyBoxSelectGUI sel = new BusyBoxSelectGUI(getId());
 			//version = sel.getVersion();
 		}
@@ -291,7 +293,7 @@ public class DeviceEntry {
 	    	s.runRoot(false);
     	}
     	else {
-    		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getAdbPath(),"reboot"},false);
+    		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getPathAdb(),"reboot"},false);
     	}
     }
     

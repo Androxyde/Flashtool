@@ -21,8 +21,8 @@ public class AdbUtility  {
 	static boolean rootperms=false;
 	
 	private static String fsep = OS.getFileSeparator();
-	private static String shellpath = OS.getWorkDir()+fsep+"custom"+fsep+"shells";
-	private static String adbpath = OS.getAdbPath();
+	private static String shellpath = OS.getFolderCustom()+fsep+"shells";
+	private static String adbpath = OS.getPathAdb();
 	private static String shpath ="";
 	private static Logger logger = Logger.getLogger(AdbUtility.class);
 

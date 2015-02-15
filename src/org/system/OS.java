@@ -72,23 +72,21 @@ public class OS {
 		}
 	}
 	
-	public static String getAdbPath() {
-		String fsep = OS.getFileSeparator();
+	public static String getPathAdb() {
 		if (OS.getName().equals("windows"))
-			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"adb.exe").getAbsolutePath();
+			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"adb.exe").getAbsolutePath();
 		else
-			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"adb."+OS.getName()).getAbsolutePath();
+			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"adb."+OS.getName()).getAbsolutePath();
 	}
 
-	public static String getBin2SinPath() {
-		String fsep = OS.getFileSeparator();
+	public static String getPathBin2Sin() {
 		if (OS.getName().equals("windows"))
-			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2sin.exe").getAbsolutePath();
+			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"bin2sin.exe").getAbsolutePath();
 		else
-			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2sin").getAbsolutePath();
+			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"bin2sin").getAbsolutePath();
 	}
 
-	public static String getBin2ElfPath() {
+	public static String getPathBin2Elf() {
 		String fsep = OS.getFileSeparator();
 		if (OS.getName().equals("windows"))
 			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2elf.exe").getAbsolutePath();
@@ -96,12 +94,7 @@ public class OS {
 			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2elf").getAbsolutePath();
 	}
 
-	public static String get7z() {
-		String fsep = OS.getFileSeparator();
-		return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"7z.exe").getAbsolutePath();	
-}
-
-	public static String getFastBootPath() {
+	public static String getPathFastBoot() {
 		String fsep = OS.getFileSeparator();
 	   if (OS.getName().equals("windows"))
 		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot.exe").getAbsolutePath();
@@ -497,38 +490,38 @@ public class OS {
 	  }
 
 	  public static String getFolderUserFlashtool() {
-		  new File(getUserHome()+File.separator+"FlashTool").mkdirs();
-		  return getUserHome()+File.separator+"FlashTool";
+		  new File(getUserHome()+File.separator+".flashTool").mkdirs();
+		  return getUserHome()+File.separator+".flashTool";
 	  }
 
 	  public static String getFolderFirmwares() {
-		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares").mkdirs();
-		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares";
+		  new File(OS.getFolderUserFlashtool()+File.separator+"firmwares").mkdirs();
+		  return OS.getFolderUserFlashtool()+File.separator+"firmwares";
 	  }
 
 	  public static String getFolderFirmwaresPrepared() {
-		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"prepared").mkdirs();
-		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"prepared";
+		  new File(OS.getFolderFirmwares()+File.separator+"prepared").mkdirs();
+		  return OS.getFolderFirmwares()+File.separator+"prepared";
 	  }
 
 	  public static String getFolderFirmwaresDownloaded() {
-		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads").mkdirs();
-		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads";
+		  new File(OS.getFolderFirmwares()+File.separator+"Downloads").mkdirs();
+		  return OS.getFolderFirmwares()+File.separator+"Downloads";
 	  }
 
 	  public static String getFolderFirmwaresSinExtracted() {
-		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"sinExtracted").mkdirs();
-		  return getUserHome()+File.separator+"FlashTool"+File.separator+"firmwares"+File.separator+"Downloads";
+		  new File(OS.getFolderFirmwares()+File.separator+"sinExtracted").mkdirs();
+		  return OS.getFolderFirmwares()+File.separator+"sinExtracted";
 	  }
 
 	  public static String getFolderCustomDevices() {
-		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"devices").mkdirs();
-		  return getUserHome()+File.separator+"FlashTool"+File.separator+"devices";		  
+		  new File(OS.getFolderUserFlashtool()+File.separator+"devices").mkdirs();
+		  return OS.getFolderUserFlashtool()+File.separator+"devices";		  
 	  }
 
 	  public static String getFolderMyDevices() {
-		  new File(getUserHome()+File.separator+"FlashTool"+File.separator+"registeredDevices").mkdirs();
-		  return getUserHome()+File.separator+"FlashTool"+File.separator+"registeredDevices";
+		  new File(OS.getFolderUserFlashtool()+File.separator+"registeredDevices").mkdirs();
+		  return OS.getFolderUserFlashtool()+File.separator+"registeredDevices";
 	  }
 
 }
