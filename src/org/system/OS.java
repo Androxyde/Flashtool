@@ -333,7 +333,27 @@ public class OS {
 	     return String.format("%1$-" + n + "s", s);  
 	}
 
-	public static void ZipExplode(String zippath) throws FileNotFoundException, IOException  {
+	public static void ZipExplodeToFolder(String zippath) throws FileNotFoundException, IOException  {
+		byte buffer[] = new byte[10240];
+		File zipfile = new File(zippath);
+		File outfolder = new File(zipfile.getParentFile().getAbsolutePath()+File.separator+zipfile.getName().replace(".zip", "").replace(".ZIP", ""));
+		outfolder.mkdirs();
+		ZipInputStream zis = new ZipInputStream(new FileInputStream(zippath));
+		ZipEntry ze = zis.getNextEntry();
+		while (ze != null) {
+			FileOutputStream fout = new FileOutputStream(outfolder.getAbsolutePath()+File.separator+ze.getName());
+			int len;
+			while ((len=zis.read(buffer))>0) {
+				fout.write(buffer,0,len);
+			}
+			fout.close();
+			ze=zis.getNextEntry();
+		}
+		zis.closeEntry();
+		zis.close();
+	}
+
+	public static void ZipExplodeToHere(String zippath) throws FileNotFoundException, IOException  {
 		byte buffer[] = new byte[10240];
 		File zipfile = new File(zippath);
 		File outfolder = new File(zipfile.getParentFile().getAbsolutePath()+File.separator+zipfile.getName().replace(".zip", "").replace(".ZIP", ""));

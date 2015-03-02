@@ -34,6 +34,7 @@
 	<classpathentry kind="lib" path="libs/jgit.jar"/>
 	<classpathentry kind="lib" path="libs/sony.jar"/>
 	<classpathentry kind="lib" path="libs/jopt-simple-4.7.jar"/>
+	<classpathentry kind="lib" path="libs/jbbp-1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

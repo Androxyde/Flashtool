@@ -1,87 +1,115 @@
 package flashsystem;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.GZIPInputStream;
 
-import org.system.OS;
-import org.system.ProcessBuilderWrapper;
-import org.util.HexDump;
+import org.apache.log4j.Logger;
+import org.sinfile.parsers.SinFileException;
+import org.ta.parsers.TAFileParseException;
+import org.ta.parsers.TAFileParser;
 
 import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
 import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
 
 public class SeusSinTool {
 
-	public static void decrypt(String sinfile) {
-		byte[] buf = new byte[1024];
-		try {
-			String folder = new File((new File(sinfile)).getParent()).getAbsolutePath();
-			FileInputStream f = new FileInputStream(sinfile);
-			//DecodeInputStream in = new DecodeInputStream(f);
-			RC4DecryptingInputStream in = new RC4DecryptingInputStream(f);
-	        String basefile = sinfile+"_dek";
-	        OutputStream out = new FileOutputStream(basefile+".zip.gz");
-	        int len;
-	        while((len = in.read(buf)) >= 0) {
-	            out.write(buf, 0, len);
-	        }
-	        out.flush();
-	        out.close();
-	        in.close();
-	        
-	        byte[] magic = new byte[2];
-        	FileInputStream fload = new FileInputStream(new File(basefile+".zip.gz"));
-        	fload.read(magic);
-        	fload.close();
-
-        	if (HexDump.toHex(magic).equals("[1F, 8B]")) {
-		        File fxml = new File(folder+"\\update.xml");
-		        if (fxml.isFile()) fxml.renameTo(new File(folder+"\\update1.xml"));
-		        try {
-			        if (OS.getName().equals("windows")) {
-			        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {OS.get7z(),"e", "-y", basefile+".zip.gz", "-o"+folder},false);
-			        }
-			        else {
-			        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {"gunzip", basefile+".zip.gz"},false);
-			        }
-		        } catch (Exception e) {}
-	        	fload = new FileInputStream(new File(basefile+".zip"));
-	        	fload.read(magic);
-	        	fload.close();
-	        	if (HexDump.toHex(magic).equals("[50, 4B]")) {
-	        		try {
-				        if (OS.getName().equals("windows")) {
-				        	ProcessBuilderWrapper run1 = new ProcessBuilderWrapper(new String[] {OS.get7z(), "e", "-y", basefile+".zip", "-o"+folder},false);
-				        }
-				        else {
-				        	ProcessBuilderWrapper run1 = new ProcessBuilderWrapper(new String[] {"unzip", "-o", basefile+".zip","-d",folder},false);
-				        }
-	        		}
-	        		catch (Exception e1) {}	        		
-	        	}
-	        	else if (HexDump.toHex(magic).equals("[2F, 2F]")) {
-	        		File fl = new File(basefile+".zip");
-	        		fl.renameTo(new File(folder+"/preset1.ta"));	        		
-	        	}
-	        	else { 
-	        		File fl = new File(basefile+".zip");
-	        		fl.renameTo(new File(folder+"/loader.sin"));
-	        	}
-        	}
-
-        	File fdek = new File(basefile+".zip.gz");
-	        fdek.delete();
-	        File ftar = new File(basefile+".zip");
-	        ftar.delete();
-	        if (new File(folder+File.separator+"boot.zip").exists()) {
-	        	OS.ZipExplode(folder+File.separator+"boot.zip");
-	        	new File(folder+File.separator+"boot.zip").delete();
-	        }
-	      } catch(IOException e) {
-	    	  e.printStackTrace();
-	      }
+	private static Logger logger = Logger.getLogger(SeusSinTool.class);
+	
+	public static void decryptAndExtract(String FILESET) throws FileNotFoundException,IOException {
+		File enc= new File(FILESET);
+		File dec = new File(enc.getParent()+File.separator+"decrypted_"+enc.getName());
+		decrypt(enc);
+		String folder = enc.getParentFile().getAbsolutePath()+File.separator+"decrypted";
+		new File(folder).mkdirs();
+	    logger.info("Identifying fileset content");
+	    ZipFile file=null;
+	    try {
+	    	 file = new ZipFile(dec.getAbsolutePath());
+	    	 logger.info("Found zip file. Extracting content");
+	    	 Enumeration<? extends ZipEntry> entries = file.entries();
+	    	 while ( entries.hasMoreElements() ) {
+	    		 ZipEntry entry = entries.nextElement();
+	    		 File out = getFile(new File(folder+File.separator+entry.getName()));
+	    		 dumpStreamTo(file.getInputStream(entry),out);
+	    		 if (entry.getName().endsWith(".zip")) {
+	    			 String subfolder = folder + File.separator+entry.getName().substring(0,entry.getName().lastIndexOf("."));
+	    			 ZipFile subzip = new ZipFile(out); 
+	    			 Enumeration<? extends ZipEntry> subentries = subzip.entries();
+	    			 while ( subentries.hasMoreElements() ) {
+	    				 ZipEntry subentry = subentries.nextElement();
+	    	    		 File subout = getFile(new File(subfolder+File.separator+subentry.getName()));
+	    	    		 dumpStreamTo(subzip.getInputStream(subentry),subout);
+	    			 }
+	    			 subzip.close();
+	    			 out.delete();
+	    		 }
+	    	 }
+	    	 file.close();
+	    } catch (Exception e) {
+	    	try {
+	    		file.close();
+	    	} catch (Exception ex) {}
+	    	try {
+	    		org.sinfile.parsers.SinFile sf = new org.sinfile.parsers.SinFile(new File(dec.getAbsolutePath()));
+	    		if (sf.getType().equals("LOADER")) {
+	    			logger.info("Found sin loader. Moving file to loader.sin");
+	    			dec.renameTo(getFile(new File(folder+File.separator+"loader.sin")));
+	    		}
+	    		if (sf.getType().equals("BOOT")) {
+	    			logger.info("Found sin boot. Moving file to boot.sin");
+	    			dec.renameTo(getFile(new File(folder+File.separator+"boot.sin")));
+	    		}
+	    	} catch (SinFileException sine) {
+	    		try {
+	    			TAFileParser ta = new TAFileParser(new FileInputStream(dec.getAbsolutePath()));
+	    			logger.info("Found ta file. Moving file to preset.ta");
+	    			dec.renameTo(getFile(new File(folder+File.separator+"preset.ta")));
+	    		} catch(TAFileParseException tae) {
+	    			logger.error(dec.getAbsolutePath() + " is unrecognizable");
+	    		}
+	    	}
+	    }
+	    dec.delete();
 	}
 
-	  public static void encrypt(String tgzfile) {
+	public static void dumpStreamTo(InputStream in, File out) throws IOException {
+		out.getParentFile().mkdirs();
+		ByteBuffer buffer = ByteBuffer.allocate(20480000);
+	    ReadableByteChannel channel = Channels.newChannel(in);
+	    RandomAccessFile afile = new RandomAccessFile (out,"rw");
+	    FileChannel cout = afile.getChannel();
+	    cout.truncate(0L);
+	    while (channel.read(buffer)>0) {
+	    	buffer.flip();
+	    	while(buffer.hasRemaining()) {
+	    	    cout.write(buffer);
+	    	}
+	    	buffer.clear();
+	    }
+	    channel.close();
+	    in.close();
+	    cout.close();
+	    afile.close();
+	}
+	
+	public static void decrypt(File enc) throws FileNotFoundException, IOException {
+		dumpStreamTo(new GZIPInputStream(new RC4DecryptingInputStream(new FileInputStream(enc))),new File(enc.getParent()+File.separator+"decrypted_"+enc.getName()));
+	}
+
+	public static void encrypt(String tgzfile) {
 		  byte[] buf = new byte[1024];
 	      try {
 	    	  String outname = tgzfile.replaceAll(".tgz", ".sin");
@@ -98,6 +126,22 @@ public class SeusSinTool {
 	      } catch(IOException e) {
 	        e.printStackTrace();
 	      }
-	  }
+	}
+	
+	public static File getFile(File file) {
+		if (file.exists()) {
+			int i=1;
+			String folder = file.getParent();
+			int point = file.getName().lastIndexOf(".");
+			if (point==-1) return file;
+			String name = file.getName().substring(0,point);
+			String ext = file.getName().substring(point+1);
+			while (new File(folder+File.separator+name+i+"."+ext).exists()) {
+				i++;
+			}
+			return new File(folder+File.separator+name+i+"."+ext);
+		}
+		else return file;
+	}
 
 }

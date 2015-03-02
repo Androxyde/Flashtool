@@ -5,9 +5,12 @@ import gui.models.TableSorter;
 import gui.models.VectorContentProvider;
 import gui.models.VectorLabelProvider;
 import gui.tools.DecryptJob;
+import gui.tools.WidgetTask;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
+
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -40,6 +43,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Label;
 import org.logger.LogProgress;
+
 import com.iagucool.xperifirm.Firmware;
 
 public class DeviceUpdates extends Dialog {
@@ -427,7 +431,7 @@ public class DeviceUpdates extends Dialog {
     								    		cre.setBranding(mu.getCustIds().getProperty(cdfval).replaceAll(" ", "_"));
     								    		cre.setVariant(mu.getDevice().getName(), mu.getModel());
     								    		cre.setVersion(mu.getReleaseOf(cdfval));
-    								    		bundleResult = (String)cre.open(_path);
+    								    		bundleResult = (String)cre.open(_path+File.separator+"decrypted");
     								    		lblInfo.setText("");
     	    									closeButton.setText("Close");
     										}
