@@ -49,6 +49,7 @@ public class Command {
 	static final int CMD10 = 10;
 	static final int CMD12 = 12;
 	static final int CMD13 = 13;
+	static final int CMD18 = 18;
 	static final int CMD25 = 25;
 	
 	
@@ -85,6 +86,14 @@ public class Command {
     	catch (Exception e) {
     		return 0;
     	}
+    }
+    
+    public byte[] getLastReply() {
+    	return USBFlash.getLastReply();
+    }
+    
+    public boolean isMultiPacketMessage() {
+    	return (USBFlash.getLastFlags() & 4) > 0;
     }
 
     private void writeCommand(int command, byte data[], boolean ongoing) throws X10FlashException, IOException {
