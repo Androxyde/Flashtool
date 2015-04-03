@@ -12,6 +12,7 @@ public class TaFile {
 	FileInputStream _in;
 	Scanner _scanner;
 	Vector<TaEntry> entries = new Vector<TaEntry>();
+	int _partition = 0;
 	
 	public TaFile(File f) throws TaParseException, FileNotFoundException {
 		_taf = f;
@@ -22,7 +23,8 @@ public class TaFile {
 	    boolean beginentry=false;
 	    while (_scanner.hasNextLine()) {
 	    	String line = _scanner.nextLine().trim();
-	    	if (!line.startsWith("/") && !(line.length()<=4)) {
+	    	if (line.startsWith("/")) continue;
+	    	if (!(line.length()<=4)) {
 	    		Scanner scanline = new Scanner(line);
 	    		scanline.useDelimiter(" ");
 	    		while (scanline.hasNext()) {
@@ -50,7 +52,21 @@ public class TaFile {
 	    			}
 	    		}
 	    	}
+	    	if(_partition == 0 && line.length() == 2){
+                try {
+                    _partition = Integer.parseInt(line);
+                    if (_partition !=1 && _partition != 2) {
+                    	throw new TaParseException("TA partition should be 1 or 2");
+                    }
+                } catch (NumberFormatException  e) {
+
+                }
+            }
 	    }
+
+	    if(_partition == 0){
+            _partition = 2;
+        }
 	    entry.close();
 	    entries.add(entry);
 	    try {
@@ -66,6 +82,10 @@ public class TaFile {
 	public String getName() {
 		return _taf.getName();
 	}
+
+    public int getPartition() {
+        return _partition;
+    }
 	
 	public String toString() {
 		String result = "";
