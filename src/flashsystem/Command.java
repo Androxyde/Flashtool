@@ -6,11 +6,14 @@ import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.util.HexDump;
 
+import com.sonymobile.cs.generic.array.ArrayUtils;
+
 import flashsystem.io.USBFlash;
 
 public class Command {
 
     private boolean _simulate;
+    private byte[] reply;
 
     public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	 = {
     	0x00, 0x00, 0x27, 0x74, 0x00, 0x00, 0x00, 0x01, 0x01};
@@ -49,6 +52,7 @@ public class Command {
 	static final int CMD10 = 10;
 	static final int CMD12 = 12;
 	static final int CMD13 = 13;
+	static final int CMD18 = 18;
 	static final int CMD25 = 25;
 	
 	
@@ -62,7 +66,7 @@ public class Command {
 	
     public String getLastReplyString() {
     	try {
-    		return new String(USBFlash.getLastReply());
+    		return new String(reply);
     	}
     	catch (Exception e) {
     		return "";
@@ -71,7 +75,7 @@ public class Command {
 
     public String getLastReplyHex() {
     	try {
-    		return HexDump.toHex(USBFlash.getLastReply());
+    		return HexDump.toHex(reply);
     	}
     	catch (Exception e) {
     		return "";
@@ -80,11 +84,19 @@ public class Command {
 
     public short getLastReplyLength() {
     	try {
-    		return (short)USBFlash.getLastReply().length;
+    		return (short)reply.length;
     	}
     	catch (Exception e) {
     		return 0;
     	}
+    }
+    
+    public byte[] getLastReply() {
+    	return reply;
+    }
+    
+    public boolean isMultiPacketMessage() {
+    	return (USBFlash.getLastFlags() & 4) > 0;
     }
 
     private void writeCommand(int command, byte data[], boolean ongoing) throws X10FlashException, IOException {
@@ -112,12 +124,19 @@ public class Command {
     public void send(int cmd, byte data[], boolean ongoing) throws X10FlashException, IOException
     {
     	writeCommand(cmd, data, ongoing);
-    	LogProgress.updateProgress();
+    	reply = USBFlash.getLastReply();
     	if (USBFlash.getLastFlags()==0) {
     		writeCommand(Command.CMD07, Command.VALNULL, false);
     		throw new X10FlashException(getLastReplyString());
     	}
-		
+    	while(isMultiPacketMessage()) {
+    		writeCommand(cmd, data, ongoing);
+	    	reply = ArrayUtils.concatenateByteArrays(reply, USBFlash.getLastReply());
+	    	if (USBFlash.getLastFlags()==0) {
+	    		writeCommand(Command.CMD07, Command.VALNULL, false);
+	    		throw new X10FlashException(getLastReplyString());
+	    	}
+    	}
+    	LogProgress.updateProgress();		
     }
-
 }
