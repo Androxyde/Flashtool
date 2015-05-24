@@ -12,7 +12,9 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.Deflater;
+
 import linuxlib.JUsb;
+
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,6 +59,8 @@ import org.system.OS;
 import org.system.Proxy;
 import org.system.StatusEvent;
 import org.system.StatusListener;
+import org.util.XperiFirm;
+
 import flashsystem.Bundle;
 import flashsystem.X10flash;
 import gui.tools.APKInstallJob;
@@ -76,7 +80,9 @@ import gui.tools.RootJob;
 import gui.tools.VersionCheckerJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
+import gui.tools.XperiFirmJob;
 import gui.tools.Yaffs2Job;
+
 import org.eclipse.swt.custom.ScrolledComposite;
 
 public class MainSWT {
@@ -112,14 +118,16 @@ public class MainSWT {
 		guimode=true;
 		shlSonyericsson.open();
 		shlSonyericsson.layout();
-		try {
-			while (new File(OS.getWorkDir()+File.separator+"firmwares").list().length>0)
-				WidgetTask.openOKBox(shlSonyericsson, "Please move "+OS.getWorkDir()+File.separator+"firmwares content to "+OS.getFolderFirmwares());
-		} catch (NullPointerException npe) {}
-		try {
-			while (new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices").list().length>0)
-				WidgetTask.openOKBox(shlSonyericsson, "Please move "+OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices content to "+OS.getFolderMyDevices());
-		} catch (NullPointerException npe) {}
+		boolean folderexists = (new File(OS.getWorkDir()+File.separator+"firmwares").exists() || new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices").exists());
+		if (folderexists) {
+			HomeSelector hs = new HomeSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+			String result = (String)hs.open(false);
+			GlobalConfig.setProperty("user.flashtool", result);
+			forceMove(OS.getWorkDir()+File.separator+"firmwares",OS.getFolderFirmwares());
+			forceMove(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices",OS.getFolderMyDevices());
+			new File(OS.getWorkDir()+File.separator+"firmwares").delete();
+			new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices").delete();
+		}
 		if (GlobalConfig.getProperty("gitauto").equals("true")) {
 			WaitForDevicesSync sync = new WaitForDevicesSync(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			sync.open();
@@ -196,8 +204,8 @@ public class MainSWT {
 
 		shlSonyericsson.setSize(794, 451);
 		shlSonyericsson.setText("Sony Mobile Flasher by Androxyde");
-		shlSonyericsson.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/flash_32.png"));
-		shlSonyericsson.setLayout(new FormLayout());
+		shlSonyericsson.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/flash_512.png"));
+		shlSonyericsson.setLayout(new FormLayout() );
 		
 		Menu menu = new Menu(shlSonyericsson, SWT.BAR);
 		shlSonyericsson.setMenuBar(menu);
@@ -234,6 +242,16 @@ public class MainSWT {
 			}
 		});
 		mntmSwitchPro.setText(GlobalConfig.getProperty("devfeatures").equals("yes")?"Switch Simple":"Switch Pro");
+		
+		MenuItem mntmChangeUserHome = new MenuItem(menu_1, SWT.NONE);
+		mntmChangeUserHome.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				HomeSelector hs = new HomeSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				String result = (String)hs.open(true);
+			}
+		});
+		mntmChangeUserHome.setText("Change User Home");
 		
 		MenuItem mntmExit = new MenuItem(menu_1, SWT.NONE);
 		mntmExit.addSelectionListener(new SelectionAdapter() {
@@ -590,7 +608,7 @@ public class MainSWT {
 		});
 		mntmCheckDrivers.setText("Check Drivers");
 		
-		MenuItem mntmCheck = new MenuItem(menu_6, SWT.NONE);
+		/*MenuItem mntmCheck = new MenuItem(menu_6, SWT.NONE);
 		mntmCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -609,7 +627,7 @@ public class MainSWT {
 				}
 			}
 		});
-		mntmCheck.setText("Check Updates");
+		mntmCheck.setText("Check Updates");*/
 		
 		MenuItem mntmEditor = new MenuItem(menu_6, SWT.CASCADE);
 		mntmEditor.setText("Manage");
@@ -821,7 +839,7 @@ public class MainSWT {
 
 		ToolBar toolBar = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
 		FormData fd_toolBar = new FormData();
-		fd_toolBar.right = new FormAttachment(0, 316);
+		fd_toolBar.right = new FormAttachment(0, 335);
 		fd_toolBar.top = new FormAttachment(0, 10);
 		fd_toolBar.left = new FormAttachment(0, 10);
 		toolBar.setLayoutData(fd_toolBar);
@@ -932,6 +950,16 @@ public class MainSWT {
 		tltmRecovery.setToolTipText("Install Recovery");
 		tltmRecovery.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/recovery_32.png"));
 		tltmRecovery.setEnabled(false);
+		
+		ToolItem tltmNewItem_1 = new ToolItem(toolBar, SWT.NONE);
+		tltmNewItem_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				WaitForXperiFirm wx = new WaitForXperiFirm(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				wx.open();
+			}
+		});
+		tltmNewItem_1.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/download_32.png"));
 		
 		ProgressBar progressBar = new ProgressBar(shlSonyericsson, SWT.NONE);
 		fd_btnSaveLog.bottom = new FormAttachment(100, -43);
@@ -1428,5 +1456,12 @@ public class MainSWT {
         }
         else
         	logger.info("Canceled");
+	}
+	
+	public void forceMove(String source, String dest) {
+		try {
+			while (new File(source).list().length>0)
+				WidgetTask.openOKBox(shlSonyericsson, "Please move "+source+" content to "+dest+"\n("+source+" folder MUST be empty once done)");
+		} catch (NullPointerException npe) {}
 	}
 }

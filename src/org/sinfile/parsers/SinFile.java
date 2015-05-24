@@ -1,15 +1,15 @@
 package org.sinfile.parsers;
 
-import gui.MainSWT;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import org.apache.log4j.Logger;
 import org.sinfile.parsers.v3.AddrBlock;
-import org.sinfile.parsers.v3.AddrBlocks;
-import org.sinfile.parsers.v3.DataHeader;
+import org.sinfile.parsers.v3.HashBlock;
+import org.system.OS;
+import org.util.BytesUtil;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
@@ -20,10 +20,12 @@ public class SinFile {
 	int version=0;
 	JBBPBitInputStream sinStream = null;
 	FileInputStream fin = null;
+
 	
-	org.sinfile.parsers.v1.SinParser sinv1 = null;
-	org.sinfile.parsers.v2.SinParser sinv2 = null;
-	org.sinfile.parsers.v3.SinParser sinv3 = null;
+	public org.sinfile.parsers.v1.SinParser sinv1 = null;
+	public org.sinfile.parsers.v2.SinParser sinv2 = null;
+	public org.sinfile.parsers.v3.SinParser sinv3 = null;
+	
 	private static Logger logger = Logger.getLogger(SinFile.class);
 	
 	public SinFile(File f) throws SinFileException {
@@ -77,10 +79,12 @@ public class SinFile {
 			}
 			if (version==3) {
 				sinv3 = sinParserV3.parse(sinStream).mapTo(org.sinfile.parsers.v3.SinParser.class);
+				sinv3.setLength(sinfile.length());
 				if (!new String(sinv3.magic).equals("SIN")) throw new SinFileException("Error parsing sin file");
 				if (sinv3.hashLen>sinv3.headerLen) throw new SinFileException("Error parsing sin file");
 				sinv3.parseHash(sinStream);
 				sinv3.parseDataHeader(sinStream);
+				sinv3.setFile(sinfile);
 				closeStreams();
 			}
 		} catch (Exception ioe) {
@@ -152,4 +156,83 @@ public class SinFile {
 		}
 		return "";
 	}
+	
+	public int getHeaderLength() {
+		if (sinv1!=null) {
+			return sinv1.headerLen;
+		}
+		if (sinv2!=null) {
+			return sinv2.headerLen;
+		}
+		if (sinv3!=null) {
+			return sinv3.headerLen;
+		}
+		return 0;
+	}
+	
+	public int getDataOffset() {
+		if (sinv1!=null) {
+			return sinv1.headerLen;
+		}
+		if (sinv2!=null) {
+			return sinv2.headerLen;
+		}
+		if (sinv3!=null) {
+			return sinv3.getDataOffset();
+		}
+		return 0;
+	}
+	
+	public String getDataType() throws IOException {
+		if (sinv1!=null) {
+			return "";
+		}
+		if (sinv2!=null) {
+			return "";
+		}
+		if (sinv3!=null) {
+			return sinv3.getDataType();
+		}
+		return "";		
+	}
+	
+	public long getDataSize() throws IOException{
+		if (sinv1!=null) {
+			return 0;
+		}
+		if (sinv2!=null) {
+			return 0;
+		}
+		if (sinv3!=null) {
+			return sinv3.getDataSize();
+		}
+		return 0;
+	}
+
+	public void dumpImage() throws IOException{
+		if (sinv1!=null) {
+			return;
+		}
+		if (sinv2!=null) {
+			return;
+		}
+		if (sinv3!=null) {
+			sinv3.dumpImage();
+		}
+		return;
+	}
+
+	public void dumpHeader() throws IOException {
+		if (sinv1!=null) {
+			return;
+		}
+		if (sinv2!=null) {
+			return;
+		}
+		if (sinv3!=null) {
+			sinv3.dumpHeader();
+		}
+		return;		
+	}
+
 }

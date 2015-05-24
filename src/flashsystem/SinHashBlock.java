@@ -67,4 +67,5 @@ public class SinHashBlock {
 	public String toString() {
 		return "Block "+blockindex+" ; Data size : "+getLength()+" ; Data hash size "+getHashSize()+" ; Dest offset : "+getOffset()+" ; Spare size : " + spare;
 	}
+
 }

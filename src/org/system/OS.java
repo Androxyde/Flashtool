@@ -1,5 +1,8 @@
 package org.system;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,6 +28,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.lf5.util.StreamUtils;
 import org.logger.LogProgress;
 import org.util.HexDump;
 
@@ -100,6 +104,11 @@ public class OS {
 		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot.exe").getAbsolutePath();
 	   else
 		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot."+OS.getName()).getAbsolutePath();
+	}
+	
+	public static String getPathXperiFirm() {
+		String fsep = OS.getFileSeparator();
+		return new File(OS.getFolderUserFlashtool()+fsep+"XperiFirm.exe").getAbsolutePath();
 	}
 	
 	public static String getWorkDir() {
@@ -345,7 +354,7 @@ public class OS {
 	public static void ZipExplodeToHere(String zippath) throws FileNotFoundException, IOException  {
 		byte buffer[] = new byte[10240];
 		File zipfile = new File(zippath);
-		File outfolder = new File(zipfile.getParentFile().getAbsolutePath()+File.separator+zipfile.getName().replace(".zip", "").replace(".ZIP", ""));
+		File outfolder = new File(zipfile.getParentFile().getAbsolutePath());
 		outfolder.mkdirs();
 		ZipInputStream zis = new ZipInputStream(new FileInputStream(zippath));
 		ZipEntry ze = zis.getNextEntry();
@@ -361,7 +370,25 @@ public class OS {
 		zis.closeEntry();
 		zis.close();
 	}
-	
+
+	public static void ZipExplodeTo(InputStream stream, File outfolder) throws FileNotFoundException, IOException  {
+		byte buffer[] = new byte[10240];
+		outfolder.mkdirs();
+		ZipInputStream zis = new ZipInputStream(stream);
+		ZipEntry ze = zis.getNextEntry();
+		while (ze != null) {
+			FileOutputStream fout = new FileOutputStream(outfolder.getAbsolutePath()+File.separator+ze.getName());
+			int len;
+			while ((len=zis.read(buffer))>0) {
+				fout.write(buffer,0,len);
+			}
+			fout.close();
+			ze=zis.getNextEntry();
+		}
+		zis.closeEntry();
+		zis.close();
+	}
+
 	public static void viewAllThreads() {
 
 
@@ -490,8 +517,11 @@ public class OS {
 	  }
 
 	  public static String getFolderUserFlashtool() {
-		  new File(getUserHome()+File.separator+".flashTool").mkdirs();
-		  return getUserHome()+File.separator+".flashTool";
+		  String folder = GlobalConfig.getProperty("user.flashtool");
+		  if (folder==null) folder = getUserHome()+File.separator+".flashTool";
+		  new File(folder).mkdirs();
+		  GlobalConfig.setProperty("user.flashtool", folder);
+		  return folder;
 	  }
 
 	  public static String getFolderFirmwares() {
@@ -522,6 +552,25 @@ public class OS {
 	  public static String getFolderMyDevices() {
 		  new File(OS.getFolderUserFlashtool()+File.separator+"registeredDevices").mkdirs();
 		  return OS.getFolderUserFlashtool()+File.separator+"registeredDevices";
+	  }
+
+	  public static void unpackArchive(URL url, File targetDir) throws IOException {
+	      if (!targetDir.exists()) {
+	          targetDir.mkdirs();
+	      }
+	      byte[] zipfile = StreamUtils.getBytes(url.openStream());
+	      OS.ZipExplodeTo(new ByteArrayInputStream(zipfile),new File(OS.getFolderUserFlashtool()));
+	  }
+	  
+	  public static void copyInputStream(InputStream in, OutputStream out) throws IOException {
+	      byte[] buffer = new byte[1024];
+	      int len = in.read(buffer);
+	      while (len >= 0) {
+	          out.write(buffer, 0, len);
+	          len = in.read(buffer);
+	      }
+	      in.close();
+	      out.close();
 	  }
 
 }

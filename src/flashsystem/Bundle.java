@@ -39,6 +39,8 @@ public final class Bundle {
     private String _version;
     private String _branding;
     private String _device;
+    private String _cda="";
+    private String _revision="";
     private String _cmd25;
     private String _resetCust;
     public final static int JARTYPE=1;
@@ -79,6 +81,7 @@ public final class Bundle {
 			_device = _firmware.getManifest().getMainAttributes().getValue("device");
 			_version = _firmware.getManifest().getMainAttributes().getValue("version");
 			_branding = _firmware.getManifest().getMainAttributes().getValue("branding");
+			_cda = _firmware.getManifest().getMainAttributes().getValue("cda");
 			_cmd25 = _firmware.getManifest().getMainAttributes().getValue("cmd25");
 			Enumeration<JarEntry> e = _firmware.entries();
 			while (e.hasMoreElements()) {
@@ -212,6 +215,14 @@ public final class Bundle {
 		_device=device;
 	}
 	
+	public void setCDA(String cda) {
+		_cda = cda;
+	}
+
+	public void setRevision(String revision) {
+		_revision = revision;
+	}
+	
 	public void setCmd25(String value) {
 		_cmd25 = value;
 		if (_cmd25==null) _cmd25="false";
@@ -241,13 +252,16 @@ public final class Bundle {
 	}
 	
 	public void createFTF() throws Exception {
-		File ftf = new File(OS.getFolderFirmwares()+File.separator+_device+"_"+_version+"_"+_branding+".ftf");
+		File ftf = new File(OS.getFolderFirmwares()+File.separator+_device+"_"+_version+"_"+(_cda.length()>0?_cda:_branding)+(_revision.length()>0?("_"+_revision):"")+".ftf");
+		if (ftf.exists()) throw new Exception("Bundle already exists");
 		byte buffer[] = new byte[10240];
 		StringBuffer sbuf = new StringBuffer();
 		sbuf.append("Manifest-Version: 1.0\n");
 		sbuf.append("Created-By: FlashTool\n");
 		sbuf.append("version: "+_version+"\n");
 		sbuf.append("branding: "+_branding+"\n");
+		sbuf.append("cda: "+_cda+"\n");
+		sbuf.append("revision: "+_revision+"\n");
 		sbuf.append("device: "+_device+"\n");
 		sbuf.append("cmd25: "+_cmd25+"\n");
 		Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf.toString().getBytes("UTF-8")));
