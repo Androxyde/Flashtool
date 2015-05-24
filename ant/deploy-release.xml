@@ -36,8 +36,6 @@
         <mkdir dir ="../../Deploy/FlashTool/custom/shells"/>
     	<mkdir dir ="../../Deploy/FlashTool/custom/features"/>
 		<mkdir dir ="../../Deploy/FlashTool/custom/sin"/>
-		<mkdir dir ="../../Deploy/FlashTool/custom/mydevices"/>
-		<mkdir dir ="../../Deploy/FlashTool/firmwares"/>
         <mkdir dir="../../Deploy/FlashTool/x10flasher_lib"/>
         <mkdir dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
         <mkdir dir="../../Deploy/FlashTool/drivers"/>
@@ -49,10 +47,6 @@
     		<fileset dir="../src/org/lang/ressources"
 				excludes="**/.svn"/>
     	</copy>
-        <copy todir="../../Deploy/FlashTool/firmwares">
-            <fileset dir="../firmwares"
-                excludes="**/.svn"/>
-        </copy>
 	    <copy todir="../../Deploy/FlashTool/custom/root">
 	       <fileset dir="../romupdates" excludes="**/.svn"/>
 	    </copy>
