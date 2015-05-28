@@ -160,7 +160,7 @@ public class BundleMetaData {
 			add(intname,"kernel".toUpperCase());
 		else if (intname.toUpperCase().contains("ELABEL"))
 			add(intname,"elabel".toUpperCase());
-		else if (intname.toUpperCase().contains("VENDOR"))
+		else if (intname.toUpperCase().contains("VENDOR") || intname.toUpperCase().contains("OEM"))
 			add(intname,"vendor".toUpperCase());
 		else if (intname.toUpperCase().contains("BOOT_DELIVERY"))
 			add(intname,"bootbundle".toUpperCase());
