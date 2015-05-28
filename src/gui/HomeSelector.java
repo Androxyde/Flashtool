@@ -66,6 +66,9 @@ public class HomeSelector extends Dialog {
 					result = "";
 					shlHomeSelector.dispose();
 				}
+		    	else {
+		    		WidgetTask.openOKBox(shlHomeSelector, "You must choose a user home folder");
+		    	}
 			}
 		});
 		FormData fd_btnCancel = new FormData();
