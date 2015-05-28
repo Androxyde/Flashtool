@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.logger.LogProgress;
 
 import flashsystem.X10flash;
 
@@ -29,10 +30,12 @@ public class BackupTAJob extends Job {
 			flash.BackupTA();
 			flash.closeDevice();
 			logger.info("Dumping TA finished.");
+			LogProgress.initProgress(0);
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
     		e.printStackTrace();
+    		LogProgress.initProgress(0);
     		return Status.CANCEL_STATUS;
     	}
     }
