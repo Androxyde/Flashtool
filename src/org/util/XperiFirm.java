@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
@@ -52,7 +54,20 @@ public class XperiFirm {
 			tf.write(version);
 			tf.close();
 		}
-		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getPathXperiFirm(),"-o", "\""+OS.getFolderFirmwaresDownloaded()+"\""},false);
+		ProcessBuilderWrapper command;
+		List<String> cmdargs = new ArrayList<String>();
+		if (OS.getName().equals("windows")) {
+			cmdargs.add(OS.getPathXperiFirm());
+			cmdargs.add("-o");
+			cmdargs.add("\""+OS.getFolderFirmwaresDownloaded()+"\"");
+		}
+		else {
+			cmdargs.add(OS.getPathXperiFirmWrapper());
+			cmdargs.add(OS.getPathXperiFirm());
+			cmdargs.add(OS.getFolderFirmwaresDownloaded());
+		}
+		command = new ProcessBuilderWrapper(cmdargs);
+		
 		String[] downloaded = new File(OS.getFolderFirmwaresDownloaded()).list();
 		for (int i = 0; i<downloaded.length;i++) {
 			File bundled = new File(OS.getFolderFirmwaresDownloaded()+File.separator+downloaded[i]+File.separator+"bundled");

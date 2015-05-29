@@ -98,6 +98,11 @@ public class OS {
 			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2elf").getAbsolutePath();
 	}
 
+	public static String getPathXperiFirmWrapper() {
+		String fsep = OS.getFileSeparator();
+		return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"xperifirm").getAbsolutePath();
+	}
+
 	public static String getPathFastBoot() {
 		String fsep = OS.getFileSeparator();
 	   if (OS.getName().equals("windows"))
