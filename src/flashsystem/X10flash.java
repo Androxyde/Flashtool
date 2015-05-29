@@ -5,6 +5,7 @@ import gui.tools.WidgetTask;
 import gui.tools.XMLBootConfig;
 import gui.tools.XMLBootDelivery;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,8 +24,14 @@ import org.system.TextFile;
 import org.util.BytesUtil;
 import org.util.HexDump;
 
+import com.sonymobile.cs.generic.array.ArrayUtils;
+import com.sonymobile.cs.generic.bytes.ByteUtils;
+import com.sonymobile.cs.generic.stream.StreamUtils;
+
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 
 public class X10flash {
@@ -87,10 +94,23 @@ public class X10flash {
     }
 
     private void sendTA(TaFile ta) throws FileNotFoundException, IOException,X10FlashException {
-    		logger.info("Flashing "+ta.getName());
+    		logger.info("Flashing "+ta.getName()+" to partition "+ta.getPartition());
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
 				sendTAUnit(entries.get(i));
+			}
+    }
+
+    private void sendTA2(TaFile ta) throws FileNotFoundException, IOException,X10FlashException {
+    		logger.info("Flashing "+ta.getName()+" to partition "+ta.getPartition());
+			Vector<TaEntry> entries = ta.entries();
+			for (int i=0;i<entries.size();i++) {
+				TaEntry tent = entries.get(i);
+				if (tent.getPartition().equals(_8a4unit.getPartition()) && tent.getData().equals(_8a4unit.getData())) {
+					logger.info("Custumization reset is now based on UI choice");
+				}
+				else
+					sendTAUnit(tent);
 			}
     }
 
@@ -131,85 +151,101 @@ public class X10flash {
 			return null;
     }
 
-    public Vector<TaEntry> dumpProperties()
-    {
-    	Vector<TaEntry> v = new Vector();
-    	try {
-		    logger.info("Start Dumping TA");
-		    LogProgress.initProgress(9789);
-	        for(int i = 0; i < 4920; i++) {
-	        	try {
-	        		cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
-		        	String reply = cmd.getLastReplyHex();
-		        	reply = reply.replace("[", "");
-		        	reply = reply.replace("]", "");
-		        	reply = reply.replace(",", "");
-		        	if (cmd.getLastReplyLength()>0) {
-		        		TaEntry ta = new TaEntry();
-		        		ta.setPartition(HexDump.toHex(i));
-		        		ta.addData(reply.trim());
-		        		v.add(ta);
-		        	}
-
-	        	}
-	        	catch (X10FlashException e) {
-	        	}
-	        }
-	        LogProgress.initProgress(0);
-	        logger.info("Dumping TA finished.");
-	    }
-    	catch (Exception ioe) {
-    		LogProgress.initProgress(0);
-    		logger.error(ioe.getMessage());
-    		logger.error("Error dumping TA. Aborted");
-    		closeDevice();
-    	}
-    	return v;
+    public void BackupTA() throws IOException, X10FlashException {
+    	String timeStamp = OS.getTimeStamp();
+    	BackupTA(1, timeStamp);
+    	BackupTA(2, timeStamp);
     }
 
-    public void BackupTA() throws IOException, X10FlashException {
-    	int partition = 2;
+    public void BackupTA(int partition, String timeStamp) throws IOException, X10FlashException {
     	openTA(partition);
-    	String folder = OS.getFolderMyDevices()+File.separator+getPhoneProperty("MSN")+File.separator+"s1ta"+File.separator+OS.getTimeStamp();
+    	String folder = OS.getFolderMyDevices()+File.separator+getPhoneProperty("MSN")+File.separator+"s1ta"+File.separator+timeStamp;
     	new File(folder).mkdirs();
     	TextFile tazone = new TextFile(folder+File.separator+partition+".ta","ISO8859-1");
-    	logger.info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
         tazone.open(false);
     	try {
-		    logger.info("Start Dumping TA");
-		    LogProgress.initProgress(4920);
-	        for(int i = 0; i < 4920; i++) {
-	        	try {
-		        	logger.debug((new StringBuilder("%%% read TA property id=")).append(i).toString());
-		        	cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
-		        	String reply = cmd.getLastReplyHex();
-		        	reply = reply.replace("[", "");
-		        	reply = reply.replace("]", "");
-		        	reply = reply.replace(",", "");
-		        	if (cmd.getLastReplyLength()>0) {
-		        		tazone.writeln(HexDump.toHex(i) + " " + HexDump.toHex(cmd.getLastReplyLength()) + " " + reply.trim());
-		        	}
-	        	}
-	        	catch (X10FlashException e) {
-	        	}
-	        }
-	        LogProgress.initProgress(0);
+		    tazone.writeln(String.format("%02d", partition));
+		    try {
+		    	logger.info("Start Dumping TA partition "+partition);
+		    	cmd.send(Command.CMD18, Command.VALNULL, false);
+		    	logger.info("Finished Dumping TA partition "+partition);
+		    	ByteArrayInputStream inputStream = new ByteArrayInputStream(cmd.getLastReply());
+		    	TreeMap<Integer, byte[]> treeMap = new  TreeMap<Integer, byte[]>();
+		    	int i = 0;
+		    	while(i == 0) {
+		    		int j = inputStream.read();
+		    		if (j == -1) {
+		    			i = 1;
+		    		}
+		    		else {
+		    			byte[] buff = new byte[3];
+		    			if(StreamUtils.fillArray(inputStream, buff)!=3){
+		    				throw new X10FlashException("Not enough data to read Uint32 when decoding command");
+		    			}
+		    			byte[] unitbuff = ArrayUtils.concatenateByteArrays(new byte[] { (byte)j }, buff);
+		    			long unit = ByteUtils.bytesToInt(ByteUtils.getSubByteArray(unitbuff, 0, unitbuff.length), false) & 0xFFFFFFFF;
+		    			long unitdatalen = decodeUint32(inputStream);
+		    			if (unitdatalen > 1000000L) {
+		    				throw new X10FlashException("Maximum unit size exceeded, application will handle units of a maximum size of 0x"
+		    			              + Long.toHexString(1000000L) + ". Got a unit of size 0x" + Long.toHexString(unitdatalen) + ".");
+		    			}
+		    			byte[] databuff = new byte[(int)unitdatalen];
+		    			if (StreamUtils.fillArray(inputStream, databuff) != unitdatalen) {
+		    				throw new X10FlashException("Not enough data to read unit data decoding command");
+		    			}
+			        	treeMap.put((int)unit, databuff);
+		    		}
+		    	}
+		    	for (Map.Entry<Integer, byte[]> entry : treeMap.entrySet())
+		    	{
+		    	    int unit = entry.getKey();
+		    	    byte[] unitdate = entry.getValue();
+	    			String dataStr = HexDump.toHex(unitdate);
+	    			dataStr = dataStr.replace("[", "");
+		        	dataStr = dataStr.replace("]", "");
+		        	dataStr = dataStr.replace(",", "");
+		        	tazone.writeln(HexDump.toHex((int)unit) + " " + HexDump.toHex((short)unitdate.length) + " " + dataStr);
+		    	}
+		    	
+		    }catch (X10FlashException e) {
+		    	throw e;
+		    }
 	        tazone.close();
+	        logger.info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
 	        closeTA();
 	    }
     	catch (Exception ioe) {
 	        tazone.close();
 	        closeTA();
-	        LogProgress.initProgress(0);
     		logger.error(ioe.getMessage());
     		logger.error("Error dumping TA. Aborted");
     	}
     }
     
+    private long decodeUint32(InputStream inputStream) throws IOException, X10FlashException {
+    	byte[] buff = new byte[4];
+    	if (StreamUtils.fillArray(inputStream, buff) != 4)
+    	{
+    		throw new X10FlashException("Not enough data to read Uint32 when decoding command");
+    	}
+    	return ByteUtils.bytesToInt(ByteUtils.getSubByteArray(buff, 0, buff.length), false) & 0xFFFFFFFF;
+    }
+    
     public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
-    	openTA(2);
+    	File f = new File(tafile);
+    	boolean taopened = false;
+    	try {
+    		TaFile ta = new TaFile(f);
+        	openTA(ta.getPartition());
+        	taopened = true;
+        	sendTA(ta);
+    	}catch (TaParseException tae) {
+    		logger.error("Error parsing TA file. Skipping");
+    	}
     	sendTA(new File(tafile));
-		closeTA();
+    	if (taopened) {
+    		closeTA();
+    	}
 		LogProgress.initProgress(0);	    
     }
     
@@ -443,17 +479,28 @@ public class X10flash {
     public void sendTAFiles() throws FileNotFoundException, IOException,X10FlashException {
 		Enumeration entries = _bundle.getMeta().getEntriesOf("TA",true);
 		if (entries.hasMoreElements()) {
-			openTA(2);
 			while (entries.hasMoreElements()) {
 				String entry = (String)entries.nextElement();
 				BundleEntry bent = _bundle.getEntry(entry);
-				if (!bent.getName().toUpperCase().contains("SIM"))
-					sendTA(new File(bent.getAbsolutePath()));
+				if (!bent.getName().toUpperCase().contains("SIM")) {
+					boolean taopened = false;
+					try {
+						TaFile ta = new TaFile(new File(bent.getAbsolutePath()));
+						openTA(ta.getPartition());
+						taopened = true;
+						sendTA2(ta);
+					}
+					catch (TaParseException tae) {
+			    		logger.error("Error parsing TA file. Skipping");
+			    	}
+					if(taopened){
+						closeTA();
+					}
+				}
 				else {
 					logger.warn("This file is ignored : "+bent.getName());
 				}
 			}
-			closeTA();
 		}
     }
     
