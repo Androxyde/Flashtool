@@ -249,6 +249,11 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				HomeSelector hs = new HomeSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 				String result = (String)hs.open(true);
+				if (!result.equals(GlobalConfig.getProperty("user.flashtool")) && result.length()>0) {
+					forceMove(GlobalConfig.getProperty("user.flashtool"),result);
+					GlobalConfig.setProperty("user.flashtool", result);
+					new File(result+File.separator+"config.properties").delete();
+				}
 			}
 		});
 		mntmChangeUserHome.setText("Change User Home");

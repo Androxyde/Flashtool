@@ -167,7 +167,7 @@ public class HomeSelector extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				result=sourceFolder.getText();
-				if (!((String)result).startsWith(OS.getWorkDir()))
+				if (!((String)result).startsWith(OS.getWorkDir()+File.separator))
 					shlHomeSelector.dispose();
 				else
 					WidgetTask.openOKBox(shlHomeSelector, "User home folder must be out of Flashtool application folder");
