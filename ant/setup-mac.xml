@@ -49,7 +49,7 @@
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtwin"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/mac"/>
         <delete file="../../Deploy/FlashTool/config.properties"/>
-		<delete file="../../Deploy/FlashTool/drivers"/>
+		<delete dir="../../Deploy/FlashTool/drivers"/>
 	</target>
 
 	<target name="JRE">
