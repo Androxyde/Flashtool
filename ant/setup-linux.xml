@@ -48,6 +48,7 @@
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtwin"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtmac"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/mac"/>
+		<delete dir="../../Deploy/FlashTool/drivers"/>
         <delete file="../../Deploy/FlashTool/config.properties"/>
 	</target>
 	
