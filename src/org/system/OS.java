@@ -518,7 +518,7 @@ public class OS {
 	  }
 
 	  public static String getFolderDevices() {
-			return OS.getWorkDir()+File.separator+"devices";
+			return OS.getFolderUserFlashtool()+File.separator+"devices";
 	  }
 
 	  public static String getFolderUserFlashtool() {
@@ -550,8 +550,8 @@ public class OS {
 	  }
 
 	  public static String getFolderCustomDevices() {
-		  new File(OS.getFolderUserFlashtool()+File.separator+"devices").mkdirs();
-		  return OS.getFolderUserFlashtool()+File.separator+"devices";		  
+		  new File(OS.getFolderUserFlashtool()+File.separator+"mydevices").mkdirs();
+		  return OS.getFolderUserFlashtool()+File.separator+"mydevices";		  
 	  }
 
 	  public static String getFolderMyDevices() {
