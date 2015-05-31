@@ -65,6 +65,7 @@
 	<target name="binaries" depends="clean, main_lib, JRE">
 	    <copy file="../ProgramExe/FlashTool" todir="../../Deploy/FlashTool"/>
 	    <copy file="../ProgramExe/FlashToolConsole" todir="../../Deploy/FlashTool"/>
+		<copy file="../ProgramExe/xperifirm" todir="../../Deploy/FlashTool/x10flasher_lib"/>
 		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
             <fileset dir="../mac"
                 excludes="**/.svn"/>
