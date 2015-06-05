@@ -4,11 +4,17 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Vector;
+
+import net.jpountz.lz4.LZ4Factory;
+import net.jpountz.lz4.LZ4FastDecompressor;
 
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
 import org.system.OS;
+import org.system.TextFile;
 import org.util.BytesUtil;
+import org.util.HexDump;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
@@ -30,7 +36,7 @@ public class SinParser {
 	public byte[] dheader;
 	public HashBlocks blocks;
 	public DataHeader dataHeader;
-	public AddrBlocks addrBlocks;
+	public Vector<Object> dataBlocks;
 	public long size;
 	private File sinfile;
 	private long dataSize=0L;
@@ -65,14 +71,24 @@ public class SinParser {
 	        );
 
 			JBBPParser addrBlocksParser = JBBPParser.prepare(
-					"addrBlocks[_] {byte[4] addrMagic;"
-				  + "int addrLen;"
+				    "int blockLen;"
 				  + ">long dataOffset;"
 	              + ">long dataLen;"
 				  + ">long fileOffset;"
 	              + "int hashType;"
-	              + "byte[addrLen-36] crc;}"
+	              + "byte[blockLen-36] checksum;"
 	        );
+
+			JBBPParser LZ4ABlocksParser = JBBPParser.prepare(
+					  "int blockLen;"
+					+ ">long dataOffset;"
+				    + ">long uncompDataLen;"
+					+ ">long compDataLen;"
+				    + ">long fileOffset;"
+					+ ">long reserved;"
+					+ "int hashType;"
+				    + "byte[blockLen-52] checksum;"
+		        );
 
 		    // First hash block seems to be Data header (addr map)
 			dheader = sinStream.readByteArray(blocks.blocks[0].length);
@@ -80,7 +96,20 @@ public class SinParser {
 			dataHeader = dataHeaderParser.parse(dheaderStream).mapTo(DataHeader.class);
 			if (new String(dataHeader.mmcfMagic).equals("MMCF")) {
 				dataHeader.addrList = dheaderStream.readByteArray(dataHeader.gptpLen-dataHeader.mmcfLen);
-				addrBlocks = addrBlocksParser.parse(dataHeader.addrList).mapTo(AddrBlocks.class);
+				JBBPBitInputStream addrListStream = new JBBPBitInputStream(new ByteArrayInputStream(dataHeader.addrList));
+				byte[] amagic = new byte[4];
+				dataBlocks = new Vector<Object>();
+				while (addrListStream.hasAvailableData()) {
+					addrListStream.read(amagic);
+					if (new String(amagic).equals("ADDR")) {
+						AddrBlock addrBlock = addrBlocksParser.parse(addrListStream).mapTo(AddrBlock.class);
+						dataBlocks.add(addrBlock);
+					}
+					if (new String(amagic).equals("LZ4A")) {
+						LZ4ABlock lz4aBlock = LZ4ABlocksParser.parse(addrListStream).mapTo(LZ4ABlock.class);
+						dataBlocks.add(lz4aBlock);
+					}
+				}
 			}
 			else {
 				dataHeader.gptpLen=0;
@@ -93,12 +122,16 @@ public class SinParser {
 		  size=s;
 	  }
 	  
+	  
 	  public long getDataSize() throws IOException {
 		  dataType=getDataType();
 		  if (dataSize>0) return dataSize;
 		  if (dataHeader.mmcfLen>0) {
-		  AddrBlock last = addrBlocks.addrBlocks[addrBlocks.addrBlocks.length-1];
-		  return last.fileOffset+last.dataLen;
+		  Object last = dataBlocks.lastElement();
+		  	if (last instanceof AddrBlock)
+		  		return ((AddrBlock)last).fileOffset+((AddrBlock)last).dataLen;
+		  	else
+		  		return ((LZ4ABlock)last).fileOffset+((LZ4ABlock)last).uncompDataLen;
 		  }
 		  else {
 			  long size=0;
@@ -127,12 +160,24 @@ public class SinParser {
 		public String getDataType() throws IOException {
 			RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
 			byte[] res=null;
+			byte[] rescomp=null;
 			if (dataHeader.mmcfLen>0) {
-				AddrBlock block = addrBlocks.addrBlocks[0];
-				res = new byte[(int)block.dataLen];
-				fin.seek(getDataOffset()+block.dataOffset);
-				fin.read(res);
-				fin.close();
+				Object block = dataBlocks.firstElement();
+				if (block instanceof AddrBlock) {
+					res = new byte[(int)((AddrBlock)block).dataLen];
+					fin.seek(getDataOffset()+((AddrBlock)block).dataOffset);
+					fin.read(res);
+					fin.close();
+				}
+				else {
+					rescomp = new byte[(int)((LZ4ABlock)block).compDataLen];
+					fin.seek(getDataOffset()+((LZ4ABlock)block).dataOffset);
+					fin.read(rescomp);
+					fin.close();
+					LZ4Factory factory = LZ4Factory.fastestInstance();
+					LZ4FastDecompressor decomp = factory.fastDecompressor();
+					res = decomp.decompress(rescomp, (int)((LZ4ABlock)block).uncompDataLen);
+				}
 			}
 			else {
 				res = new byte[blocks.blocks[0].length];
@@ -148,7 +193,7 @@ public class SinParser {
 				int count = 0;
 				int bcount=0;
 				if (dataHeader.mmcfLen>0)
-					bcount = addrBlocks.addrBlocks.length;
+					bcount = dataBlocks.size();
 				else
 					bcount = blocks.blocks.length;
 				String ext = "."+getDataType();
@@ -161,12 +206,27 @@ public class SinParser {
 					long srcoffset=0;
 					long destoffset=0;
 					long dataLen=0;
+					LZ4Factory factory = LZ4Factory.fastestInstance();
+					LZ4FastDecompressor decomp = factory.fastDecompressor();
+					long uncompLen=0;
 					for (int i=0;i<bcount;i++) {
 						if (dataHeader.mmcfLen>0) {
-							AddrBlock block = addrBlocks.addrBlocks[i];
-							srcoffset=getDataOffset()+block.dataOffset;
-							destoffset=block.fileOffset;
-							dataLen=block.dataLen;
+							Object objblock = dataBlocks.elementAt(i);
+							if (objblock instanceof AddrBlock) {
+								AddrBlock block = (AddrBlock)objblock;
+								srcoffset=getDataOffset()+block.dataOffset;
+								destoffset=block.fileOffset;
+								dataLen=block.dataLen;
+								uncompLen=0;
+							}
+							else {
+								LZ4ABlock block = (LZ4ABlock)objblock;
+								System.out.println(i + " : data offset : "+block.dataOffset+" comp : "+block.compDataLen+" uncomp : "+block.uncompDataLen+" file offset : "+block.fileOffset);
+								srcoffset=getDataOffset()+block.dataOffset;
+								destoffset=block.fileOffset;
+								dataLen=block.compDataLen;
+								uncompLen=block.uncompDataLen;
+							}
 						}
 						else {
 							HashBlock block = blocks.blocks[i];
@@ -179,8 +239,13 @@ public class SinParser {
 						fout.seek(destoffset);
 						byte[] data = new byte[(int)dataLen];
 						int nbread = fin.read(data);
-						fout.write(data);
-						LogProgress.updateProgress();
+						if (uncompLen>0) {
+							byte[] res = factory.fastDecompressor().decompress(data,(int)uncompLen);
+							fout.write(res);
+						}
+						else
+							fout.write(data);
+						//LogProgress.updateProgress();
 					}
 				fout.close();
 				fin.close();

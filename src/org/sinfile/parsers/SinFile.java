@@ -136,7 +136,6 @@ public class SinFile {
 		}
 		if (version==3) {
 			builder.append("Version : "+version+"\nMagic : "+new String(sinv3.magic)+"\nHeader Length : "+sinv3.headerLen+"\nPayLoad Type : "+sinv3.payloadType+"\nHash type : "+sinv3.hashType+"\nReserved : "+sinv3.reserved+"\nHashList Length : "+sinv3.hashLen+" ("+sinv3.blocks.blocks.length+" hashblocks) \nCert len : "+sinv3.certLen+"\n");
-			builder.append(sinv3.addrBlocks.addrBlocks[0].dataLen+"\n");
 		}
 		return builder.toString();
 	}
