@@ -30,7 +30,8 @@ public class S1Packet {
 				validate();
 				return;
 			}
-			if (pdata.length==0) {
+			// check minimum length
+			if (pdata.length<13) {
 				validate();
 				return;
 			}
@@ -39,7 +40,7 @@ public class S1Packet {
 			System.arraycopy(pdata, 8, datalen, 0, 4);
 			hdr = pdata[12];
 			if (getDataLength()>65553)
-				throw new X10FlashException("Incorect read packet. Bad Data length");
+				throw new X10FlashException("Incorrect read packet. Bad Data length");
 			data = new byte[getDataLength()];
 			int totransfer=pdata.length-13;
 			if (totransfer>getDataLength()) totransfer=getDataLength();
@@ -48,10 +49,7 @@ public class S1Packet {
 			if (pdata.length>13+totransfer) {
 				System.arraycopy(pdata, 13+totransfer, crc32, 0, 4);
 				finalized=true;
-				if (BytesUtil.getLong(calculatedCRC32())!=BytesUtil.getLong(crc32))
-					throw new X10FlashException("S1 Data CRC32 Error");
-				if (calculateHeaderCkSum()!=hdr)
-					throw new X10FlashException("S1 Header checksum Error");
+				validate();
 			}
 		}
 		catch (Exception e) {
@@ -112,13 +110,12 @@ public class S1Packet {
 		flags = BytesUtil.getBytesWord(getFlag(flag1,flag2,ongoing), 4);
 	}
 	
-	private int getFlag(boolean flag1, boolean flag2, boolean ongoing)
-    {
-        boolean flag = !flag1;
-        byte byte0 = (byte)(flag2 ? 2 : 0);
-        byte byte1 = (byte)(ongoing ? 4 : 0);
-        return (((byte)(flag ? 1 : 0))) | byte0 | byte1;
-    }
+	private int getFlag(boolean flag1, boolean flag2, boolean ongoing) {
+        	boolean flag = !flag1;
+        	byte byte0 = (byte)(flag2 ? 2 : 0);
+        	byte byte1 = (byte)(ongoing ? 4 : 0);
+        	return (((byte)(flag ? 1 : 0))) | byte0 | byte1;
+	}
 
 	public int getFlags() {
 		return BytesUtil.getInt(flags);
@@ -180,7 +177,7 @@ public class S1Packet {
 	}
 
 	public String toString() { 	
-	    return "CommandID : "+getCommand()+" / Flags : "+this.getFlagsAsString()+" / Data length : "+this.getDataLength()+" / Data CRC32 : "+HexDump.toHex(crc32);
+		return "CommandID : "+getCommand()+" / Flags : "+this.getFlagsAsString()+" / Data length : "+this.getDataLength()+" / Data CRC32 : "+HexDump.toHex(crc32);
 	}
 	
 	public byte[] calculatedCRC32() {
@@ -192,30 +189,27 @@ public class S1Packet {
 		return !finalized;
 	}
 
-	public byte calculateHeaderCkSum()
-    {
-        byte header[] = new byte[12];
-        System.arraycopy(cmd, 0, header, 0, 4);
-        System.arraycopy(flags, 0, header, 4, 4);
-        System.arraycopy(datalen, 0, header, 8, 4);
-        byte result = calcSum(header);
-        header = null;
-        return result;
-    }
+	public byte calculateHeaderCkSum() {
+		byte header[] = new byte[12];
+		System.arraycopy(cmd, 0, header, 0, 4);
+		System.arraycopy(flags, 0, header, 4, 4);
+		System.arraycopy(datalen, 0, header, 8, 4);
+		byte result = calcSum(header);
+		header = null;
+		return result;
+	}
 
-	private byte calcSum(byte paramArray[])
-    {
-        byte byte0 = 0;
-        if(paramArray.length < 12)
-            return 0;
-        for(int i = 0; i < 12; i++)
-            byte0 ^= paramArray[i];
-
-        byte0 += 7;
-        return byte0;
-    }
+	private byte calcSum(byte paramArray[]) {
+		byte byte0 = 0;
+		if(paramArray.length < 12)
+            		return 0;
+		for(int i = 0; i < 12; i++)
+            		byte0 ^= paramArray[i];
+		byte0 += 7;
+		return byte0;
+	}
 	
-	public void saveDataAs(String file) {
+        public void saveDataAs(String file) {
 		try {
 			FileOutputStream fos = new FileOutputStream(file);
 			fos.write(data);
@@ -236,5 +230,4 @@ public class S1Packet {
 		array[12] = hdr;
 		return array;
 	}
-
 }
