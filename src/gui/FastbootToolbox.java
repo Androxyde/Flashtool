@@ -14,11 +14,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.apache.log4j.Logger;
 
 public class FastbootToolbox extends Dialog {
 
 	protected Object result;
 	protected Shell shlFastbootToolbox;
+	private static Logger logger = Logger.getLogger(FastbootToolbox.class);
 
 	/**
 	 * Create the dialog.
@@ -119,7 +121,7 @@ public class FastbootToolbox extends Dialog {
 		        if (dir!=null)
 		        	doHotBoot(dir);
 			} else {
-				logger.info("Failed"):
+				logger.info("Failed");
 			}
 		   }
 		});
@@ -215,7 +217,7 @@ public class FastbootToolbox extends Dialog {
 				doFastbootReboot();
 			}
 			else {
-				loggger.info("failed");
+				logger.info("failed");
 			}
 		   }
 		});
