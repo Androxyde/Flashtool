@@ -223,6 +223,11 @@ public class SinFile {
 			while (i.hasNext()) {
 				int key = ((Integer)i.next()).intValue();
 				SinAddr ad = (SinAddr)dhead.getAddrs().get(key);
+				if (key==0 || key==1||key==2) {
+					System.out.println("nb addr : "+dhead.getAddrs().keySet().size());
+					System.out.println(sinheader.getHeaderSize()+dhead.getDataOffset());
+					System.out.println(ad.getSrcOffset()+" "+ad.getDataLength()+" "+ad.getDestOffset());
+				}
 				fin.seek(sinheader.getHeaderSize()+dhead.getDataOffset()+ad.getSrcOffset());
 				fout.seek(ad.getDestOffset());
 				for (long j=0;j<ad.getDataLength()/chunk.length;j++) {

@@ -151,42 +151,6 @@ public class X10flash {
 			return null;
     }
 
-    public Vector<TaEntry> dumpProperties()
-    {
-    	Vector<TaEntry> v = new Vector();
-    	try {
-		    logger.info("Start Dumping TA");
-		    LogProgress.initProgress(9789);
-	        for(int i = 0; i < 4920; i++) {
-	        	try {
-	        		cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
-		        	String reply = cmd.getLastReplyHex();
-		        	reply = reply.replace("[", "");
-		        	reply = reply.replace("]", "");
-		        	reply = reply.replace(",", "");
-		        	if (cmd.getLastReplyLength()>0) {
-		        		TaEntry ta = new TaEntry();
-		        		ta.setPartition(HexDump.toHex(i));
-		        		ta.addData(reply.trim());
-		        		v.add(ta);
-		        	}
-
-	        	}
-	        	catch (X10FlashException e) {
-	        	}
-	        }
-	        LogProgress.initProgress(0);
-	        logger.info("Dumping TA finished.");
-	    }
-    	catch (Exception ioe) {
-    		LogProgress.initProgress(0);
-    		logger.error(ioe.getMessage());
-    		logger.error("Error dumping TA. Aborted");
-    		closeDevice();
-    	}
-    	return v;
-    }
-
     public void BackupTA() throws IOException, X10FlashException {
     	String timeStamp = OS.getTimeStamp();
     	BackupTA(1, timeStamp);
@@ -198,21 +162,14 @@ public class X10flash {
     	String folder = OS.getFolderMyDevices()+File.separator+getPhoneProperty("MSN")+File.separator+"s1ta"+File.separator+timeStamp;
     	new File(folder).mkdirs();
     	TextFile tazone = new TextFile(folder+File.separator+partition+".ta","ISO8859-1");
-    	logger.info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
         tazone.open(false);
     	try {
-		    logger.info("Start Dumping TA");
 		    tazone.writeln(String.format("%02d", partition));
-		    LogProgress.initProgress(50);
-		    byte[] reply;
 		    try {
+		    	logger.info("Start Dumping TA partition "+partition);
 		    	cmd.send(Command.CMD18, Command.VALNULL, false);
-		    	reply = cmd.getLastReply(); 
-		    	while(cmd.isMultiPacketMessage()) {
-			    	cmd.send(Command.CMD18, Command.VALNULL, false);
-			    	reply = ArrayUtils.concatenateByteArrays(reply, cmd.getLastReply());
-		    	}
-		    	ByteArrayInputStream inputStream = new ByteArrayInputStream(reply);
+		    	logger.info("Finished Dumping TA partition "+partition);
+		    	ByteArrayInputStream inputStream = new ByteArrayInputStream(cmd.getLastReply());
 		    	TreeMap<Integer, byte[]> treeMap = new  TreeMap<Integer, byte[]>();
 		    	int i = 0;
 		    	while(i == 0) {
@@ -249,17 +206,17 @@ public class X10flash {
 		        	dataStr = dataStr.replace(",", "");
 		        	tazone.writeln(HexDump.toHex((int)unit) + " " + HexDump.toHex((short)unitdate.length) + " " + dataStr);
 		    	}
+		    	
 		    }catch (X10FlashException e) {
 		    	throw e;
 		    }
-	        LogProgress.initProgress(0);
 	        tazone.close();
+	        logger.info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
 	        closeTA();
 	    }
     	catch (Exception ioe) {
 	        tazone.close();
 	        closeTA();
-	        LogProgress.initProgress(0);
     		logger.error(ioe.getMessage());
     		logger.error("Error dumping TA. Aborted");
     	}

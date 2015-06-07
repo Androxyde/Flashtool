@@ -89,7 +89,7 @@ public class BLUWizard extends Dialog {
 		    	  event.doit = true;
 		      }
 		    });
-		shlBootloaderUnlockWizard.setSize(286, 183);
+		shlBootloaderUnlockWizard.setSize(350, 220);
 		if (_action.equals("R"))
 			shlBootloaderUnlockWizard.setText("BootLoader Relock Wizard");
 		else

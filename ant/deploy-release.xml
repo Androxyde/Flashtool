@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
 	
-	<property name="version" value="0.9.18.5"/>
-	<property name="progtime" value="14-02-2015 15:30:00"/>
-	
+	<property name="version" value="0.9.18.6"/>
+	<property name="progtime" value="30-05-2015 22:30:00"/>
+
 	<target name="all" depends="core release"/>
 
 
@@ -36,8 +36,6 @@
         <mkdir dir ="../../Deploy/FlashTool/custom/shells"/>
     	<mkdir dir ="../../Deploy/FlashTool/custom/features"/>
 		<mkdir dir ="../../Deploy/FlashTool/custom/sin"/>
-		<mkdir dir ="../../Deploy/FlashTool/custom/mydevices"/>
-		<mkdir dir ="../../Deploy/FlashTool/firmwares"/>
         <mkdir dir="../../Deploy/FlashTool/x10flasher_lib"/>
         <mkdir dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
         <mkdir dir="../../Deploy/FlashTool/drivers"/>
@@ -49,10 +47,6 @@
     		<fileset dir="../src/org/lang/ressources"
 				excludes="**/.svn"/>
     	</copy>
-        <copy todir="../../Deploy/FlashTool/firmwares">
-            <fileset dir="../firmwares"
-                excludes="**/.svn"/>
-        </copy>
 	    <copy todir="../../Deploy/FlashTool/custom/root">
 	       <fileset dir="../romupdates" excludes="**/.svn"/>
 	    </copy>
