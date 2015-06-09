@@ -249,6 +249,11 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				HomeSelector hs = new HomeSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 				String result = (String)hs.open(true);
+				if (!result.equals(GlobalConfig.getProperty("user.flashtool")) && result.length()>0) {
+					forceMove(GlobalConfig.getProperty("user.flashtool"),result);
+					GlobalConfig.setProperty("user.flashtool", result);
+					new File(result+File.separator+"config.properties").delete();
+				}
 			}
 		});
 		mntmChangeUserHome.setText("Change User Home");
@@ -839,7 +844,7 @@ public class MainSWT {
 
 		ToolBar toolBar = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
 		FormData fd_toolBar = new FormData();
-		fd_toolBar.right = new FormAttachment(0, 335);
+		fd_toolBar.right = new FormAttachment(0, 392);
 		fd_toolBar.top = new FormAttachment(0, 10);
 		fd_toolBar.left = new FormAttachment(0, 10);
 		toolBar.setLayoutData(fd_toolBar);

@@ -49,6 +49,7 @@
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtwin"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/mac"/>
         <delete file="../../Deploy/FlashTool/config.properties"/>
+		<delete dir="../../Deploy/FlashTool/drivers"/>
 	</target>
 
 	<target name="JRE">
@@ -64,12 +65,14 @@
 	<target name="binaries" depends="clean, main_lib, JRE">
 	    <copy file="../ProgramExe/FlashTool" todir="../../Deploy/FlashTool"/>
 	    <copy file="../ProgramExe/FlashToolConsole" todir="../../Deploy/FlashTool"/>
+		<copy file="../ProgramExe/xperifirm" todir="../../Deploy/FlashTool/x10flasher_lib"/>
 		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
             <fileset dir="../mac"
                 excludes="**/.svn"/>
         </copy>
 		<chmod file="../../Deploy/FlashTool/FlashTool" perm="755" />
     	<chmod file="../../Deploy/FlashTool/FlashToolConsole" perm="755"/>
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/xperifirm" perm="755"/>
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb.mac" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot.mac" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.mac" perm="755" />

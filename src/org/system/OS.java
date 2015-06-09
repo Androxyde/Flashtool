@@ -98,6 +98,11 @@ public class OS {
 			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2elf").getAbsolutePath();
 	}
 
+	public static String getPathXperiFirmWrapper() {
+		String fsep = OS.getFileSeparator();
+		return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"xperifirm").getAbsolutePath();
+	}
+
 	public static String getPathFastBoot() {
 		String fsep = OS.getFileSeparator();
 	   if (OS.getName().equals("windows"))
@@ -513,7 +518,7 @@ public class OS {
 	  }
 
 	  public static String getFolderDevices() {
-			return OS.getWorkDir()+File.separator+"devices";
+			return OS.getFolderUserFlashtool()+File.separator+"devices";
 	  }
 
 	  public static String getFolderUserFlashtool() {
@@ -545,8 +550,8 @@ public class OS {
 	  }
 
 	  public static String getFolderCustomDevices() {
-		  new File(OS.getFolderUserFlashtool()+File.separator+"devices").mkdirs();
-		  return OS.getFolderUserFlashtool()+File.separator+"devices";		  
+		  new File(OS.getFolderUserFlashtool()+File.separator+"mydevices").mkdirs();
+		  return OS.getFolderUserFlashtool()+File.separator+"mydevices";		  
 	  }
 
 	  public static String getFolderMyDevices() {
