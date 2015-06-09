@@ -1,5 +1,7 @@
 package gui;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -12,7 +14,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import flashsystem.SinFile;
 import gui.tools.ExtractSinDataJob;
 import gui.tools.WidgetsTool;
 
@@ -22,6 +23,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.GridData;
+import org.sinfile.parsers.SinFile;
 
 public class SinEditor extends Dialog {
 
@@ -87,7 +89,7 @@ public class SinEditor extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					SinFile sinf = new SinFile(sourceFile.getText());
+					SinFile sinf = new SinFile(new File(sourceFile.getText()));
 					sinf.dumpHeader();
 				}
 				catch (Exception ex) {
@@ -107,7 +109,7 @@ public class SinEditor extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					SinFile sinf = new SinFile(sourceFile.getText());
+					SinFile sinf = new SinFile(new File(sourceFile.getText()));
 					ExtractSinDataJob ej = new ExtractSinDataJob("Sin dump job");
 					ej.setSin(sinf);
 					ej.setMode("data");
@@ -130,7 +132,7 @@ public class SinEditor extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					SinFile sinf = new SinFile(sourceFile.getText());
+					SinFile sinf = new SinFile(new File(sourceFile.getText()));
 					ExtractSinDataJob ej = new ExtractSinDataJob("Sin dump job");
 					ej.setSin(sinf);
 					ej.setMode("raw");
@@ -169,7 +171,7 @@ public class SinEditor extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-				SinFile sin =new SinFile(sourceFile.getText());
+				SinFile sin =new SinFile(new File(sourceFile.getText()));
 				SinAdvanced sadv = new SinAdvanced(shlSinEditor,SWT.PRIMARY_MODAL | SWT.SHEET);
 				sadv.open(sin);
 				} catch (Exception ex) {

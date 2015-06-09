@@ -1,5 +1,8 @@
 package gui;
 
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -11,13 +14,17 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import flashsystem.SinFile;
+
+
+
+
 import gui.tools.CreateSinAsJob;
 import gui.tools.WidgetsTool;
 
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
+import org.sinfile.parsers.SinFile;
 import org.util.HexDump;
 
 public class SinAdvanced extends Dialog {
@@ -29,6 +36,7 @@ public class SinAdvanced extends Dialog {
 	private Text textSpare;
 	private Text textContent;
 	private SinFile _sin;
+	private static Logger logger = Logger.getLogger(SinAdvanced.class);
 
 	/**
 	 * Create the dialog.
@@ -63,22 +71,26 @@ public class SinAdvanced extends Dialog {
 		fd_textVersion.left = new FormAttachment(0, 10);
 		fd_textVersion.top = new FormAttachment(lblSinVersion, 6);
 		textVersion.setLayoutData(fd_textVersion);
-		textVersion.setText(Integer.toString(_sin.getSinHeader().getVersion()));
+		textVersion.setText(Integer.toString(_sin.getVersion()));
 		
 		textPartition = new Text(shlSinEditor, SWT.BORDER);
 		textPartition.setEditable(false);
 		FormData fd_textPartition = new FormData();
 		fd_textPartition.left = new FormAttachment(lblSinVersion, 0, SWT.LEFT);
 		textPartition.setLayoutData(fd_textPartition);
-		textPartition.setText(_sin.getSinHeader().hasPartitionInfo()?HexDump.toHex(_sin.getSinHeader().getPartitionInfo()).replace("[", "").replace("]", "").replace(", ",""):"");
-		
+		try {
+			textPartition.setText(_sin.hasPartitionInfo()?HexDump.toHex(_sin.getPartitionInfo()).replace("[", "").replace("]", "").replace(", ",""):"");
+		} catch (IOException ioe) {
+			logger.warn("Unable to get PartitionInfo. Leaving blank");
+			textPartition.setText("");
+		}
 		textSpare = new Text(shlSinEditor, SWT.BORDER);
 		textSpare.setEditable(false);
 		FormData fd_textSpare = new FormData();
 		fd_textSpare.right = new FormAttachment(100, -131);
 		fd_textSpare.left = new FormAttachment(0, 10);
 		textSpare.setLayoutData(fd_textSpare);
-		textSpare.setText(_sin.getSinHeader().getPartypeString());
+		textSpare.setText(_sin.getPartypeString());
 		
 		Label lblPartition = new Label(shlSinEditor, SWT.NONE);
 		fd_textPartition.top = new FormAttachment(lblPartition, 6);
@@ -149,7 +161,7 @@ public class SinAdvanced extends Dialog {
 		        CreateSinAsJob cj = new CreateSinAsJob("Create SIN");
 		        cj.setFile(file);
 		        cj.setPartition(textPartition.getText());
-		        cj.setSpare(HexDump.toHex(_sin.getSinHeader().getPartitionType()));
+		        cj.setSpare(HexDump.toHex(_sin.getPartitionType()));
 		        cj.schedule();
 		        if (file!=null)
 		        	shlSinEditor.dispose();

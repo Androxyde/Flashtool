@@ -12,9 +12,7 @@ import net.jpountz.lz4.LZ4FastDecompressor;
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
 import org.system.OS;
-import org.system.TextFile;
 import org.util.BytesUtil;
-import org.util.HexDump;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
@@ -95,7 +93,7 @@ public class SinParser {
 			JBBPBitInputStream dheaderStream = new JBBPBitInputStream(new ByteArrayInputStream(dheader));
 			dataHeader = dataHeaderParser.parse(dheaderStream).mapTo(DataHeader.class);
 			if (new String(dataHeader.mmcfMagic).equals("MMCF")) {
-				dataHeader.addrList = dheaderStream.readByteArray(dataHeader.gptpLen-dataHeader.mmcfLen);
+				dataHeader.addrList = dheaderStream.readByteArray(dataHeader.mmcfLen-dataHeader.gptpLen);
 				JBBPBitInputStream addrListStream = new JBBPBitInputStream(new ByteArrayInputStream(dataHeader.addrList));
 				byte[] amagic = new byte[4];
 				dataBlocks = new Vector<Object>();
@@ -221,7 +219,6 @@ public class SinParser {
 							}
 							else {
 								LZ4ABlock block = (LZ4ABlock)objblock;
-								System.out.println(i + " : data offset : "+block.dataOffset+" comp : "+block.compDataLen+" uncomp : "+block.uncompDataLen+" file offset : "+block.fileOffset);
 								srcoffset=getDataOffset()+block.dataOffset;
 								destoffset=block.fileOffset;
 								dataLen=block.compDataLen;
@@ -245,7 +242,7 @@ public class SinParser {
 						}
 						else
 							fout.write(data);
-						//LogProgress.updateProgress();
+						LogProgress.updateProgress();
 					}
 				fout.close();
 				fin.close();
@@ -267,7 +264,14 @@ public class SinParser {
 			fout.close();
 			fin.close();
 			logger.info("Extraction finished to "+foutname);
-			
+		}
+
+		public byte[] getHeader()  throws IOException {
+			RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
+			byte[] buff = new byte[headerLen];
+			fin.read(buff);
+			fin.close();
+			return buff;
 		}
 
 		public int getDataOffset() {

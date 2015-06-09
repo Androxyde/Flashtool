@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import flashsystem.SinFile;
+import org.sinfile.parsers.SinFile;
 
 public class ExtractSinDataJob extends Job {
 
@@ -33,9 +33,9 @@ public class ExtractSinDataJob extends Job {
     			logger.info("Starting data extraction");
     			sin.dumpImage();
     		}
-    		else
-    			if (mode.equals("raw"))
-    				sin.dumpRaw();
+    		//else
+    			//if (mode.equals("raw"))
+    				//sin.dumpRaw();
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
