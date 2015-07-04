@@ -46,6 +46,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.logger.TextAreaAppender;
+import org.simpleusblogger.Parser;
 import org.system.AdbPhoneThread;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
@@ -77,6 +78,7 @@ import gui.tools.MsgBox;
 import gui.tools.OldUnlockJob;
 import gui.tools.RawTAJob;
 import gui.tools.RootJob;
+import gui.tools.USBParseJob;
 import gui.tools.VersionCheckerJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
@@ -556,6 +558,21 @@ public class MainSWT {
 		});
 		mntmRawRestore.setText("Restore");
 		mntmRawRestore.setEnabled(false);
+		
+		MenuItem mntmUsbLogParser = new MenuItem(AdvancedMenu, SWT.NONE);
+		mntmUsbLogParser.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					USBLogviewer lv = new USBLogviewer(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+					lv.open();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		mntmUsbLogParser.setText("USB log parser");
 		MenuItem mntmDevices = new MenuItem(menu, SWT.CASCADE);
 		mntmDevices.setText("Devices");
 		

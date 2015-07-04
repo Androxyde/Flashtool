@@ -158,10 +158,6 @@ public final class Bundle {
 		return _firmware.getInputStream(j);
 	}
 		
-	public boolean hasTA() {
-		return _meta.hasCategorie("TA",true);
-	}
-
 	public boolean isBootDeliveryFlashed() {
 		return bootdeliveryflashed;
 	}
@@ -169,35 +165,50 @@ public final class Bundle {
 	public void setBootDeliveryFlashed(boolean flashed) {
 		bootdeliveryflashed=flashed;
 	}
-	
+
+	public boolean hasTA() {
+		return _meta.hasCategorie("TA",true);
+	}
+
+	public boolean hasLoader() {
+		return _meta.hasCategorie("LOADER",false);
+	}
+
 	public BundleEntry getLoader() throws IOException, FileNotFoundException {
 		return (BundleEntry)bundleList.get("loader.sin");
 	}
 
-	public BundleEntry getBootDelivery()  throws IOException, FileNotFoundException {
-		return (BundleEntry)bundleList.get("boot_delivery.xml");
+	public boolean hasPreloader() {
+		int count=0;
+		Enumeration e = _meta.getEntriesOf("PRELOAD", true);
+		while (e.hasMoreElements()) {e.nextElement();count++;}
+		return (_meta.hasCategorie("PRELOAD",true) && count==2);
 	}
-	
-	public boolean hasLoader() {
-		return _meta.hasCategorie("LOADER",false);
+
+	public BundleEntry getPreloader() throws IOException, FileNotFoundException {
+		return (BundleEntry)bundleList.get("preloader.sin");
+	}
+
+	public BundleEntry getSecro() throws IOException, FileNotFoundException {
+		return (BundleEntry)bundleList.get("secro.sin");
 	}
 
 	public boolean hasBootDelivery() {
 		return _meta.hasCategorie("BOOTBUNDLE",true);
 	}
 
-	public boolean hasBoot() {
-		return _meta.hasCategorie("BOOT",true);
+	public BundleEntry getBootDelivery()  throws IOException, FileNotFoundException {
+		return (BundleEntry)bundleList.get("boot_delivery.xml");
+	}
+
+	public boolean hasPartition() {
+		return _meta.hasCategorie("PARTITION",true);
 	}
 
 	public BundleEntry getPartition() throws IOException, FileNotFoundException {
 		return (BundleEntry)bundleList.get(_meta.getEntriesOf("PARTITION",true).nextElement());
 	}
 
-	public boolean hasPartition() {
-		return _meta.hasCategorie("PARTITION",true);
-	}
-	
 	public boolean simulate() {
 		return _simulate;
 	}

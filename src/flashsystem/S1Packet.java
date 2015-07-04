@@ -1,10 +1,15 @@
 package flashsystem;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.util.BytesUtil;
 import org.util.HexDump;
 
+import com.igormaznitsa.jbbp.JBBPParser;
+import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
+import com.igormaznitsa.jbbp.io.JBBPByteOrder;
 
 public class S1Packet {
 
@@ -14,56 +19,54 @@ public class S1Packet {
 	//[BYTE]   HDR CHECKSUM
 	//[BYTE[LEN]]  DATA
 	//[DWORD]  DATA CHECKSUM (CRC32)
-	byte[] cmd = new byte[4];
-	byte[] flags = new byte[4];
-	byte[] datalen = new byte[4];
-	byte hdr;
-	byte[] data;
-	byte[] crc32 = new byte[4];
-	int lastdatapos = 0;
-	int lastcrcpos = 0;
-	boolean finalized = false;
+	int command=0;
+	int flag=0;
+	int length=0;
+	byte hdrcksum=0;
+
+	byte[] data=null;
+	byte[] crc32=null;
+	private byte[] tempbuffer=null;
 	
-	public S1Packet(byte[] pdata) throws X10FlashException {
-		try {
-			if (pdata==null) {
-				validate();
-				return;
-			}
-			if (pdata.length==0) {
-				validate();
-				return;
-			}
-			System.arraycopy(pdata, 0, cmd, 0, 4);
-			System.arraycopy(pdata, 4, flags, 0, 4);
-			System.arraycopy(pdata, 8, datalen, 0, 4);
-			hdr = pdata[12];
-			if (getDataLength()>65553)
-				throw new X10FlashException("Incorect read packet. Bad Data length");
-			data = new byte[getDataLength()];
-			int totransfer=pdata.length-13;
-			if (totransfer>getDataLength()) totransfer=getDataLength();
-			lastdatapos = totransfer;
-			System.arraycopy(pdata, 13, data, 0, totransfer);
-			if (pdata.length>13+totransfer) {
-				System.arraycopy(pdata, 13+totransfer, crc32, 0, 4);
-				finalized=true;
-				if (BytesUtil.getLong(calculatedCRC32())!=BytesUtil.getLong(crc32))
-					throw new X10FlashException("S1 Data CRC32 Error");
-				if (calculateHeaderCkSum()!=hdr)
-					throw new X10FlashException("S1 Header checksum Error");
-			}
-		}
-		catch (Exception e) {
-			throw new X10FlashException(e.getMessage());
-		}
+
+	public S1Packet(byte[] pdata) throws IOException {
+		addData(pdata);
 	}
 
+	public S1Packet(int pcommand, byte[] pdata, boolean ongoing) {
+		command = pcommand;
+		setFlags(false,true,ongoing);
+		if (pdata==null) 
+			length = 0;
+		else
+			length = pdata.length;
+		data=pdata;
+		hdrcksum = calculateHeaderCkSum();
+		crc32=calculatedCRC32();
+	}
+
+	public S1Packet(int pcommand, byte pdata, boolean ongoing) {
+		command = pcommand;
+		setFlags(false,true,ongoing);
+		data = new byte[] {pdata};
+		length=1;
+		hdrcksum = calculateHeaderCkSum();
+		crc32=calculatedCRC32();		
+	}
+
+	public boolean isValid() {
+		if (BytesUtil.getLong(calculatedCRC32())!=BytesUtil.getLong(crc32))
+			return false;
+		if (calculateHeaderCkSum()!=hdrcksum)
+			return false;
+		return true;
+	}
+	
 	public void validate() throws X10FlashException {
 		try {
 			if (BytesUtil.getLong(calculatedCRC32())!=BytesUtil.getLong(crc32))
 				throw new X10FlashException("S1 Data CRC32 Error");
-			if (calculateHeaderCkSum()!=hdr)
+			if (calculateHeaderCkSum()!=hdrcksum)
 				throw new X10FlashException("S1 Header checksum Error");
 		}
 		catch (Exception e) {
@@ -72,46 +75,21 @@ public class S1Packet {
 	}
 	
 	public byte[] getByteArray() {
-		byte[] array = new byte[17+data.length];
-		System.arraycopy(cmd, 0, array, 0, 4);
-		System.arraycopy(flags, 0, array, 4, 4);
-		System.arraycopy(datalen, 0, array, 8, 4);
-		array[12] = hdr;
-		System.arraycopy(data, 0, array, 13, data.length);
-		System.arraycopy(crc32, 0, array, array.length-4, 4);
-		return array;
+		if (length==0)
+			return BytesUtil.concatAll(getHeader(), new byte[] {hdrcksum}, crc32);
+		else
+			return BytesUtil.concatAll(getHeader(), new byte[] {hdrcksum}, data, crc32);
 	}
 
 	public void release() {
-		cmd = null;
-		flags = null;
-		datalen = null;
 		data = null;
 		crc32 = null;
 	}
-	
-	public S1Packet(int pcommand, byte[] pdata, boolean ongoing) {
-		cmd = BytesUtil.getBytesWord(pcommand, 4);
-		setFlags(false,true,ongoing);
-		if (pdata==null) data = new byte[0]; else data=pdata;
-		datalen = BytesUtil.getBytesWord(data.length, 4);
-		hdr = calculateHeaderCkSum();
-		crc32=calculatedCRC32();
-	}
-
-	public S1Packet(int pcommand, byte pdata, boolean ongoing) {
-		cmd = BytesUtil.getBytesWord(pcommand, 4);
-		setFlags(false,true,ongoing);
-		data = new byte[] {pdata};
-		datalen = BytesUtil.getBytesWord(data.length, 4);
-		hdr = calculateHeaderCkSum();
-		crc32=calculatedCRC32();		
-	}
 
 	public void setFlags(boolean flag1, boolean flag2, boolean ongoing) {
-		flags = BytesUtil.getBytesWord(getFlag(flag1,flag2,ongoing), 4);
+		flag = getFlag(flag1,flag2,ongoing);
 	}
-	
+
 	private int getFlag(boolean flag1, boolean flag2, boolean ongoing)
     {
         boolean flag = !flag1;
@@ -121,9 +99,9 @@ public class S1Packet {
     }
 
 	public int getFlags() {
-		return BytesUtil.getInt(flags);
+		 return flag;
 	}
-	
+
 	public String getFlagsAsString() {
 		String result = "";
 		int flag1 = getFlags()&1;
@@ -134,13 +112,13 @@ public class S1Packet {
 		if (flag3==0) result += ",false"; else result+=",true";
 		return result;
 	}
-	
+
 	public int getCommand() {
-		return BytesUtil.getInt(cmd);
+		return command;
 	}
 
 	public int getDataLength() {
-		return BytesUtil.getInt(datalen);
+		return length;
 	}
 	
 	public byte[] getDataArray() {
@@ -151,53 +129,78 @@ public class S1Packet {
 		return new String(data);
 	}
 
-	public void addData(byte[] datachunk) throws X10FlashException {
-		if (lastdatapos < data.length) {
-			int totransfer=data.length-lastdatapos;
-			if (datachunk.length<=totransfer) totransfer=datachunk.length;
-			System.arraycopy(datachunk, 0, data, lastdatapos, totransfer);
-			lastdatapos+=totransfer;
-			if (datachunk.length>totransfer) {
-				int lasttransfer=datachunk.length-totransfer;
-				System.arraycopy(datachunk, totransfer, crc32, lastcrcpos, lasttransfer);
-				lastcrcpos+=lasttransfer;
-				finalized = (lastcrcpos==4);
+	public void addData(byte[] datachunk) throws IOException  {
+		JBBPBitInputStream chunkStream = new JBBPBitInputStream(new ByteArrayInputStream(datachunk));
+		while (chunkStream.hasAvailableData()) {
+			if (tempbuffer==null)
+				tempbuffer = chunkStream.readByteArray(1);
+			else
+				tempbuffer=BytesUtil.concatAll(tempbuffer, chunkStream.readByteArray(1));
+			if (!isHeaderValid()) {
+				if (tempbuffer.length==13) {
+					JBBPBitInputStream headerStream = new JBBPBitInputStream(new ByteArrayInputStream(tempbuffer));
+					command=headerStream.readInt(JBBPByteOrder.BIG_ENDIAN);
+					flag=headerStream.readInt(JBBPByteOrder.BIG_ENDIAN);
+					length=headerStream.readInt(JBBPByteOrder.BIG_ENDIAN);
+					hdrcksum=(byte)headerStream.readByte();
+					headerStream.close();
+					tempbuffer=null;
+				}
+			}
+			else if (!isDataComplete()) {
+				if (tempbuffer.length==length) {
+					JBBPBitInputStream dataStream = new JBBPBitInputStream(new ByteArrayInputStream(tempbuffer));
+					data = dataStream.readByteArray(length);
+					dataStream.close();
+					tempbuffer=null;
+				}
+			}
+			else if (!isCRCComplete()) {
+				if (tempbuffer.length==4) {
+					JBBPBitInputStream crcStream = new JBBPBitInputStream(new ByteArrayInputStream(tempbuffer));
+					crc32 = crcStream.readByteArray(4);
+					crcStream.close();
+					tempbuffer=null;
+				}
 			}
 		}
-		else {
-			int lasttransfer=4-lastcrcpos;
-			if (datachunk.length<lasttransfer) lasttransfer=datachunk.length;
-			System.arraycopy(datachunk, 0, crc32, lastcrcpos, lasttransfer);
-			lastcrcpos+=lasttransfer;
-			finalized = (lastcrcpos==4);
-		}
-		if (finalized) {
-			if (BytesUtil.getLong(calculatedCRC32())!=BytesUtil.getLong(crc32))
-				throw new X10FlashException("S1 Data CRC32 Error");
-			if (calculateHeaderCkSum()!=hdr)
-				throw new X10FlashException("S1 Header checksum Error");
-		}
+		chunkStream.close();
 	}
 
 	public String toString() { 	
 	    return "CommandID : "+getCommand()+" / Flags : "+this.getFlagsAsString()+" / Data length : "+this.getDataLength()+" / Data CRC32 : "+HexDump.toHex(crc32);
 	}
-	
+
 	public byte[] calculatedCRC32() {
 		if (data ==null) return null;
 		return BytesUtil.getCRC32(data);
 	}
-	
+
+	public boolean isHeaderValid() {
+		if (command==0) return false;
+		return hdrcksum==calculateHeaderCkSum();
+	}
+
+	public boolean isDataComplete() {
+		if (data==null && length==0) return true;
+		if (data==null) return false;
+		if (data.length<length) return false;
+		return true;
+	}
+
+	public boolean isCRCComplete() {
+		if (crc32==null) return false;
+		if (crc32.length<4) return false;
+		return true;
+	}
+
 	public boolean hasMoreToRead() {
-		return !finalized;
+		return !(isHeaderValid() && isDataComplete() && isCRCComplete());
 	}
 
 	public byte calculateHeaderCkSum()
     {
-        byte header[] = new byte[12];
-        System.arraycopy(cmd, 0, header, 0, 4);
-        System.arraycopy(flags, 0, header, 4, 4);
-        System.arraycopy(datalen, 0, header, 8, 4);
+        byte header[] = getHeader();
         byte result = calcSum(header);
         header = null;
         return result;
@@ -229,12 +232,22 @@ public class S1Packet {
 	}
 	
 	public byte[] getHeader() {
-		byte[] array = new byte[13];
-		System.arraycopy(cmd, 0, array, 0, 4);
-		System.arraycopy(flags, 0, array, 4, 4);
-		System.arraycopy(datalen, 0, array, 8, 4);
-		array[12] = hdr;
-		return array;
+		return BytesUtil.concatAll(BytesUtil.getBytesWord(command, 4),
+				                   BytesUtil.getBytesWord(flag, 4),
+				                   BytesUtil.getBytesWord(length, 4)
+				                  );
+	}
+
+	public byte[] getHeaderWithChecksum() {
+		return BytesUtil.concatAll(BytesUtil.getBytesWord(command, 4),
+				                   BytesUtil.getBytesWord(flag, 4),
+				                   BytesUtil.getBytesWord(length, 4),
+				                   new byte[] {hdrcksum}
+				                  );
+	}
+
+	public byte getCksum() {
+		return hdrcksum;
 	}
 
 }

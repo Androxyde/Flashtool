@@ -1,25 +1,28 @@
 package flashsystem;
 
+import java.io.ByteArrayInputStream;
 import java.lang.Byte;
 
 import org.util.BytesUtil;
 import org.util.HexDump;
 
+import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
+
 public class TaEntry {
 
-	String _partition="";
+	String _unit="";
 	String _data="";
 	String _size="";
 	
 	public TaEntry() {
 	}
 	
-	public void setPartition(int partition) {
-		_partition = HexDump.toHex(partition);
+	public void setUnit(int unit) {
+		_unit = HexDump.toHex(unit);
 	}
 	
-	public void setPartition(String partition) {
-		_partition = partition;
+	public void setUnit(String unit) {
+		_unit = unit;
 	}
 	
 	public void addData(String data) {
@@ -42,12 +45,21 @@ public class TaEntry {
 		}
 	}
 	
-	public String getPartition() {
-		return _partition;
+	public String getUnit() {
+		return _unit;
 	}
 	
-	public Byte[] getPartitionBytes() {
-		return BytesUtil.getBytes(_partition);
+	public Byte[] getUnitBytes() {
+		return BytesUtil.getBytes(_unit);
+	}
+
+	public byte[] getUnitbytes() {
+		Byte[] uB=BytesUtil.getBytes(_unit);
+		byte[] ub = new byte[uB.length];
+		for (int i=0;i<ub.length;i++) {
+			ub[i]=uB[i];
+		}
+		return ub;
 	}
 
 	public void setSize(String size) {
@@ -137,9 +149,9 @@ public class TaEntry {
 	
 	public Byte[] getWordByte() {
 		if (getDataBytes()!=null)
-			return BytesUtil.concatAll(getPartitionBytes(), getSizeBytes(), getDataBytes());
+			return BytesUtil.concatAll(getUnitBytes(), getSizeBytes(), getDataBytes());
 		else
-			return BytesUtil.concatAll(getPartitionBytes(), getSizeBytes());
+			return BytesUtil.concatAll(getUnitBytes(), getSizeBytes());
 	}
 
 	public byte[] getWordbyte() {
@@ -152,12 +164,13 @@ public class TaEntry {
 	}
 
 	public String toString() {
-		return getPartition()+" "+getComputedSize().substring(4)+" "+getData();
+		return getUnit()+" "+getComputedSize().substring(4)+" "+getData();
 	}
 	
 	public void close() throws TaParseException {
 		if (Integer.parseInt(getComputedSize(),16)!=Integer.parseInt(_size,16)) {
-			throw new TaParseException("TA entry ("+getPartition()+")parsing error");
+			throw new TaParseException("TA entry ("+getUnit()+")parsing error");
 		}
 	}
+	
 }

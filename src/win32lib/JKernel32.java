@@ -52,10 +52,10 @@ public class JKernel32 {
 		return true;
 	}
 
-	public static byte[] readBytes(int bufsize) throws IOException {
+	public static byte[] readBytes() throws IOException {
 		IntByReference nbread = new IntByReference();
-		byte[] b = new byte[bufsize];
-		boolean result = kernel32.ReadFile(HandleToDevice, b, bufsize, nbread, null);
+		byte[] b = new byte[0x1000];
+		boolean result = kernel32.ReadFile(HandleToDevice, b, 0x1000, nbread, null);
 		if (!result) throw new IOException("Read error :"+getLastError());
 		return BytesUtil.getReply(b,nbread.getValue());
 	}
@@ -78,7 +78,7 @@ public class JKernel32 {
 	public static boolean writeBytes(byte bytes[]) throws IOException {
 		IntByReference nbwritten = new IntByReference();
 		boolean result = kernel32.WriteFile(HandleToDevice, bytes, bytes.length, nbwritten, null);
-		if (!result) if (!result) throw new IOException(getLastError());
+		if (!result) throw new IOException(getLastError());
 		if (nbwritten.getValue()!=bytes.length) throw new IOException("Did not write all data");
 		bytes = null;
 		return result;

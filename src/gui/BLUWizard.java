@@ -160,7 +160,7 @@ public class BLUWizard extends Dialog {
 				else {
 					if (_action.equals("R")) {
 						TaEntry ta = new TaEntry();
-						ta.setPartition(2226);
+						ta.setUnit(2226);
 						//byte[] data = new byte[2];data[0]=0;data[1]=0;
 						//ta.setData(data);
 						logger.info("Relocking device");
@@ -183,7 +183,7 @@ public class BLUWizard extends Dialog {
 					}
 					else {
 						TaEntry ta = new TaEntry();
-						ta.setPartition(2226);
+						ta.setUnit(2226);
 						ta.setData(textULCODE.getText().getBytes());
 						logger.info("Unlocking device");
 						WriteTAJob tj = new WriteTAJob("Write TA");

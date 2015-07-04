@@ -93,8 +93,13 @@ public class DeviceEntry {
 	public DeviceEntry(String Id) {
 		_entry = new PropertiesFile();
 		try {
-			String path = OS.getFolderDevices()+File.separator+Id+File.separator+Id+".properties";
-			_entry.open("",path);			
+			String path = OS.getFolderCustomDevices()+File.separator+Id+File.separator+Id+".properties";
+			if (new File(path).exists())
+				_entry.open("",path);
+			else {
+				path = OS.getFolderDevices()+File.separator+Id+File.separator+Id+".properties";
+				_entry.open("",path);
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();

@@ -26,34 +26,50 @@ public class BundleMetaData {
 	TreeMap<Integer,String> _catorders = new TreeMap<Integer,String>();
 	
 	public BundleMetaData() {
-		_categex.setProperty("SYSTEM", "Exclude system");
-		_categex.setProperty("BOOT", "Exclude boot");
 		_categex.setProperty("BOOTBUNDLE", "Exclude boot bundle");
-		_categex.setProperty("ELABEL", "Exclude elabel");
-		_categex.setProperty("BASEBAND", "Exclude baseband");
-		_categex.setProperty("KERNEL", "Exclude kernel");
 		_categex.setProperty("PARTITION", "Exclude partition");
-		_categex.setProperty("VENDOR", "Exclude vendor");
-		_categex.setProperty("UNKNOWN", "Exclude uncategorized");
-		_categex.setProperty("FOTA", "Exclude Fota");
+		_categex.setProperty("PRELOAD", "Exclude preload");
 		_categex.setProperty("TA", "Exclude TA");
-		_categwipe.setProperty("DATA", "Wipe data");
+		
+		
+		_categex.setProperty("BOOT", "Exclude boot");
+		_categex.setProperty("KERNEL", "Exclude kernel");
+		_categex.setProperty("FOTA", "Exclude Fota");
 		_categwipe.setProperty("CACHE", "Wipe cache");
+		_categex.setProperty("FTMA", "Exclude Ftma");
 		_categwipe.setProperty("APPSLOG", "Wipe apps log");
+		_categex.setProperty("LOGO", "Exclude Logo");
+		_categex.setProperty("UNKNOWN", "Exclude uncategorized");
+		_categex.setProperty("VENDOR", "Exclude vendor");
+		_categex.setProperty("MODEM", "Exclude modem");
+		
+		_categwipe.setProperty("DATA", "Wipe data");
+		_categex.setProperty("SYSTEM", "Exclude system");
+		_categex.setProperty("BASEBAND", "Exclude baseband");
+		
+		_categex.setProperty("ELABEL", "Exclude elabel");
+
 		_catorders.put(-4, "BOOTBUNDLE");
-		_catorders.put(-3, "BOOT");
-		_catorders.put(-2, "PARTITION");
+		_catorders.put(-3, "PARTITION");
+		_catorders.put(-2, "PRELOAD");
 		_catorders.put(-1, "TA");
-		_catorders.put(1, "KERNEL");
-		_catorders.put(2, "FOTA");
-		_catorders.put(3, "BASEBAND");
-		_catorders.put(4, "UNKNOWN");
-		_catorders.put(5, "APPSLOG");
-		_catorders.put(6, "CACHE");
-		_catorders.put(7, "SYSTEM");
-		_catorders.put(8, "DATA");
-		_catorders.put(9, "VENDOR");
-		_catorders.put(10, "ELABEL");
+		
+		_catorders.put(101, "BOOT");
+		_catorders.put(102, "KERNEL");
+		_catorders.put(103, "FOTA");
+		_catorders.put(105, "CACHE");
+		_catorders.put(106, "FTMA");
+		_catorders.put(107, "APPSLOG");
+		_catorders.put(108, "LOGO");
+		_catorders.put(109, "UNKNOWN");
+		_catorders.put(110, "VENDOR");
+		_catorders.put(111, "MODEM");
+		
+		_catorders.put(201, "DATA");
+		_catorders.put(202, "SYSTEM");
+		_catorders.put(203, "BASEBAND");
+		
+		_catorders.put(301, "ELABEL");
 	}
 	
 	public int getNbCategs() {
@@ -124,30 +140,47 @@ public class BundleMetaData {
 
 	public void process(String fname,String path) throws Exception {
 		String intname = fname;
-		int S1pos = intname.toUpperCase().indexOf("_S1");
+		int S1pos = intname.toUpperCase().indexOf("_S1-");
 		if (S1pos > 0) {
 				if (fname.toUpperCase().endsWith("SIN"))
 						intname = intname.substring(0,S1pos)+".sin";
 				else if (fname.toUpperCase().endsWith("TA"))
 					intname = intname.substring(0,S1pos)+".ta";
 				else if (fname.toUpperCase().endsWith("XML"))
-					intname = intname.substring(0,S1pos)+".ta";
+					intname = intname.substring(0,S1pos)+".xml";
+		}
+		int signpos = intname.toUpperCase().indexOf("-SIGN");
+		if (signpos > 0) {
+				if (fname.toUpperCase().endsWith("SIN"))
+						intname = intname.substring(0,signpos)+".sin";
+				else if (fname.toUpperCase().endsWith("TA"))
+					intname = intname.substring(0,signpos)+".ta";
+				else if (fname.toUpperCase().endsWith("XML"))
+					intname = intname.substring(0,signpos)+".xml";
 		}
 		_ftoint.setProperty(fname, intname);
 		_inttof.setProperty(intname, fname);
 		_pathtof.setProperty(intname, path);
 		if (intname.toUpperCase().endsWith(".TA"))
 			add(intname,"ta".toUpperCase());
+		else if (intname.toUpperCase().startsWith("PRELOADER"))
+			add(intname,"preload".toUpperCase());
+		else if (intname.toUpperCase().startsWith("SECRO"))
+			add(intname,"preload".toUpperCase());
 		else if (intname.toUpperCase().contains("SYSTEM"))
 			add(intname,"system".toUpperCase());
 		else if (intname.toUpperCase().contains("USERDATA"))
 			add(intname,"data".toUpperCase());
 		else if (intname.toUpperCase().contains("AMSS"))
 			add(intname,"baseband".toUpperCase());
+		else if (intname.toUpperCase().contains("TEE"))
+			add(intname,"kernel".toUpperCase());
+		else if (intname.toUpperCase().contains("LK"))
+			add(intname,"kernel".toUpperCase());
 		else if (intname.toUpperCase().contains("ADSP") || intname.toUpperCase().startsWith("DSP"))
 			add(intname,"baseband".toUpperCase());
-		else if (intname.toUpperCase().contains("MODEM") || intname.toUpperCase().contains("PRCMU"))
-			add(intname,"baseband".toUpperCase());
+		else if (intname.toUpperCase().startsWith("MODEM") || intname.toUpperCase().contains("PRCMU"))
+			add(intname,"modem".toUpperCase());
 		else if (intname.toUpperCase().contains("FOTA"))
 			add(intname,"fota".toUpperCase());
 		else if (intname.toUpperCase().contains("APPS_LOG"))
@@ -174,6 +207,12 @@ public class BundleMetaData {
 			add(intname,"partition".toUpperCase());
 		else if (intname.toUpperCase().startsWith("LOADER"))
 			add(intname,"loader".toUpperCase());
+		else if (intname.toUpperCase().startsWith("PRELOADER"))
+			add(intname,"preload".toUpperCase());
+		else if (intname.toUpperCase().startsWith("SECRO"))
+			add(intname,"preload".toUpperCase());
+		else if (intname.toUpperCase().startsWith("LOGO"))
+			add(intname,"logo".toUpperCase());
 		else
 			add(intname,"unknown".toUpperCase());
 	}

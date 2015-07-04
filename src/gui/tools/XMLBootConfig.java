@@ -37,13 +37,23 @@ public class XMLBootConfig {
 		}
 		return "";
 	}
-	
+
+	public String getDbiFile() {
+		Iterator<String> file = files.iterator();
+		while(file.hasNext()) {
+			String dbi = file.next();
+			if (dbi.toUpperCase().contains("DBI")) return (_folder.length()>0?_folder+"/":"")+dbi;
+		}
+		return "";
+	}
+
 	public Vector<String> getOtherFiles() {
 		Vector<String> otherfiles = new Vector<String>();
 		Iterator<String> file = files.iterator();
 		while(file.hasNext()) {
 			String curfile = file.next();
 			if (!curfile.toUpperCase().contains("APPSBOOT"))
+				if (!curfile.toUpperCase().contains("DBI"))
 				otherfiles.add((_folder.length()>0?_folder+"/":"")+curfile);
 		}
 		return otherfiles;
