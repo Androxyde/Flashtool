@@ -7,6 +7,7 @@ import gui.models.VectorLabelProvider;
 import gui.tools.USBParseJob;
 import gui.tools.WidgetsTool;
 
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
@@ -33,8 +34,10 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Table;
 import org.simpleusblogger.S1Packet;
+import org.simpleusblogger.Session;
 import org.system.DeviceEntry;
 import org.system.Devices;
+import org.system.TextFile;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
@@ -50,7 +53,7 @@ public class USBLogviewer extends Dialog {
 	private Table table;
 	private TableViewer tableViewer;
 	private Text textSinFolder;
-	private Button btnCancel;
+	private Button btnClose;
 	private Composite compositeTable;
 	private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
 	private Label lblLogfile;
@@ -103,18 +106,18 @@ public class USBLogviewer extends Dialog {
 		shlUSBLogviewer.setText("USB Log Viewer");
 		shlUSBLogviewer.setLayout(new FormLayout());
 		
-		btnCancel = new Button(shlUSBLogviewer, SWT.NONE);
-		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.bottom = new FormAttachment(100, -10);
-		fd_btnCancel.right = new FormAttachment(100, -10);
-		btnCancel.setLayoutData(fd_btnCancel);
-		btnCancel.setText("Cancel");
+		btnClose = new Button(shlUSBLogviewer, SWT.NONE);
+		FormData fd_btnClose = new FormData();
+		fd_btnClose.bottom = new FormAttachment(100, -10);
+		fd_btnClose.right = new FormAttachment(100, -10);
+		btnClose.setLayoutData(fd_btnClose);
+		btnClose.setText("Close");
 		
 		compositeTable = new Composite(shlUSBLogviewer, SWT.NONE);
 		compositeTable.setLayout(new FillLayout(SWT.HORIZONTAL));
 		FormData fd_compositeTable = new FormData();
-		fd_compositeTable.bottom = new FormAttachment(btnCancel, -6);
-		fd_compositeTable.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
+		fd_compositeTable.bottom = new FormAttachment(btnClose, -6);
+		fd_compositeTable.right = new FormAttachment(btnClose, 0, SWT.RIGHT);
 		fd_compositeTable.left = new FormAttachment(0, 10);
 		fd_compositeTable.top = new FormAttachment(0, 98);
 		compositeTable.setLayoutData(fd_compositeTable);
@@ -124,13 +127,11 @@ public class USBLogviewer extends Dialog {
 		tableViewer.setLabelProvider(new VectorLabelProvider());
 
 		table = tableViewer.getTable();
-		TableColumn[] columns = new TableColumn[3];
+		TableColumn[] columns = new TableColumn[2];
 		columns[0] = new TableColumn(table, SWT.NONE);
-		columns[0].setText("Direction");
+		columns[0].setText("Action");
 		columns[1] = new TableColumn(table, SWT.NONE);
-		columns[1].setText("Action");
-		columns[2] = new TableColumn(table, SWT.NONE);
-		columns[2].setText("Value");
+		columns[1].setText("Parameter");
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		TableSorter sort = new TableSorter(tableViewer);
@@ -173,8 +174,8 @@ public class USBLogviewer extends Dialog {
 		btnSourceFolder.setText("...");
 		btnParse = new Button(shlUSBLogviewer, SWT.NONE);
 		FormData fd_btnParse = new FormData();
-		fd_btnParse.bottom = new FormAttachment(btnCancel, 0, SWT.BOTTOM);
-		fd_btnParse.right = new FormAttachment(btnCancel, -6);
+		fd_btnParse.bottom = new FormAttachment(btnClose, 0, SWT.BOTTOM);
+		fd_btnParse.right = new FormAttachment(btnClose, -6);
 		btnParse.setLayoutData(fd_btnParse);
 		formToolkit.adapt(btnParse, true, true);
 		btnParse.setText("Parse");
@@ -183,7 +184,7 @@ public class USBLogviewer extends Dialog {
 
 	public void createTriggers() {
 		
-		btnCancel.addSelectionListener(new SelectionAdapter() {
+		btnClose.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				result = null;
@@ -250,6 +251,7 @@ public class USBLogviewer extends Dialog {
 		          // Set the text box to the new selection
 		        	if (!textLogFile.getText().equals(dir)) {
 		        		textLogFile.setText(dir);
+		        		textSinFolder.setText(new File(dir).getParentFile().getAbsolutePath()+File.separator+"decrypted");
 		        	}
 		        }
 			}
@@ -258,52 +260,20 @@ public class USBLogviewer extends Dialog {
 		btnParse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				USBParseJob pj = new USBParseJob("USB log parser");
-				pj.setFilename(textLogFile.getText());
-				pj.setSinDir(textSinFolder.getText());
-				pj.addJobChangeListener(new IJobChangeListener() {
-					public void aboutToRun(IJobChangeEvent event) {
-					}
-
-					public void awake(IJobChangeEvent event) {
-					}
-
-					public void done(IJobChangeEvent event) {
-						Vector result = new Vector();
-						Iterator<S1Packet> i = pj.getSession().iterator();
-						while (i.hasNext()) {
-							S1Packet p = i.next();
-					    	TableLine line = new TableLine();
-					    	line.add(p.getDirection());
-					    	line.add(p.getCommandName());
-					    	line.add(p.getInfo());
-					    	result.add(line);
+				WaitForUSBParser parse = new WaitForUSBParser(shlUSBLogviewer,SWT.PRIMARY_MODAL | SWT.SHEET);
+				Session sess = (Session)parse.open(textLogFile.getText(),textSinFolder.getText());	
+				sess.saveScript();
+						
+				Display.getDefault().asyncExec(
+						new Runnable() {
+							public void run() {
+								tableViewer.setInput(sess.getScript());
+							    for (int nbcols=0;nbcols<table.getColumnCount();nbcols++)
+							    	table.getColumn(nbcols).pack();
+							    tableViewer.refresh();
+							}
 						}
-						Display.getDefault().asyncExec(
-								new Runnable() {
-									public void run() {
-										tableViewer.setInput(result);
-									    for (int nbcols=0;nbcols<table.getColumnCount();nbcols++)
-									    	table.getColumn(nbcols).pack();
-									    tableViewer.refresh();
-									}
-								}
-						);
-
-					}
-
-					public void running(IJobChangeEvent event) {
-					}
-
-					public void scheduled(IJobChangeEvent event) {
-					}
-
-					public void sleeping(IJobChangeEvent event) {
-					}
-				});
-
-				pj.schedule();
-
+				);
 			}
 		});
 

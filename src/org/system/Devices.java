@@ -54,7 +54,7 @@ public class Devices  {
 			if (props.containsKey(device))
 				return (DeviceEntry)props.get(device);
 			else {
-				File f = new File(OS.getFolderCustomDevices()+File.separator+device+".ftd");
+				File f = new File(OS.getFolderMyDevices()+File.separator+device+".ftd");
 				if (f.exists()) {
 					DeviceEntry ent=null;
 					JarFile jar = new JarFile(f);
@@ -92,15 +92,16 @@ public class Devices  {
 	private static void load() {
 		if (props==null) props=new Properties();
 		else props.clear();
-		File[] list = (new File(OS.getFolderCustomDevices()).listFiles());
+		File[] list = (new File(OS.getFolderMyDevices()).listFiles());
 		if (list==null) return;
 		for (int i=0;i<list.length;i++) {
 			if (list[i].isDirectory()) {
 				PropertiesFile p = new PropertiesFile();
 				String device = list[i].getPath().substring(list[i].getPath().lastIndexOf(OS.getFileSeparator())+1);
 				try {
-					if (!device.toLowerCase().equals("busybox") && !device.toLowerCase().equals(".git")) {
-						p.open("",new File(list[i].getPath()+OS.getFileSeparator()+device+".properties").getAbsolutePath());
+					File propfile = new File(list[i].getPath()+OS.getFileSeparator()+device+".properties");
+					if (!device.toLowerCase().equals("busybox") && !device.toLowerCase().equals(".git") && propfile.exists()) {
+						p.open("",propfile.getAbsolutePath());
 						DeviceEntry entry = new DeviceEntry(p);
 						if (device.equals(entry.getId()))
 							props.put(device, entry);

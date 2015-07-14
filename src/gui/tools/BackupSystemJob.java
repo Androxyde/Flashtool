@@ -23,7 +23,7 @@ public class BackupSystemJob extends Job {
 	
     protected IStatus run(IProgressMonitor monitor) {
     	try {
-    		new File(OS.getFolderMyDevices()+File.separator+Devices.getCurrent().getSerial()+File.separator+"apps"+File.separator+Devices.getCurrent().getBuildId()).mkdirs();
+    		new File(OS.getFolderRegisteredDevices()+File.separator+Devices.getCurrent().getSerial()+File.separator+"apps"+File.separator+Devices.getCurrent().getBuildId()).mkdirs();
 			DeviceApps apps = new DeviceApps();
 			LogProgress.initProgress(apps.getCurrent().size());
 			Iterator<String> ic = apps.getCurrent().iterator();
@@ -31,7 +31,7 @@ public class BackupSystemJob extends Job {
 				String app = ic.next();
 				LogProgress.updateProgress();
 				try {
-					AdbUtility.pull("/system/app/"+app, OS.getFolderMyDevices()+File.separator+Devices.getCurrent().getSerial()+File.separator+"apps"+File.separator+Devices.getCurrent().getBuildId());
+					AdbUtility.pull("/system/app/"+app, OS.getFolderRegisteredDevices()+File.separator+Devices.getCurrent().getSerial()+File.separator+"apps"+File.separator+Devices.getCurrent().getBuildId());
 				}
 				catch (Exception e) {}
 			}

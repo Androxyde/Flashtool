@@ -97,6 +97,10 @@ public class JUsb {
 			dev.releaseAndClose();
 	}
 	
+	public static byte[] readBytes() {
+		return dev.bulkRead(0x1000);
+	}
+	
 	public static byte[] readBytes(int count) {
 		return dev.bulkRead(count);
 	}

@@ -544,17 +544,22 @@ public class OS {
 		  return OS.getFolderFirmwares()+File.separator+"Downloads";
 	  }
 
+	  public static String getFolderFirmwaresScript() {
+		  new File(OS.getFolderFirmwares()+File.separator+"Scripts").mkdirs();
+		  return OS.getFolderFirmwares()+File.separator+"Scripts";
+	  }
+
 	  public static String getFolderFirmwaresSinExtracted() {
 		  new File(OS.getFolderFirmwares()+File.separator+"sinExtracted").mkdirs();
 		  return OS.getFolderFirmwares()+File.separator+"sinExtracted";
 	  }
 
-	  public static String getFolderCustomDevices() {
+	  public static String getFolderMyDevices() {
 		  new File(OS.getFolderUserFlashtool()+File.separator+"mydevices").mkdirs();
 		  return OS.getFolderUserFlashtool()+File.separator+"mydevices";		  
 	  }
 
-	  public static String getFolderMyDevices() {
+	  public static String getFolderRegisteredDevices() {
 		  new File(OS.getFolderUserFlashtool()+File.separator+"registeredDevices").mkdirs();
 		  return OS.getFolderUserFlashtool()+File.separator+"registeredDevices";
 	  }

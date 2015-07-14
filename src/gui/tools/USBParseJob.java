@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.simpleusblogger.Parser;
 import org.simpleusblogger.S1Packet;
+import org.simpleusblogger.Session;
 
 import flashsystem.Bundle;
 
@@ -17,7 +18,7 @@ public class USBParseJob extends Job {
 	String logfile="";
 	String sindir="";
 	private static Logger logger = Logger.getLogger(USBParseJob.class);
-	private Vector<S1Packet> session = null;
+	Session session;
 	
 	public USBParseJob(String name) {
 		super(name);
@@ -42,7 +43,7 @@ public class USBParseJob extends Job {
     	}
     }
     
-    public Vector<S1Packet> getSession() {
+    public Session getSession() {
     	return session;
     }
 }

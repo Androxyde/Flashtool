@@ -36,6 +36,10 @@ public class TAUnit {
         return bl;
     }
     
+    public String getUnitHex() {
+    	return HexDump.toHex(aUnitNumber);
+    }
+    
     public String toString() {
     	return HexDump.toHex(aUnitNumber) + HexDump.toHex(aUnitData);
     }

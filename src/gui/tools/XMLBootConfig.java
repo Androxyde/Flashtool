@@ -25,6 +25,19 @@ public class XMLBootConfig {
 		return files;
 	}
 	
+	public String getMatchingFile(String match) {
+		Vector<String> matched = new Vector<String>();
+		Iterator<String> file = files.iterator();
+		while(file.hasNext()) {
+			String name = file.next();
+			if (name.startsWith(match))
+				matched.add(name);
+		}
+		if (matched.size()==1)
+			return (_folder.length()>0?_folder+"/":"")+matched.get(0);
+		return null;
+	}
+	
 	public void setFolder(String folder) {
 		_folder = folder+"/boot";
 	}
@@ -38,14 +51,6 @@ public class XMLBootConfig {
 		return "";
 	}
 
-	public String getDbiFile() {
-		Iterator<String> file = files.iterator();
-		while(file.hasNext()) {
-			String dbi = file.next();
-			if (dbi.toUpperCase().contains("DBI")) return (_folder.length()>0?_folder+"/":"")+dbi;
-		}
-		return "";
-	}
 
 	public Vector<String> getOtherFiles() {
 		Vector<String> otherfiles = new Vector<String>();
@@ -53,7 +58,6 @@ public class XMLBootConfig {
 		while(file.hasNext()) {
 			String curfile = file.next();
 			if (!curfile.toUpperCase().contains("APPSBOOT"))
-				if (!curfile.toUpperCase().contains("DBI"))
 				otherfiles.add((_folder.length()>0?_folder+"/":"")+curfile);
 		}
 		return otherfiles;

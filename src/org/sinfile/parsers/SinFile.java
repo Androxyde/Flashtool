@@ -297,5 +297,21 @@ public class SinFile {
 		}
 		return;		
 	}
+	
+	public static String getShortName(String pname) {
+		if (pname.toUpperCase().endsWith(".TA")) return pname;
+		String name = pname;
+		if (name.indexOf("_AID")!=-1)
+			name = name.substring(0, name.indexOf("_AID"));
+		if (name.indexOf("_PLATFORM")!=-1)
+			name = name.substring(0, name.indexOf("_PLATFORM"));
+		if (name.indexOf("_S1")!=-1)
+			name = name.substring(0, name.indexOf("_S1"));
+		if (name.startsWith("elabel"))
+			name = "elabel";
+		if (name.indexOf("-")!=-1)
+			name = name.substring(0, name.indexOf("-"));
+		return name;
+	}
 
 }

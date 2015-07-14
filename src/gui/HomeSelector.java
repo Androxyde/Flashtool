@@ -26,7 +26,6 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.system.Elf;
 import org.system.GlobalConfig;
 import org.system.OS;
 

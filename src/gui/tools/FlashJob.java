@@ -35,7 +35,8 @@ public class FlashJob extends Job {
     			String result = "";
     			if (!flash.getBundle().simulate()) {
     				result = (String)WidgetTask.openWaitDeviceForFlashmode(_shell,flash);
-    			} result="OK";
+    			}
+    			else result="OK";
     			if (result.equals("OK")) {
     				flash.openDevice();
     				flash.flashDevice();

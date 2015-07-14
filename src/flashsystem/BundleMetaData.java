@@ -139,25 +139,9 @@ public class BundleMetaData {
 	}
 
 	public void process(String fname,String path) throws Exception {
-		String intname = fname;
-		int S1pos = intname.toUpperCase().indexOf("_S1-");
-		if (S1pos > 0) {
-				if (fname.toUpperCase().endsWith("SIN"))
-						intname = intname.substring(0,S1pos)+".sin";
-				else if (fname.toUpperCase().endsWith("TA"))
-					intname = intname.substring(0,S1pos)+".ta";
-				else if (fname.toUpperCase().endsWith("XML"))
-					intname = intname.substring(0,S1pos)+".xml";
-		}
-		int signpos = intname.toUpperCase().indexOf("-SIGN");
-		if (signpos > 0) {
-				if (fname.toUpperCase().endsWith("SIN"))
-						intname = intname.substring(0,signpos)+".sin";
-				else if (fname.toUpperCase().endsWith("TA"))
-					intname = intname.substring(0,signpos)+".ta";
-				else if (fname.toUpperCase().endsWith("XML"))
-					intname = intname.substring(0,signpos)+".xml";
-		}
+		String intname = org.sinfile.parsers.SinFile.getShortName(fname);
+		if (!intname.equals(fname))
+			intname = intname + fname.substring(fname.lastIndexOf("."));
 		_ftoint.setProperty(fname, intname);
 		_inttof.setProperty(intname, fname);
 		_pathtof.setProperty(intname, path);

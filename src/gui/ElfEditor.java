@@ -3,6 +3,15 @@ package gui;
 import gui.tools.WidgetsTool;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
+import nl.lxtreme.binutils.elf.ProgramHeader;
+import nl.lxtreme.binutils.elf.Section;
+import nl.lxtreme.binutils.elf.Attribute;
+import nl.lxtreme.binutils.elf.Elf;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
@@ -22,7 +31,8 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.system.Elf;
+import org.util.HexDump;
+
 
 public class ElfEditor extends Dialog {
 
@@ -111,8 +121,13 @@ public class ElfEditor extends Dialog {
 		          // Set the text box to the new selection
 		        	if (!sourceFile.getText().equals(dir)) {
 		        		try {
-		        			elfobj = new Elf(new File(dir));
-		        			textNbParts.setText(Integer.toString(elfobj.getNumPrograms()));
+		        		    elfobj = new nl.lxtreme.binutils.elf.Elf(new File(dir));
+		        		    elfobj.loadSymbols();
+		        		    Attribute attributes = elfobj.getAttributes();
+		        		    Section[] sections = elfobj.getSections();
+		        		    ProgramHeader[] programHeaders = elfobj.getProgramHeaders();
+
+		        			textNbParts.setText(Integer.toString(elfobj.getProgramHeaders().length));
 		        			sourceFile.setText(dir);
 		        			btnExtract.setEnabled(true);
 		        			logger.info("You can now press the Unpack button to get the elf data content");
@@ -153,7 +168,7 @@ public class ElfEditor extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					elfobj.unpack();
+					doUnpack(elfobj);
 				}
 				catch (Exception ex) {
 					logger.error(ex.getMessage());
@@ -177,4 +192,45 @@ public class ElfEditor extends Dialog {
 		btnClose.setText("Close");
 
 	}
+	
+	public void doUnpack(Elf elf) throws FileNotFoundException, IOException {
+		String ctype="";
+		RandomAccessFile fin = new RandomAccessFile(elf.getFilename(),"r");
+		ProgramHeader[] aProgramHeaders = elf.getProgramHeaders();
+		int i = 0;
+		for (ProgramHeader ph : aProgramHeaders) {
+			fin.seek(ph.getFileOffset());
+			byte[] ident = new byte[ph.getFileSize()<352?(int)ph.getFileSize():352];
+			fin.read(ident);
+			String identHex = HexDump.toHex(ident);
+			if (identHex.contains("[1F, 8B"))
+				ctype="ramdisk.gz";
+			else if (identHex.contains("[00, 00, A0, E1"))
+				ctype="Image";
+			else if (identHex.contains("41, 52, 4D, 64"))
+				ctype="Image";
+			else if (identHex.contains("[51, 43, 44, 54"))
+				ctype="qcdt";
+			else if (identHex.contains("53, 31, 5F, 52, 50, 4D"))
+				ctype="rpm.bin";
+			else if (new String(ident).contains("S1_Root") || new String(ident).contains("S1_SW_Root"))
+				ctype="cert";
+			else if (ident.length<200) ctype="bootcmd";
+			else ctype=Integer.toString(i);
+			fin.seek(ph.getFileOffset());
+			byte[] image = new byte[(int)ph.getFileSize()];
+			fin.read(image);
+			logger.info("Extracting part " + i + " to " +elf.getFilename()+"."+ctype);
+			File f = new File(elf.getFilename()+"."+ctype);
+			FileOutputStream fout = new FileOutputStream(f);
+			fout.write(image);
+			image=null;
+			fout.flush();
+			fout.close();
+			i++;
+		}
+		fin.close();
+		logger.info("ELF Extraction finished");		
+	}
+
 }

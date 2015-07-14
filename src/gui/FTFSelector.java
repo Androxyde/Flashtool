@@ -61,6 +61,7 @@ public class FTFSelector extends Dialog {
 	private Composite compositeExclude;
 	private Composite compositeWipe;
 	private ScrolledComposite scrolledCompositeExclude;
+	private boolean simulate = false;
 
 	/**
 	 * Create the dialog.
@@ -79,6 +80,19 @@ public class FTFSelector extends Dialog {
 	public Object open(String pathname, String ftfname) {
 		createContents(pathname, ftfname);
 		WidgetsTool.setSize(shlFirmwareSelector);		
+		
+		Button btnCheckSimulate = new Button(shlFirmwareSelector, SWT.CHECK);
+		btnCheckSimulate.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				simulate = btnCheckSimulate.getSelection();
+			}
+		});
+		FormData fd_btnCheckSimulate = new FormData();
+		fd_btnCheckSimulate.bottom = new FormAttachment(btnCancel, 0, SWT.BOTTOM);
+		fd_btnCheckSimulate.left = new FormAttachment(compositeFirmware, 0, SWT.LEFT);
+		btnCheckSimulate.setLayoutData(fd_btnCheckSimulate);
+		btnCheckSimulate.setText("Simulate");
 		shlFirmwareSelector.open();
 		shlFirmwareSelector.layout();
 		Display display = getParent().getDisplay();
@@ -87,6 +101,8 @@ public class FTFSelector extends Dialog {
 				display.sleep();
 			}
 		}
+		if (result!=null)
+			result.setSimulate(simulate);
 		return result;
 	}
 

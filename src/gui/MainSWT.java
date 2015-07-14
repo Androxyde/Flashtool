@@ -126,7 +126,7 @@ public class MainSWT {
 			String result = (String)hs.open(false);
 			GlobalConfig.setProperty("user.flashtool", result);
 			forceMove(OS.getWorkDir()+File.separator+"firmwares",OS.getFolderFirmwares());
-			forceMove(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices",OS.getFolderMyDevices());
+			forceMove(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices",OS.getFolderRegisteredDevices());
 			new File(OS.getWorkDir()+File.separator+"firmwares").delete();
 			new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices").delete();
 		}
@@ -744,7 +744,7 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				Devices.listDevices(true);
         		Properties list = new Properties();
-        		File[] lfiles = new File(OS.getFolderCustomDevices()).listFiles();
+        		File[] lfiles = new File(OS.getFolderMyDevices()).listFiles();
         		for (int i=0;i<lfiles.length;i++) {
         			if (lfiles[i].getName().endsWith(".ftd")) {
         				String name = lfiles[i].getName();
@@ -1237,9 +1237,8 @@ public class MainSWT {
 		try {
 			FTFSelector ftfsel = new FTFSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
-			logger.info("Selected "+bundle);
 			if (bundle !=null) {
-				bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+				logger.info("Selected "+bundle);
 				final X10flash flash = new X10flash(bundle,shlSonyericsson);
 				try {
 						FlashJob fjob = new FlashJob("Flash");
@@ -1376,7 +1375,7 @@ public class MainSWT {
 	}
 
 	public void doExportDevice(String device) throws Exception {
-		File ftd = new File(OS.getFolderCustomDevices()+File.separator+device+".ftd");
+		File ftd = new File(OS.getFolderMyDevices()+File.separator+device+".ftd");
 		byte buffer[] = new byte[10240];
 	    FileOutputStream stream = new FileOutputStream(ftd);
 	    JarOutputStream out = new JarOutputStream(stream);

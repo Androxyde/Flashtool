@@ -142,7 +142,32 @@ public final class Bundle {
 	public BundleEntry getEntry(String name) {
 		return (BundleEntry)bundleList.get(name);
 	}
-	
+
+	public BundleEntry searchEntry(String name) {
+		Vector<BundleEntry> v = new Vector<BundleEntry>();
+		Enumeration<Object> e = bundleList.keys();
+		while (e.hasMoreElements()) {
+			String key = (String)e.nextElement();
+			if (key.startsWith(name)) {
+				BundleEntry entry = (BundleEntry)bundleList.get(key);
+				v.add(entry);
+			}
+		}
+		if (v.size()==1) {
+			try {
+				v.get(0).getAbsolutePath();
+			} catch (Exception e1) { return null; }
+			return v.get(0);
+		}
+		else {
+			e = bundleList.keys();
+			while (e.hasMoreElements()) {
+				String key = (String)e.nextElement();
+			}			
+		}
+		return null;
+	}
+
 	public Enumeration <BundleEntry> allEntries() {
 		Vector<BundleEntry> v = new Vector<BundleEntry>();
 		Enumeration<Object> e = bundleList.keys();
@@ -186,11 +211,23 @@ public final class Bundle {
 	}
 
 	public BundleEntry getPreloader() throws IOException, FileNotFoundException {
-		return (BundleEntry)bundleList.get("preloader.sin");
+		Enumeration e = bundleList.keys();
+		while (e.hasMoreElements()) {
+			String key = (String)e.nextElement();
+			if (key.contains("preloader"))
+				return (BundleEntry)bundleList.get(key);
+		}
+		return null;
 	}
 
 	public BundleEntry getSecro() throws IOException, FileNotFoundException {
-		return (BundleEntry)bundleList.get("secro.sin");
+		Enumeration e = bundleList.keys();
+		while (e.hasMoreElements()) {
+			String key = (String)e.nextElement();
+			if (key.contains("secro"))
+				return (BundleEntry)bundleList.get(key);
+		}
+		return null;
 	}
 
 	public boolean hasBootDelivery() {
@@ -206,7 +243,8 @@ public final class Bundle {
 	}
 
 	public BundleEntry getPartition() throws IOException, FileNotFoundException {
-		return (BundleEntry)bundleList.get(_meta.getEntriesOf("PARTITION",true).nextElement());
+		String partition = _meta.getEntriesOf("PARTITION",true).nextElement();
+		return (BundleEntry)bundleList.get(_meta.getExternal(partition));
 	}
 
 	public boolean simulate() {
@@ -288,11 +326,13 @@ public final class Bundle {
 	    Enumeration<BundleEntry> e = allEntries();
 		while (e.hasMoreElements()) {
 			BundleEntry entry = e.nextElement();
-			String name = entry.getName();
-			int S1pos = name.toUpperCase().indexOf("_S1");
-			if (S1pos > 0) name = name.substring(0,S1pos)+".sin";
-			logger.info("Adding "+name+" to the bundle");
-		    JarEntry jarAdd = new JarEntry(name);
+			String fname = entry.getName();
+			String intname = org.sinfile.parsers.SinFile.getShortName(fname);
+			if (!intname.equals(fname))
+				intname = intname + fname.substring(fname.lastIndexOf("."));
+
+			logger.info("Adding "+intname+" to the bundle");
+		    JarEntry jarAdd = new JarEntry(intname);
 	        out.putNextEntry(jarAdd);
 	        InputStream in = entry.getInputStream();
 	        while (true) {
@@ -444,7 +484,7 @@ public final class Bundle {
 			Enumeration<String> entries = _meta.getAllEntries(true);
 			while (entries.hasMoreElements()) {
 				String entry = entries.nextElement();
-				saveEntry(getEntry(entry),true);
+				saveEntry(getEntry(_meta.getExternal(entry)),true);
 				if (entry.toUpperCase().equals("BOOT_DELIVERY.XML")) {
 					BundleEntry xmlentry = getEntry(entry);
 					xmlb = new XMLBootDelivery(new File(xmlentry.getAbsolutePath()));
@@ -504,6 +544,14 @@ public final class Bundle {
 		return _meta;
 	}
 
+	public String getDevice() {
+		return _device;
+	}
+
+	public String getVersion() {
+		return _version;
+	}
+	
 	public String toString() {
 	    return "Bundle for " + Devices.getVariantName(_device) + ". FW release : " + _version + ". Customization : " + _branding;
 	}

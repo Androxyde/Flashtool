@@ -22,6 +22,8 @@ public class S1Packet {
 	int datalength=0;
 	String direction="";
 	String sinname="";
+	String action = "";
+	String actionreply="";
 
 	public boolean isHeaderOK() {
 		byte computed = calcSum(BytesUtil.concatAll(command, flag, length));
@@ -37,14 +39,14 @@ public class S1Packet {
 	}
 
 	public String getCommandName() {
-		if (getCommand() == 0x01) return "Get Loader Infos";
-		if (getCommand() == 0x09) return "Open TA";
-		if (getCommand() == 0x0A) return "Close TA";
-		if (getCommand() == 0x0C) return "Read TA";
-		if (getCommand() == 0x0D) return "Write TA";
-		if (getCommand() == 0x05) return "Send sin header";
+		if (getCommand() == 0x01) return "getLoaderInfos";
+		if (getCommand() == 0x09) return "openTA";
+		if (getCommand() == 0x0A) return "closeTA";
+		if (getCommand() == 0x0C) return "readTA";
+		if (getCommand() == 0x0D) return "writeTA";
+		if (getCommand() == 0x05) return "uploadImage";
 		if (getCommand() == 0x06) return "Send sin data";
-		if (getCommand() == 0x19) return "Set loader config";
+		if (getCommand() == 0x19) return "setLoaderConfig";
 		if (getCommand() == 0x04) return "End flashing";
 		if (getCommand() == 0x07) return "Get Error";
 		//System.out.println(HexDump.toHex(BytesUtil.concatAll(command, flag, length)));
@@ -138,5 +140,14 @@ public class S1Packet {
 	
 	public String toString() {	
 		return direction + " : " + getCommandName()+" "+getInfo();
+	}
+	
+	public byte[] getData() {
+		return data;
+	}
+	
+	public String getSin() {
+		if (sinname==null) return "";
+		return sinname;
 	}
 }

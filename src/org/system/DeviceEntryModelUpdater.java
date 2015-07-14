@@ -40,8 +40,8 @@ public class DeviceEntryModelUpdater {
 				TextFile tf = new TextFile(entry.getDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"tac","ISO8859-15");
 				tac8 = tf.getLines().iterator().next();
 			}
-			else if (new File(entry.getCustomDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"tac").exists()) {
-				TextFile tf = new TextFile(entry.getCustomDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"tac","ISO8859-15");
+			else if (new File(entry.getMyDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"tac").exists()) {
+				TextFile tf = new TextFile(entry.getMyDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"tac","ISO8859-15");
 				tac8 = tf.getLines().iterator().next();			
 			}
 			if (new File(entry.getDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"custlist.properties").exists()) {
@@ -49,9 +49,9 @@ public class DeviceEntryModelUpdater {
 				pf.open("", entry.getDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"custlist.properties");
 				_custid.mergeWith(pf);
 			}
-			if (new File(entry.getCustomDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"custlist.properties").exists()) {
+			if (new File(entry.getMyDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"custlist.properties").exists()) {
 				PropertiesFile pf = new PropertiesFile();
-				pf.open("", entry.getCustomDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"custlist.properties");
+				pf.open("", entry.getMyDeviceDir()+File.separator+"updates"+File.separator+model+File.separator+"custlist.properties");
 				_custid.getProperties().clear();
 				_custid.mergeWith(pf);
 			}
@@ -124,7 +124,7 @@ public class DeviceEntryModelUpdater {
 	}
 
 	public void save() {
-		_custid.setFileName(getDevice().getCustomDeviceDir()+File.separator+"updates"+File.separator+getModel()+File.separator+"custlist.properties");
+		_custid.setFileName(getDevice().getMyDeviceDir()+File.separator+"updates"+File.separator+getModel()+File.separator+"custlist.properties");
 		_custid.write("ISO8859-15");
 	}
 	

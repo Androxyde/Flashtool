@@ -46,9 +46,9 @@ public class Parser {
 
 	//public static byte[] record = new byte[] {(byte)0x80,0x00,0x09,0x00,0x00,0x00,0x00,0x00};	
 		  
-	  public static Vector<S1Packet> parse(String usblog, String extractedsin) throws Exception {
+	  public static Session parse(String usblog, String extractedsin) throws Exception {
 		  
-		  	Vector<S1Packet> session = new Vector<S1Packet>();
+		  	Session session = new Session();
 		  	S1Packet current=null;
 			USBHeader head=null;
 			FileInputStream fin=new FileInputStream(usblog);
@@ -81,11 +81,11 @@ public class Parser {
 							if (current.getCommand()!=6) {
 								if (current.direction.equals("READ REPLY")) {
 									if (current.getLength()>0)
-										session.add(current);
+										session.addPacket(current);
 								} else {
 									if (current.getCommand()==5)
 										current.setFileName(getSin(extractedsin,current.data));
-									session.add(current);
+									session.addPacket(current);
 								}
 							}
 						}
