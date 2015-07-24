@@ -446,35 +446,8 @@ public class X10flash {
 	    	maxpacketsize=128000;
 	    LogProgress.initProgress(_bundle.getMaxProgress(maxpacketsize));
     }
-
-    public void sendPartition() throws FileNotFoundException, IOException, X10FlashException {		
-		if (_bundle.hasPartition()) {
-			BundleEntry entry = _bundle.getPartition();
-			SinFile sin = new SinFile(entry.getAbsolutePath());
-			sin.setChunkSize(maxpacketsize);
-			uploadImage(sin);
-		}
-    }
-
-    public void sendPreloader() throws FileNotFoundException, IOException, X10FlashException {		
-		if (_bundle.hasPreloader()) {
-	    	disableFinalVerification();
-	    	disableEraseBeforeWrite();
-			BundleEntry entry = _bundle.getPreloader();
-			SinFile sin = new SinFile(entry.getAbsolutePath());
-			sin.setChunkSize(maxpacketsize);
-			uploadImage(sin);
-			enableEraseBeforeWrite();
-			entry = _bundle.getSecro();
-			sin = new SinFile(entry.getAbsolutePath());
-			sin.setChunkSize(maxpacketsize);
-			uploadImage(sin);
-			enableFinalVerification();
-		}
-    }
-
     
-    public void sendImages(int group) throws FileNotFoundException, IOException,X10FlashException {
+/*    public void sendImages(int group) throws FileNotFoundException, IOException,X10FlashException {
     	Iterator<Integer> orderlist = _bundle.getMeta().getOrder();
     	if (orderlist.hasNext()) {
     		openTA(2);
@@ -496,7 +469,7 @@ public class X10flash {
 	    	}
 	    	closeTA();
     	}
-    }
+    }*/
 
     public String getPhoneProperty(String property) {
     	return phoneprops.getProperty(property);
@@ -598,59 +571,33 @@ public class X10flash {
     	}
     }
 
-    public void sendTAFiles() throws FileNotFoundException, IOException,X10FlashException {
-		Enumeration entries = _bundle.getMeta().getEntriesOf("TA",true);
-		if (entries.hasMoreElements()) {
-			while (entries.hasMoreElements()) {
-				String entry = (String)entries.nextElement();
-				BundleEntry bent = _bundle.getEntry(entry);
-				if (!bent.getName().toUpperCase().contains("SIM")) {
-					boolean taopened = false;
-					try {
-						TaFile ta = new TaFile(new File(bent.getAbsolutePath()));
-						openTA(ta.getPartition());
-						taopened = true;
-						sendTA2(ta);
-					}
-					catch (TaParseException tae) {
-			    		logger.error("Error parsing TA file. Skipping");
-			    	}
-					if(taopened){
-						closeTA();
-					}
-				}
-				else {
-					logger.warn("This file is ignored : "+bent.getName());
-				}
-			}
-		}
-    }
 
     public void loadTAFiles() throws FileNotFoundException, IOException,X10FlashException {
-		Enumeration entries = _bundle.getMeta().getEntriesOf("TA",true);
-		if (entries.hasMoreElements()) {
-			while (entries.hasMoreElements()) {
-				String entry = (String)entries.nextElement();
-				BundleEntry bent = _bundle.getEntry(entry);
-				if (!bent.getName().toUpperCase().contains("SIM")) {
-					boolean taopened = false;
-					try {
-						TaFile ta = new TaFile(new File(bent.getAbsolutePath()));
-						Iterator<TaEntry> i = ta.entries().iterator();
-						while (i.hasNext()) {
-							TaEntry ent = i.next();
-							TaPartition2.put(BytesUtil.getInt(ent.getUnitbytes()),ent);
+		Iterator<Category> entries = _bundle.getMeta().getTAEntries(true).iterator();
+			while (entries.hasNext()) {
+				Category categ = entries.next();
+				Iterator<BundleEntry> icateg = categ.getEntries().iterator();
+				while (icateg.hasNext()) {
+					BundleEntry bent = icateg.next();
+					if (bent.getName().toUpperCase().endsWith(".TA")) {
+						if (!bent.getName().toUpperCase().contains("SIM"))
+						try {
+							TaFile ta = new TaFile(new File(bent.getAbsolutePath()));
+							Iterator<TaEntry> i = ta.entries().iterator();
+							while (i.hasNext()) {
+								TaEntry ent = i.next();
+								TaPartition2.put(BytesUtil.getInt(ent.getUnitbytes()),ent);
+							}
+						}
+						catch (TaParseException tae) {
+				    		logger.error("Error parsing TA file. Skipping");
+				    	}
+						else {
+							logger.warn("File "+bent.getName()+" is ignored");
 						}
 					}
-					catch (TaParseException tae) {
-			    		logger.error("Error parsing TA file. Skipping");
-			    	}
-				}
-				else {
-					logger.warn("This file is ignored : "+bent.getName());
 				}
 			}
-		}
 		try {
 			if (bc!=null) {
 				TaFile taf = new TaFile(new File(bc.getTA()));
@@ -694,28 +641,32 @@ public class X10flash {
     		Vector<String> ignored = new Vector<String>();
     		String file = getFlashScript();
     		TextFile tf = new TextFile(getFlashScript(),"ISO8859-1");
-    		Enumeration e = _bundle.getMeta().getAllEntries(false);
-    		while (e.hasMoreElements()) {
-    			String elem = (String)e.nextElement();
-    			if (!elem.endsWith(".sin")) continue;
-    			if (elem.equals("loader.sin")) continue;
-        		Map<Integer,String> map =  tf.getMap();
-        		Iterator<Integer> keys = map.keySet().iterator();
-        		boolean intemplate = false;
-        		while (keys.hasNext()) {
-        			String line = map.get(keys.next());
-        			String param="";
-        			String[] parsed = line.split(":");
-        			String action = parsed[0];
-        			if (action.equals("uploadImage")) {
-        				param = parsed[1];
-            			if (elem.contains(param)) {
-            				intemplate=true;
-            				break; 
-            			}
-        			}
-        		}
-        		if (!intemplate) ignored.add(elem);
+    		Iterator<Category> e = _bundle.getMeta().getAllEntries(false).iterator();
+    		while (e.hasNext()) {
+    			Category cat = e.next();
+    			Iterator<BundleEntry> icat = cat.getEntries().iterator();
+    			while (icat.hasNext()) {
+    				String elem = icat.next().getName();
+	    			if (!elem.endsWith(".sin")) continue;
+	    			if (elem.equals("loader.sin")) continue;
+	        		Map<Integer,String> map =  tf.getMap();
+	        		Iterator<Integer> keys = map.keySet().iterator();
+	        		boolean intemplate = false;
+	        		while (keys.hasNext()) {
+	        			String line = map.get(keys.next());
+	        			String param="";
+	        			String[] parsed = line.split(":");
+	        			String action = parsed[0];
+	        			if (action.equals("uploadImage")) {
+	        				param = parsed[1];
+	            			if (elem.contains(param)) {
+	            				intemplate=true;
+	            				break; 
+	            			}
+	        			}
+	        		}
+	        		if (!intemplate) ignored.add(elem);
+    			}
     		}
     		if (ignored.size()>0) {
     			Enumeration eignored = ignored.elements();
@@ -796,6 +747,7 @@ public class X10flash {
     				TaEntry unit = TaPartition2.get(Integer.parseInt(param));
     				if (unit != null)
     					this.sendTAUnit(unit);
+    				else logger.warn("Unit "+param+" not found in bundle");
     			}
     			else if (action.equals("setFlashTimestamp")) {
     				this.setFlashTimestamp();
@@ -804,7 +756,7 @@ public class X10flash {
     				this.endSession();
     			}
     		}
-    	} catch (Exception e) {}
+    	} catch (Exception e) {e.printStackTrace();}
     }
 
     public void flashDevice() {
@@ -886,7 +838,8 @@ public class X10flash {
 
     public void endSession() throws X10FlashException,IOException {
     	logger.info("Ending flash session");
-    	cmd.send(Command.CMD04,Command.VALNULL,false);
+    	if (!_bundle.simulate())
+    		cmd.send(Command.CMD04,Command.VALNULL,false);
     }
 
     public void endSession(int param) throws X10FlashException,IOException {

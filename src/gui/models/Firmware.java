@@ -3,9 +3,13 @@ package gui.models;
 import java.io.File;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import flashsystem.Bundle;
+import flashsystem.BundleEntry;
+import flashsystem.Category;
 
 public class Firmware {
 	  private String fileName;
@@ -20,17 +24,20 @@ public class Firmware {
 	  public Firmware() {
 		  content = new LinkedList();
 	  }
-	  public Firmware(String pfilename, String pdevice, String pversion, String pbranding) {
+	  
+	  public Firmware(String pfilename, String pdevice, String pversion, String pbranding) throws Exception {
 	    fileName = pfilename;
 	    device = pdevice;
 	    version = pversion;
 	    branding = pbranding;
 	    content = new LinkedList();
 	    bundle = new Bundle(pfilename,Bundle.JARTYPE);
-		Enumeration<String> e = bundle.getMeta().getAllEntries(true);
-		while (e.hasMoreElements()) {
-			String elem = e.nextElement();
-			add(new Content(elem));
+		Iterator<Category> i = bundle.getMeta().getAllEntries(true).iterator();
+		while (i.hasNext()) {
+			Category c = i.next();
+			Iterator<BundleEntry> ic =  c.getEntries().iterator();
+			while (ic.hasNext())
+				add(new Content(ic.next().getName()));
 	    }
 	  }
 
@@ -64,10 +71,12 @@ public class Firmware {
 	  public void disableCateg(String categ) {
 		  bundle.getMeta().setCategEnabled(categ, false);
 		  content.clear();
-			Enumeration<String> e = bundle.getMeta().getAllEntries(true);
-			while (e.hasMoreElements()) {
-				String elem = e.nextElement();
-				add(new Content(elem));
+			Iterator<Category> i = bundle.getMeta().getAllEntries(true).iterator();
+			while (i.hasNext()) {
+				Category c = i.next();
+				Iterator<BundleEntry> ic =  c.getEntries().iterator();
+				while (ic.hasNext())
+					add(new Content(ic.next().getName()));
 		    }
 
 	  }
@@ -75,10 +84,12 @@ public class Firmware {
 	  public void enableCateg(String categ) {
 		  bundle.getMeta().setCategEnabled(categ, true);
 		  content.clear();
-			Enumeration<String> e = bundle.getMeta().getAllEntries(true);
-			while (e.hasMoreElements()) {
-				String elem = e.nextElement();
-				add(new Content(elem));
+			Iterator<Category> i = bundle.getMeta().getAllEntries(true).iterator();
+			while (i.hasNext()) {
+				Category c = i.next();
+				Iterator<BundleEntry> ic =  c.getEntries().iterator();
+				while (ic.hasNext())
+					add(new Content(ic.next().getName()));
 		    }
 	  }
 	  /**

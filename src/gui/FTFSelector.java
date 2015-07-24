@@ -1,8 +1,12 @@
 package gui;
 
 import flashsystem.Bundle;
+import flashsystem.Category;
+
 import java.io.File;
 import java.util.Enumeration;
+import java.util.Iterator;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -26,6 +30,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
+
 import gui.models.ContentContentProvider;
 import gui.models.ContentLabelProvider;
 import gui.models.Firmware;
@@ -410,13 +415,12 @@ public class FTFSelector extends Dialog {
 			IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
 	    	Firmware firm = (Firmware)sel.getFirstElement();
 			
-			Enumeration<String> exclude = result.getMeta().getExclude();
-	    	while (exclude.hasMoreElements()) {
-				String categ = exclude.nextElement();
+			Iterator<Category> exclude = result.getMeta().getExclude().iterator();
+	    	while (exclude.hasNext()) {
+				Category categ = exclude.next();
 				Button btnExclude = new Button(compositeExclude, SWT.CHECK);
-				btnExclude.setText(categ);
-				btnExclude.setToolTipText(result.getMeta().getExcludeLabel(categ));
-				btnExclude.setSelection(!firm.getBundle().getMeta().isCategEnabled(categ));
+				btnExclude.setText(categ.getId());
+				btnExclude.setSelection(!categ.isEnabled());
 				compositeExclude.setSize(compositeExclude.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 				compositeExclude.layout();
 				btnExclude.addSelectionListener(new SelectionAdapter() {
@@ -432,13 +436,12 @@ public class FTFSelector extends Dialog {
 					}
 				});
 	    	}
-	    	Enumeration<String> wipe = result.getMeta().getWipe();
-	    	while (wipe.hasMoreElements()) {
-				String categ = wipe.nextElement();
+	    	Iterator<Category> wipe = result.getMeta().getWipe().iterator();
+	    	while (wipe.hasNext()) {
+				Category categ = wipe.next();
 				Button btnWipe = new Button(compositeWipe, SWT.CHECK);
-				btnWipe.setText(categ);
-				btnWipe.setToolTipText(result.getMeta().getWipeLabel(categ));
-				btnWipe.setSelection(firm.getBundle().getMeta().isCategEnabled(categ));
+				btnWipe.setText(categ.getId());
+				btnWipe.setSelection(categ.isEnabled());
 				compositeWipe.setSize(compositeWipe.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 				compositeWipe.layout();
 				btnWipe.addSelectionListener(new SelectionAdapter() {

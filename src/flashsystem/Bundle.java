@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -29,13 +30,14 @@ import org.logger.LogProgress;
 import org.system.Devices;
 import org.system.OS;
 
+import com.sonymobile.cs.generic.file.FileUtils;
 import com.turn.ttorrent.common.Torrent;
 
 public final class Bundle {
 
 	private JarFile _firmware;
     private boolean _simulate=false;
-    private Properties bundleList=new Properties();
+    //private Properties bundleList=new Properties();
     private String _version;
     private String _branding;
     private String _device;
@@ -54,21 +56,21 @@ public final class Bundle {
     	_meta = new BundleMetaData();
     }
     
-    public Bundle(String path, int type) {
+    public Bundle(String path, int type) throws Exception {
     	feed(path,type);
     }
 
-    public void setMeta(BundleMetaData meta) {
+    public void setMeta(BundleMetaData meta) throws Exception {
     	_meta = meta;
     	feedFromMeta();
     }
     
-    public Bundle(String path, int type, BundleMetaData meta) {
+    public Bundle(String path, int type, BundleMetaData meta) throws Exception {
     	_meta = meta;
     	feed(path,type);
     }
     
-    private void feed(String path, int type) {
+    private void feed(String path, int type) throws Exception {
     	if (type==JARTYPE) feedFromJar(path);
     	if (type==FOLDERTYPE) feedFromFolder(path);    	
     }
@@ -85,15 +87,14 @@ public final class Bundle {
 			_cmd25 = _firmware.getManifest().getMainAttributes().getValue("cmd25");
 			Enumeration<JarEntry> e = _firmware.entries();
 			while (e.hasMoreElements()) {
-				BundleEntry entry = new BundleEntry(this,e.nextElement());
+				BundleEntry entry = new BundleEntry(_firmware,e.nextElement());
 				if (!entry.getName().toUpperCase().startsWith("BOOT/")) {
 				if (entry.getName().toUpperCase().endsWith("SIN") || entry.getName().toUpperCase().endsWith("TA") || entry.getName().toUpperCase().endsWith("XML")) {
 					try {
-						_meta.process(entry.getName(), "");
+						_meta.process(entry);
 					}
 					catch (Exception e1) {e1.printStackTrace();
 					}
-					bundleList.put(entry.getName(), entry);
 					logger.debug("Added this entry to the bundle list : "+entry.getName());
 				}
 				}
@@ -104,35 +105,36 @@ public final class Bundle {
 		}
 	}
 
-	private void feedFromFolder(String path) {
+	private void feedFromFolder(String path) throws Exception {
 		File[] list = (new File(path)).listFiles(new FirmwareFileFilter());
 		for (int i=0;i<list.length;i++) {
-			BundleEntry entry = new BundleEntry(list[i],list[i].getName());
-			bundleList.put(entry.getName(), entry);
+			BundleEntry entry = new BundleEntry(list[i]);
+			_meta.process(entry);
 			logger.debug("Added this entry to the bundle list : "+entry.getName());
 		}
 	}
 
-	private void feedFromMeta() {
-		bundleList.clear();
-		Enumeration<String> all = _meta.getAllEntries(true);
-		while (all.hasMoreElements()) {
-			String name = all.nextElement();
-			BundleEntry entry = new BundleEntry(new File(_meta.getPath(name)),name);
-			bundleList.put(entry.getName(), entry);
-			logger.debug("Added this entry to the bundle list : "+entry.getName());
+	private void feedFromMeta() throws Exception {
+		Iterator<Category> all = _meta.getAllEntries(true).iterator();
+		while (all.hasNext()) {
+			Category cat = all.next();
+			Iterator<BundleEntry> icat = cat.getEntries().iterator();
+			while (icat.hasNext()) {
+				BundleEntry f = icat.next();
+				_meta.process(f);
+				logger.debug("Added this entry to the bundle list : "+f.getName());
+			}
 		}
 	}
 
 	public void setLoader(File loader) {
+		BundleEntry entry = new BundleEntry(loader);
 		try {
 			if (_meta!=null)
-				_meta.process("loader.sin", loader.getAbsolutePath());
+				_meta.process(entry);
 		}
 		catch (Exception e) {
 		}
-		BundleEntry entry = new BundleEntry(loader,"loader.sin");
-		bundleList.put("loader.sin", entry);
 	}
 
 	public void setSimulate(boolean simulate) {
@@ -140,47 +142,28 @@ public final class Bundle {
 	}
 
 	public BundleEntry getEntry(String name) {
-		return (BundleEntry)bundleList.get(name);
+		Category c = _meta.get(Category.getCategoryFromName(name));
+		return c.getEntries().iterator().next();
 	}
 
 	public BundleEntry searchEntry(String name) {
 		Vector<BundleEntry> v = new Vector<BundleEntry>();
-		Enumeration<Object> e = bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.startsWith(name)) {
-				BundleEntry entry = (BundleEntry)bundleList.get(key);
-				v.add(entry);
-			}
-		}
-		if (v.size()==1) {
-			try {
-				v.get(0).getAbsolutePath();
-			} catch (Exception e1) { return null; }
-			return v.get(0);
-		}
-		else {
-			e = bundleList.keys();
-			while (e.hasMoreElements()) {
-				String key = (String)e.nextElement();
-			}			
-		}
+		Category c = _meta.get(Category.getCategoryFromName(name));
+		if (c!=null && c.isEnabled()) return c.getEntries().iterator().next();
 		return null;
 	}
 
 	public Enumeration <BundleEntry> allEntries() {
+		Iterator<Category> icateg = _meta.getAllEntries(false).iterator();
 		Vector<BundleEntry> v = new Vector<BundleEntry>();
-		Enumeration<Object> e = bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			BundleEntry entry = (BundleEntry)bundleList.get(key);
-			v.add(entry);
+		while (icateg.hasNext()) {
+			Category c = icateg.next();
+			Iterator<BundleEntry> ibentry = c.getEntries().iterator();
+			while (ibentry.hasNext()) {
+				v.add(ibentry.next());
+			}
 		}
 		return v.elements();
-	}
-
-	public InputStream getImageStream(JarEntry j) throws IOException {
-		return _firmware.getInputStream(j);
 	}
 		
 	public boolean isBootDeliveryFlashed() {
@@ -191,60 +174,23 @@ public final class Bundle {
 		bootdeliveryflashed=flashed;
 	}
 
-	public boolean hasTA() {
-		return _meta.hasCategorie("TA",true);
-	}
-
 	public boolean hasLoader() {
-		return _meta.hasCategorie("LOADER",false);
+		return _meta.getLoader()!=null;
 	}
 
 	public BundleEntry getLoader() throws IOException, FileNotFoundException {
-		return (BundleEntry)bundleList.get("loader.sin");
-	}
-
-	public boolean hasPreloader() {
-		int count=0;
-		Enumeration e = _meta.getEntriesOf("PRELOAD", true);
-		while (e.hasMoreElements()) {e.nextElement();count++;}
-		return (_meta.hasCategorie("PRELOAD",true) && count==2);
-	}
-
-	public BundleEntry getPreloader() throws IOException, FileNotFoundException {
-		Enumeration e = bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.contains("preloader"))
-				return (BundleEntry)bundleList.get(key);
-		}
-		return null;
-	}
-
-	public BundleEntry getSecro() throws IOException, FileNotFoundException {
-		Enumeration e = bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.contains("secro"))
-				return (BundleEntry)bundleList.get(key);
-		}
-		return null;
+		return _meta.getLoader().getEntries().iterator().next();
 	}
 
 	public boolean hasBootDelivery() {
-		return _meta.hasCategorie("BOOTBUNDLE",true);
+		Category bl = _meta.get("BOOT_DELIVERY");
+		if (bl==null) return false;
+		if (bl.isEnabled()) return true;
+		return false;
 	}
 
 	public BundleEntry getBootDelivery()  throws IOException, FileNotFoundException {
-		return (BundleEntry)bundleList.get("boot_delivery.xml");
-	}
-
-	public boolean hasPartition() {
-		return _meta.hasCategorie("PARTITION",true);
-	}
-
-	public BundleEntry getPartition() throws IOException, FileNotFoundException {
-		String partition = _meta.getEntriesOf("PARTITION",true).nextElement();
-		return (BundleEntry)bundleList.get(_meta.getExternal(partition));
+		return _meta.get("BOOT_DELIVERY").getEntries().iterator().next();
 	}
 
 	public boolean simulate() {
@@ -326,13 +272,8 @@ public final class Bundle {
 	    Enumeration<BundleEntry> e = allEntries();
 		while (e.hasMoreElements()) {
 			BundleEntry entry = e.nextElement();
-			String fname = entry.getName();
-			String intname = org.sinfile.parsers.SinFile.getShortName(fname);
-			if (!intname.equals(fname))
-				intname = intname + fname.substring(fname.lastIndexOf("."));
-
-			logger.info("Adding "+intname+" to the bundle");
-		    JarEntry jarAdd = new JarEntry(intname);
+			logger.info("Adding "+entry.getName()+" to the bundle as "+entry.getInternal());
+		    JarEntry jarAdd = new JarEntry(entry.getInternal());
 	        out.putNextEntry(jarAdd);
 	        InputStream in = entry.getInputStream();
 	        while (true) {
@@ -387,23 +328,8 @@ public final class Bundle {
 	    LogProgress.initProgress(0);
 	}
 
-	private void saveEntry(BundleEntry entry, boolean addmeta) throws IOException {
-		if (entry.isJarEntry()) {
-			logger.debug("Saving entry "+entry.getName()+" to disk");
-			InputStream in = entry.getInputStream();
-			String outname = OS.getFolderFirmwaresPrepared()+File.separator+entry.getName();
-			new File(outname).getParentFile().mkdirs();
-			logger.debug("Writing Entry to "+outname);
-			OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
-			byte[] buffer = new byte[10240];
-			int len;
-			while((len = in.read(buffer)) >= 0)
-				out.write(buffer, 0, len);
-			in.close();
-			out.close();
-			if (addmeta)
-				bundleList.put(entry.getName(), new BundleEntry(new File(outname),entry.getName()));
-		}
+	private void saveEntry(BundleEntry entry) throws IOException {
+		entry.saveTo(OS.getFolderFirmwaresPrepared());
 	}
 	
 	public long getMaxLoaderProgress() {
@@ -421,10 +347,13 @@ public final class Bundle {
 		catch (Exception e) {
 			maxloadersize=0x1000;
 		}	
-	    Enumeration<String> e = getMeta().getAllEntries(true);
+	    Iterator<Category> e = getMeta().getAllEntries(true).iterator();
 	    long totalsize = 8;
-	    while (e.hasMoreElements()) {
-	    	BundleEntry entry = getEntry(e.nextElement());
+	    while (e.hasNext()) {
+	    	Category cat = e.next();
+	    	Iterator<BundleEntry> icat = cat.getEntries().iterator();
+	    	while (icat.hasNext()) {
+	    	BundleEntry entry = getEntry(icat.next().getName());
 	    	try {
 	    		if (!entry.getName().toUpperCase().endsWith(".TA")) {
 	    			long filecount = 0;
@@ -439,67 +368,67 @@ public final class Bundle {
 		    		totalsize += filecount;
 	    		}
 	    	} catch (Exception ex) {}
+	    	}
 	    }
 	    return totalsize;
 	}
 
 	public long getMaxProgress(int chunksize) {
-		    Enumeration<String> e = getMeta().getAllEntries(true);
+		    Iterator<Category> e = getMeta().getAllEntries(true).iterator();
 		    long totalsize = 15;
-		    while (e.hasMoreElements()) {
-		    	BundleEntry entry = getEntry(e.nextElement());
-		    	try {
-		    		if (!entry.getName().toUpperCase().endsWith(".TA")) {
-		    			if (!entry.getName().toUpperCase().contains("LOADER")) {
-		    				if (entry.getName().toUpperCase().endsWith("SIN")) {
-					    		long filecount = 0;
-					    		SinFile s = new SinFile(entry.getAbsolutePath());
-					    		s.setChunkSize(chunksize);
-					    		s.getSinHeader().setChunkSize(chunksize);
-					    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
-					    		totalsize += filecount;
-		    				}
-		    			}
-		    		}
-		    	} catch (Exception ex) {}
+		    while (e.hasNext()) {
+		    	Category cat = e.next();
+		    	Iterator<BundleEntry> icat = cat.getEntries().iterator();
+		    	while (icat.hasNext()) {
+			    	BundleEntry entry = icat.next();
+			    	try {
+			    		if (!entry.getName().toUpperCase().endsWith(".TA")) {
+			    			if (!entry.getName().toUpperCase().contains("LOADER")) {
+			    				if (entry.getName().toUpperCase().endsWith("SIN")) {
+						    		long filecount = 0;
+						    		SinFile s = new SinFile(entry.getAbsolutePath());
+						    		s.setChunkSize(chunksize);
+						    		s.getSinHeader().setChunkSize(chunksize);
+						    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
+						    		totalsize += filecount;
+			    				}
+			    			}
+			    		}
+			    	} catch (Exception ex) {}
+		    	}
 		    }
 		    if (hasCmd25()) totalsize = totalsize + 1;
-		    if (hasPartition()) totalsize = totalsize + 2;
 		    return totalsize;
 	}
 
 	public boolean open() {
 		try {
 			logger.info("Preparing files for flashing");
+			FileUtils.deleteDir(new File(OS.getFolderFirmwaresPrepared()));
 			File f = new File(OS.getFolderFirmwaresPrepared());
-			if (f.exists()) {
-				File[] f1 = f.listFiles();
-				for (int i = 0;i<f1.length;i++) {
-					if (!f1[i].delete()) throw new Exception("Cannot delete "+f1[i].getAbsolutePath());
-				}
-				if (!f.delete()) throw new Exception("Cannot delete "+f.getAbsolutePath());
-			}
 			f.mkdir();
 			logger.debug("Created the "+f.getName()+" folder");
-			Enumeration<String> entries = _meta.getAllEntries(true);
-			while (entries.hasMoreElements()) {
-				String entry = entries.nextElement();
-				saveEntry(getEntry(_meta.getExternal(entry)),true);
-				if (entry.toUpperCase().equals("BOOT_DELIVERY.XML")) {
-					BundleEntry xmlentry = getEntry(entry);
-					xmlb = new XMLBootDelivery(new File(xmlentry.getAbsolutePath()));
-					Enumeration files = xmlb.getFiles();
-					while (files.hasMoreElements()) {
-						String file = (String)files.nextElement();
-						JarEntry j = _firmware.getJarEntry("boot/"+file.replace(".sin", ".sinb").replace(".ta", ".tab"));
-						BundleEntry bent = new BundleEntry(this,j);
-						bent.setName(bent.getName().replace(".sinb", ".sin").replace(".tab", ".ta"));
-						saveEntry(bent,false);
+			Iterator<Category>  entries = _meta.getAllEntries(true).iterator();
+			while (entries.hasNext()) {
+				Category categ = entries.next();
+				Iterator<BundleEntry> icateg = categ.getEntries().iterator();
+				while (icateg.hasNext()) {
+					BundleEntry bf = icateg.next();
+					bf.saveTo(OS.getFolderFirmwaresPrepared());
+					if (bf.getCategory().equals("BOOT_DELIVERY")) {
+						xmlb = new XMLBootDelivery(new File(bf.getAbsolutePath()));
+						Enumeration files = xmlb.getFiles();
+						while (files.hasMoreElements()) {
+							String file = (String)files.nextElement();
+							JarEntry j = _firmware.getJarEntry("boot/"+file.replace(".sin", ".sinb").replace(".ta", ".tab"));
+							BundleEntry bent = new BundleEntry(_firmware,j);
+							bent.saveTo(OS.getFolderFirmwaresPrepared());
+						}
 					}
 				}
 			}
 			if (hasLoader())
-				saveEntry(getLoader(),true);
+				getLoader().saveTo(OS.getFolderFirmwaresPrepared());
 			return true;
 		}
 		catch (Exception e) {
@@ -534,10 +463,6 @@ public final class Bundle {
 			}
 			catch (IOException ioe) {ioe.printStackTrace();}
 		}
-	}
-	
-	public void removeEntry(String name) {
-		bundleList.remove(name);
 	}
 	
 	public BundleMetaData getMeta() {

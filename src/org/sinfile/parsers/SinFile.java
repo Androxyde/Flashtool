@@ -299,8 +299,13 @@ public class SinFile {
 	}
 	
 	public static String getShortName(String pname) {
-		if (pname.toUpperCase().endsWith(".TA")) return pname;
 		String name = pname;
+		int extpos = name.lastIndexOf(".");
+		if (name.toUpperCase().endsWith(".TA")) {
+			if (extpos!=-1)
+				name = name.substring(0,extpos);
+			return name;
+		}
 		if (name.indexOf("_AID")!=-1)
 			name = name.substring(0, name.indexOf("_AID"));
 		if (name.indexOf("_PLATFORM")!=-1)
@@ -311,6 +316,10 @@ public class SinFile {
 			name = "elabel";
 		if (name.indexOf("-")!=-1)
 			name = name.substring(0, name.indexOf("-"));
+		extpos = name.lastIndexOf(".");
+		if (extpos!=-1) {
+			name = name.substring(0,extpos);
+		}
 		return name;
 	}
 

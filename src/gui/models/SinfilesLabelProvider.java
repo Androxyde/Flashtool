@@ -6,6 +6,9 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import flashsystem.BundleEntry;
+import flashsystem.Category;
+
 public class SinfilesLabelProvider extends LabelProvider {
 	
 	private static final Image FOLDER = SWTResourceManager.getImage(SinfilesLabelProvider.class,"/gui/ressources/folder.gif");
@@ -17,7 +20,7 @@ public class SinfilesLabelProvider extends LabelProvider {
 	      Category category = (Category) element;
 	      return category.getId();
 	    }
-	    return ((File) element).getName();
+	    return ((BundleEntry) element).getInternal();
 	  }
 
 	  @Override

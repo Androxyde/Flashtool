@@ -333,24 +333,39 @@ public class DeviceEntry {
     }
     
     public boolean hasFlashScript(String model, String version) {
-    	boolean official = new File(getDeviceDir()+File.separator+model+"_"+version+".fsc").exists();
-    	boolean custom = new File(getMyDeviceDir()+File.separator+model+"_"+version+".fsc").exists();
-    	boolean genericofficial = new File(getDeviceDir()+File.separator+model+".fsc").exists();
-    	boolean genericcustom = new File(getMyDeviceDir()+File.separator+model+".fsc").exists();
-    	return (official || custom || genericofficial || genericcustom);
+    	
+    	boolean official = new File(getDeviceDir()   + File.separator+model+"_"+version+".fsc").exists();
+    	boolean custom   = new File(getMyDeviceDir() + File.separator+model+"_"+version+".fsc").exists();
+    	
+    	boolean genericofficial = new File(getDeviceDir()   + File.separator+model+".fsc").exists();
+    	boolean genericcustom   = new File(getMyDeviceDir() + File.separator+model+".fsc").exists();
+    	
+    	boolean defaultofficial = new File(getDeviceDir()   + File.separator+"default.fsc").exists();
+    	boolean defaultcustom   = new File(getMyDeviceDir() + File.separator+"default.fsc").exists();
+    	
+    	return (official || custom || genericofficial || genericcustom || defaultofficial || defaultcustom);
     }
 
     public String getFlashScript(String model, String version) {
-    	boolean official = new File(getDeviceDir()+File.separator+model+"_"+version+".fsc").exists();
-    	boolean custom = new File(getMyDeviceDir()+File.separator+model+"_"+version+".fsc").exists();
-    	boolean genericofficial = new File(getDeviceDir()+File.separator+model+".fsc").exists();
-    	boolean genericcustom = new File(getMyDeviceDir()+File.separator+model+".fsc").exists();
-    	boolean defaultofficial = new File(getDeviceDir()+File.separator+"default.fsc").exists();
-    	if (custom) return getMyDeviceDir()+File.separator+model+"_"+version+".fsc";
+
+    	boolean official = new File(getDeviceDir()   + File.separator+model+"_"+version+".fsc").exists();
+    	boolean custom   = new File(getMyDeviceDir() + File.separator+model+"_"+version+".fsc").exists();
+    	
+    	boolean genericofficial = new File(getDeviceDir()   + File.separator+model+".fsc").exists();
+    	boolean genericcustom   = new File(getMyDeviceDir() + File.separator+model+".fsc").exists();
+    	
+    	boolean defaultofficial = new File(getDeviceDir()   + File.separator+"default.fsc").exists();
+    	boolean defaultcustom   = new File(getMyDeviceDir() + File.separator+"default.fsc").exists();
+
+    	if (custom)   return getMyDeviceDir()+File.separator+model+"_"+version+".fsc";
     	if (official) return getDeviceDir()+File.separator+model+"_"+version+".fsc";
-    	if (genericcustom) return getMyDeviceDir()+File.separator+model+".fsc";
+    	
+    	if (genericcustom)   return getMyDeviceDir()+File.separator+model+".fsc";
     	if (genericofficial) return getDeviceDir()+File.separator+model+".fsc";
+    	
+    	if (defaultcustom)   return getMyDeviceDir()+File.separator+"default.fsc";
     	if (defaultofficial) return getDeviceDir()+File.separator+"default.fsc";
+
     	return "";
     }
 

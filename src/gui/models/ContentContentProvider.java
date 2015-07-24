@@ -13,15 +13,13 @@ public class ContentContentProvider implements IStructuredContentProvider {
 	   * @return Object[]
 	   */
 	  public Object[] getElements(Object arg0) {
-	    // Returns all the players in the specified team
-	    return ((Firmware)arg0).getContent().toArray();
+		  return ((Firmware)arg0).getContent().toArray();
 	  }
 
 	  /**
 	   * Disposes any resources
 	   */
 	  public void dispose() {
-	    // We don't create any resources, so we don't dispose any
 	  }
 
 	  /**
@@ -35,6 +33,5 @@ public class ContentContentProvider implements IStructuredContentProvider {
 	   *            the new input
 	   */
 	  public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
-	    // Nothing to do
 	  }
 }
