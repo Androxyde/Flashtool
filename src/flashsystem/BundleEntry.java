@@ -24,17 +24,34 @@ public class BundleEntry {
 
 	private static Logger logger = Logger.getLogger(BundleEntry.class);
 
+	private String getExtension() {
+		if (fileentry!=null) {
+			int extpos = fileentry.getName().lastIndexOf(".");
+			if (extpos > -1) {
+				return fileentry.getName().substring(extpos);
+			}
+			return "";
+		}
+		else {
+			int extpos = jarentry.getName().lastIndexOf(".");
+			if (extpos > -1) {
+				return jarentry.getName().substring(extpos);
+			}
+			return "";
+		}
+	}
+	
 	public BundleEntry(File f) {
 		fileentry = f;
 		_category = BundleEntry.getShortName(fileentry.getName()).toUpperCase();
-		_internal = org.sinfile.parsers.SinFile.getShortName(fileentry.getName());
+		_internal = org.sinfile.parsers.SinFile.getShortName(fileentry.getName())+getExtension();
 	}
 
 	public BundleEntry(JarFile jf, JarEntry j) {
 		jarentry = j;
 		jarfile = jf;
 		_category = BundleEntry.getShortName(jarentry.getName()).toUpperCase();
-		_internal = org.sinfile.parsers.SinFile.getShortName(jarentry.getName());
+		_internal = org.sinfile.parsers.SinFile.getShortName(jarentry.getName())+getExtension();
 	}
 
 	public InputStream getInputStream() throws FileNotFoundException, IOException {

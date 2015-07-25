@@ -735,11 +735,11 @@ public class X10flash {
     	    					this.uploadImage(sin);						
     						}
         					else {
-        						logger.warn(param + " file not found in bundle");
+        						logger.warn(param + " is excluded from bundle");
         					}
     					}
     					else {
-    						logger.warn(param + " file not found in bundle");
+    						logger.warn(param + " is excluded from bundle");
     					}
     				}
     			}
