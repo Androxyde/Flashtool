@@ -30,8 +30,8 @@ public class TaFile {
 	    		while (scanline.hasNext()) {
 	    			String elem = scanline.next();
 	    			if (elem.length()==8) {
-	    				if (entry.getPartition().length()==0) {
-	    					entry.setPartition(elem);
+	    				if (entry.getUnit().length()==0) {
+	    					entry.setUnit(elem);
 	    					String size=scanline.next();
 	    					if (size.length()==4) entry.setSize(size);
 	    					else throw new TaParseException("Next to unit should be the size on 4 digits");
@@ -40,7 +40,7 @@ public class TaFile {
 	    					entry.close();
 	    					entries.add(entry);
 	    					entry = new TaEntry();
-	    					entry.setPartition(elem);
+	    					entry.setUnit(elem);
 	    					String size=scanline.next();
 	    					if (size.length()==4) entry.setSize(size);
 	    					else throw new TaParseException("Next to unit should be the size on 4 digits");

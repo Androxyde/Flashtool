@@ -75,6 +75,7 @@ public class SinFile {
 				sinv2 = sinParserV2.parse(sinStream).mapTo(org.sinfile.parsers.v2.SinParser.class);
 				if (sinv2.hashLen>sinv2.headerLen) throw new SinFileException("Error parsing sin file");
 				sinv2.parseHash(sinStream);
+				sinv2.setFile(sinfile);
 				closeStreams();
 			}
 			if (version==3) {
@@ -91,6 +92,40 @@ public class SinFile {
 			closeStreams();
 			throw new SinFileException(ioe.getMessage());
 		}
+	}
+
+	public byte[] getHeader() throws IOException {
+		if (sinv1!=null) {
+			return null;
+		}
+		if (sinv2!=null) {
+			return sinv2.getHeader();
+		}
+		if (sinv3!=null) {
+			return sinv3.getHeader();
+		}
+		return null;		
+	}
+	
+	public byte getPartitionType() {
+		if (sinv1!=null) {
+			return sinv1.payloadType;
+		}
+		if (sinv2!=null) {
+			return sinv2.payloadType;
+		}
+		if (sinv3!=null) {
+			return (byte)sinv3.payloadType;
+		}
+		return 0;
+	}
+
+	public String getPartypeString() {
+		if (getPartitionType()==0x09)
+			return "Without spare";
+		if (getPartitionType()==0x0A)
+			return "With spare";
+		return "unknown";
 	}
 
 	public void closeStreams() {
@@ -136,7 +171,6 @@ public class SinFile {
 		}
 		if (version==3) {
 			builder.append("Version : "+version+"\nMagic : "+new String(sinv3.magic)+"\nHeader Length : "+sinv3.headerLen+"\nPayLoad Type : "+sinv3.payloadType+"\nHash type : "+sinv3.hashType+"\nReserved : "+sinv3.reserved+"\nHashList Length : "+sinv3.hashLen+" ("+sinv3.blocks.blocks.length+" hashblocks) \nCert len : "+sinv3.certLen+"\n");
-			builder.append(sinv3.addrBlocks.addrBlocks[0].dataLen+"\n");
 		}
 		return builder.toString();
 	}
@@ -168,6 +202,35 @@ public class SinFile {
 			return sinv3.headerLen;
 		}
 		return 0;
+	}
+
+	public boolean hasPartitionInfo() {
+		if (sinv1!=null) {
+			return false;
+		}
+		if (sinv2!=null) {
+			return sinv2.hasPartitionInfo();
+		}
+		if (sinv3!=null) {
+			return false;
+		}
+		return false;
+	}
+
+	public byte[] getPartitionInfo() throws IOException {
+		if (hasPartitionInfo()) {
+			if (sinv1!=null) {
+				return null;
+			}
+			if (sinv2!=null) {
+				return sinv2.getPartitionInfo();
+			}
+			if (sinv3!=null) {
+				return null;
+			}
+			return null;
+		}
+		else return null;
 	}
 	
 	public int getDataOffset() {
@@ -233,6 +296,31 @@ public class SinFile {
 			sinv3.dumpHeader();
 		}
 		return;		
+	}
+	
+	public static String getShortName(String pname) {
+		String name = pname;
+		int extpos = name.lastIndexOf(".");
+		if (name.toUpperCase().endsWith(".TA")) {
+			if (extpos!=-1)
+				name = name.substring(0,extpos);
+			return name;
+		}
+		if (name.indexOf("_AID")!=-1)
+			name = name.substring(0, name.indexOf("_AID"));
+		if (name.indexOf("_PLATFORM")!=-1)
+			name = name.substring(0, name.indexOf("_PLATFORM"));
+		if (name.indexOf("_S1")!=-1)
+			name = name.substring(0, name.indexOf("_S1"));
+		if (name.startsWith("elabel"))
+			name = "elabel";
+		if (name.indexOf("-")!=-1)
+			name = name.substring(0, name.indexOf("-"));
+		extpos = name.lastIndexOf(".");
+		if (extpos!=-1) {
+			name = name.substring(0,extpos);
+		}
+		return name;
 	}
 
 }

@@ -3,9 +3,11 @@ package gui.models;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 import flashsystem.BundleMetaData;
+import flashsystem.Category;
 
 public class CategoriesModel  {
 
@@ -17,16 +19,9 @@ public class CategoriesModel  {
 
 	public void refresh(BundleMetaData meta) {
 		categories = new ArrayList<Category>();
-		Enumeration<String> c = meta.getCategories();
-		while (c.hasMoreElements()) {
-		    Category category = new Category();
-		    category.setId(c.nextElement());
-		    category.setName(meta.getCategorie(category.getId()));
-		    Enumeration<String> e = meta.getEntriesOf(category.getId(), true);
-		    while (e.hasMoreElements()) {
-		    	File f = new File(e.nextElement());
-		    	category.addSinfile(f);
-		    }
+		Iterator<Category> c = meta.getAllEntries(false).iterator();
+		while (c.hasNext()) {
+		    Category category = c.next();
 		    categories.add(category);
 		}		
 	}

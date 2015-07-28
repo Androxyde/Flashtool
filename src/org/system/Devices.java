@@ -50,10 +50,11 @@ public class Devices  {
 	
 	public static DeviceEntry getDevice(String device) {
 		try {
+			if (device==null) System.out.println("no device id");
 			if (props.containsKey(device))
 				return (DeviceEntry)props.get(device);
 			else {
-				File f = new File(OS.getFolderDevices()+File.separator+device+".ftd");
+				File f = new File(OS.getFolderMyDevices()+File.separator+device+".ftd");
 				if (f.exists()) {
 					DeviceEntry ent=null;
 					JarFile jar = new JarFile(f);
@@ -91,7 +92,28 @@ public class Devices  {
 	private static void load() {
 		if (props==null) props=new Properties();
 		else props.clear();
-		File[] list = (new File(OS.getFolderDevices()).listFiles());
+		File[] list = (new File(OS.getFolderMyDevices()).listFiles());
+		if (list==null) return;
+		for (int i=0;i<list.length;i++) {
+			if (list[i].isDirectory()) {
+				PropertiesFile p = new PropertiesFile();
+				String device = list[i].getPath().substring(list[i].getPath().lastIndexOf(OS.getFileSeparator())+1);
+				try {
+					File propfile = new File(list[i].getPath()+OS.getFileSeparator()+device+".properties");
+					if (!device.toLowerCase().equals("busybox") && !device.toLowerCase().equals(".git") && propfile.exists()) {
+						p.open("",propfile.getAbsolutePath());
+						DeviceEntry entry = new DeviceEntry(p);
+						if (device.equals(entry.getId()))
+							props.put(device, entry);
+						else logger.error(device + " : this bundle is not valid");
+					}
+				}
+				catch (Exception fne) {
+					logger.error(device + " : this bundle is not valid");
+				}
+			}
+		}
+		list = (new File(OS.getFolderDevices()).listFiles());
 		if (list==null) return;
 		for (int i=0;i<list.length;i++) {
 			if (list[i].isDirectory()) {

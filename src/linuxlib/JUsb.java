@@ -10,8 +10,7 @@ import libusb.UsbDevice;
 import libusb.UsbSystem;
 
 public class JUsb {
-	
-	private static byte[] data = new byte[512];
+
 	private static UsbSystem us=null;
 	private static UsbDevice dev=null;
 	private static String VendorId = "";
@@ -79,22 +78,16 @@ public class JUsb {
 	}
 	
 	public static void writeBytes(byte[] towrite) throws Exception {
-		ByteArrayInputStream in = new ByteArrayInputStream(towrite);		
-  	  	boolean hasData = true;
-  	  	int loop = 0;
-  	  	while (hasData) {
-				int read = in.read(data);
-				if (read > 0) {
-	  	  			dev.bulkWrite(BytesUtil.getReply(data, read));
-				}
-				else hasData=false;
-  	  	}
-  	  	in.close();
+		dev.bulkWrite(BytesUtil.getReply(towrite, towrite.length));
 	}
 
 	public static void close() {
 		if (dev!=null)
 			dev.releaseAndClose();
+	}
+	
+	public static byte[] readBytes() {
+		return dev.bulkRead(0x1000);
 	}
 	
 	public static byte[] readBytes(int count) {

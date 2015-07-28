@@ -274,4 +274,29 @@ public class BytesUtil {
 	    }
 	    return true;
 	  }
+	  
+	  public static byte[] intToBytes(int paramInt1, int paramInt2, boolean paramBoolean)
+	  {
+	    int i = paramInt2;
+	    if ((paramInt2 < 1) || (paramInt2 > 4)) {
+	      i = 4;
+	    }
+	    byte[] arrayOfByte = new byte[i];
+	    int j = 0;
+	    int k;
+	    if (paramBoolean) {
+	      for (k = 0; k < i; k++)
+	      {
+	        arrayOfByte[k] = ((byte)(paramInt1 >> j & 0xFF));
+	        j += 8;
+	      }
+	    } else {
+	      for (k = i - 1; k >= 0; k--)
+	      {
+	        arrayOfByte[k] = ((byte)(paramInt1 >> j & 0xFF));
+	        j += 8;
+	      }
+	    }
+	    return arrayOfByte;
+	  }
 }

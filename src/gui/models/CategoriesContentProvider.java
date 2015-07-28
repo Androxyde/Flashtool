@@ -3,6 +3,8 @@ package gui.models;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import flashsystem.Category;
+
 public class CategoriesContentProvider implements ITreeContentProvider {
 
 	  private CategoriesModel model;
@@ -25,7 +27,7 @@ public class CategoriesContentProvider implements ITreeContentProvider {
 	  public Object[] getChildren(Object parentElement) {
 	    if (parentElement instanceof Category) {
 	      Category category = (Category) parentElement;
-	      return category.getSinfiles().toArray();
+	      return category.getEntries().toArray();
 	    }
 	    return null;
 	  }

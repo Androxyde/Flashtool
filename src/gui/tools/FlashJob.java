@@ -32,7 +32,11 @@ public class FlashJob extends Job {
     	try {
     		if (flash.getBundle().open()) {
     			logger.info("Please connect your device into flashmode.");
-    			String result = (String)WidgetTask.openWaitDeviceForFlashmode(_shell,flash);
+    			String result = "";
+    			if (!flash.getBundle().simulate()) {
+    				result = (String)WidgetTask.openWaitDeviceForFlashmode(_shell,flash);
+    			}
+    			else result="OK";
     			if (result.equals("OK")) {
     				flash.openDevice();
     				flash.flashDevice();

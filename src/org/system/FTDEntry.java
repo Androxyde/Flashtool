@@ -24,7 +24,7 @@ public class FTDEntry {
 	private static Logger logger = Logger.getLogger(FTDEntry.class);
 
 	public FTDEntry(String id) throws FileNotFoundException, IOException {
-		ftdfile = new File(OS.getFolderCustomDevices()+File.separator+id+".ftd");
+		ftdfile = new File(OS.getFolderMyDevices()+File.separator+id+".ftd");
 		if (!ftdfile.exists()) throw new FileNotFoundException();
     	JarFile jar = new JarFile(ftdfile);
     	Enumeration<JarEntry> e = jar.entries();
@@ -45,7 +45,7 @@ public class FTDEntry {
 	}
 
 	public boolean explode() throws Exception {
-    	String destDir = OS.getFolderCustomDevices();
+    	String destDir = OS.getFolderMyDevices();
     	int reply = SWT.YES;
     	if (new  File(destDir).exists()) 
     		reply = MsgBox.question("This device already exists. Overwrite it ?");

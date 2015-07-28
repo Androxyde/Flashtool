@@ -10,7 +10,7 @@ public class ULCodeFile extends TextFile {
 	private static Logger logger = Logger.getLogger(ULCodeFile.class);
 
 	public ULCodeFile(String serial) {
-		super(OS.getFolderMyDevices()+File.separator+serial+File.separator+"ulcode.txt", "ISO-8859-1");
+		super(OS.getFolderRegisteredDevices()+File.separator+serial+File.separator+"ulcode.txt", "ISO-8859-1");
 	}
 
 	public String getULCode() {

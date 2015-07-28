@@ -23,7 +23,7 @@ public class UpdateURL {
 		if (devId.length()==0) throw new Exception("Device not found in database");
 		DeviceEntry ent = Devices.getDevice(devId);
 		path = ent.getDeviceDir()+File.separator+"updates"+File.separator+getVariant();
-		cpath = ent.getCustomDeviceDir()+File.separator+"updates"+File.separator+getVariant();
+		cpath = ent.getMyDeviceDir()+File.separator+"updates"+File.separator+getVariant();
 	}
 
 	public boolean exists() {

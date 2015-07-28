@@ -2,12 +2,18 @@ package flashsystem.io;
 
 import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
+import flashsystem.X10flash;
+
 import java.io.IOException;
+
+import org.apache.log4j.Logger;
 import org.system.DeviceChangedListener;
 import org.system.OS;
 
 public class USBFlash {
 
+	private static Logger logger = Logger.getLogger(USBFlash.class);
+	
 	public static void open(String pid) throws IOException, Exception {
 		DeviceChangedListener.pause(true);
 		if (OS.getName().equals("windows")) {
@@ -16,6 +22,16 @@ public class USBFlash {
 		else {
 			USBFlashLinux.linuxOpen(pid);
 		}
+	}
+
+	public static void setUSBBuffer(int buffer) {
+		if (OS.getName().equals("windows")) {
+			USBFlashWin32.setUSBBuffer(buffer);
+		}
+		else {
+			USBFlashLinux.setUSBBuffer(buffer);
+		}
+		logger.info("Transfer buffer size : "+buffer);
 	}
 
 	public static void writeS1(S1Packet p,boolean withprogressupdate) throws IOException,X10FlashException {

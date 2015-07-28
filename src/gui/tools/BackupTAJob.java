@@ -29,12 +29,13 @@ public class BackupTAJob extends Job {
 			flash.sendLoader();
 			flash.BackupTA();
 			flash.closeDevice();
+			logger.info("Dumping TA finished.");
 			LogProgress.initProgress(0);
-			logger.info("Dumping TA Job finished.");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
     		e.printStackTrace();
+    		LogProgress.initProgress(0);
     		return Status.CANCEL_STATUS;
     	}
     }

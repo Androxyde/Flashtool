@@ -2,11 +2,13 @@ package org.ta.parsers;
 
 import java.util.Arrays;
 
+import org.util.HexDump;
+
 public class TAUnit {
-    private long aUnitNumber;
+    private int aUnitNumber;
     private byte[] aUnitData;
 
-    public TAUnit(long l, byte[] arrby) {
+    public TAUnit(int l, byte[] arrby) {
         this.aUnitNumber = l;
         this.aUnitData = arrby;
     }
@@ -32,5 +34,13 @@ public class TAUnit {
             }
         }
         return bl;
+    }
+    
+    public String getUnitHex() {
+    	return HexDump.toHex(aUnitNumber);
+    }
+    
+    public String toString() {
+    	return HexDump.toHex(aUnitNumber) + HexDump.toHex(aUnitData);
     }
 }

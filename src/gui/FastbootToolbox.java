@@ -1,7 +1,10 @@
 package gui;
 
+import gui.tools.WidgetTask;
 import gui.tools.FastBootToolBoxJob;
 import gui.tools.WidgetsTool;
+
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -18,6 +21,7 @@ public class FastbootToolbox extends Dialog {
 
 	protected Object result;
 	protected Shell shlFastbootToolbox;
+	private static Logger logger = Logger.getLogger(FastbootToolbox.class);
 
 	/**
 	 * Create the dialog.
@@ -91,8 +95,15 @@ public class FastbootToolbox extends Dialog {
 		btnRebootFBFB.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+			logger.info("Now plug your device in Fastboot Mode");
+			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
+			if (result.equals("OK")) {
 				doRebootBackIntoFastbootMode();
 			}
+			else {
+				logger.info("Failed");
+			}
+		   }
 		});
 		btnRebootFBFB.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		btnRebootFBFB.setText("Reboot into fastboot mode (via Fastboot)");
@@ -101,13 +112,19 @@ public class FastbootToolbox extends Dialog {
 		btnHotboot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+			logger.info("Now plug your device in Fastboot Mode");
+			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
+			if (result.equals("OK")) {
 				FileDialog dlg = new FileDialog(shlFastbootToolbox);
 		        dlg.setFilterExtensions(new String[]{"*.sin","*.elf","*.img"});
 		        dlg.setText("Kernel Chooser");
 		        String dir = dlg.open();
 		        if (dir!=null)
 		        	doHotBoot(dir);
+			} else {
+				logger.info("Failed");
 			}
+		   }
 		});
 		btnHotboot.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnHotboot.setText("Select kernel to HotBoot");
@@ -116,6 +133,9 @@ public class FastbootToolbox extends Dialog {
 		btnFlashSystem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+			logger.info("Now plug your device in Fastboot Mode");
+			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
+			if (result.equals("OK")) {
 				FileDialog dlg = new FileDialog(shlFastbootToolbox);
 		        dlg.setFilterExtensions(new String[]{"*.sin","*.img","*.ext4","*.yaffs2"});
 		        dlg.setText("System Chooser");
@@ -123,7 +143,12 @@ public class FastbootToolbox extends Dialog {
 		        if (dir!=null)
 		        	doFlashSystem(dir);
 			}
+			else {
+				logger.info("Failed");
+			}
+		   }
 		});
+
 		btnFlashSystem.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnFlashSystem.setText("Select system to Flash");
 		
@@ -131,6 +156,9 @@ public class FastbootToolbox extends Dialog {
 		btnFlashKernel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+			logger.info("Now plug your device in Fastboot Mode");
+			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
+			if (result.equals("OK")) {
 				FileDialog dlg = new FileDialog(shlFastbootToolbox);
 		        dlg.setFilterExtensions(new String[]{"*.sin","*.elf","*.img"});
 		        dlg.setText("Kernel Chooser");
@@ -138,6 +166,10 @@ public class FastbootToolbox extends Dialog {
 		        if (dir!=null)
 		        	doFlashKernel(dir);
 			}
+			else {
+				logger.info("Failed");
+			}
+		   }
 		});
 		btnFlashKernel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		btnFlashKernel.setText("Select kernel to Flash");
@@ -146,8 +178,14 @@ public class FastbootToolbox extends Dialog {
 		btnGetVerInfo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+			logger.info("Now plug your device in Fastboot Mode");
+			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
+			if (result.equals("OK")) {
 				doGetFastbootVerInfo();
+			} else {
+				logger.info("Filed");
 			}
+		   }
 		});
 		btnGetVerInfo.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnGetVerInfo.setText("Get Ver Info");
@@ -157,8 +195,14 @@ public class FastbootToolbox extends Dialog {
 		btnGetDeviceInfo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+			logger.info("Now plug your device in Fastboot Mode");
+			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
+			if (result.equals("OK")) {
 				doGetConnectedDeviceInfo();
+			} else {
+				logger.info("Failed");
 			}
+		   }
 		});
 		btnGetDeviceInfo.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		btnGetDeviceInfo.setText("Get Device Info");
@@ -168,8 +212,15 @@ public class FastbootToolbox extends Dialog {
 		btnReboot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+			logger.info("Now plug your device in Fastboot Mode");
+			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
+			if (result.equals("OK")) {
 				doFastbootReboot();
 			}
+			else {
+				logger.info("failed");
+			}
+		   }
 		});
 		btnReboot.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnReboot.setText("Reboot device into system");

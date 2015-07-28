@@ -26,7 +26,6 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.system.Elf;
 import org.system.GlobalConfig;
 import org.system.OS;
 
@@ -66,6 +65,9 @@ public class HomeSelector extends Dialog {
 					result = "";
 					shlHomeSelector.dispose();
 				}
+		    	else {
+		    		WidgetTask.openOKBox(shlHomeSelector, "You must choose a user home folder");
+		    	}
 			}
 		});
 		FormData fd_btnCancel = new FormData();
@@ -164,7 +166,7 @@ public class HomeSelector extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				result=sourceFolder.getText();
-				if (!((String)result).startsWith(OS.getWorkDir()))
+				if (!((String)result).startsWith(OS.getWorkDir()+File.separator))
 					shlHomeSelector.dispose();
 				else
 					WidgetTask.openOKBox(shlHomeSelector, "User home folder must be out of Flashtool application folder");

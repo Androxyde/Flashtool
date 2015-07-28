@@ -299,8 +299,12 @@ public class RootJob extends Job {
 				String device = AdbUtility.run("/system/bin/getprop "+ "ro.product.model");
 				String buildid = AdbUtility.run("/system/bin/getprop "+ "ro.build.display.id");
 				String config = device + "_" + buildid;
+				File run_root_shell_enc = new File(OS.getFolderCustom()+File.separator+"root"+File.separator+"run_root_shell"+File.separator+"run_root_shell.enc");
+				File run_root_shell = new File(OS.getFolderCustom()+File.separator+"root"+File.separator+"run_root_shell"+File.separator+"run_root_shell");
 				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"run_root_shell"+File.separator+"install_root.sh", "/data/local/tmp/");
-				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"run_root_shell"+File.separator+"run_root_shell", "/data/local/tmp/");
+				OS.decrypt(run_root_shell_enc);
+				AdbUtility.push(run_root_shell.getAbsolutePath(), "/data/local/tmp/");
+				run_root_shell.delete();
 				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"run_root_shell"+File.separator+"device.db", "/data/local/tmp/");
 				AdbUtility.run("chmod 755 /data/local/tmp/install_root.sh");
 				AdbUtility.run("chmod 755 /data/local/tmp/run_root_shell");

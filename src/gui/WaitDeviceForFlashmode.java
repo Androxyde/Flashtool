@@ -67,35 +67,75 @@ public class WaitDeviceForFlashmode extends Dialog {
 	 */
 	private void createContents() {
 		shlWaitForFlashmode = new Shell(getParent(), getStyle());
-		shlWaitForFlashmode.setSize(616, 425);
+		shlWaitForFlashmode.setSize(656, 520);
 		shlWaitForFlashmode.setText("Wait for Flashmode");
 		
 		Composite composite = new Composite(shlWaitForFlashmode, SWT.NONE);
-		composite.setBounds(10, 10, 200, 348);
+		composite.setBounds(10, 5, 304, 433);
 		
+		// 2012 Line Of Xperias Text
+		Label lblNewLabel00 = new Label(composite, SWT.NONE);
+		lblNewLabel00.setBounds(20, 39, 248, 15);
+		lblNewLabel00.setText("2012");
+
+		Label lblNewLabel01 = new Label(composite, SWT.NONE);
+		lblNewLabel01.setBounds(20, 61, 274, 15);
+		lblNewLabel01.setText("1.  Unplug the device");
+		
+		Label lblNewLabel02 = new Label(composite, SWT.NONE);
+		lblNewLabel02.setBounds(20, 82, 274, 15);
+		lblNewLabel02.setText("2.  Power off the device");
+		
+		Label lblNewLabel03 = new Label(composite, SWT.NONE);
+		lblNewLabel03.setBounds(20, 104, 274, 15);
+		lblNewLabel03.setText("3.  Press the volume DOWN button");
+
+		Label lblNewLabel05 = new Label(composite, SWT.NONE);
+		lblNewLabel05.setBounds(20, 126, 274, 15);
+		lblNewLabel05.setText("4.  Plug the USB cable");
+		
+		
+		// Xperia 2011 Lines of Xperia Text
 		Label lblNewLabel = new Label(composite, SWT.NONE);
-		lblNewLabel.setBounds(10, 122, 180, 15);
-		lblNewLabel.setText("1 - Unplug the device");
-		
-		Label lblPower = new Label(composite, SWT.NONE);
-		lblPower.setBounds(10, 143, 180, 15);
-		lblPower.setText("2 - Power off the device");
+		lblNewLabel.setBounds(20, 260, 274, 15);
+		lblNewLabel.setText("2011");
 		
 		Label lblNewLabel_1 = new Label(composite, SWT.NONE);
-		lblNewLabel_1.setBounds(10, 164, 180, 15);
-		lblNewLabel_1.setText("3 - Press the back button");
+		lblNewLabel_1.setBounds(20, 282, 274, 15);
+		lblNewLabel_1.setText("1.  Unplug the device");
 		
-		Label lblPlug = new Label(composite, SWT.NONE);
-		lblPlug.setBounds(10, 185, 180, 15);
-		lblPlug.setText("4 - Plug the USB cable");
+		Label lblNewLabel_2 = new Label(composite, SWT.NONE);
+		lblNewLabel_2.setBounds(20, 304, 274, 15);
+		lblNewLabel_2.setText("2.  Power off the device");
+		
+		Label lblNewLabel_3 = new Label(composite, SWT.NONE);
+		lblNewLabel_3.setBounds(20, 326, 274, 15);
+		lblNewLabel_3.setText("3.  Press the BACK button-");
+		
+		Label lblNewLabel_4 = new Label(composite, SWT.NONE);
+		lblNewLabel_4.setBounds(20, 348, 274, 23);
+		lblNewLabel_4.setText("-Volume down for Xperia Ray");
+		
+		Label lblNewLabel_5 = new Label(composite, SWT.NONE);
+		lblNewLabel_5.setBounds(20, 369, 274, 23);
+		lblNewLabel_5.setText("4.  Plug the USB cable");
 		
 		Composite composite_1 = new Composite(shlWaitForFlashmode, SWT.NONE);
-		composite_1.setBounds(216, 10, 384, 348);
+		composite_1.setBounds(320, 0, 364, 221);
 		
 		final GifCLabel lbl = new GifCLabel(composite_1, SWT.CENTER);
 		lbl.setText("");
-		lbl.setGifImage(this.getClass().getResourceAsStream("/gui/ressources/flashmode.gif"));
-		lbl.setBounds(10, 35, 350, 339);
+		lbl.setGifImage(this.getClass().getResourceAsStream("/gui/ressources/flashmode2012.gif"));
+		lbl.setBounds(10, -44, 350, 339);
+
+		Composite composite_2 = new Composite(shlWaitForFlashmode, SWT.NONE);
+		composite_2.setBounds(320, 167, 364, 271);
+		
+		final GifCLabel lbl2 = new GifCLabel(composite_2, SWT.CENTER);
+		lbl2.setText("");
+		lbl2.setGifImage(this.getClass().getResourceAsStream("/gui/ressources/flashmode2011.gif"));
+		lbl2.setBounds(8, 5, 350, 339);
+		
 		
 		Button btnCancel = new Button(shlWaitForFlashmode, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -106,7 +146,7 @@ public class WaitDeviceForFlashmode extends Dialog {
 				shlWaitForFlashmode.dispose();
 			}
 		});
-		btnCancel.setBounds(538, 364, 68, 28);
+		btnCancel.setBounds(568, 450, 68, 26);
 		btnCancel.setText("Cancel");
 	}
 }

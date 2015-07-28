@@ -46,6 +46,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.logger.TextAreaAppender;
+import org.simpleusblogger.Parser;
 import org.system.AdbPhoneThread;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
@@ -77,6 +78,7 @@ import gui.tools.MsgBox;
 import gui.tools.OldUnlockJob;
 import gui.tools.RawTAJob;
 import gui.tools.RootJob;
+import gui.tools.USBParseJob;
 import gui.tools.VersionCheckerJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
@@ -124,7 +126,7 @@ public class MainSWT {
 			String result = (String)hs.open(false);
 			GlobalConfig.setProperty("user.flashtool", result);
 			forceMove(OS.getWorkDir()+File.separator+"firmwares",OS.getFolderFirmwares());
-			forceMove(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices",OS.getFolderMyDevices());
+			forceMove(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices",OS.getFolderRegisteredDevices());
 			new File(OS.getWorkDir()+File.separator+"firmwares").delete();
 			new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices").delete();
 		}
@@ -249,6 +251,11 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				HomeSelector hs = new HomeSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 				String result = (String)hs.open(true);
+				if (!result.equals(GlobalConfig.getProperty("user.flashtool")) && result.length()>0) {
+					forceMove(GlobalConfig.getProperty("user.flashtool"),result);
+					GlobalConfig.setProperty("user.flashtool", result);
+					new File(result+File.separator+"config.properties").delete();
+				}
 			}
 		});
 		mntmChangeUserHome.setText("Change User Home");
@@ -551,6 +558,21 @@ public class MainSWT {
 		});
 		mntmRawRestore.setText("Restore");
 		mntmRawRestore.setEnabled(false);
+		
+		MenuItem mntmUsbLogParser = new MenuItem(AdvancedMenu, SWT.NONE);
+		mntmUsbLogParser.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					USBLogviewer lv = new USBLogviewer(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+					lv.open();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		mntmUsbLogParser.setText("USB log parser");
 		MenuItem mntmDevices = new MenuItem(menu, SWT.CASCADE);
 		mntmDevices.setText("Devices");
 		
@@ -722,7 +744,7 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				Devices.listDevices(true);
         		Properties list = new Properties();
-        		File[] lfiles = new File(OS.getFolderCustomDevices()).listFiles();
+        		File[] lfiles = new File(OS.getFolderMyDevices()).listFiles();
         		for (int i=0;i<lfiles.length;i++) {
         			if (lfiles[i].getName().endsWith(".ftd")) {
         				String name = lfiles[i].getName();
@@ -839,7 +861,7 @@ public class MainSWT {
 
 		ToolBar toolBar = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
 		FormData fd_toolBar = new FormData();
-		fd_toolBar.right = new FormAttachment(0, 335);
+		fd_toolBar.right = new FormAttachment(0, 392);
 		fd_toolBar.top = new FormAttachment(0, 10);
 		fd_toolBar.left = new FormAttachment(0, 10);
 		toolBar.setLayoutData(fd_toolBar);
@@ -1215,9 +1237,8 @@ public class MainSWT {
 		try {
 			FTFSelector ftfsel = new FTFSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
-			logger.info("Selected "+bundle);
 			if (bundle !=null) {
-				bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+				logger.info("Selected "+bundle);
 				final X10flash flash = new X10flash(bundle,shlSonyericsson);
 				try {
 						FlashJob fjob = new FlashJob("Flash");
@@ -1354,7 +1375,7 @@ public class MainSWT {
 	}
 
 	public void doExportDevice(String device) throws Exception {
-		File ftd = new File(OS.getFolderCustomDevices()+File.separator+device+".ftd");
+		File ftd = new File(OS.getFolderMyDevices()+File.separator+device+".ftd");
 		byte buffer[] = new byte[10240];
 	    FileOutputStream stream = new FileOutputStream(ftd);
 	    JarOutputStream out = new JarOutputStream(stream);

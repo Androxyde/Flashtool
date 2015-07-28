@@ -2,6 +2,7 @@ package org.system;
 
 import java.io.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Scanner;
@@ -48,7 +49,7 @@ public class TextFile {
 	}
 
 	public void readLines() throws IOException {
-		lines = new Hashtable<Integer,String>();
+		lines = new HashMap<Integer,String>();
 		Scanner scanner = new Scanner(new FileInputStream(fFileName));
 		try {
 			int linenumber=1;
@@ -91,6 +92,6 @@ public class TextFile {
 	protected String fFileName;
 	private final String fEncoding;
 	private PrintWriter pwriter;
-	private Map<Integer,String> lines=null;
+	private HashMap<Integer,String> lines=null;
 
 }

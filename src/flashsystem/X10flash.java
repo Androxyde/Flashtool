@@ -7,12 +7,12 @@ import gui.tools.XMLBootDelivery;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.JDOMException;
 import org.logger.LogProgress;
@@ -24,13 +24,19 @@ import org.system.TextFile;
 import org.util.BytesUtil;
 import org.util.HexDump;
 
+import win32lib.JKernel32;
+
 import com.sonymobile.cs.generic.array.ArrayUtils;
 import com.sonymobile.cs.generic.bytes.ByteUtils;
 import com.sonymobile.cs.generic.stream.StreamUtils;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -50,6 +56,10 @@ public class X10flash {
     private TaEntry _8fdunit = null;
     private TaEntry _8a4unit = null;
     private static Logger logger = Logger.getLogger(X10flash.class);
+    private HashMap<Integer,TaEntry> TaPartition2 = new HashMap<Integer,TaEntry>();
+    int loaderConfig = 0;
+    private String model;
+    private XMLBootConfig bc=null;
 
     public X10flash(Bundle bundle, Shell shell) {
     	_bundle=bundle;
@@ -57,23 +67,94 @@ public class X10flash {
     }
 
     public String getCurrentDevice() {
-    	return currentdevice;
+    	if (!_bundle.simulate())
+    		return currentdevice;
+    	return _bundle.getDevice();
+    }
+    
+    public void enableFinalVerification() throws X10FlashException,IOException {
+    	loaderConfig &= 0xFFFFFFFE;
+    	logger.info("Enabling final verification");
+    	setLoaderConfiguration();
+    }
+    
+    public void disableFinalVerification() throws X10FlashException,IOException {
+    	loaderConfig |= 0x1;
+    	logger.info("Disabling final verification");
+    	setLoaderConfiguration();
+    }
+    
+    public void enableEraseBeforeWrite() throws X10FlashException,IOException {
+    	loaderConfig &= 0xFFFFFFFD;
+    	logger.info("Enabling erase before write");
+    	setLoaderConfiguration();
     }
 
+    public void disableEraseBeforeWrite() throws X10FlashException,IOException {
+    	loaderConfig |= 0x2;
+    	logger.info("Disabling erase before write");
+    	setLoaderConfiguration();
+    }
+    
+    public void setLoaderConfiguration() throws X10FlashException,IOException {
+    	byte[] data = BytesUtil.concatAll(BytesUtil.intToBytes(1, 2, false), BytesUtil.intToBytes(loaderConfig, 4, false));
+    	if (!_bundle.simulate()) {
+    		cmd.send(Command.CMD25,data,false);
+    	}
+    }
+
+    public void setLoaderConfiguration(String param) throws X10FlashException,IOException {
+    	String[] bytes = param.split(",");
+    	byte[] data = new byte[bytes.length];
+    	for (int i=0;i<bytes.length;i++) {
+    		data[i]=(byte)Integer.parseInt(bytes[i]);
+    	}
+    	logger.info("Set loader configuration : "+HexDump.toHex(data));
+    	if (!_bundle.simulate()) {
+    		cmd.send(Command.CMD25,data,false);
+    	}
+    }
+    
+    public void setFlashTimestamp() throws IOException,X10FlashException {
+	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	  	TaEntry tau = new TaEntry();
+	  	tau.setUnit(0x00002725);
+	  	tau.setData(BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
+	  	sendTAUnit(tau);
+    }
+    
     public void setFlashState(boolean ongoing) throws IOException,X10FlashException
     {
 	    	if (ongoing) {
 	    		openTA(2);
-	    		cmd.send(Command.CMD13,Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);
+	    		TaEntry ent = new TaEntry();
+	    		ent.setUnit(0x00002774);
+	    		ent.setData(new byte[] {0x01});
+	    		sendTAUnit(ent);
 	    		closeTA();
 	    	}
 	    	else {
 	    		openTA(2);
-	    		cmd.send(Command.CMD13, Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
+	    	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	    	  	TaEntry tau = new TaEntry();
+	    	  	tau.setUnit(0x00002725);
+	    	  	tau.setData(BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
+			  	sendTAUnit(tau);
+    			TaEntry ent = new TaEntry();
+	    		ent.setUnit(0x00002774);
+	    		ent.setData(new byte[] {0x00});
+    			sendTAUnit(ent);
 	    		closeTA();
 	    	}
     }
 
+    public void setFlashStat(byte state)  throws IOException,X10FlashException {
+		TaEntry ent = new TaEntry();
+		ent.setUnit(0x00002774);
+		ent.setData(new byte[] {state});
+		sendTAUnit(ent);
+    }
+    
     private void sendTA(File f) throws FileNotFoundException, IOException,X10FlashException {
     	try {
     		TaFile ta = new TaFile(f);
@@ -81,7 +162,7 @@ public class X10flash {
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
 				TaEntry tent = entries.get(i);
-				if (tent.getPartition().equals(_8a4unit.getPartition()) && tent.getData().equals(_8a4unit.getData())) {
+				if (tent.getUnit().equals(_8a4unit.getUnit()) && tent.getData().equals(_8a4unit.getData())) {
 					logger.info("Custumization reset is now based on UI choice");
 				}
 				else
@@ -106,7 +187,7 @@ public class X10flash {
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
 				TaEntry tent = entries.get(i);
-				if (tent.getPartition().equals(_8a4unit.getPartition()) && tent.getData().equals(_8a4unit.getData())) {
+				if (tent.getUnit().equals(_8a4unit.getUnit()) && tent.getData().equals(_8a4unit.getData())) {
 					logger.info("Custumization reset is now based on UI choice");
 				}
 				else
@@ -115,7 +196,7 @@ public class X10flash {
     }
 
     public void sendTAUnit(TaEntry ta) throws X10FlashException, IOException {
-		logger.info("Writing TA unit : "+HexDump.toHex(ta.getWordbyte()));
+		logger.info("Writing TA unit "+ta.getUnit()+". Value : "+ta.getDataHex());
 		if (!_bundle.simulate()) {
 			cmd.send(Command.CMD13, ta.getWordbyte(),false);  
 		} 	
@@ -140,7 +221,7 @@ public class X10flash {
 	        }
 	        if (cmd.getLastReplyLength()>0) {
         		TaEntry ta = new TaEntry();
-        		ta.setPartition(HexDump.toHex(unit));
+        		ta.setUnit(HexDump.toHex(unit));
 	        	String reply = cmd.getLastReplyHex();
 	        	reply = reply.replace("[", "");
 	        	reply = reply.replace("]", "");
@@ -159,7 +240,7 @@ public class X10flash {
 
     public void BackupTA(int partition, String timeStamp) throws IOException, X10FlashException {
     	openTA(partition);
-    	String folder = OS.getFolderMyDevices()+File.separator+getPhoneProperty("MSN")+File.separator+"s1ta"+File.separator+timeStamp;
+    	String folder = OS.getFolderRegisteredDevices()+File.separator+getPhoneProperty("MSN")+File.separator+"s1ta"+File.separator+timeStamp;
     	new File(folder).mkdirs();
     	TextFile tazone = new TextFile(folder+File.separator+partition+".ta","ISO8859-1");
         tazone.open(false);
@@ -256,9 +337,11 @@ public class X10flash {
 			for (int j=0;j<header.getNbChunks();j++) {
 				int cur = j+1;
 				logger.debug("Sending part "+cur+" of "+header.getNbChunks());
+				if (!_bundle.simulate()) {
 				cmd.send(Command.CMD05, header.getChunckBytes(j), !((j+1)==header.getNbChunks()));
 				if (USBFlash.getLastFlags() == 0)
 					getLastError();
+				}
 			}
 	    }
     	catch (IOException ioe) {
@@ -280,11 +363,13 @@ public class X10flash {
 			for (int j=0;j<sin.getNbChunks();j++) {
 				int cur = j+1;
 				logger.debug("Sending part "+cur+" of "+sin.getNbChunks());
+				if (!_bundle.simulate()) {
 				cmd.send(Command.CMD06, sin.getChunckBytes(j), !((j+1)==sin.getNbChunks()));
 				if (USBFlash.getLastFlags() == 0)
 					getLastError();
+				}
 			}
-			logger.info("Processing of "+sin.getShortFileName()+" finished.");
+			//logger.info("Processing of "+sin.getShortFileName()+" finished.");
     	}
     	catch (Exception e) {
     		logger.error("Processing of "+sin.getShortFileName()+" finished with errors.");
@@ -299,7 +384,7 @@ public class X10flash {
     	Enumeration<Object> e = Devices.listDevices(true);
     	while (e.hasMoreElements()) {
     		DeviceEntry current = Devices.getDevice((String)e.nextElement());
-    		if (current.getRecognition().contains(currentdevice)) {
+    		if (current.getRecognition().contains(getCurrentDevice())) {
     			nbfound++;
     			if (modded_loader) {
     				loader = current.getLoaderUnlocked();
@@ -350,47 +435,31 @@ public class X10flash {
 		else
 			sin.setChunkSize(0x1000);
 		uploadImage(sin);
-		USBFlash.readS1Reply();
-		hookDevice(true);
-    }
-
-    public void sendPartition() throws FileNotFoundException, IOException, X10FlashException {		
-		if (_bundle.hasPartition()) {
-			BundleEntry entry = _bundle.getPartition();
-			SinFile sin = new SinFile(entry.getAbsolutePath());
-			sin.setChunkSize(maxpacketsize);
-			uploadImage(sin);
+		if (!_bundle.simulate()) {
+			USBFlash.readS1Reply();
+			hookDevice(true);
 		}
-    }
-
-    public void sendBoot() throws FileNotFoundException, IOException,X10FlashException {
-    	if (_bundle.hasBoot()) {
-    		openTA(2);
-    		Enumeration<String> e = _bundle.getMeta().getEntriesOf("BOOT", true);
-    		while (e.hasMoreElements()) {
-				String entry = (String)e.nextElement();
-				BundleEntry bent = _bundle.getEntry(entry);
-				SinFile sin = new SinFile(bent.getAbsolutePath());
-				sin.setChunkSize(maxpacketsize);
-				uploadImage(sin);
-    		}
-    		closeTA();
-    	}
+	    if (!_bundle.simulate()) {
+	    	maxpacketsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
+	    }
+	    else
+	    	maxpacketsize=128000;
+	    LogProgress.initProgress(_bundle.getMaxProgress(maxpacketsize));
     }
     
-    public void sendImages() throws FileNotFoundException, IOException,X10FlashException {
+/*    public void sendImages(int group) throws FileNotFoundException, IOException,X10FlashException {
     	Iterator<Integer> orderlist = _bundle.getMeta().getOrder();
     	if (orderlist.hasNext()) {
     		openTA(2);
 	    	while (orderlist.hasNext()) {
 	    		int place = orderlist.next();
-	    		if (place>0) {
+	    		if (place>=(group*100) && place<(group*100+99)) {
 	    			String categ = _bundle.getMeta().getCagorie(place);
 	    			if (_bundle.getMeta().isCategEnabled(categ)) {
 	    				Enumeration entries = _bundle.getMeta().getEntriesOf(categ,true);
 	    				while (entries.hasMoreElements()) {
 	    					String entry = (String)entries.nextElement();
-	    					BundleEntry bent = _bundle.getEntry(entry);
+	    					BundleEntry bent = _bundle.getEntry(_bundle.getMeta().getExternal(entry));
 	    					SinFile sin = new SinFile(bent.getAbsolutePath());
 	    					sin.setChunkSize(maxpacketsize);
 	    					uploadImage(sin);
@@ -400,118 +469,157 @@ public class X10flash {
 	    	}
 	    	closeTA();
     	}
-    }
+    }*/
 
     public String getPhoneProperty(String property) {
     	return phoneprops.getProperty(property);
     }
 
     public void openTA(int partition) throws X10FlashException, IOException{
-    	if (!taopen)
-    		cmd.send(Command.CMD09, BytesUtil.getBytesWord(partition, 1), false);
+    	if (!taopen) {
+    		logger.info("Opening TA partition "+partition);
+    		if (!_bundle.simulate())
+    			cmd.send(Command.CMD09, BytesUtil.getBytesWord(partition, 1), false);
+    	}
     	taopen = true;
     }
     
     public void closeTA() throws X10FlashException, IOException{
-    	if (taopen)
-    		cmd.send(Command.CMD10, Command.VALNULL, false);
+    	if (taopen) {
+    		logger.info("Closing TA partition");
+    		if (!_bundle.simulate())
+    			cmd.send(Command.CMD10, Command.VALNULL, false);
+    	}
     	taopen = false;
     }
 
-    public void sendBootDelivery() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TaParseException {
-    	try {
-    		if (!_bundle.hasBootDelivery()) throw new BootDeliveryException ("No bootdelivery to send");
-    		logger.info("Parsing boot delivery");
-    		XMLBootDelivery xml = _bundle.getXMLBootDelivery();
-    		if (!xml.mustUpdate(phoneprops.getProperty("BOOTVER"))) throw new BootDeliveryException("Boot delivery up to date. Nothing to do");    			
+    public XMLBootConfig getBootConfig() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TaParseException, BootDeliveryException  {
+		if (!_bundle.hasBootDelivery()) return null;
+		logger.info("Parsing boot delivery");
+		XMLBootDelivery xml = _bundle.getXMLBootDelivery();
+		Vector<XMLBootConfig> found = new Vector<XMLBootConfig>();
+		if (!_bundle.simulate()) {    			
     		Enumeration<XMLBootConfig> e = xml.getBootConfigs();
-    		Vector<XMLBootConfig> found = new Vector<XMLBootConfig>();
     		while (e.hasMoreElements()) {
     			// We get matching bootconfig from all configs
     			XMLBootConfig bc=e.nextElement();
     			if (bc.matches(phoneprops.getProperty("OTP_LOCK_STATUS_1"), phoneprops.getProperty("OTP_DATA_1"), phoneprops.getProperty("IDCODE_1")))
     				found.add(bc);
     		}
-    		if (found.size()==0)
-    			throw new BootDeliveryException ("Found no matching config. Skipping boot delivery");
-    		// if found more thant 1 config
-    		boolean same = true;
-    		if (found.size()>1) {
-    			// Check if all found configs have the same fileset
-    			Iterator<XMLBootConfig> masterlist = found.iterator();
-				while (masterlist.hasNext()) {
-					XMLBootConfig masterconfig = masterlist.next();
-					Iterator<XMLBootConfig> slavelist = found.iterator();
-					while (slavelist.hasNext()) {
-						XMLBootConfig slaveconfig = slavelist.next();
-						if (slaveconfig.compare(masterconfig)==2)
-							throw new BootDeliveryException ("Cannot decide among found configurations. Skipping boot delivery");
-					}
-				}
+		}
+		else {
+			Enumeration<XMLBootConfig> e = xml.getBootConfigs();
+    		while (e.hasMoreElements()) {
+    			// We get matching bootconfig from all configs
+    			XMLBootConfig bc=e.nextElement();
+    			if (bc.getName().startsWith("COMMERCIAL")) {
+    				found.add(bc);
+    				break;
+    			}
     		}
-    		logger.info("Going to flash boot delivery");
-    		XMLBootConfig bc=found.get(found.size()-1);
-			bc.setFolder(_bundle.getBootDelivery().getFolder());
-			if (!bc.isComplete()) throw new BootDeliveryException ("Some files are missing from your boot delivery");
-			TaFile taf = new TaFile(new File(bc.getTA()));
-			openTA(2);
-			SinFile sin = new SinFile(bc.getAppsBootFile());
-			sin.setChunkSize(maxpacketsize);
-			uploadImage(sin);
-			closeTA();
-			openTA(2);
-			sendTA(taf);
-			closeTA();
-			openTA(2);
-			Iterator<String> otherfiles = bc.getOtherFiles().iterator();
-			while (otherfiles.hasNext()) {
-				SinFile sin1 = new SinFile(otherfiles.next());
-				sin1.setChunkSize(maxpacketsize);
-				uploadImage(sin1);
+		}
+		if (found.size()==0)
+			throw new BootDeliveryException ("Found no matching config. Skipping boot delivery");
+		// if found more thant 1 config
+		boolean same = true;
+		if (found.size()>1) {
+			// Check if all found configs have the same fileset
+			Iterator<XMLBootConfig> masterlist = found.iterator();
+			while (masterlist.hasNext()) {
+				XMLBootConfig masterconfig = masterlist.next();
+				Iterator<XMLBootConfig> slavelist = found.iterator();
+				while (slavelist.hasNext()) {
+					XMLBootConfig slaveconfig = slavelist.next();
+					if (slaveconfig.compare(masterconfig)==2)
+						throw new BootDeliveryException ("Cannot decide among found configurations. Skipping boot delivery");
+				}
 			}
-			closeTA();
-			_bundle.setBootDeliveryFlashed(true);
+		}
+		found.get(found.size()-1).setFolder(_bundle.getBootDelivery().getFolder());
+		return found.get(found.size()-1);
+    }
+    
+    public void sendBootDelivery() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TaParseException {
+    	try {
+    		if (_bundle.hasBootDelivery()) {
+    			XMLBootDelivery xmlboot = _bundle.getXMLBootDelivery();
+    			if (!_bundle.simulate())
+    				if (!xmlboot.mustUpdate(phoneprops.getProperty("BOOTVER"))) throw new BootDeliveryException("Boot delivery up to date. Nothing to do");
+	    		logger.info("Going to flash boot delivery");
+				if (!bc.isComplete()) throw new BootDeliveryException ("Some files are missing from your boot delivery");
+				TaFile taf = new TaFile(new File(bc.getTA()));
+				openTA(2);
+				SinFile sin = new SinFile(bc.getAppsBootFile());
+				sin.setChunkSize(maxpacketsize);
+				uploadImage(sin);
+				closeTA();
+				openTA(2);
+				sendTA(taf);
+				closeTA();
+				openTA(2);
+				Iterator<String> otherfiles = bc.getOtherFiles().iterator();
+				while (otherfiles.hasNext()) {
+					SinFile sin1 = new SinFile(otherfiles.next());
+					sin1.setChunkSize(maxpacketsize);
+					uploadImage(sin1);
+				}
+				closeTA();
+				_bundle.setBootDeliveryFlashed(true);
+    		}
     	} catch (BootDeliveryException e) {
     		logger.info(e.getMessage());
     	}
     }
 
-    public void sendTAFiles() throws FileNotFoundException, IOException,X10FlashException {
-		Enumeration entries = _bundle.getMeta().getEntriesOf("TA",true);
-		if (entries.hasMoreElements()) {
-			while (entries.hasMoreElements()) {
-				String entry = (String)entries.nextElement();
-				BundleEntry bent = _bundle.getEntry(entry);
-				if (!bent.getName().toUpperCase().contains("SIM")) {
-					boolean taopened = false;
-					try {
-						TaFile ta = new TaFile(new File(bent.getAbsolutePath()));
-						openTA(ta.getPartition());
-						taopened = true;
-						sendTA2(ta);
+
+    public void loadTAFiles() throws FileNotFoundException, IOException,X10FlashException {
+		Iterator<Category> entries = _bundle.getMeta().getTAEntries(true).iterator();
+			while (entries.hasNext()) {
+				Category categ = entries.next();
+				Iterator<BundleEntry> icateg = categ.getEntries().iterator();
+				while (icateg.hasNext()) {
+					BundleEntry bent = icateg.next();
+					if (bent.getName().toUpperCase().endsWith(".TA")) {
+						if (!bent.getName().toUpperCase().contains("SIM"))
+						try {
+							TaFile ta = new TaFile(new File(bent.getAbsolutePath()));
+							Iterator<TaEntry> i = ta.entries().iterator();
+							while (i.hasNext()) {
+								TaEntry ent = i.next();
+								TaPartition2.put(BytesUtil.getInt(ent.getUnitbytes()),ent);
+							}
+						}
+						catch (TaParseException tae) {
+				    		logger.error("Error parsing TA file. Skipping");
+				    	}
+						else {
+							logger.warn("File "+bent.getName()+" is ignored");
+						}
 					}
-					catch (TaParseException tae) {
-			    		logger.error("Error parsing TA file. Skipping");
-			    	}
-					if(taopened){
-						closeTA();
-					}
-				}
-				else {
-					logger.warn("This file is ignored : "+bent.getName());
 				}
 			}
+		try {
+			if (bc!=null) {
+				TaFile taf = new TaFile(new File(bc.getTA()));
+				Iterator<TaEntry> i = taf.entries().iterator();
+				while (i.hasNext()) {
+					TaEntry ent = i.next();
+					TaPartition2.put(BytesUtil.getInt(ent.getUnitbytes()),ent);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
     }
     
     public void getDevInfo() throws IOException, X10FlashException {
     	openTA(2);
-    	cmd.send(Command.CMD12, Command.TA_DEVID1, false);
-    	String info = "Current device : "+cmd.getLastReplyString();
+    	cmd.send(Command.CMD12, Command.TA_MODEL, false);
     	currentdevice = cmd.getLastReplyString();
-    	cmd.send(Command.CMD12, Command.TA_DEVID2, false);
-    	info = info + " - "+cmd.getLastReplyString();
+    	String info = "Current device : "+getCurrentDevice();
+    	cmd.send(Command.CMD12, Command.TA_SERIAL, false);
     	serial = cmd.getLastReplyString();
+    	info = info + " - "+serial;
     	cmd.send(Command.CMD12, Command.TA_DEVID3, false);
     	info = info + " - "+cmd.getLastReplyString();
     	cmd.send(Command.CMD12, Command.TA_DEVID4, false);
@@ -528,33 +636,172 @@ public class X10flash {
 		closeTA();    	
     }
     
+    public boolean hasScript() {
+    	try {
+    		Vector<String> ignored = new Vector<String>();
+    		String file = getFlashScript();
+    		TextFile tf = new TextFile(getFlashScript(),"ISO8859-1");
+    		Iterator<Category> e = _bundle.getMeta().getAllEntries(false).iterator();
+    		while (e.hasNext()) {
+    			Category cat = e.next();
+    			Iterator<BundleEntry> icat = cat.getEntries().iterator();
+    			while (icat.hasNext()) {
+    				String elem = icat.next().getName();
+	    			if (!elem.endsWith(".sin")) continue;
+	    			if (elem.equals("loader.sin")) continue;
+	        		Map<Integer,String> map =  tf.getMap();
+	        		Iterator<Integer> keys = map.keySet().iterator();
+	        		boolean intemplate = false;
+	        		while (keys.hasNext()) {
+	        			String line = map.get(keys.next());
+	        			String param="";
+	        			String[] parsed = line.split(":");
+	        			String action = parsed[0];
+	        			if (action.equals("uploadImage")) {
+	        				param = parsed[1];
+	            			if (elem.contains(param)) {
+	            				intemplate=true;
+	            				break; 
+	            			}
+	        			}
+	        		}
+	        		if (!intemplate) ignored.add(elem);
+    			}
+    		}
+    		if (ignored.size()>0) {
+    			Enumeration eignored = ignored.elements();
+    			String dynmsg = "";
+    			while (eignored.hasMoreElements()) {
+    				dynmsg=dynmsg+eignored.nextElement();
+    				if (eignored.hasMoreElements()) dynmsg = dynmsg + ",";
+    			}
+    			String result = WidgetTask.openYESNOBox(_curshell, "Those files will not be flashed : "+dynmsg+". Do you want to continue ?");
+    			if (Integer.parseInt(result) == SWT.YES) {
+    				return true;
+    			}
+    			return false;
+    		}
+    		return true;
+
+    	} catch (Exception e) {
+    		return false;
+    	}
+    }
+
+    public String getFlashScript() {
+      	String devid = Devices.getIdFromVariant(getCurrentDevice());
+    	DeviceEntry dev = Devices.getDevice(devid);
+    	return dev.getFlashScript(getCurrentDevice(),_bundle.getVersion());
+    }
+  
+    public void runScript() {
+    	try {
+    		TextFile tf = new TextFile(getFlashScript(),"ISO8859-1");
+    		logger.info("Found a template session. Using it : "+tf.getFileName());
+    		Map<Integer,String> map =  tf.getMap();
+    		Iterator<Integer> keys = map.keySet().iterator();
+    		while (keys.hasNext()) {
+    			String param="";
+    			String line = map.get(keys.next());
+    			String[] parsed = line.split(":");
+    			String action = parsed[0];
+    			if (parsed.length>1)
+    				param = parsed[1];
+    			if (action.equals("openTA")) {
+    				this.openTA(Integer.parseInt(param));
+    			}
+    			else if (action.equals("closeTA")) {
+    				this.closeTA();
+    			}
+    			else if (action.equals("setFlashState")) {
+    				this.setFlashStat((byte)Integer.parseInt(param));
+    			}
+    			else if (action.equals("setLoaderConfig")) {
+    				this.setLoaderConfiguration(param);
+    			}
+    			else if (action.equals("uploadImage")) {
+    				BundleEntry b = _bundle.searchEntry(param);
+    				if (b!=null) {
+    					SinFile sin =new SinFile(b.getAbsolutePath());
+    					sin.setChunkSize(maxpacketsize);
+    					this.uploadImage(sin);
+    				}
+    				else {
+    					if (bc!=null) {
+    						String file = bc.getMatchingFile(param);
+    						if (file!=null) {
+    	    					SinFile sin =new SinFile(file);
+    	    					sin.setChunkSize(maxpacketsize);
+    	    					this.uploadImage(sin);						
+    						}
+        					else {
+        						logger.warn(param + " is excluded from bundle");
+        					}
+    					}
+    					else {
+    						logger.warn(param + " is excluded from bundle");
+    					}
+    				}
+    			}
+    			else if (action.equals("writeTA")) {
+    				TaEntry unit = TaPartition2.get(Integer.parseInt(param));
+    				if (unit != null)
+    					this.sendTAUnit(unit);
+    				else logger.warn("Unit "+param+" not found in bundle");
+    			}
+    			else if (action.equals("setFlashTimestamp")) {
+    				this.setFlashTimestamp();
+    			}
+    			else if (action.equals("End flashing")) {
+    				this.endSession();
+    			}
+    		}
+    	} catch (Exception e) {e.printStackTrace();}
+    }
+
     public void flashDevice() {
     	try {
 		    logger.info("Start Flashing");
 		    sendLoader();
-		    maxpacketsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
-		    LogProgress.initProgress(_bundle.getMaxProgress(maxpacketsize));
-		    if (_bundle.hasCmd25()) {
-		    	logger.info("Disabling final data verification check");
-		    	cmd.send(Command.CMD25, Command.DISABLEFINALVERIF, false);
+		    if (!_bundle.simulate())
+		    	USBFlash.setUSBBuffer(maxpacketsize/2);
+		    bc = getBootConfig();
+		    loadTAFiles();
+		    if (hasScript()) {
+		    	runScript();
 		    }
-		    setFlashState(true);
-		    sendPartition();
-		    sendBootDelivery();
-		    sendBoot();
-			sendImages();
-			if (_bundle.isBootDeliveryFlashed()) {
-				openTA(2);
-				sendTAUnit(_8fdunit);
-				closeTA();
-			}
-        	setFlashState(false);
-        	sendTAFiles();
-		    if (_bundle.hasResetStats()) {
-		    	logger.info("Resetting customizations");
-		    	resetStats();
-		    }
-        	closeDevice(0x01);
+		    else logger.info("You must have the according fsc script to flash this device.");
+		    /*else {
+			    if (_bundle.hasCmd25()) {
+			    	logger.info("Disabling final data verification check");
+			    	if (!_bundle.simulate()) {
+			    		this.disableFinalVerification();
+			    	}
+			    }
+			    setFlashState(true);
+			    sendPartition();
+			    sendPreloader();
+			    sendBootDelivery();
+				sendImages(1);
+				if (_bundle.hasPreloader()) {
+					openTA(2);
+					sendTAUnit(TaPartition2.get(0x0000084F));
+					closeTA();
+				}
+				sendImages(2);
+				sendImages(3);
+				if (_bundle.isBootDeliveryFlashed()) {
+					openTA(2);
+					sendTAUnit(_8fdunit);
+					closeTA();
+				}
+	        	setFlashState(false);
+			    if (_bundle.hasResetStats()) {
+			    	logger.info("Resetting customizations");
+			    	resetStats();
+			    }
+	        	closeDevice(0x01);
+		    }*/
 			logger.info("Flashing finished.");
 			logger.info("Please unplug and start your phone");
 			logger.info("For flashtool, Unknown Sources and Debugging must be checked in phone settings");
@@ -591,7 +838,8 @@ public class X10flash {
 
     public void endSession() throws X10FlashException,IOException {
     	logger.info("Ending flash session");
-    	cmd.send(Command.CMD04,Command.VALNULL,false);
+    	if (!_bundle.simulate())
+    		cmd.send(Command.CMD04,Command.VALNULL,false);
     }
 
     public void endSession(int param) throws X10FlashException,IOException {
@@ -634,6 +882,14 @@ public class X10flash {
     }
 
     public boolean openDevice(boolean simulate) {
+    	_8fdunit = new TaEntry();
+    	_8fdunit.setUnit("000008FD");
+    	_8fdunit.addData("01");
+    	_8fdunit.setSize("1");
+    	_8a4unit = new TaEntry();
+    	_8a4unit.setUnit("000008A4");
+    	_8a4unit.addData("00 00 00 00 00 00 00 00 00 00 00 00 00 00");
+    	_8a4unit.setSize("0E");
     	if (simulate) return true;
     	LogProgress.initProgress(_bundle.getMaxLoaderProgress());
     	boolean found=false;
@@ -648,7 +904,6 @@ public class X10flash {
 				if (phoneprops.getProperty("VER").startsWith("r"))
 					modded_loader=true;
 				logger.debug(firstRead);
-				
     		}
     		catch (Exception e) {
     			e.printStackTrace();
@@ -659,14 +914,6 @@ public class X10flash {
     	    hookDevice(false);
     	    logger.info("Phone ready for flashmode operations.");
 		    getDevInfo();
-	    	_8fdunit = new TaEntry();
-	    	_8fdunit.setPartition("000008FD");
-	    	_8fdunit.addData("01");
-	    	_8fdunit.setSize("1");
-	    	_8a4unit = new TaEntry();
-	    	_8a4unit.setPartition("000008A4");
-	    	_8a4unit.addData("00 00 00 00 00 00 00 00 00 00 00 00 00 00");
-	    	_8a4unit.setSize("0E");
 	    	found = true;
     	}
     	catch (Exception e){

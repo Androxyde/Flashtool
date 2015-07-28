@@ -1,10 +1,11 @@
 package gui;
 
 import flashsystem.Bundle;
+import flashsystem.BundleEntry;
 import flashsystem.BundleMetaData;
+import flashsystem.Category;
 import gui.models.CategoriesContentProvider;
 import gui.models.CategoriesModel;
-import gui.models.Category;
 import gui.models.SinfilesLabelProvider;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
@@ -57,7 +58,7 @@ public class BundleCreator extends Dialog {
 	private Text device;
 	private Text branding;
 	private Text version;
-	Vector files = new Vector();
+	Vector<BundleEntry> files = new Vector<BundleEntry>();
 	ListViewer listViewerFiles;
 	private Label lblSelectSourceFolder;
 	private Button btnNewButton;
@@ -125,12 +126,12 @@ public class BundleCreator extends Dialog {
 		WidgetsTool.setSize(shlBundler);
 		sourceFolder.setText(folder);
 		meta.clear();
-		files = new Vector();
+		files = new Vector<BundleEntry>();
 		File srcdir = new File(sourceFolder.getText());
 		File[] chld = srcdir.listFiles();
 		for(int i = 0; i < chld.length; i++) {
 			if (chld[i].getName().toUpperCase().endsWith("SIN") || (chld[i].getName().toUpperCase().endsWith("TA") && !chld[i].getName().toUpperCase().contains("SIMLOCK")) || (chld[i].getName().toUpperCase().endsWith("XML") && (!chld[i].getName().toUpperCase().contains("UPDATE") && !chld[i].getName().toUpperCase().contains("FWINFO")))) {
-				files.add(chld[i]);
+				files.add(new BundleEntry(chld[i]));
 			}
 		}
 		srcdir = new File(sourceFolder.getText()+File.separator+"boot");
@@ -138,7 +139,7 @@ public class BundleCreator extends Dialog {
 			chld = srcdir.listFiles();
 			for(int i = 0; i < chld.length; i++) {
 				if (chld[i].getName().toUpperCase().endsWith("XML")) {
-					files.add(chld[i]);
+					files.add(new BundleEntry(chld[i]));
 				}
 			}
 		}		
@@ -191,12 +192,12 @@ public class BundleCreator extends Dialog {
 	        }
 	   
 	        public String getText(Object element) {
-	          return ((File)element).getName();
+	          return ((BundleEntry)element).getName();
 	        }
 	      });
 	    listViewerFiles.setSorter(new ViewerSorter(){
 	        public int compare(Viewer viewer, Object e1, Object e2) {
-	          return ((File)e1).getName().compareTo(((File)e2).getName());
+	          return ((BundleEntry)e1).getName().compareTo(((BundleEntry)e2).getName());
 	        }
 
 	      });
@@ -227,7 +228,7 @@ public class BundleCreator extends Dialog {
 	        	int cat2 = category(e2);
 	        	if (cat1 != cat2) return cat1 - cat2;
 		    	if ((e1 instanceof Category) && (e2 instanceof Category))
-		    		return ((Category)e1).getName().compareTo(((Category)e2).getName());
+		    		return ((Category)e1).getId().compareTo(((Category)e2).getId());
 		    	else
 		    		return ((File)e1).getName().compareTo(((File)e2).getName());
 	        }
@@ -284,7 +285,9 @@ public class BundleCreator extends Dialog {
 					return;						
 				}
 				Bundle b = new Bundle();
-				b.setMeta(meta);
+				try {
+					b.setMeta(meta);
+				} catch (Exception ex) {}
 				b.setDevice(_variant);
 				b.setVersion(version.getText());
 				b.setBranding(branding.getText());
@@ -330,10 +333,10 @@ public class BundleCreator extends Dialog {
 				IStructuredSelection selection = (IStructuredSelection)listViewerFiles.getSelection();
 				Iterator i = selection.iterator();
 				while (i.hasNext()) {
-					File f = (File)i.next();
+					BundleEntry f = (BundleEntry)i.next();
 					files.remove(f);
 					try {
-						meta.process(f.getName(), f.getAbsolutePath());
+						meta.process(f);
 						model.refresh(meta);
 						treeViewerCategories.setInput(model);
 					} catch (Exception ex) {ex.printStackTrace();}
@@ -360,21 +363,21 @@ public class BundleCreator extends Dialog {
 					Object o = i.next();
 					if (o instanceof Category) {
 						Category c = (Category)o;
-						Iterator<File> j = c.getSinfiles().iterator();
+						Iterator<BundleEntry> j = c.getEntries().iterator();
 						while (j.hasNext()) {
-							File f=j.next();
+							BundleEntry f=j.next();
 							files.add(f);
-							meta.remove(f.getName());
+							meta.remove(f);
 							model.refresh(meta);
 							treeViewerCategories.setAutoExpandLevel(2);
 							treeViewerCategories.refresh();
 							listViewerFiles.refresh();
 						}
 					}
-					if (o instanceof File) {
-						String internal = ((File)o).getName();
-						files.add(new File(meta.getPath(internal)));
-						meta.remove(internal);
+					if (o instanceof BundleEntry) {
+						BundleEntry f = (BundleEntry)o;
+						files.add(f);
+						meta.remove(f);
 						model.refresh(meta);
 						treeViewerCategories.setAutoExpandLevel(2);
 						treeViewerCategories.refresh();
@@ -440,7 +443,7 @@ public class BundleCreator extends Dialog {
 		    			File[] chld = srcdir.listFiles();
 		    			for(int i = 0; i < chld.length; i++) {
 		    				if (chld[i].getName().toUpperCase().endsWith("SIN") || (chld[i].getName().toUpperCase().endsWith("TA") && !chld[i].getName().toUpperCase().contains("SIMLOCK")) || (chld[i].getName().toUpperCase().endsWith("XML") && (!chld[i].getName().toUpperCase().contains("UPDATE") && !chld[i].getName().toUpperCase().contains("FWINFO")))) {
-		    					files.add(chld[i]);
+		    					files.add(new BundleEntry(chld[i]));
 		    				}
 		    			}
 		    			srcdir = new File(sourceFolder.getText()+File.separator+"boot");
@@ -448,7 +451,7 @@ public class BundleCreator extends Dialog {
 		    				chld = srcdir.listFiles();
 			    			for(int i = 0; i < chld.length; i++) {
 			    				if (chld[i].getName().toUpperCase().endsWith("XML")) {
-			    					files.add(chld[i]);
+			    					files.add(new BundleEntry(chld[i]));
 			    				}
 			    			}
 		    			}
