@@ -61,6 +61,7 @@ public class USBLogviewer extends Dialog {
 	private Button btnParse;
 	private Button btnLogFile;
 	private Button btnSourceFolder;
+	private Label lblSavedPath;
 
 	/**
 	 * Create the dialog.
@@ -82,6 +83,14 @@ public class USBLogviewer extends Dialog {
 		createTriggers();
 		
 		WidgetsTool.setSize(shlUSBLogviewer);
+		
+		lblSavedPath = new Label(shlUSBLogviewer, SWT.NONE);
+		FormData fd_lblSavedPath = new FormData();
+		fd_lblSavedPath.right = new FormAttachment(btnParse, -45);
+		fd_lblSavedPath.bottom = new FormAttachment(100, -10);
+		fd_lblSavedPath.left = new FormAttachment(0, 10);
+		lblSavedPath.setLayoutData(fd_lblSavedPath);
+		formToolkit.adapt(lblSavedPath, true, true);
 		
 		
 		shlUSBLogviewer.open();
@@ -224,6 +233,9 @@ public class USBLogviewer extends Dialog {
 		          // Set the text box to the new selection
 		        	if (!textSinFolder.getText().equals(dir)) {
 		        		textSinFolder.setText(dir);
+		        		tableViewer.setInput(new Vector());
+		        		tableViewer.refresh();
+		        		lblSavedPath.setText("");
 		        	}
 		        }
 			}
@@ -252,6 +264,9 @@ public class USBLogviewer extends Dialog {
 		        	if (!textLogFile.getText().equals(dir)) {
 		        		textLogFile.setText(dir);
 		        		textSinFolder.setText(new File(dir).getParentFile().getAbsolutePath()+File.separator+"decrypted");
+		        		lblSavedPath.setText("");
+		        		tableViewer.setInput(new Vector());
+		        		tableViewer.refresh();
 		        	}
 		        }
 			}
@@ -262,7 +277,7 @@ public class USBLogviewer extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				WaitForUSBParser parse = new WaitForUSBParser(shlUSBLogviewer,SWT.PRIMARY_MODAL | SWT.SHEET);
 				Session sess = (Session)parse.open(textLogFile.getText(),textSinFolder.getText());	
-				sess.saveScript();
+				lblSavedPath.setText("Script saved to "+sess.saveScript());
 						
 				Display.getDefault().asyncExec(
 						new Runnable() {

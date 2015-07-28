@@ -43,7 +43,7 @@ public class Session {
 		return packets.iterator();
 	}
 
-	public void saveScript() {
+	public String saveScript() {
 		try {
 			DeviceEntry ent = Devices.getDevice(Devices.getIdFromVariant(model));
 			
@@ -54,7 +54,8 @@ public class Session {
 			else
 				folder = OS.getFolderFirmwaresScript();
 			
-			TextFile tf = new TextFile(folder+File.separator+model+(version.length()>0?"_"+version:"")+".fsc","ISO8859-1");
+			String filename = folder+File.separator+model+(version.length()>0?"_"+version:"")+".fsc";
+			TextFile tf = new TextFile(filename,"ISO8859-1");
 			
 			tf.open(false);
 			Iterator<TableLine> i = getScript().iterator();
@@ -63,8 +64,10 @@ public class Session {
 				tf.writeln(tl.getValueOf(0)+":"+tl.getValueOf(1));
 			}
 			tf.close();
+			return filename;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return "";
 		}
 	}
 
