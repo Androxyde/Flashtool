@@ -1,5 +1,9 @@
 package flashsystem;
 
+import com.google.common.hash.Hashing;
+import com.google.common.io.BaseEncoding;
+import com.google.common.io.ByteStreams;
+import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,28 +11,36 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Security;
 import java.util.Enumeration;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.GZIPInputStream;
-
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.sinfile.parsers.SinFileException;
 import org.ta.parsers.TAFileParseException;
 import org.ta.parsers.TAFileParser;
 
-import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
-import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
-
 public class SeusSinTool {
 
 	private static Logger logger = Logger.getLogger(SeusSinTool.class);
-	
-	public static void decryptAndExtract(String FILESET) throws FileNotFoundException,IOException {
+	  
+	public static void decryptAndExtract(String FILESET) throws FileNotFoundException,IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
 		File enc= new File(FILESET);
 		File dec = new File(enc.getParent()+File.separator+"decrypted_"+enc.getName());
 		decrypt(enc);
@@ -105,8 +117,48 @@ public class SeusSinTool {
 	    afile.close();
 	}
 	
-	public static void decrypt(File enc) throws FileNotFoundException, IOException {
-		dumpStreamTo(new GZIPInputStream(new RC4DecryptingInputStream(new FileInputStream(enc))),new File(enc.getParent()+File.separator+"decrypted_"+enc.getName()));
+    private static Cipher setupCipher(int mode, String key, String IV, String method) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchProviderException {
+        if (Security.getProvider("BC") == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        if (method.equals("AES/CTR/NoPadding")) {
+            SecretKeySpec secretKeySpec = new SecretKeySpec(Hashing.sha256().hashBytes(key.getBytes("UTF-8")).asBytes(), "AES");
+        	IvParameterSpec ivParameterSpec = new IvParameterSpec(BaseEncoding.base16().decode(IV));
+        	Cipher cipher = Cipher.getInstance(method, "BC");
+        	cipher.init(mode, secretKeySpec, ivParameterSpec);
+        	return cipher;
+        }
+        else {
+        	SecretKeySpec secretKeySpec = new SecretKeySpec(BaseEncoding.base64().decode(key), "RC4");
+        	Cipher cipher = Cipher.getInstance(method);
+        	cipher.init(mode, secretKeySpec);
+        	return cipher;
+        }
+    }
+
+	public static void decrypt(File enc) throws FileNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
+		try {
+			GZIPInputStream localInputStream = new GZIPInputStream(new FileInputStream(enc));
+		    FileOutputStream localFileOutputStream = new FileOutputStream(new File(enc.getParent()+File.separator+"decrypted_"+enc.getName()));
+			ByteStreams.copy(localInputStream, localFileOutputStream);
+		} catch (Exception e) {
+			try {
+			Cipher localCipher = setupCipher(Cipher.DECRYPT_MODE, "qAp!wmvl!cOS7xSQV!aoR7Qz*neY^5Sx", "5621616F5237517A21634F5337785351", "AES/CTR/NoPadding");
+		    CipherInputStream localCipherInputStream = new CipherInputStream(new FileInputStream(enc), localCipher);
+		    FileOutputStream localFileOutputStream = new FileOutputStream(new File(enc.getParent()+File.separator+"decrypted_"+enc.getName()));
+		    ByteStreams.copy(new GZIPInputStream(localCipherInputStream), localFileOutputStream);
+		    localFileOutputStream.close();
+		    localCipherInputStream.close();
+			}
+			catch (Exception e1) {
+				Cipher localCipher = setupCipher(Cipher.DECRYPT_MODE, "DoL6FBfnYcNJBjH31Vnz6lKATTaDGe4y", null, "RC4");
+			    CipherInputStream localCipherInputStream = new CipherInputStream(new FileInputStream(enc), localCipher);
+			    FileOutputStream localFileOutputStream = new FileOutputStream(new File(enc.getParent()+File.separator+"decrypted_"+enc.getName()));
+			    ByteStreams.copy(new GZIPInputStream(localCipherInputStream), localFileOutputStream);
+			    localFileOutputStream.close();
+			    localCipherInputStream.close();				
+			}
+		}
 	}
 
 	public static void encrypt(String tgzfile) {
