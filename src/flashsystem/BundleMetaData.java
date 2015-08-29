@@ -11,6 +11,7 @@ public class BundleMetaData {
 
 	MyTreeSet<Category> _categwipe = new MyTreeSet<Category>();
 	MyTreeSet<Category> _categex = new MyTreeSet<Category>();
+	MyTreeSet<Category> _categta = new MyTreeSet<Category>();
 	Category loader=null;
 	
 	public BundleMetaData() {
@@ -26,6 +27,10 @@ public class BundleMetaData {
 
 	public Set<Category> getExclude() {
 		return _categex;
+	}
+
+	public Set<Category> getTA() {
+		return _categta;
 	}
 	
 	public Set<Category> getAllEntries(boolean checked) {
@@ -76,7 +81,8 @@ public class BundleMetaData {
 		cat.addEntry(f);
 		if (cat.getId().startsWith("APPS_LOG") ||
 			cat.getId().startsWith("USERDATA") ||
-			cat.getId().startsWith("CACHE") ||
+			cat.getId().startsWith("SSD") ||
+			cat.getId().startsWith("DIAG") ||
 			cat.getId().startsWith("B2B")
 		   ) {
 			cat.setEnabled(false);
@@ -114,5 +120,6 @@ public class BundleMetaData {
 	public void clear() {
 		_categex.clear();
 		_categwipe.clear();
+		_categta.clear();
 	}
 }
