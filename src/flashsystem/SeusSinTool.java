@@ -39,11 +39,11 @@ import org.ta.parsers.TAFileParser;
 public class SeusSinTool {
 
 	private static Logger logger = Logger.getLogger(SeusSinTool.class);
-	  
-	public static void decryptAndExtract(String FILESET) throws FileNotFoundException,IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
+
+	public static void decryptAndExtract(String FILESET) throws Exception,FileNotFoundException,IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
 		File enc= new File(FILESET);
 		File dec = new File(enc.getParent()+File.separator+"decrypted_"+enc.getName());
-		decrypt(enc);
+		if (!decrypt(enc,dec)) throw new Exception("Unable to decrypt "+FILESET);
 		String folder = enc.getParentFile().getAbsolutePath()+File.separator+"decrypted";
 		new File(folder).mkdirs();
 	    logger.info("Identifying fileset content");
@@ -54,20 +54,29 @@ public class SeusSinTool {
 	    	 Enumeration<? extends ZipEntry> entries = file.entries();
 	    	 while ( entries.hasMoreElements() ) {
 	    		 ZipEntry entry = entries.nextElement();
+	    		 InputStream entryStream = file.getInputStream(entry);
 	    		 File out = getFile(new File(folder+File.separator+entry.getName()));
-	    		 dumpStreamTo(file.getInputStream(entry),out);
-	    		 if (entry.getName().endsWith(".zip")) {
-	    			 String subfolder = folder + File.separator+entry.getName().substring(0,entry.getName().lastIndexOf("."));
-	    			 ZipFile subzip = new ZipFile(out); 
-	    			 Enumeration<? extends ZipEntry> subentries = subzip.entries();
-	    			 while ( subentries.hasMoreElements() ) {
-	    				 ZipEntry subentry = subentries.nextElement();
-	    	    		 File subout = getFile(new File(subfolder+File.separator+subentry.getName()));
-	    	    		 dumpStreamTo(subzip.getInputStream(subentry),subout);
-	    			 }
-	    			 subzip.close();
-	    			 out.delete();
-	    		 }
+	    		 FileOutputStream streamOut = new FileOutputStream(out);
+	    		 ByteStreams.copy(entryStream,streamOut);
+	    		 entryStream.close();
+	    		 streamOut.close();
+	    		 try {
+		    			 ZipFile subzip = new ZipFile(out);
+		    			 String subfolder = folder + File.separator+entry.getName().substring(0,entry.getName().lastIndexOf("."));
+		    			 new File(subfolder).mkdirs();
+		    			 Enumeration<? extends ZipEntry> subentries = subzip.entries();
+		    			 while ( subentries.hasMoreElements() ) {
+		    				 ZipEntry subentry = subentries.nextElement();
+		    	    		 File subout = getFile(new File(subfolder+File.separator+subentry.getName()));
+		    	    		 entryStream=subzip.getInputStream(subentry);
+		    	    		 streamOut = new FileOutputStream(subout);
+		    	    		 ByteStreams.copy(entryStream,streamOut);
+		    	    		 entryStream.close();
+		    	    		 streamOut.close();
+		    			 }
+		    			 subzip.close();
+		    			 out.delete();
+	    		 } catch (Exception e1) {}
 	    	 }
 	    	 file.close();
 	    } catch (Exception e) {
@@ -96,26 +105,6 @@ public class SeusSinTool {
 	    }
 	    dec.delete();
 	}
-
-	public static void dumpStreamTo(InputStream in, File out) throws IOException {
-		out.getParentFile().mkdirs();
-		ByteBuffer buffer = ByteBuffer.allocate(20480000);
-	    ReadableByteChannel channel = Channels.newChannel(in);
-	    RandomAccessFile afile = new RandomAccessFile (out,"rw");
-	    FileChannel cout = afile.getChannel();
-	    cout.truncate(0L);
-	    while (channel.read(buffer)>0) {
-	    	buffer.flip();
-	    	while(buffer.hasRemaining()) {
-	    	    cout.write(buffer);
-	    	}
-	    	buffer.clear();
-	    }
-	    channel.close();
-	    in.close();
-	    cout.close();
-	    afile.close();
-	}
 	
     private static Cipher setupCipher(int mode, String key, String IV, String method) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchProviderException {
         if (Security.getProvider("BC") == null) {
@@ -136,28 +125,72 @@ public class SeusSinTool {
         }
     }
 
-	public static void decrypt(File enc) throws FileNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
+	public static boolean decrypt(File enc, File dec)  {
+		if (decryptUncrypted(enc,dec)) return true;
+		if (decryptAES(enc,dec)) return true;
+		if (decryptRC4(enc,dec)) return true;
+		return false;
+	}
+
+	public static boolean decryptUncrypted(File enc, File dec) {
+		FileOutputStream localFileOutputStream=null;
+		GZIPInputStream localGZIPInputStream=null;
 		try {
-			GZIPInputStream localInputStream = new GZIPInputStream(new FileInputStream(enc));
-		    FileOutputStream localFileOutputStream = new FileOutputStream(new File(enc.getParent()+File.separator+"decrypted_"+enc.getName()));
-			ByteStreams.copy(localInputStream, localFileOutputStream);
+			localGZIPInputStream = new GZIPInputStream(new FileInputStream(enc));
+		    localFileOutputStream = new FileOutputStream(dec);
+			ByteStreams.copy(localGZIPInputStream, localFileOutputStream);
+		    localFileOutputStream.close();
+		    localGZIPInputStream.close();
+		    return true;
 		} catch (Exception e) {
 			try {
+			    localFileOutputStream.close();
+			    localGZIPInputStream.close();
+			    dec.delete();
+			} catch (Exception e1) {}
+		    return false;
+		}
+	}
+
+	public static boolean decryptAES(File enc, File dec) {
+		FileOutputStream localFileOutputStream=null;
+		CipherInputStream localCipherInputStream=null;
+		try {
 			Cipher localCipher = setupCipher(Cipher.DECRYPT_MODE, "qAp!wmvl!cOS7xSQV!aoR7Qz*neY^5Sx", "5621616F5237517A21634F5337785351", "AES/CTR/NoPadding");
-		    CipherInputStream localCipherInputStream = new CipherInputStream(new FileInputStream(enc), localCipher);
-		    FileOutputStream localFileOutputStream = new FileOutputStream(new File(enc.getParent()+File.separator+"decrypted_"+enc.getName()));
+			localCipherInputStream = new CipherInputStream(new FileInputStream(enc), localCipher);
+			localFileOutputStream = new FileOutputStream(dec);
+			ByteStreams.copy(new GZIPInputStream(localCipherInputStream), localFileOutputStream);
+			localFileOutputStream.close();
+			localCipherInputStream.close();
+		    return true;
+		} catch (Exception e) {
+			try {
+				localFileOutputStream.close();
+				localCipherInputStream.close();
+				dec.delete();
+			} catch (Exception e1) {}
+		    return false;
+		}
+	}
+
+	public static boolean decryptRC4(File enc, File dec) {
+		FileOutputStream localFileOutputStream=null;
+		CipherInputStream localCipherInputStream=null;
+		try {
+			Cipher localCipher = setupCipher(Cipher.DECRYPT_MODE, "DoL6FBfnYcNJBjH31Vnz6lKATTaDGe4y", null, "RC4");
+		    localCipherInputStream = new CipherInputStream(new FileInputStream(enc), localCipher);
+		    localFileOutputStream = new FileOutputStream(dec);
 		    ByteStreams.copy(new GZIPInputStream(localCipherInputStream), localFileOutputStream);
 		    localFileOutputStream.close();
-		    localCipherInputStream.close();
-			}
-			catch (Exception e1) {
-				Cipher localCipher = setupCipher(Cipher.DECRYPT_MODE, "DoL6FBfnYcNJBjH31Vnz6lKATTaDGe4y", null, "RC4");
-			    CipherInputStream localCipherInputStream = new CipherInputStream(new FileInputStream(enc), localCipher);
-			    FileOutputStream localFileOutputStream = new FileOutputStream(new File(enc.getParent()+File.separator+"decrypted_"+enc.getName()));
-			    ByteStreams.copy(new GZIPInputStream(localCipherInputStream), localFileOutputStream);
-			    localFileOutputStream.close();
-			    localCipherInputStream.close();				
-			}
+		    localCipherInputStream.close();				
+		    return true;
+		} catch (Exception e) {
+			try {
+				localFileOutputStream.close();
+				localCipherInputStream.close();
+				dec.delete();
+			} catch (Exception e1) {}
+		    return false;
 		}
 	}
 
