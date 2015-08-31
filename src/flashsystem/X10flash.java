@@ -53,8 +53,6 @@ public class X10flash {
     private int maxpacketsize = 0;
     private String serial = "";
     private Shell _curshell;
-    private TaEntry _8fdunit = null;
-    private TaEntry _8a4unit = null;
     private static Logger logger = Logger.getLogger(X10flash.class);
     private HashMap<Integer,TaEntry> TaPartition2 = new HashMap<Integer,TaEntry>();
     int loaderConfig = 0;
@@ -162,11 +160,7 @@ public class X10flash {
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
 				TaEntry tent = entries.get(i);
-				if (tent.getUnit().equals(_8a4unit.getUnit()) && tent.getData().equals(_8a4unit.getData())) {
-					logger.info("Custumization reset is now based on UI choice");
-				}
-				else
-					sendTAUnit(tent);
+				sendTAUnit(tent);
 			}
     	}
     	catch (TaParseException tae) {
@@ -187,11 +181,7 @@ public class X10flash {
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
 				TaEntry tent = entries.get(i);
-				if (tent.getUnit().equals(_8a4unit.getUnit()) && tent.getData().equals(_8a4unit.getData())) {
-					logger.info("Custumization reset is now based on UI choice");
-				}
-				else
-					sendTAUnit(tent);
+				sendTAUnit(tent);
 			}
     }
 
@@ -630,42 +620,61 @@ public class X10flash {
     	closeTA();
     }
     
-    public void resetStats() throws IOException, X10FlashException {
-		openTA(2);
-		sendTAUnit(_8a4unit);
-		closeTA();    	
-    }
     
     public boolean hasScript() {
     	try {
     		Vector<String> ignored = new Vector<String>();
-    		String file = getFlashScript();
     		TextFile tf = new TextFile(getFlashScript(),"ISO8859-1");
-    		Iterator<Category> e = _bundle.getMeta().getAllEntries(false).iterator();
+    		Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     		while (e.hasNext()) {
     			Category cat = e.next();
     			Iterator<BundleEntry> icat = cat.getEntries().iterator();
     			while (icat.hasNext()) {
-    				String elem = icat.next().getName();
-	    			if (!elem.endsWith(".sin")) continue;
-	    			if (elem.equals("loader.sin")) continue;
-	        		Map<Integer,String> map =  tf.getMap();
-	        		Iterator<Integer> keys = map.keySet().iterator();
-	        		boolean intemplate = false;
-	        		while (keys.hasNext()) {
-	        			String line = map.get(keys.next());
-	        			String param="";
-	        			String[] parsed = line.split(":");
-	        			String action = parsed[0];
-	        			if (action.equals("uploadImage")) {
-	        				param = parsed[1];
-	            			if (elem.contains(param)) {
-	            				intemplate=true;
-	            				break; 
-	            			}
-	        			}
-	        		}
-	        		if (!intemplate) ignored.add(elem);
+    				BundleEntry ent = icat.next();
+    				if (ent.getName().equals("loader.sin")) continue;
+    				if (ent.getName().endsWith(".sin")) {
+    	        		Map<Integer,String> map =  tf.getMap();
+    	        		Iterator<Integer> keys = map.keySet().iterator();
+    	        		boolean intemplate = false;
+    	        		while (keys.hasNext()) {
+    	        			String line = map.get(keys.next());
+    	        			String param="";
+    	        			String[] parsed = line.split(":");
+    	        			String action = parsed[0];
+    	        			if (action.equals("uploadImage")) {
+    	        				param = parsed[1];
+    	            			if (ent.getName().contains(param)) {
+    	            				intemplate=true;
+    	            				break; 
+    	            			}
+    	        			}
+    	        		}
+    	        		if (!intemplate) ignored.add(ent.getName());
+    				}
+    				if (ent.getName().endsWith(".ta")) {
+    					TaFile taf = new TaFile(new File(ent.getAbsolutePath()));
+    					Iterator<TaEntry> itaent = taf.entries().iterator();
+    					while (itaent.hasNext()) {
+    						TaEntry taent = itaent.next();
+        	        		Map<Integer,String> map =  tf.getMap();
+        	        		Iterator<Integer> keys = map.keySet().iterator();
+        	        		boolean intemplate = false;
+        	        		while (keys.hasNext()) {
+        	        			String line = map.get(keys.next());
+        	        			String param="";
+        	        			String[] parsed = line.split(":");
+        	        			String action = parsed[0];
+        	        			if (action.equals("writeTA")) {
+        	        				param = parsed[1];
+        	            			if (Integer.parseInt(taent.getUnit(),16) == Integer.parseInt(param)) {
+        	            				intemplate=true;
+        	            				break; 
+        	            			}
+        	        			}
+        	        		}
+        	        		if (!intemplate) ignored.add("TA unit "+taent.getUnit());
+    					}
+    				}
     			}
     		}
     		if (ignored.size()>0) {
@@ -675,7 +684,7 @@ public class X10flash {
     				dynmsg=dynmsg+eignored.nextElement();
     				if (eignored.hasMoreElements()) dynmsg = dynmsg + ",";
     			}
-    			String result = WidgetTask.openYESNOBox(_curshell, "Those files will not be flashed : "+dynmsg+". Do you want to continue ?");
+    			String result = WidgetTask.openYESNOBox(_curshell, "Those data will not be flashed : "+dynmsg+". Do you want to continue ?");
     			if (Integer.parseInt(result) == SWT.YES) {
     				return true;
     			}
@@ -882,14 +891,6 @@ public class X10flash {
     }
 
     public boolean openDevice(boolean simulate) {
-    	_8fdunit = new TaEntry();
-    	_8fdunit.setUnit("000008FD");
-    	_8fdunit.addData("01");
-    	_8fdunit.setSize("1");
-    	_8a4unit = new TaEntry();
-    	_8a4unit.setUnit("000008A4");
-    	_8a4unit.addData("00 00 00 00 00 00 00 00 00 00 00 00 00 00");
-    	_8a4unit.setSize("0E");
     	if (simulate) return true;
     	LogProgress.initProgress(_bundle.getMaxLoaderProgress());
     	boolean found=false;
