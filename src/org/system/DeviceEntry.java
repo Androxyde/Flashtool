@@ -15,7 +15,7 @@ public class DeviceEntry {
 	PropertiesFile _entry;
 	private Boolean hasBusybox=null;
 	private boolean isRecoveryMode=false;
-	private HashSet<DeviceEntryModel> models = new HashSet<DeviceEntryModel>();
+	//private HashSet<DeviceEntryModel> models = new HashSet<DeviceEntryModel>();
 	
 	public void queryAll() {
 		setVersion();
@@ -306,7 +306,7 @@ public class DeviceEntry {
     	return AdbUtility.getDevices().nextElement();
     }
     
-    public boolean canHandleUpdates() {
+    /*public boolean canHandleUpdates() {
     	Iterator<DeviceEntryModel> i = getModels().iterator();
     	while (i.hasNext()) {
     		if (i.next().getTac().length()>0) return true;
@@ -320,9 +320,9 @@ public class DeviceEntry {
     		if (i.next().getCDA().getProperties().size()>0) return true;
     	}
     	return false;
-    }
+    }*/
     
-    public HashSet<DeviceEntryModel> getModels() {
+    /*public HashSet<DeviceEntryModel> getModels() {
     	if (models.size()==0) {
 			Iterator<String> ivariants = getVariantList().iterator();
 			while (ivariants.hasNext()) {
@@ -330,7 +330,7 @@ public class DeviceEntry {
 			}
     	}
     	return models;
-    }
+    }*/
     
     public boolean hasFlashScript(String model, String version) {
     	

@@ -4,14 +4,15 @@ import flashsystem.io.USBFlash;
 import gui.tools.WidgetTask;
 import gui.tools.XMLBootConfig;
 import gui.tools.XMLBootDelivery;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.io.IOException;
-
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.io.Streams;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.JDOMException;
@@ -25,12 +26,9 @@ import org.system.TextFile;
 import org.util.BytesUtil;
 import org.util.HexDump;
 
+import com.google.common.primitives.Bytes;
+
 import win32lib.JKernel32;
-
-import com.sonymobile.cs.generic.array.ArrayUtils;
-import com.sonymobile.cs.generic.bytes.ByteUtils;
-import com.sonymobile.cs.generic.stream.StreamUtils;
-
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
@@ -251,18 +249,19 @@ public class X10flash {
 		    		}
 		    		else {
 		    			byte[] buff = new byte[3];
-		    			if(StreamUtils.fillArray(inputStream, buff)!=3){
+		    			if(Streams.readFully(inputStream, buff)!=3){
 		    				throw new X10FlashException("Not enough data to read Uint32 when decoding command");
 		    			}
-		    			byte[] unitbuff = ArrayUtils.concatenateByteArrays(new byte[] { (byte)j }, buff);
-		    			long unit = ByteUtils.bytesToInt(ByteUtils.getSubByteArray(unitbuff, 0, unitbuff.length), false) & 0xFFFFFFFF;
+		    			byte[] unitbuff = Bytes.concat(new byte[] { (byte)j }, buff);
+		    			
+		    			long unit = ByteBuffer.wrap(Arrays.copyOfRange(unitbuff, 0, unitbuff.length)).getLong() & 0xFFFFFFFF;
 		    			long unitdatalen = decodeUint32(inputStream);
 		    			if (unitdatalen > 1000000L) {
 		    				throw new X10FlashException("Maximum unit size exceeded, application will handle units of a maximum size of 0x"
 		    			              + Long.toHexString(1000000L) + ". Got a unit of size 0x" + Long.toHexString(unitdatalen) + ".");
 		    			}
 		    			byte[] databuff = new byte[(int)unitdatalen];
-		    			if (StreamUtils.fillArray(inputStream, databuff) != unitdatalen) {
+		    			if (Streams.readFully(inputStream, databuff) != unitdatalen) {
 		    				throw new X10FlashException("Not enough data to read unit data decoding command");
 		    			}
 			        	treeMap.put((int)unit, databuff);
@@ -296,11 +295,11 @@ public class X10flash {
     
     private long decodeUint32(InputStream inputStream) throws IOException, X10FlashException {
     	byte[] buff = new byte[4];
-    	if (StreamUtils.fillArray(inputStream, buff) != 4)
+    	if (Streams.readFully(inputStream, buff) != 4)
     	{
     		throw new X10FlashException("Not enough data to read Uint32 when decoding command");
     	}
-    	return ByteUtils.bytesToInt(ByteUtils.getSubByteArray(buff, 0, buff.length), false) & 0xFFFFFFFF;
+    	return ByteBuffer.wrap(Arrays.copyOfRange(buff, 0, buff.length)).getInt() & 0xFFFFFFFF;
     }
     
     public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
