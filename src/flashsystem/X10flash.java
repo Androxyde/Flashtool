@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.JDOMException;
 import org.logger.LogProgress;
+import org.sinfile.parsers.SinFileException;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.Devices;
@@ -779,42 +780,127 @@ public class X10flash {
 		    if (hasScript()) {
 		    	runScript();
 		    }
-		    else logger.info("You must have the according fsc script to flash this device.");
-		    /*else {
-			    if (_bundle.hasCmd25()) {
-			    	logger.info("Disabling final data verification check");
-			    	if (!_bundle.simulate()) {
-			    		this.disableFinalVerification();
-			    	}
-			    }
-			    setFlashState(true);
-			    sendPartition();
-			    sendPreloader();
-			    sendBootDelivery();
-				sendImages(1);
-				if (_bundle.hasPreloader()) {
-					openTA(2);
-					sendTAUnit(TaPartition2.get(0x0000084F));
-					closeTA();
-				}
-				sendImages(2);
-				sendImages(3);
-				if (_bundle.isBootDeliveryFlashed()) {
-					openTA(2);
-					sendTAUnit(_8fdunit);
-					closeTA();
-				}
-	        	setFlashState(false);
-			    if (_bundle.hasResetStats()) {
-			    	logger.info("Resetting customizations");
-			    	resetStats();
-			    }
-	        	closeDevice(0x01);
-		    }*/
+		    else {
+		    	logger.info("No flash script found. Using 0.9.18 flash engine");
+		    	oldFlashEngine();
+		    }
 			logger.info("Flashing finished.");
 			logger.info("Please unplug and start your phone");
 			logger.info("For flashtool, Unknown Sources and Debugging must be checked in phone settings");
 			LogProgress.initProgress(0);
+    	}
+    	catch (Exception ioe) {
+    		ioe.printStackTrace();
+    		closeDevice();
+    		logger.error(ioe.getMessage());
+    		logger.error("Error flashing. Aborted");
+    		LogProgress.initProgress(0);
+    	}
+    }
+
+    public void sendPartition() throws FileNotFoundException, IOException, X10FlashException {		
+    	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
+    	while (e.hasNext()) {
+    		Category c = e.next();
+    		if (c.getId().contains("PARTITION")) {
+    			BundleEntry entry = c.getEntries().iterator().next();
+    			SinFile sin = new SinFile(entry.getAbsolutePath());
+    			sin.setChunkSize(maxpacketsize);
+    			uploadImage(sin);
+    		}
+    	}
+    }
+
+    public void sendBoot() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
+    	openTA(2);
+    	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
+    	while (e.hasNext()) {
+    		Category c = e.next();
+    		if (c.getId().contains("PARTITION") || c.getId().contains("PRELOAD") || c.getId().contains("SECRO") || c.isTa()) continue;
+    		if (c.isSin()) {
+	    		BundleEntry entry = c.getEntries().iterator().next();
+	    		if (isBoot(entry.getAbsolutePath()) || c.getId().contains("BOOT")) {
+	    			SinFile sin1 = new SinFile(entry.getAbsolutePath());
+	    			sin1.setChunkSize(maxpacketsize);
+	    			uploadImage(sin1);
+	    		}
+    		}
+    	}
+    	closeTA();
+    }
+
+    public void sendSecro() throws X10FlashException, IOException {
+    	BundleEntry preload = null;
+    	BundleEntry secro = null;
+    	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
+    	while (e.hasNext()) {
+    		Category c = e.next();
+    		if (c.getId().contains("PRELOAD")) preload = c.getEntries().iterator().next();
+    		if (c.getId().contains("SECRO")) secro = c.getEntries().iterator().next();
+    	}
+    	if (preload!=null && secro!=null) {
+    		setLoaderConfiguration("00,01,00,00,00,01");
+    		setLoaderConfiguration("00,01,00,00,00,03");
+    		SinFile sinpreload = new SinFile(preload.getAbsolutePath());
+    		sinpreload.setChunkSize(maxpacketsize);
+    		uploadImage(sinpreload);
+    		setLoaderConfiguration("00,01,00,00,00,01");
+    		SinFile sinsecro = new SinFile(secro.getAbsolutePath());
+    		sinsecro.setChunkSize(maxpacketsize);
+    		uploadImage(sinsecro);    		
+    		setLoaderConfiguration("00,01,00,00,00,00");
+    	}
+    }
+    
+    public boolean isBoot(String sinfile) throws SinFileException {
+		org.sinfile.parsers.SinFile sin = new org.sinfile.parsers.SinFile(new File(sinfile));    		
+		return sin.getType()=="BOOT";
+    }
+    
+    public void sendImages() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
+    	openTA(2);
+    	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
+    	while (e.hasNext()) {
+    		Category c = e.next();
+    		if (c.getId().contains("PARTITION") || c.getId().contains("BOOT") || c.getId().contains("PRELOAD") || c.getId().contains("SECRO") || c.isTa()) continue;
+			BundleEntry entry = c.getEntries().iterator().next();
+			if (isBoot(entry.getAbsolutePath())) continue;
+			SinFile sin = new SinFile(entry.getAbsolutePath());
+			sin.setChunkSize(maxpacketsize);
+			uploadImage(sin);
+    	}
+    	closeTA();
+    }
+    
+    public void sendTAFiles()  throws FileNotFoundException, IOException, X10FlashException, TaParseException {
+    	openTA(2);
+    	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
+    	while (e.hasNext()) {
+    		Category c = e.next();
+    		if (c.isTa()) {
+    			BundleEntry entry = c.getEntries().iterator().next();
+    			TaFile taf = new TaFile(new File(entry.getAbsolutePath()));
+    			sendTA(taf);
+    		}
+    	}
+    	closeTA();
+    }
+ 
+    public void oldFlashEngine() {
+    	try {
+		    if (_bundle.hasCmd25()) {
+		    	logger.info("Disabling final data verification check");
+		    	this.disableFinalVerification();
+		    }
+		    setFlashState(true);
+		    sendPartition();
+		    sendSecro();
+		    sendBootDelivery();
+		    sendBoot();
+			sendImages();
+			sendTAFiles();
+        	setFlashState(false);
+        	closeDevice(0x01);
     	}
     	catch (Exception ioe) {
     		ioe.printStackTrace();

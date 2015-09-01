@@ -11,6 +11,8 @@ public class Category implements Comparable {
 	private String fpath;
 	private List<BundleEntry> entries = new ArrayList<BundleEntry>();
 	boolean enabled = false;
+	boolean issin = false;
+	boolean ista = false;
 
 		  public String getId() {
 		    return id;
@@ -26,12 +28,22 @@ public class Category implements Comparable {
 		  
 		  public void addEntry(BundleEntry f) {
 			  entries.add(f);
+			  if (f.getName().endsWith(".sin")) issin=true;
+			  if (f.getName().endsWith(".ta")) ista=true;
 		  }
 		  
 		  public String toString() {
 			  return id;
 		  }
 
+		  public boolean isTa() {
+			  return ista;
+		  }
+		  
+		  public boolean isSin() {
+			  return issin;
+		  }
+		  
 		  public boolean equals(Category c) {
 			  return c.getId().equals(id);
 		  }

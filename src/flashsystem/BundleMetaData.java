@@ -76,6 +76,7 @@ public class BundleMetaData {
 	}
 
 	public void process(BundleEntry f) throws Exception {
+		if (f.getName().equals("fwinfo.xml")) return;
 		Category cat = new Category();
 		cat.setId(f.getCategory());
 		cat.addEntry(f);
