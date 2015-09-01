@@ -781,6 +781,7 @@ public class X10flash {
 		    	runScript();
 		    }
 		    else {
+		    	logger.info("No flash script found. Using 0.9.18 flash engine");
 		    	oldFlashEngine();
 		    }
 			logger.info("Flashing finished.");
