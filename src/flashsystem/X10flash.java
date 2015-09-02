@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.io.IOException;
 import org.apache.log4j.Logger;
-import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.io.Streams;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -25,17 +24,13 @@ import org.system.OS;
 import org.system.TextFile;
 import org.util.BytesUtil;
 import org.util.HexDump;
-
 import com.google.common.primitives.Bytes;
-
-import win32lib.JKernel32;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -252,9 +247,9 @@ public class X10flash {
 		    			if(Streams.readFully(inputStream, buff)!=3){
 		    				throw new X10FlashException("Not enough data to read Uint32 when decoding command");
 		    			}
-		    			byte[] unitbuff = Bytes.concat(new byte[] { (byte)j }, buff);
 		    			
-		    			long unit = ByteBuffer.wrap(Arrays.copyOfRange(unitbuff, 0, unitbuff.length)).getLong() & 0xFFFFFFFF;
+		    			byte[] unitbuff = Bytes.concat(new byte[] { (byte)j }, buff);
+		    			long unit = ByteBuffer.wrap(unitbuff).getInt() & 0xFFFFFFFF;
 		    			long unitdatalen = decodeUint32(inputStream);
 		    			if (unitdatalen > 1000000L) {
 		    				throw new X10FlashException("Maximum unit size exceeded, application will handle units of a maximum size of 0x"
@@ -299,7 +294,8 @@ public class X10flash {
     	{
     		throw new X10FlashException("Not enough data to read Uint32 when decoding command");
     	}
-    	return ByteBuffer.wrap(Arrays.copyOfRange(buff, 0, buff.length)).getInt() & 0xFFFFFFFF;
+    	long longval = ByteBuffer.wrap(buff).getInt();
+    	return  longval & 0xFFFFFFFF;
     }
     
     public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
