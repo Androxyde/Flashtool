@@ -797,7 +797,7 @@ public class X10flash {
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     	while (e.hasNext()) {
     		Category c = e.next();
-    		if (c.getId().contains("PARTITION")) {
+    		if (c.isPartition()) {
     			BundleEntry entry = c.getEntries().iterator().next();
     			SinFile sin = new SinFile(entry.getAbsolutePath());
     			sin.setChunkSize(maxpacketsize);
@@ -811,14 +811,13 @@ public class X10flash {
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     	while (e.hasNext()) {
     		Category c = e.next();
-    		if (c.getId().contains("PARTITION") || c.getId().contains("PRELOAD") || c.getId().contains("SECRO") || c.isTa()) continue;
-    		if (c.isSin()) {
-	    		BundleEntry entry = c.getEntries().iterator().next();
-	    		if (isBoot(entry.getAbsolutePath()) || c.getId().contains("BOOT")) {
-	    			SinFile sin1 = new SinFile(entry.getAbsolutePath());
-	    			sin1.setChunkSize(maxpacketsize);
-	    			uploadImage(sin1);
-	    		}
+    		if (c.isSoftware()) {
+				BundleEntry entry = c.getEntries().iterator().next();
+				if (isBoot(entry.getAbsolutePath())) {
+					SinFile sin = new SinFile(entry.getAbsolutePath());
+					sin.setChunkSize(maxpacketsize);
+					uploadImage(sin);
+				}
     		}
     	}
     	closeTA();
@@ -830,8 +829,8 @@ public class X10flash {
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     	while (e.hasNext()) {
     		Category c = e.next();
-    		if (c.getId().contains("PRELOAD")) preload = c.getEntries().iterator().next();
-    		if (c.getId().contains("SECRO")) secro = c.getEntries().iterator().next();
+    		if (c.isPreload()) preload = c.getEntries().iterator().next();
+    		if (c.isSecro()) secro = c.getEntries().iterator().next();
     	}
     	if (preload!=null && secro!=null) {
     		setLoaderConfiguration("00,01,00,00,00,01");
@@ -848,25 +847,59 @@ public class X10flash {
     }
     
     public boolean isBoot(String sinfile) throws SinFileException {
-		org.sinfile.parsers.SinFile sin = new org.sinfile.parsers.SinFile(new File(sinfile));    		
+		org.sinfile.parsers.SinFile sin = new org.sinfile.parsers.SinFile(new File(sinfile));
+		if (sin.getName().toUpperCase().contains("BOOT")) return true;
 		return sin.getType()=="BOOT";
     }
     
-    public void sendImages() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
+    public void sendSoftware() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
     	openTA(2);
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     	while (e.hasNext()) {
     		Category c = e.next();
-    		if (c.getId().contains("PARTITION") || c.getId().contains("BOOT") || c.getId().contains("PRELOAD") || c.getId().contains("SECRO") || c.isTa()) continue;
-			BundleEntry entry = c.getEntries().iterator().next();
-			if (isBoot(entry.getAbsolutePath())) continue;
-			SinFile sin = new SinFile(entry.getAbsolutePath());
-			sin.setChunkSize(maxpacketsize);
-			uploadImage(sin);
+    		if (c.isSoftware()) {
+				BundleEntry entry = c.getEntries().iterator().next();
+				if (isBoot(entry.getAbsolutePath())) continue;
+				SinFile sin = new SinFile(entry.getAbsolutePath());
+				sin.setChunkSize(maxpacketsize);
+				uploadImage(sin);
+    		}
     	}
     	closeTA();
     }
-    
+
+    public void sendElabel() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
+    	openTA(2);
+    	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
+    	while (e.hasNext()) {
+    		Category c = e.next();
+    		if (c.isElabel()) {
+				BundleEntry entry = c.getEntries().iterator().next();
+				if (isBoot(entry.getAbsolutePath())) continue;
+				SinFile sin = new SinFile(entry.getAbsolutePath());
+				sin.setChunkSize(maxpacketsize);
+				uploadImage(sin);
+    		}
+    	}
+    	closeTA();
+    }
+
+    public void sendSystem() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
+    	openTA(2);
+    	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
+    	while (e.hasNext()) {
+    		Category c = e.next();
+    		if (c.isSystem()) {
+				BundleEntry entry = c.getEntries().iterator().next();
+				if (isBoot(entry.getAbsolutePath())) continue;
+				SinFile sin = new SinFile(entry.getAbsolutePath());
+				sin.setChunkSize(maxpacketsize);
+				uploadImage(sin);
+    		}
+    	}
+    	closeTA();
+    }
+
     public void sendTAFiles()  throws FileNotFoundException, IOException, X10FlashException, TaParseException {
     	openTA(2);
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
@@ -892,8 +925,10 @@ public class X10flash {
 		    sendSecro();
 		    sendBootDelivery();
 		    sendBoot();
-			sendImages();
+			sendSoftware();
+			sendSystem();
 			sendTAFiles();
+			sendElabel();
         	setFlashState(false);
         	closeDevice(0x01);
     	}
