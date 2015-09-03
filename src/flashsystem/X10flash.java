@@ -4,14 +4,14 @@ import flashsystem.io.USBFlash;
 import gui.tools.WidgetTask;
 import gui.tools.XMLBootConfig;
 import gui.tools.XMLBootDelivery;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.io.IOException;
-
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.io.Streams;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.JDOMException;
@@ -24,20 +24,13 @@ import org.system.OS;
 import org.system.TextFile;
 import org.util.BytesUtil;
 import org.util.HexDump;
-
-import win32lib.JKernel32;
-
-import com.sonymobile.cs.generic.array.ArrayUtils;
-import com.sonymobile.cs.generic.bytes.ByteUtils;
-import com.sonymobile.cs.generic.stream.StreamUtils;
-
+import com.google.common.primitives.Bytes;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -251,18 +244,19 @@ public class X10flash {
 		    		}
 		    		else {
 		    			byte[] buff = new byte[3];
-		    			if(StreamUtils.fillArray(inputStream, buff)!=3){
+		    			if(Streams.readFully(inputStream, buff)!=3){
 		    				throw new X10FlashException("Not enough data to read Uint32 when decoding command");
 		    			}
-		    			byte[] unitbuff = ArrayUtils.concatenateByteArrays(new byte[] { (byte)j }, buff);
-		    			long unit = ByteUtils.bytesToInt(ByteUtils.getSubByteArray(unitbuff, 0, unitbuff.length), false) & 0xFFFFFFFF;
+		    			
+		    			byte[] unitbuff = Bytes.concat(new byte[] { (byte)j }, buff);
+		    			long unit = ByteBuffer.wrap(unitbuff).getInt() & 0xFFFFFFFF;
 		    			long unitdatalen = decodeUint32(inputStream);
 		    			if (unitdatalen > 1000000L) {
 		    				throw new X10FlashException("Maximum unit size exceeded, application will handle units of a maximum size of 0x"
 		    			              + Long.toHexString(1000000L) + ". Got a unit of size 0x" + Long.toHexString(unitdatalen) + ".");
 		    			}
 		    			byte[] databuff = new byte[(int)unitdatalen];
-		    			if (StreamUtils.fillArray(inputStream, databuff) != unitdatalen) {
+		    			if (Streams.readFully(inputStream, databuff) != unitdatalen) {
 		    				throw new X10FlashException("Not enough data to read unit data decoding command");
 		    			}
 			        	treeMap.put((int)unit, databuff);
@@ -296,11 +290,12 @@ public class X10flash {
     
     private long decodeUint32(InputStream inputStream) throws IOException, X10FlashException {
     	byte[] buff = new byte[4];
-    	if (StreamUtils.fillArray(inputStream, buff) != 4)
+    	if (Streams.readFully(inputStream, buff) != 4)
     	{
     		throw new X10FlashException("Not enough data to read Uint32 when decoding command");
     	}
-    	return ByteUtils.bytesToInt(ByteUtils.getSubByteArray(buff, 0, buff.length), false) & 0xFFFFFFFF;
+    	long longval = ByteBuffer.wrap(buff).getInt();
+    	return  longval & 0xFFFFFFFF;
     }
     
     public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
@@ -802,7 +797,7 @@ public class X10flash {
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     	while (e.hasNext()) {
     		Category c = e.next();
-    		if (c.getId().contains("PARTITION")) {
+    		if (c.isPartition()) {
     			BundleEntry entry = c.getEntries().iterator().next();
     			SinFile sin = new SinFile(entry.getAbsolutePath());
     			sin.setChunkSize(maxpacketsize);
@@ -816,14 +811,13 @@ public class X10flash {
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     	while (e.hasNext()) {
     		Category c = e.next();
-    		if (c.getId().contains("PARTITION") || c.getId().contains("PRELOAD") || c.getId().contains("SECRO") || c.isTa()) continue;
-    		if (c.isSin()) {
-	    		BundleEntry entry = c.getEntries().iterator().next();
-	    		if (isBoot(entry.getAbsolutePath()) || c.getId().contains("BOOT")) {
-	    			SinFile sin1 = new SinFile(entry.getAbsolutePath());
-	    			sin1.setChunkSize(maxpacketsize);
-	    			uploadImage(sin1);
-	    		}
+    		if (c.isSoftware()) {
+				BundleEntry entry = c.getEntries().iterator().next();
+				if (isBoot(entry.getAbsolutePath())) {
+					SinFile sin = new SinFile(entry.getAbsolutePath());
+					sin.setChunkSize(maxpacketsize);
+					uploadImage(sin);
+				}
     		}
     	}
     	closeTA();
@@ -835,8 +829,8 @@ public class X10flash {
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     	while (e.hasNext()) {
     		Category c = e.next();
-    		if (c.getId().contains("PRELOAD")) preload = c.getEntries().iterator().next();
-    		if (c.getId().contains("SECRO")) secro = c.getEntries().iterator().next();
+    		if (c.isPreload()) preload = c.getEntries().iterator().next();
+    		if (c.isSecro()) secro = c.getEntries().iterator().next();
     	}
     	if (preload!=null && secro!=null) {
     		setLoaderConfiguration("00,01,00,00,00,01");
@@ -853,25 +847,59 @@ public class X10flash {
     }
     
     public boolean isBoot(String sinfile) throws SinFileException {
-		org.sinfile.parsers.SinFile sin = new org.sinfile.parsers.SinFile(new File(sinfile));    		
+		org.sinfile.parsers.SinFile sin = new org.sinfile.parsers.SinFile(new File(sinfile));
+		if (sin.getName().toUpperCase().contains("BOOT")) return true;
 		return sin.getType()=="BOOT";
     }
     
-    public void sendImages() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
+    public void sendSoftware() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
     	openTA(2);
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     	while (e.hasNext()) {
     		Category c = e.next();
-    		if (c.getId().contains("PARTITION") || c.getId().contains("BOOT") || c.getId().contains("PRELOAD") || c.getId().contains("SECRO") || c.isTa()) continue;
-			BundleEntry entry = c.getEntries().iterator().next();
-			if (isBoot(entry.getAbsolutePath())) continue;
-			SinFile sin = new SinFile(entry.getAbsolutePath());
-			sin.setChunkSize(maxpacketsize);
-			uploadImage(sin);
+    		if (c.isSoftware()) {
+				BundleEntry entry = c.getEntries().iterator().next();
+				if (isBoot(entry.getAbsolutePath())) continue;
+				SinFile sin = new SinFile(entry.getAbsolutePath());
+				sin.setChunkSize(maxpacketsize);
+				uploadImage(sin);
+    		}
     	}
     	closeTA();
     }
-    
+
+    public void sendElabel() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
+    	openTA(2);
+    	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
+    	while (e.hasNext()) {
+    		Category c = e.next();
+    		if (c.isElabel()) {
+				BundleEntry entry = c.getEntries().iterator().next();
+				if (isBoot(entry.getAbsolutePath())) continue;
+				SinFile sin = new SinFile(entry.getAbsolutePath());
+				sin.setChunkSize(maxpacketsize);
+				uploadImage(sin);
+    		}
+    	}
+    	closeTA();
+    }
+
+    public void sendSystem() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
+    	openTA(2);
+    	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
+    	while (e.hasNext()) {
+    		Category c = e.next();
+    		if (c.isSystem()) {
+				BundleEntry entry = c.getEntries().iterator().next();
+				if (isBoot(entry.getAbsolutePath())) continue;
+				SinFile sin = new SinFile(entry.getAbsolutePath());
+				sin.setChunkSize(maxpacketsize);
+				uploadImage(sin);
+    		}
+    	}
+    	closeTA();
+    }
+
     public void sendTAFiles()  throws FileNotFoundException, IOException, X10FlashException, TaParseException {
     	openTA(2);
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
@@ -897,8 +925,10 @@ public class X10flash {
 		    sendSecro();
 		    sendBootDelivery();
 		    sendBoot();
-			sendImages();
+			sendSoftware();
+			sendSystem();
 			sendTAFiles();
+			sendElabel();
         	setFlashState(false);
         	closeDevice(0x01);
     	}

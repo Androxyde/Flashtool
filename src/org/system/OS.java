@@ -14,6 +14,7 @@ import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
@@ -27,20 +28,23 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.crypto.NoSuchPaddingException;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.lf5.util.StreamUtils;
 import org.logger.LogProgress;
 import org.util.HexDump;
-
-import com.sonymobile.cs.generic.encoding.RC4DecryptingInputStream;
-import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
-
+import com.google.common.io.BaseEncoding;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.Adler32;
 
 public class OS {
 
 	private static Logger logger = Logger.getLogger(OS.class);
+	
+	public static String RC4Key = "DoL6FBfnYcNJBjH31Vnz6lKATTaDGe4y";
+	public static String AESKey = "qAp!wmvl!cOS7xSQV!aoR7Qz*neY^5Sx";
+	public static String AESIV  = "5621616F5237517A21634F5337785351";
 	
 	public static String getName() {
 		  String os = "";
@@ -471,11 +475,11 @@ public class OS {
     	}
     }
 
-    public static void decrypt(File infile) {
+    public static void decrypt(File infile) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
 		byte[] buf = new byte[1024];
 		try {
 			if (!infile.getName().endsWith(".enc")) throw new IOException("Bad filename");
-			RC4DecryptingInputStream in = new RC4DecryptingInputStream(new FileInputStream(infile));
+			RC4InputStream in = new RC4InputStream(new FileInputStream(infile));
 			File outfile = new File(infile.getAbsolutePath().substring(0, infile.getAbsolutePath().length()-4));
 	        OutputStream out = new FileOutputStream(outfile);
 	        int len;
@@ -490,12 +494,12 @@ public class OS {
 	      }
 	}
 
-	  public static void encrypt(File infile) {
+	  public static void encrypt(File infile) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
 		  byte[] buf = new byte[1024];
 	      try {
 	    	  String outname = infile.getAbsolutePath()+".enc";
 	    	  FileInputStream in = new FileInputStream(infile);
-	    	  RC4EncryptingOutputStream out = new RC4EncryptingOutputStream(new FileOutputStream(outname));
+	    	  RC4OutputStream out = new RC4OutputStream(new FileOutputStream(outname));
 	    	  int len;
 	    	  while((len = in.read(buf)) >= 0) {
 	    		  if (len > 0)

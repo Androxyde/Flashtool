@@ -686,27 +686,6 @@ public class MainSWT {
 		});
 		mntmNewItem_2.setText("Add Update URL");*/
 		
-		MenuItem mntmCdfidManager = new MenuItem(menu_7, SWT.NONE);
-		mntmCdfidManager.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Properties p = new Properties();
-				Enumeration<Object> list = Devices.listDevices(false);
-				while (list.hasMoreElements()) {
-					DeviceEntry entry = Devices.getDevice((String)list.nextElement());
-					if (entry.canHandleUpdates()) {
-						p.setProperty(entry.getId(), entry.getName());
-					}
-				}
-				String result = WidgetTask.openDeviceSelector(shlSonyericsson, p);
-				if (result.length()>0) {
-					DeviceEntry entry = new DeviceEntry(result);
-					CustIdManager mng = new CustIdManager(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-					mng.open(entry);
-				}
-			}
-		});
-		mntmCdfidManager.setText("cdfID Editor");
 		
 		//MenuItem mntmEdit = new MenuItem(menu_7, SWT.NONE);
 		//mntmEdit.setText("Edit");

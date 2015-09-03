@@ -1,38 +1,26 @@
 package flashsystem;
 
-import com.google.common.hash.Hashing;
-import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
-import com.sonymobile.cs.generic.encoding.RC4EncryptingOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.Security;
 import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import org.apache.log4j.Logger;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.sinfile.parsers.SinFileException;
+import org.system.AESInputStream;
+import org.system.RC4InputStream;
+import org.system.RC4OutputStream;
 import org.ta.parsers.TAFileParseException;
 import org.ta.parsers.TAFileParser;
 
@@ -62,6 +50,7 @@ public class SeusSinTool {
 	    		 streamOut.close();
 	    		 try {
 		    			 ZipFile subzip = new ZipFile(out);
+		    			 logger.info("Extracting "+out.getName());
 		    			 String subfolder = folder + File.separator+entry.getName().substring(0,entry.getName().lastIndexOf("."));
 		    			 new File(subfolder).mkdirs();
 		    			 Enumeration<? extends ZipEntry> subentries = subzip.entries();
@@ -106,25 +95,6 @@ public class SeusSinTool {
 	    dec.delete();
 	}
 	
-    private static Cipher setupCipher(int mode, String key, String IV, String method) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchProviderException {
-        if (Security.getProvider("BC") == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
-        if (method.equals("AES/CTR/NoPadding")) {
-            SecretKeySpec secretKeySpec = new SecretKeySpec(Hashing.sha256().hashBytes(key.getBytes("UTF-8")).asBytes(), "AES");
-        	IvParameterSpec ivParameterSpec = new IvParameterSpec(BaseEncoding.base16().decode(IV));
-        	Cipher cipher = Cipher.getInstance(method, "BC");
-        	cipher.init(mode, secretKeySpec, ivParameterSpec);
-        	return cipher;
-        }
-        else {
-        	SecretKeySpec secretKeySpec = new SecretKeySpec(BaseEncoding.base64().decode(key), "RC4");
-        	Cipher cipher = Cipher.getInstance(method);
-        	cipher.init(mode, secretKeySpec);
-        	return cipher;
-        }
-    }
-
 	public static boolean decrypt(File enc, File dec)  {
 		if (decryptUncrypted(enc,dec)) return true;
 		if (decryptAES(enc,dec)) return true;
@@ -154,19 +124,18 @@ public class SeusSinTool {
 
 	public static boolean decryptAES(File enc, File dec) {
 		FileOutputStream localFileOutputStream=null;
-		CipherInputStream localCipherInputStream=null;
+		GZIPInputStream localEncodedStream = null;
 		try {
-			Cipher localCipher = setupCipher(Cipher.DECRYPT_MODE, "qAp!wmvl!cOS7xSQV!aoR7Qz*neY^5Sx", "5621616F5237517A21634F5337785351", "AES/CTR/NoPadding");
-			localCipherInputStream = new CipherInputStream(new FileInputStream(enc), localCipher);
-			localFileOutputStream = new FileOutputStream(dec);
-			ByteStreams.copy(new GZIPInputStream(localCipherInputStream), localFileOutputStream);
-			localFileOutputStream.close();
-			localCipherInputStream.close();
+		    localFileOutputStream = new FileOutputStream(dec);
+		    localEncodedStream = new GZIPInputStream(new AESInputStream(new FileInputStream(enc)));
+		    ByteStreams.copy(localEncodedStream, localFileOutputStream);
+		    localFileOutputStream.close();
+		    localEncodedStream.close();				
 		    return true;
 		} catch (Exception e) {
 			try {
 				localFileOutputStream.close();
-				localCipherInputStream.close();
+				localEncodedStream.close();
 				dec.delete();
 			} catch (Exception e1) {}
 		    return false;
@@ -175,31 +144,30 @@ public class SeusSinTool {
 
 	public static boolean decryptRC4(File enc, File dec) {
 		FileOutputStream localFileOutputStream=null;
-		CipherInputStream localCipherInputStream=null;
+		GZIPInputStream localEncodedStream = null;
 		try {
-			Cipher localCipher = setupCipher(Cipher.DECRYPT_MODE, "DoL6FBfnYcNJBjH31Vnz6lKATTaDGe4y", null, "RC4");
-		    localCipherInputStream = new CipherInputStream(new FileInputStream(enc), localCipher);
 		    localFileOutputStream = new FileOutputStream(dec);
-		    ByteStreams.copy(new GZIPInputStream(localCipherInputStream), localFileOutputStream);
+		    localEncodedStream = new GZIPInputStream(new RC4InputStream(new FileInputStream(enc)));
+		    ByteStreams.copy(localEncodedStream, localFileOutputStream);
 		    localFileOutputStream.close();
-		    localCipherInputStream.close();				
+		    localEncodedStream.close();				
 		    return true;
 		} catch (Exception e) {
 			try {
 				localFileOutputStream.close();
-				localCipherInputStream.close();
+				localEncodedStream.close();
 				dec.delete();
 			} catch (Exception e1) {}
 		    return false;
 		}
 	}
 
-	public static void encrypt(String tgzfile) {
+	public static void encryptRC4(String tgzfile) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
 		  byte[] buf = new byte[1024];
 	      try {
 	    	  String outname = tgzfile.replaceAll(".tgz", ".sin");
 	    	  FileInputStream in = new FileInputStream(tgzfile);
-	    	  RC4EncryptingOutputStream out = new RC4EncryptingOutputStream(new FileOutputStream(outname));
+	    	  RC4OutputStream out = new RC4OutputStream(new FileOutputStream(outname));
 	    	  int len;
 	    	  while((len = in.read(buf)) >= 0) {
 	    		  if (len > 0)
@@ -212,7 +180,7 @@ public class SeusSinTool {
 	        e.printStackTrace();
 	      }
 	}
-	
+
 	public static File getFile(File file) {
 		if (file.exists()) {
 			int i=1;

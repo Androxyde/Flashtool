@@ -25,12 +25,11 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.Deflater;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
 import org.system.Devices;
 import org.system.OS;
-
-import com.sonymobile.cs.generic.file.FileUtils;
 import com.turn.ttorrent.common.Torrent;
 
 public final class Bundle {
@@ -404,7 +403,7 @@ public final class Bundle {
 	public boolean open() {
 		try {
 			logger.info("Preparing files for flashing");
-			FileUtils.deleteDir(new File(OS.getFolderFirmwaresPrepared()));
+			FileUtils.deleteDirectory(new File(OS.getFolderFirmwaresPrepared()));
 			File f = new File(OS.getFolderFirmwaresPrepared());
 			f.mkdir();
 			logger.debug("Created the "+f.getName()+" folder");

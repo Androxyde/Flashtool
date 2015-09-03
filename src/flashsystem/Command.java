@@ -1,12 +1,15 @@
 package flashsystem;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.util.HexDump;
 
-import com.sonymobile.cs.generic.array.ArrayUtils;
+import com.google.common.collect.ObjectArrays;
+import com.google.common.primitives.Bytes;
 
 import flashsystem.io.USBFlash;
 
@@ -128,7 +131,7 @@ public class Command {
     	}
     	while(isMultiPacketMessage()) {
     		writeCommand(cmd, data, ongoing);
-	    	reply = ArrayUtils.concatenateByteArrays(reply, USBFlash.getLastReply());
+	    	reply = Bytes.concat(reply,USBFlash.getLastReply());
 	    	if (USBFlash.getLastFlags()==0) {
 	    		writeCommand(Command.CMD07, Command.VALNULL, false);
 	    		throw new X10FlashException(getLastReplyString());
