@@ -1,4 +1,4 @@
-package flashsystem;
+package flashsystem.sin;
 
 import org.system.OS;
 import org.util.BytesUtil;

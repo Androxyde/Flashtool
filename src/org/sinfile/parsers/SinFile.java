@@ -1,7 +1,9 @@
 package org.sinfile.parsers;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -20,6 +22,9 @@ public class SinFile {
 	int version=0;
 	JBBPBitInputStream sinStream = null;
 	FileInputStream fin = null;
+	BufferedInputStream bin = null;
+	private int packetsize=0;
+	private int nbchunks=0;
 
 	
 	public org.sinfile.parsers.v1.SinParser sinv1 = null;
@@ -131,12 +136,13 @@ public class SinFile {
 	public void closeStreams() {
 		try {
 			sinStream.close();
-		} catch (Exception e) {
-		}
+		} catch (Exception e) {}
 		try {
 			fin.close();
-		} catch (Exception e) {
-		}		
+		} catch (Exception e) {}
+		try {
+			bin.close();
+		} catch (Exception e) {}
 	}
 	
 	public String getName() {
@@ -321,6 +327,52 @@ public class SinFile {
 			name = name.substring(0,extpos);
 		}
 		return name;
+	}
+
+	public void setChunkSize(int size) {
+		packetsize=size;
+		try {
+			bin = new BufferedInputStream(new FileInputStream(sinfile));
+			bin.skip(getHeaderLength());
+			int avail = bin.available();
+			bin.close();
+			nbchunks = avail/packetsize;
+			if (avail%packetsize>0) nbchunks++;
+		} catch (Exception e) {}
+
+	}
+	
+	public int getChunkSize() {
+		return packetsize;
+	}
+	
+	public int getNbChunks() throws IOException {
+		return nbchunks;
+	}
+
+	public void openForSending() throws IOException {
+		bin = new BufferedInputStream(new FileInputStream(sinfile));
+		bin.skip(getHeaderLength());
+	}
+	
+	public boolean hasData() throws IOException {
+		if (bin.available()==0) {
+			closeStreams();
+			return false;
+		}
+		return true;
+	}
+	
+	public byte[] getNextChunk() throws IOException {
+		try {
+			byte[] b = new byte[packetsize];
+			int nbread = bin.read(b);
+			if (nbread!=b.length) return BytesUtil.getReply(b, nbread);
+			return b;
+		}
+		catch (IOException ioe) {
+			return null;
+		}
 	}
 
 }

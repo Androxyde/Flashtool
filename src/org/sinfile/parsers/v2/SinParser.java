@@ -21,9 +21,6 @@ import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
 import com.igormaznitsa.jbbp.io.JBBPByteOrder;
 import com.igormaznitsa.jbbp.mapper.Bin;
 
-import flashsystem.SinFile;
-import flashsystem.SinHashBlock;
-
 
 public class SinParser {
 	  @Bin public byte multipleHeaders;

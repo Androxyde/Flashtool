@@ -130,6 +130,7 @@ public class Command {
     		throw new X10FlashException(getLastReplyString());
     	}
     	while(isMultiPacketMessage()) {
+    		System.out.println("Multipacket");
     		writeCommand(cmd, data, ongoing);
 	    	reply = Bytes.concat(reply,USBFlash.getLastReply());
 	    	if (USBFlash.getLastFlags()==0) {

@@ -1,4 +1,4 @@
-package flashsystem;
+package flashsystem.sin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
