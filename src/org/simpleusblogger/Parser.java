@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.system.TextFile;
 import org.util.HexDump;
 
 import com.igormaznitsa.jbbp.JBBPParser;
@@ -48,6 +49,8 @@ public class Parser {
 		  
 	  public static Session parse(String usblog, String extractedsin) throws Exception {
 		  
+		  TextFile tf = new TextFile("D:\\usb.txt","ISO8859-1");
+		  tf.open(false);
 		  	Session session = new Session();
 		  	S1Packet current=null;
 			USBHeader head=null;
@@ -59,7 +62,11 @@ public class Parser {
 			while (usbStream.hasAvailableData()) {
 				USBRecord rec = readRecord(usbStream);
 				rec.recnum=recnum++;
-
+				if (rec.header!=null) {
+					//if (rec.header.usb_TransferFlags==0)
+						//System.out.println(rec.header.usb_TransferBuffer + " / "+rec.header.usb_TransferBufferLength+" / "+rec.header.usb_TransferBufferMDL);
+				}
+					
 				if (rec.header==null) continue;
 				if (rec.header.usb_UsbDeviceHandle==0) continue;
 				
@@ -78,16 +85,20 @@ public class Parser {
 						p.setDirection(rec.header.usb_TransferFlags);
 						if (current!=null) {
 							current.finalise();
-							if (current.getCommand()!=6) {
+							//if (current.getCommand()!=6) {
 								if (current.direction.equals("READ REPLY")) {
 									if (current.getLength()>0)
-										session.addPacket(current);
+										if (current.getCommand()!=6)
+											session.addPacket(current);
 								} else {
 									if (current.getCommand()==5)
 										current.setFileName(getSin(extractedsin,current.data));
-									session.addPacket(current);
+									if (current.getCommand()!=6)
+										session.addPacket(current);
+									tf.writeln(current.getStartRecord() + " : " + current.getCommandName()+ " / " + current.getSin() + " / " + current.getNbParts() + " " + current.getLength());
 								}
-							}
+							//}
+							
 						}
 						current = p;
 					}
@@ -99,6 +110,7 @@ public class Parser {
 				}
 			}
 			usbStream.close();
+			tf.close();
 			return session;
 	  }
 	  

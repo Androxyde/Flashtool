@@ -24,16 +24,6 @@ public class USBFlash {
 		}
 	}
 
-	public static void setUSBBuffer(int buffer) {
-		if (OS.getName().equals("windows")) {
-			USBFlashWin32.setUSBBuffer(buffer);
-		}
-		else {
-			USBFlashLinux.setUSBBuffer(buffer);
-		}
-		logger.info("Transfer buffer size : "+buffer);
-	}
-
 	public static void writeS1(S1Packet p,boolean withprogressupdate) throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
 			USBFlashWin32.windowsWriteS1(p);

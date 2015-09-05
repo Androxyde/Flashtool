@@ -1,4 +1,4 @@
-package flashsystem;
+package flashsystem.sin;
 
 import java.util.HashMap;
 import java.util.Set;

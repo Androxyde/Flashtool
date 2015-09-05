@@ -18,12 +18,6 @@ public class USBFlashWin32 {
 	private static int lastflags;
 	private static byte[] lastreply;
 	private static Logger logger = Logger.getLogger(USBFlashWin32.class);
-	private static int usbbuffer=4*(512*1024);
-	
-	
-	public static void setUSBBuffer(int buffer) {
-		usbbuffer=buffer;
-	}
 	
 	public static void windowsOpen(String pid) throws IOException {
 		try {
@@ -46,27 +40,10 @@ public class USBFlashWin32 {
 	}
 
 	public static boolean windowsWriteS1(S1Packet p) throws IOException,X10FlashException {
-		logger.debug("Writing packet to phone");
-		
-		if (p.getDataLength()>usbbuffer) {
-			JKernel32.writeBytes(p.getHeaderWithChecksum());
-			JBBPBitInputStream dataStream = new JBBPBitInputStream(new ByteArrayInputStream(p.getDataArray()));
-			int sent=0;
-			while (dataStream.hasAvailableData()) {
-				if (sent+usbbuffer>p.getDataLength()) {
-					byte[] buf = dataStream.readByteArray(p.getDataLength()-sent);
-					JKernel32.writeBytes(buf);
-				}
-				else {
-					byte[] buf = dataStream.readByteArray(usbbuffer);
-					JKernel32.writeBytes(buf);
-					sent+=usbbuffer;
-				}
-			}
-			JKernel32.writeBytes(p.getCRC32());
-		}
-		else
-			JKernel32.writeBytes(p.getByteArray());
+		logger.debug("Writing packet to phone");		
+		JKernel32.writeBytes(p.getHeaderWithChecksum());
+		JKernel32.writeBytes(p.getDataArray());
+		JKernel32.writeBytes(p.getCRC32());
 		logger.debug("OUT : " + p);
 		return true;
 	}
@@ -92,11 +69,11 @@ public class USBFlashWin32 {
     public static void windowsReadReply() throws X10FlashException, IOException {
     	lastreply = JKernel32.readBytes();
     }
-    
+
     public static int windowsGetLastFlags() {
     	return lastflags;
     }
-    
+
     public static byte[] windowsGetLastReply() {
     	return lastreply;
     }

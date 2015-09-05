@@ -20,11 +20,19 @@ public class S1Packet {
 	byte[] crc = null;
 	int startrecord=0;
 	int datalength=0;
+	int nbparts=1;
 	String direction="";
 	String sinname="";
 	String action = "";
 	String actionreply="";
 
+	public int getStartRecord() {
+		return startrecord;
+	}
+	public int getNbParts() {
+		return nbparts;
+	}
+	
 	public boolean isHeaderOK() {
 		byte computed = calcSum(BytesUtil.concatAll(command, flag, length));
 		return (computed == headercksum) && (getCommandName().length() >0);
@@ -90,6 +98,7 @@ public class S1Packet {
 			data = pdata;
 		else
 			data = BytesUtil.concatAll(data, pdata);
+		nbparts++;
 	}
 	
 	public void setRecord(int recnum) {

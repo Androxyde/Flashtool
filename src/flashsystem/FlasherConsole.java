@@ -11,6 +11,7 @@ import gui.MainSWT;
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.logger.MyLogger;
+import org.sinfile.parsers.SinFile;
 import org.system.AdbPhoneThread;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
@@ -159,7 +160,7 @@ public class FlasherConsole {
 	
 	public static void doExtract(String file) {
 		try {
-			SinFile sin = new SinFile(file);
+			SinFile sin = new SinFile(new File(file));
 			sin.dumpImage();
 		}
 		catch (Exception e) {

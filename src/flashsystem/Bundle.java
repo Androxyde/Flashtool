@@ -28,6 +28,7 @@ import java.util.zip.Deflater;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.logger.LogProgress;
+import org.sinfile.parsers.SinFile;
 import org.system.Devices;
 import org.system.OS;
 import com.turn.ttorrent.common.Torrent;
@@ -335,8 +336,8 @@ public final class Bundle {
 		int maxdatasize=0;
 		int maxloadersize=0;
 		try {
-			SinFile loader = new SinFile(getLoader().getAbsolutePath());
-			if (loader.sinheader.getVersion()>=2) {
+			SinFile loader = new SinFile(new File(getLoader().getAbsolutePath()));
+			if (loader.getVersion()>=2) {
 				maxloadersize=0x10000;
 			}
 			else {
@@ -358,12 +359,11 @@ public final class Bundle {
 	    			long filecount = 0;
 	    			SinFile s = null;
 				    if (entry.getName().contains("loader")) {
-			    		s = new SinFile(entry.getAbsolutePath());
+			    		s = new SinFile(new File(entry.getAbsolutePath()));
 				    	s.setChunkSize(maxloadersize);
-		    			s.getSinHeader().setChunkSize(maxloadersize);
 		    			filecount++;
 				    }
-		    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
+		    		filecount = filecount + s.getNbChunks()+1;
 		    		totalsize += filecount;
 	    		}
 	    	} catch (Exception ex) {}
@@ -385,10 +385,9 @@ public final class Bundle {
 			    			if (!entry.getName().toUpperCase().contains("LOADER")) {
 			    				if (entry.getName().toUpperCase().endsWith("SIN")) {
 						    		long filecount = 0;
-						    		SinFile s = new SinFile(entry.getAbsolutePath());
+						    		SinFile s = new SinFile(new File(entry.getAbsolutePath()));
 						    		s.setChunkSize(chunksize);
-						    		s.getSinHeader().setChunkSize(chunksize);
-						    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
+						    		filecount = filecount + s.getNbChunks()+1;
 						    		totalsize += filecount;
 			    				}
 			    			}
