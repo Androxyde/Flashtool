@@ -340,7 +340,7 @@ public class X10flash {
     		logger.info("Processing "+sin.getName());
 	    	processHeader(sin);
 	    	logger.info("    Flashing data");
-	    	logger.info("Number of parts to send : "+sin.getNbChunks()+" / Part size : "+sin.getChunkSize());
+	    	logger.debug("Number of parts to send : "+sin.getNbChunks()+" / Part size : "+sin.getChunkSize());
 	    	sin.openForSending();
 	    	int nbparts=1;
 	    	while (sin.hasData()) {
