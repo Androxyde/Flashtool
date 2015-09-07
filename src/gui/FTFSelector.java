@@ -55,8 +55,6 @@ public class FTFSelector extends Dialog {
 	private Table tableFirmware;
 	private Table tableContent;
 	private Text sourceFolder;
-	private Button btnCheckCmd25;
-	private Button btnResetCust;
 	private Composite compositeContent;
 	private Composite compositeMisc;
 	private Button btnCancel;
@@ -189,7 +187,6 @@ public class FTFSelector extends Dialog {
 		    	  tableContentViewer.setInput(firm);
 		    	  tableContentViewer.refresh();
 		    	  result = firm.getBundle();
-		    	  btnCheckCmd25.setSelection(result.hasCmd25());
 		    	  updateCheckBoxes();
 		      }
 		    });
@@ -248,7 +245,7 @@ public class FTFSelector extends Dialog {
 		fd_lblMisc.right = new FormAttachment(100, -11);
 		fd_lblMisc.left = new FormAttachment(compositeContent, 6);
 		lblMisc.setLayoutData(fd_lblMisc);
-		lblMisc.setText("Misc : ");
+		lblMisc.setText("MiscTA Exclude : ");
 
 		ScrolledComposite scrolledCompositeMisc = new ScrolledComposite(shlFirmwareSelector, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		fd_lblMisc.bottom = new FormAttachment(scrolledCompositeMisc, -2);
@@ -418,6 +415,7 @@ public class FTFSelector extends Dialog {
 			Iterator<Category> exclude = result.getMeta().getExclude().iterator();
 	    	while (exclude.hasNext()) {
 				Category categ = exclude.next();
+				if (!(categ.isSin() || categ.isBootDelivery())) continue; 
 				Button btnExclude = new Button(compositeExclude, SWT.CHECK);
 				btnExclude.setText(categ.getId());
 				btnExclude.setSelection(!categ.isEnabled());
@@ -436,6 +434,7 @@ public class FTFSelector extends Dialog {
 					}
 				});
 	    	}
+
 	    	Iterator<Category> wipe = result.getMeta().getWipe().iterator();
 	    	while (wipe.hasNext()) {
 				Category categ = wipe.next();
@@ -457,27 +456,30 @@ public class FTFSelector extends Dialog {
 					}
 				});
 	    	}
-			btnCheckCmd25 = new Button(compositeMisc, SWT.CHECK);
-			btnCheckCmd25.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					result.setCmd25(btnCheckCmd25.getSelection()?"true":"false");
-				}
-			});
-			btnCheckCmd25.setText("No final verification");
-			btnCheckCmd25.setSelection(firm.getBundle().hasCmd25());
-			
-			btnResetCust = new Button(compositeMisc, SWT.CHECK);
-			btnResetCust.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					result.setResetStats(btnResetCust.getSelection()?"true":"false");
-				}
-			});
-			btnResetCust.setText("Reset customizations");
-			btnResetCust.setSelection(firm.getBundle().hasResetStats());
-			compositeMisc.setSize(compositeMisc.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-			compositeMisc.layout();
+	    	
+			Iterator<Category> miscta = result.getMeta().getExclude().iterator();
+	    	while (miscta.hasNext()) {
+				Category categ = miscta.next();
+				if (!categ.isTa()) continue; 
+				Button btnMisc = new Button(compositeMisc, SWT.CHECK);
+				btnMisc.setText(categ.getId());
+				btnMisc.setSelection(!categ.isEnabled());
+				compositeMisc.setSize(compositeMisc.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				compositeMisc.layout();
+				btnMisc.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+				    	IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
+				    	Firmware firm = (Firmware)sel.getFirstElement();
+						Button b = (Button)e.widget;
+				    	if (b.getSelection()) firm.disableCateg(b.getText());
+				    	else firm.enableCateg(b.getText());
+						tableContentViewer.setInput(firm);
+						tableContentViewer.refresh();
+					}
+				});
+	    	}
+
 		}
 	}
 }
