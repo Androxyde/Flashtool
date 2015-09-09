@@ -13,6 +13,7 @@ public class Category implements Comparable {
 	private boolean enabled = false;
 	private boolean issin = false;
 	private boolean ista = false;
+	private boolean isbootdelivery = false;
 	private boolean ispartition = false;
 	private boolean issecro = false;
 	private boolean ispreload = false;
@@ -36,6 +37,7 @@ public class Category implements Comparable {
 			  entries.add(f);
 			  if (f.getName().endsWith(".sin")) issin=true;
 			  if (f.getName().endsWith(".ta")) ista=true;
+			  if (f.getName().contains("boot_delivery")) isbootdelivery = true;
 			  if (issin) {
 				  if (f.getName().toUpperCase().contains("PARTITION")) {
 						ispartition = true;
@@ -91,6 +93,10 @@ public class Category implements Comparable {
 		  
 		  public boolean isSin() {
 			  return issin;
+		  }
+
+		  public boolean isBootDelivery() {
+			  return isbootdelivery;
 		  }
 		  
 		  public boolean equals(Category c) {
