@@ -42,9 +42,6 @@
 		<delete file="../../Deploy/FlashTool/x10flasher_lib/bin2elf"/>
 	    <delete file="../../Deploy/FlashTool/x10flasher_lib/bin2sin"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/linux"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/adb.mac"/>
-        <delete file="../../Deploy/FlashTool/x10flasher_lib/fastboot.mac"/>
-	    <delete file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.mac"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtlin"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtwin"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/mac"/>
@@ -73,9 +70,12 @@
 		<chmod file="../../Deploy/FlashTool/FlashTool" perm="755" />
     	<chmod file="../../Deploy/FlashTool/FlashToolConsole" perm="755"/>
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/xperifirm" perm="755"/>
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb.mac" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot.mac" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.mac" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb.mac.32" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot.mac.32" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.mac.32" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb.mac.64" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot.mac.64" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.mac.64" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/mac/lib64/libusb-1.0.0.dylib" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/mac/lib32/libusb-1.0.0.dylib" perm="755" />
 	</target>
