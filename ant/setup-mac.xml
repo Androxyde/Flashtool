@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Create Mac Package">
 
-	<target name="all" depends="loadprops, binaries, dobundle"/>
+	<target name="all" depends="loadprops, binaries, dobundle, dodmg"/>
 
 	<target name="main_lib" depends="loadprops">
         <jar destfile="../../Deploy/FlashTool/x10flasher.jar">
@@ -100,11 +100,17 @@
             <fileset dir="../ProgramExe/FlashTool.app"
                 excludes="**/.svn"/>
         </copy>
-		<move todir="../../Deploy/FlashTool.app/Contents/MacOS" includeEmptyDirs="yes">
-		    <fileset dir="../../Deploy/FlashTool">
-		        <include name="**/*" />
-		    </fileset>
-		</move>
+		<mkdir dir="../../Deploy/FlashTool.app/Contents/MacOS"/>
+		<exec executable="tar" dir="../../Deploy/FlashTool">
+		    <arg value="cf"/>
+			<arg value="../FlashTool.app/Contents/MacOS/flashtool-${Internal-Version}.tar"/>
+			<arg value="."/>
+		</exec>
+		<exec executable="tar" dir="../../Deploy/FlashTool.app/Contents/MacOS">
+		    <arg value="xf"/>
+			<arg value="flashtool-${Internal-Version}.tar"/>
+		</exec>
+		<delete file="../../Deploy/FlashTool.app/Contents/MacOS/flashtool-${Internal-Version}.tar"/>
 	</target>
 	
 	<target name="dodmg">
