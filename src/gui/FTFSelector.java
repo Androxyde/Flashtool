@@ -37,6 +37,7 @@ import gui.models.Firmware;
 import gui.models.FirmwareContentProvider;
 import gui.models.FirmwareLabelProvider;
 import gui.models.FirmwaresModel;
+import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
 
 import org.eclipse.swt.layout.GridLayout;
@@ -65,6 +66,7 @@ public class FTFSelector extends Dialog {
 	private Composite compositeWipe;
 	private ScrolledComposite scrolledCompositeExclude;
 	private boolean simulate = false;
+	private Button btnCheckCmd25;
 
 	/**
 	 * Create the dialog.
@@ -96,6 +98,24 @@ public class FTFSelector extends Dialog {
 		fd_btnCheckSimulate.left = new FormAttachment(compositeFirmware, 0, SWT.LEFT);
 		btnCheckSimulate.setLayoutData(fd_btnCheckSimulate);
 		btnCheckSimulate.setText("Simulate");
+		
+		btnCheckCmd25 = new Button(shlFirmwareSelector, SWT.CHECK);
+		FormData fd_btnCheckButton = new FormData();
+		fd_btnCheckButton.bottom = new FormAttachment(btnCancel, 0, SWT.BOTTOM);
+		fd_btnCheckButton.left = new FormAttachment(btnCheckSimulate, 33);
+		btnCheckCmd25.setLayoutData(fd_btnCheckButton);
+		btnCheckCmd25.setText("Disable final verification");
+		btnCheckCmd25.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (btnCheckCmd25.getSelection()) {
+					WidgetTask.openOKBox(shlFirmwareSelector, "Warning, this option will not be used if a FSC script is found");
+				}
+				result.setCmd25(btnCheckCmd25.getSelection()?"true":"false");
+			}
+		});
+		btnCheckCmd25.setSelection(result.hasCmd25());
+
 		shlFirmwareSelector.open();
 		shlFirmwareSelector.layout();
 		Display display = getParent().getDisplay();
@@ -187,6 +207,7 @@ public class FTFSelector extends Dialog {
 		    	  tableContentViewer.setInput(firm);
 		    	  tableContentViewer.refresh();
 		    	  result = firm.getBundle();
+		    	  btnCheckCmd25.setSelection(result.hasCmd25());
 		    	  updateCheckBoxes();
 		      }
 		    });
@@ -479,7 +500,6 @@ public class FTFSelector extends Dialog {
 					}
 				});
 	    	}
-
 		}
 	}
 }

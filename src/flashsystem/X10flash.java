@@ -896,7 +896,7 @@ public class X10flash {
  
     public void oldFlashEngine() {
     	try {
-		    if (_bundle.hasCmd25()) {
+    		if (_bundle.hasCmd25()) {
 		    	logger.info("Disabling final data verification check");
 		    	this.disableFinalVerification();
 		    }
