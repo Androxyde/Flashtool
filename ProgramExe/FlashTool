@@ -83,7 +83,7 @@ then
                         -Xms128m -Xmx512m -Duser.country=US -Duser.language=en \
                         -Djsse.enableSNIExtension=false gui.Main
 
-else -- MacOSX
+else
 
     if test "${system64}" = "x86_64"
     then
