@@ -79,8 +79,13 @@
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/mac/lib32/libusb-1.0.0.dylib" perm="755" />
 		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/mac/lib32">
 		    <arg value="-sf"/>
-			<arg value="libusbx-1.0.so.0.1.0"/>
-			<arg value="libusbx-1.0.so"/>
+			<arg value="libusbx-1.0.0.dylib"/>
+			<arg value="libusbx-1.0.dylib"/>
+		</exec>
+		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/mac/lib64">
+		    <arg value="-sf"/>
+			<arg value="libusbx-1.0.0.dylib"/>
+			<arg value="libusbx-1.0.dylib"/>
 		</exec>
 	</target>
 

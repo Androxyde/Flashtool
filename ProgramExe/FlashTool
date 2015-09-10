@@ -32,11 +32,11 @@ export OS=$(uname -s)
 
 cd $BASEDIR
 
-rootandudevcheck;
 
 if test "$OS" = "Linux"
 then
 
+    rootandudevcheck;
     chmod 755 ./x10flasher_lib/bin2elf
     chmod 755 ./x10flasher_lib/bin2sin
     chmod 755 ./x10flasher_lib/adb.linux.64
