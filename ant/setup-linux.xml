@@ -85,10 +85,27 @@
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linux/lib64/udev1/libusbx-1.0.so.0.1.0" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev/libusbx-1.0.so.0.1.0" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev1/libusbx-1.0.so.0.1.0" perm="755" />
-		<symlink link="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev1/libusbx-1.0.so" resource="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev1/libusbx-1.0.so.0.1.0"/>
-		<symlink link="../../Deploy/FlashTool/x10flasher_lib/linux/lib64/udev1/libusbx-1.0.so" resource="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev1/libusbx-1.0.so.0.1.0"/>
-		<symlink link="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev1/libusbx-1.0.so" resource="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev/libusbx-1.0.so.0.1.0"/>
-		<symlink link="../../Deploy/FlashTool/x10flasher_lib/linux/lib64/udev1/libusbx-1.0.so" resource="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev/libusbx-1.0.so.0.1.0"/>
+		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev">
+		    <arg value="-sf"/>
+			<arg value="libusbx-1.0.so.0.1.0"/>
+			<arg value="libusbx-1.0.so"/>
+		</exec>
+		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev1">
+		    <arg value="-sf"/>
+			<arg value="libusbx-1.0.so.0.1.0"/>
+			<arg value="libusbx-1.0.so"/>
+		</exec>
+		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/linux/lib64/udev">
+		    <arg value="-sf"/>
+			<arg value="libusbx-1.0.so.0.1.0"/>
+			<arg value="libusbx-1.0.so"/>
+		</exec>
+		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/linux/lib64/udev1">
+		    <arg value="-sf"/>
+			<arg value="libusbx-1.0.so.0.1.0"/>
+			<arg value="libusbx-1.0.so"/>
+		</exec>
+
 	</target>
 	
 	<target name="loadprops">
