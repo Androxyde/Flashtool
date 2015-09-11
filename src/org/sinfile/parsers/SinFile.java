@@ -24,7 +24,8 @@ public class SinFile {
 	FileInputStream fin = null;
 	BufferedInputStream bin = null;
 	private int packetsize=0;
-	private int nbchunks=0;
+	private long nbchunks=0;
+	private long filesize;
 
 	
 	public org.sinfile.parsers.v1.SinParser sinv1 = null;
@@ -331,13 +332,10 @@ public class SinFile {
 
 	public void setChunkSize(int size) {
 		packetsize=size;
+		filesize=sinfile.length()-getHeaderLength();
 		try {
-			bin = new BufferedInputStream(new FileInputStream(sinfile));
-			bin.skip(getHeaderLength());
-			int avail = bin.available();
-			bin.close();
-			nbchunks = avail/packetsize;
-			if (avail%packetsize>0) nbchunks++;
+			nbchunks = filesize/packetsize;
+			if (filesize%packetsize>0) nbchunks++;
 		} catch (Exception e) {}
 
 	}
@@ -346,7 +344,7 @@ public class SinFile {
 		return packetsize;
 	}
 	
-	public int getNbChunks() throws IOException {
+	public long getNbChunks() throws IOException {
 		return nbchunks;
 	}
 
