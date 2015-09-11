@@ -37,14 +37,6 @@ if test "$OS" = "Linux"
 then
 
     rootandudevcheck;
-    chmod 755 ./x10flasher_lib/bin2elf
-    chmod 755 ./x10flasher_lib/bin2sin
-    chmod 755 ./x10flasher_lib/adb.linux.64
-    chmod 755 ./x10flasher_lib/fastboot.linux.64
-    chmod 755 ./x10flasher_lib/unyaffs.linux.64
-    chmod 755 ./x10flasher_lib/adb.linux.32
-    chmod 755 ./x10flasher_lib/fastboot.linux.32
-    chmod 755 ./x10flasher_lib/unyaffs.linux.32
 
     if test "${system64}" = "x86_64"
     then
@@ -93,13 +85,6 @@ else
     fi
 
     echo "Used java home : ${JAVA_HOME}"
-
-    chmod 755 ./x10flasher_lib/adb.mac.64
-    chmod 755 ./x10flasher_lib/fastboot.mac.64
-    chmod 755 ./x10flasher_lib/unyaffs.mac.64
-    chmod 755 ./x10flasher_lib/adb.mac.32
-    chmod 755 ./x10flasher_lib/fastboot.mac.32
-    chmod 755 ./x10flasher_lib/unyaffs.mac.32
 
     ISJAVA64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bit|wc -l)
     CP=$(ls ./x10flasher_lib/*jar|xargs|tr ' ' ':')
