@@ -99,6 +99,7 @@ public class FTFSelector extends Dialog {
 	 */
 	public Object open(String pathname, String ftfname) {
 		createContents(pathname, ftfname);
+		WidgetsTool.setSize(shlFirmwareSelector);
 		if (result!=null)
 			btnCheckCmd25.setSelection(result.hasCmd25());
 		shlFirmwareSelector.open();
@@ -411,15 +412,15 @@ public class FTFSelector extends Dialog {
 				fd_btnNewButton_1.right = new FormAttachment(compositeContent, -6);
 				btnNewButton_1.setLayoutData(fd_btnNewButton_1);
 				btnNewButton_1.setText("Clear filter");
-				WidgetsTool.setSize(shlFirmwareSelector);
+				
 				
 				composite = new Composite(shlFirmwareSelector, SWT.NONE);
-				composite.setLayout(new GridLayout(7, false));
+				composite.setLayout(new GridLayout(6, false));
 				FormData fd_composite = new FormData();
+				fd_composite.top = new FormAttachment(compositeFirmware, 12);
+				fd_composite.bottom = new FormAttachment(100, -4);
 				fd_composite.right = new FormAttachment(lblWipe, -144, SWT.RIGHT);
-				fd_composite.bottom = new FormAttachment(compositeFirmware, 47, SWT.BOTTOM);
-				fd_composite.left = new FormAttachment(lblWipe, -681);
-				fd_composite.top = new FormAttachment(compositeFirmware, 6);
+				fd_composite.left = new FormAttachment(compositeFirmware, 0, SWT.LEFT);
 				composite.setLayoutData(fd_composite);
 				
 				
@@ -434,7 +435,6 @@ public class FTFSelector extends Dialog {
 				
 				btnCheckCmd25 = new Button(composite, SWT.CHECK);
 				btnCheckCmd25.setText("Disable final verification");
-				new Label(composite, SWT.NONE);
 				new Label(composite, SWT.NONE);
 				new Label(composite, SWT.NONE);
 				
@@ -452,7 +452,7 @@ public class FTFSelector extends Dialog {
 				comboUSBBuffer.select(0);
 				btnCancel = new Button(shlFirmwareSelector, SWT.NONE);
 				FormData fd_btnCancel = new FormData();
-				fd_btnCancel.bottom = new FormAttachment(100, -10);
+				fd_btnCancel.bottom = new FormAttachment(composite, 0, SWT.BOTTOM);
 				fd_btnCancel.right = new FormAttachment(lblWipe, 0, SWT.RIGHT);
 				btnCancel.setLayoutData(fd_btnCancel);
 				btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -465,8 +465,8 @@ public class FTFSelector extends Dialog {
 				btnCancel.setText("Cancel");
 				btnFlash = new Button(shlFirmwareSelector, SWT.NONE);
 				FormData fd_btnFlash = new FormData();
-				fd_btnFlash.top = new FormAttachment(btnCancel, 0, SWT.TOP);
 				fd_btnFlash.right = new FormAttachment(btnCancel, -6);
+				fd_btnFlash.bottom = new FormAttachment(composite, 0, SWT.BOTTOM);
 				btnFlash.setLayoutData(fd_btnFlash);
 				btnFlash.addSelectionListener(new SelectionAdapter() {
 					@Override
