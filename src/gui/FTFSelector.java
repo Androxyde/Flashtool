@@ -116,8 +116,8 @@ public class FTFSelector extends Dialog {
 		
 		btnCheckCmd25 = new Button(shlFirmwareSelector, SWT.CHECK);
 		FormData fd_btnCheckButton = new FormData();
-		fd_btnCheckButton.left = new FormAttachment(btnCheckSimulate, 33);
 		fd_btnCheckButton.top = new FormAttachment(btnCancel, 4, SWT.TOP);
+		fd_btnCheckButton.left = new FormAttachment(btnCheckSimulate, 19);
 		btnCheckCmd25.setLayoutData(fd_btnCheckButton);
 		btnCheckCmd25.setText("Disable final verification");
 		btnCheckCmd25.addSelectionListener(new SelectionAdapter() {
@@ -143,13 +143,13 @@ public class FTFSelector extends Dialog {
 		comboUSBBuffer.setItems(new String[] {"Device maxsize", "512K", "256K", "128K"});
 		FormData fd_combo = new FormData();
 		fd_combo.top = new FormAttachment(btnCancel, 2, SWT.TOP);
-		fd_combo.right = new FormAttachment(btnFlash, -15);
 		comboUSBBuffer.setLayoutData(fd_combo);
 		
 		Label lblNewLabel = new Label(shlFirmwareSelector, SWT.NONE);
+		fd_combo.left = new FormAttachment(0, 475);
 		FormData fd_lblNewLabel = new FormData();
 		fd_lblNewLabel.top = new FormAttachment(btnCancel, 5, SWT.TOP);
-		fd_lblNewLabel.right = new FormAttachment(comboUSBBuffer, -6);
+		fd_lblNewLabel.right = new FormAttachment(comboUSBBuffer, -4);
 		comboUSBBuffer.select(0);
 		lblNewLabel.setLayoutData(fd_lblNewLabel);
 		lblNewLabel.setText("Max USB Buffer :");
