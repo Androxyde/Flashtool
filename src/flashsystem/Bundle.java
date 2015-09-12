@@ -45,6 +45,7 @@ public final class Bundle {
     private String _revision="";
     private String _cmd25;
     private String _resetCust;
+    private int maxbuffer;
     public final static int JARTYPE=1;
     public final static int FOLDERTYPE=2;
     private BundleMetaData _meta;
@@ -481,6 +482,14 @@ public final class Bundle {
 	
 	public XMLBootDelivery getXMLBootDelivery() {
 		return xmlb;
+	}
+	
+	public void setMaxBuffer(int value) {
+		maxbuffer=value;
+	}
+	
+	public int getMaxBuffer() {
+		return maxbuffer;
 	}
 
 }

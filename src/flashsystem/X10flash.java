@@ -424,13 +424,22 @@ public class X10flash {
 			hookDevice(true);
 		}
 	    if (!_bundle.simulate()) {
-	    	maxpacketsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
-	    	if (maxpacketsize>0x080000) {
-	    		logger.info("Max packet size reset to "+0x080000+" (actual size : "+maxpacketsize+")");
-	    		maxpacketsize=0x080000;
+	    	if (_bundle.getMaxBuffer()==0) {
+	    		maxpacketsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
+	    		logger.info("Max packet size set to "+maxpacketsize/1024+"K");
 	    	}
-	    	else
-	    		logger.info("Max packet size set to "+maxpacketsize);
+	    	if (_bundle.getMaxBuffer()==1) {
+	    		maxpacketsize=512*1024;
+	    		logger.info("Max packet size forced to 512K");
+	    	}
+	    	if (_bundle.getMaxBuffer()==2) {
+	    		maxpacketsize=256*1024;
+	    		logger.info("Max packet size forced to 256K");
+	    	}
+	    	if (_bundle.getMaxBuffer()==3) {
+	    		maxpacketsize=128*1024;
+	    		logger.info("Max packet size forced to 128K");
+	    	}
 	    }
 	    else {
 	    	maxpacketsize=0x080000;
