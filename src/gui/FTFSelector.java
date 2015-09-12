@@ -98,7 +98,7 @@ public class FTFSelector extends Dialog {
 	 */
 	public Object open(String pathname, String ftfname) {
 		createContents(pathname, ftfname);
-		WidgetsTool.setSize(shlFirmwareSelector);		
+				
 		
 		Button btnCheckSimulate = new Button(shlFirmwareSelector, SWT.CHECK);
 		fd_compositeFirmware.bottom = new FormAttachment(btnCheckSimulate, -22);
@@ -212,7 +212,7 @@ public class FTFSelector extends Dialog {
 		fd_btnNewButton_1.right = new FormAttachment(compositeFirmware, 0, SWT.RIGHT);
 		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
 		btnNewButton_1.setText("Clear filter");
-
+		WidgetsTool.setSize(shlFirmwareSelector);
 		shlFirmwareSelector.open();
 		shlFirmwareSelector.layout();
 		Display display = getParent().getDisplay();
