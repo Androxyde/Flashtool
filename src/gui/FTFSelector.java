@@ -129,7 +129,8 @@ public class FTFSelector extends Dialog {
 				result.setCmd25(btnCheckCmd25.getSelection()?"true":"false");
 			}
 		});
-		btnCheckCmd25.setSelection(result.hasCmd25());
+		if (result!=null)
+			btnCheckCmd25.setSelection(result.hasCmd25());
 		
 		comboUSBBuffer = new Combo(shlFirmwareSelector, SWT.READ_ONLY);
 		fd_compositeContent.bottom = new FormAttachment(comboUSBBuffer, -14);
