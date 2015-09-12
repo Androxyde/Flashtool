@@ -142,8 +142,8 @@ public class FTFSelector extends Dialog {
 		});
 		comboUSBBuffer.setItems(new String[] {"Device maxsize", "512K", "256K", "128K"});
 		FormData fd_combo = new FormData();
-		fd_combo.bottom = new FormAttachment(btnCancel, 0, SWT.BOTTOM);
-		fd_combo.right = new FormAttachment(btnFlash, -59);
+		fd_combo.top = new FormAttachment(btnCancel, 2, SWT.TOP);
+		fd_combo.right = new FormAttachment(btnFlash, -15);
 		comboUSBBuffer.setLayoutData(fd_combo);
 		
 		Label lblNewLabel = new Label(shlFirmwareSelector, SWT.NONE);
