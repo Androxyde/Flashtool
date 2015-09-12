@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<exe4j version="4.5.2" transformSequenceNumber="1">
+<exe4j version="5.0.1" transformSequenceNumber="2">
   <directoryPresets config="C:/Users/Public/git/Deploy/FlashTool/x10flasher_lib/swtwin" />
-  <application name="FlashTool" distributionSourceDir="C:/Users/Public/git/Deploy/FlashTool">
+  <application name="FlashTool" distributionSourceDir="D:/git/Deploy/FlashTool">
     <languages>
       <principalLanguage id="en" customLocalizationFile="" />
     </languages>
   </application>
-  <executable name="FlashTool64" type="1" iconSet="true" iconFile="C:/Users/Public/git/Flashtool/ProgramExe/flash_32.ico" executableDir="" redirectStderr="true" stderrFile="stderr.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="stdout.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="requireAdministrator" checkConsoleParameter="true" globalSingleInstance="false" amd64="true">
+  <executable name="FlashTool64" type="1" iconSet="true" iconFile="D:/git/Flashtool/ProgramExe/flash_32.ico" executableDir="" redirectStderr="true" stderrFile="stderr.log" stderrMode="overwrite" redirectStdout="true" stdoutFile="stdout.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="requireAdministrator" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false" amd64="true">
     <messageSet />
     <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" companyName="" productVersion="" />
   </executable>
-  <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
+  <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
     <text>
-      <statusLine x="20" y="20" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
-      <versionLine x="20" y="40" text="version %VERSION%" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+      <statusLine x="20" y="20" text="" fontSize="8" fontColor="0,0,0" bold="false" />
+      <versionLine x="20" y="40" text="version %VERSION%" fontSize="8" fontColor="0,0,0" bold="false" />
     </text>
   </splashScreen>
-  <java mainClass="gui.Main" vmParameters="-Xms128m -Xmx256m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false" arguments="" allowVMPassthroughParameters="true" preferredVM="client" bundleRuntime="true" minVersion="1.6" maxVersion="" allowBetaVM="false" jdkOnly="false">
+  <java mainClass="gui.Main" vmParameters="-Xms128m -Xmx256m -Duser.country=US -Duser.language=en -Djsse.enableSNIExtension=false" arguments="" allowVMPassthroughParameters="true" preferredVM="client" bundleRuntime="true" minVersion="1.8" maxVersion="" allowBetaVM="false" jdkOnly="false">
     <searchSequence>
       <directory location="./x10flasher_lib/winjre64" />
-      <registry />
     </searchSequence>
     <classPath>
       <archive location="./x10flasher.jar" failOnError="false" />
@@ -33,4 +32,3 @@
   <includedFiles />
   <unextractableFiles />
 </exe4j>
-
