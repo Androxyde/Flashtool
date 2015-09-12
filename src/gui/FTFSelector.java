@@ -101,7 +101,6 @@ public class FTFSelector extends Dialog {
 				
 		
 		Button btnCheckSimulate = new Button(shlFirmwareSelector, SWT.CHECK);
-		fd_compositeFirmware.bottom = new FormAttachment(btnCheckSimulate, -22);
 		btnCheckSimulate.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -146,10 +145,10 @@ public class FTFSelector extends Dialog {
 		comboUSBBuffer.setLayoutData(fd_combo);
 		
 		Label lblNewLabel = new Label(shlFirmwareSelector, SWT.NONE);
-		fd_combo.left = new FormAttachment(0, 475);
+		fd_combo.left = new FormAttachment(lblNewLabel, 6);
 		FormData fd_lblNewLabel = new FormData();
+		fd_lblNewLabel.right = new FormAttachment(100, -244);
 		fd_lblNewLabel.top = new FormAttachment(btnCancel, 5, SWT.TOP);
-		fd_lblNewLabel.right = new FormAttachment(comboUSBBuffer, -4);
 		comboUSBBuffer.select(0);
 		lblNewLabel.setLayoutData(fd_lblNewLabel);
 		lblNewLabel.setText("Max USB Buffer :");
@@ -186,7 +185,7 @@ public class FTFSelector extends Dialog {
 		fd_textDevice.left = new FormAttachment(lblNewLabel_1, 6);
 		FormData fd_lblNewLabel_1 = new FormData();
 		fd_lblNewLabel_1.bottom = new FormAttachment(compositeFirmware, -6);
-		fd_lblNewLabel_1.left = new FormAttachment(compositeFirmware, 0, SWT.LEFT);
+		fd_lblNewLabel_1.left = new FormAttachment(0, 10);
 		lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
 		lblNewLabel_1.setText("Device filter :");
 		
@@ -209,7 +208,7 @@ public class FTFSelector extends Dialog {
 		fd_textDevice.right = new FormAttachment(btnNewButton_1, -6);
 		FormData fd_btnNewButton_1 = new FormData();
 		fd_btnNewButton_1.bottom = new FormAttachment(compositeFirmware, -6);
-		fd_btnNewButton_1.right = new FormAttachment(compositeFirmware, 0, SWT.RIGHT);
+		fd_btnNewButton_1.right = new FormAttachment(compositeContent, -6);
 		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
 		btnNewButton_1.setText("Clear filter");
 		WidgetsTool.setSize(shlFirmwareSelector);
@@ -309,6 +308,7 @@ public class FTFSelector extends Dialog {
 		    });
 		
 		compositeContent = new Composite(shlFirmwareSelector, SWT.NONE);
+		fd_compositeFirmware.bottom = new FormAttachment(compositeContent, 0, SWT.BOTTOM);
 		fd_compositeFirmware.right = new FormAttachment(compositeContent, -6);
 		fd_compositeContent = new FormData();
 		fd_compositeContent.left = new FormAttachment(0, 347);
