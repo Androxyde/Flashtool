@@ -608,7 +608,7 @@ public class X10flash {
     }
     
     
-    public boolean hasScript() {
+    public boolean checkScript() {
     	try {
     		Vector<String> ignored = new Vector<String>();
     		TextFile tf = new TextFile(getFlashScript(),"ISO8859-1");
@@ -755,6 +755,15 @@ public class X10flash {
     	} catch (Exception e) {e.printStackTrace();}
     }
 
+    public boolean hasScript() {
+    	boolean has=new File(getFlashScript()).exists();
+    	if (has) {
+    		String result = WidgetTask.openYESNOBox(_curshell, "A FSC script is found. Do you want to use it ?");
+    		return Integer.parseInt(result)==SWT.YES;
+    	}
+    	return has;
+    }
+
     public void flashDevice() {
     	try {
 		    logger.info("Start Flashing");
@@ -762,7 +771,8 @@ public class X10flash {
 		    bc = getBootConfig();
 		    loadTAFiles();
 		    if (hasScript()) {
-		    	runScript();
+		    	if (checkScript())
+		    		runScript();
 		    }
 		    else {
 		    	logger.info("No flash script found. Using 0.9.18 flash engine");
