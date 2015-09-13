@@ -4,13 +4,17 @@ rootandudevcheck() {
     if [ "$(whoami)" != "root" ]
     then
         export HASRULES="false"
-        if test -d /etc/udev/rules.d
-        then
-            if grep -rl "0fce" /etc/udev/rules.d >/dev/null
+        local _RULES_DIR="/etc/udev/rules.d /usr/lib/udev/rules.d"
+        for dir in $_RULES_DIR; do
+            if test -d $dir
             then
-                export HASRULES="true"
+                if grep -rl "0fce" $dir >/dev/null
+                then
+                    export HASRULES="true"
+                    break
+                fi
             fi
-        fi
+        done
         if test "$HASRULES" = "true"
         then
     		echo "Not running as root but Sony/SonyEriccson Vendor ID found on your udev rules"
