@@ -23,7 +23,8 @@ public class CategoriesModel  {
 		while (c.hasNext()) {
 		    Category category = c.next();
 		    categories.add(category);
-		}		
+		}
+		if (meta.getLoader()!=null) categories.add(meta.getLoader());
 	}
 	
 	public List<Category> getCategories() {

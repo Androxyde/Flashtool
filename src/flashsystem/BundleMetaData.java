@@ -104,8 +104,12 @@ public class BundleMetaData {
 	}
 
 	public void remove(BundleEntry f) {
+		if (f.getCategory().equals("LOADER")) {
+			loader=null;
+			return;
+		}
 		try {
-		_categex.remove(get(f.getCategory()));
+			_categex.remove(get(f.getCategory()));
 		} catch (Exception e) {}
 		try {
 			_categwipe.remove(get(f.getCategory()));
@@ -113,6 +117,7 @@ public class BundleMetaData {
 	}
 	
 	public Category get(String categ) {
+		//if (categ.equals("LOADER")) return loader;
 		Category c = _categex.get(categ);
 		if (c==null) c = _categwipe.get(categ);
 		return c;

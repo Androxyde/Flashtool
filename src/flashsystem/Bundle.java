@@ -270,7 +270,19 @@ public final class Bundle {
 			size += esize.nextElement().getSize();
 		}
 		LogProgress.initProgress(size/10240+(size%10240>0?1:0));
-	    Enumeration<BundleEntry> e = allEntries();
+		BundleEntry ldr = getLoader();
+		logger.info("Adding "+ldr.getName()+" to the bundle as "+ldr.getInternal());
+	    JarEntry jarAddLdr = new JarEntry(ldr.getInternal());
+        out.putNextEntry(jarAddLdr);
+        InputStream inLdr = ldr.getInputStream();
+        while (true) {
+          int nRead = inLdr.read(buffer, 0, buffer.length);
+          if (nRead <= 0)
+            break;
+          out.write(buffer, 0, nRead);
+        }
+        inLdr.close();
+		Enumeration<BundleEntry> e = allEntries();
 		while (e.hasMoreElements()) {
 			BundleEntry entry = e.nextElement();
 			logger.info("Adding "+entry.getName()+" to the bundle as "+entry.getInternal());
