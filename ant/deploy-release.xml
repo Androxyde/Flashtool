@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
-	
-	<property name="version" value="0.9.19.4"/>
-	<property name="progtime" value="14-09-2015 22:30:00"/>
-	
-	<target name="all" depends="core release"/>
 
+	<property name="version" value="0.9.19.5"/>
+	<property name="progtime" value="17-09-2015 22:30:00"/>
+
+	<target name="all" depends="core release"/>
 
 	<target name="clean">
     	<mkdir dir="../../Deploy"/>
@@ -15,7 +14,7 @@
 	<target name="clone">
 		<git-clone uri="https://github.com/Androxyde/devices.git" dest="../../Deploy/FlashTool/devices" />
 	</target>	
-	
+
 	<target name="ressources">
         <jar destfile="../../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar">
             <manifest>
