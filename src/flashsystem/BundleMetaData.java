@@ -90,8 +90,12 @@ public class BundleMetaData {
 			_categwipe.add(cat);
 		}
 		else {
-			cat.setEnabled(true);
-			if (cat.getId().equals("LOADER")) loader=cat;
+			if (cat.getId().startsWith("SIMLOCK"))
+				cat.setEnabled(false);
+			else
+				cat.setEnabled(true);
+			if (cat.getId().equals("LOADER")) 
+				loader=cat;
 			else
 				_categex.add(cat);
 		}

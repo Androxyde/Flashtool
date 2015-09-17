@@ -586,6 +586,8 @@ public class FTFSelector extends Dialog {
 				    	IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
 				    	Firmware firm = (Firmware)sel.getFirstElement();
 						Button b = (Button)e.widget;
+						if (b.getText().startsWith("SIMLOCK") && !b.getSelection())
+							WidgetTask.openOKBox(shlFirmwareSelector, "Warning, Including SIMLOCK can lead to a device brick. Do this only if you know what you do.");
 				    	if (b.getSelection()) firm.disableCateg(b.getText());
 				    	else firm.enableCateg(b.getText());
 						tableContentViewer.setInput(firm);
