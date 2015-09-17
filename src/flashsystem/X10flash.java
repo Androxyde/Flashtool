@@ -181,6 +181,13 @@ public class X10flash {
     }
 
     public void sendTAUnit(TaEntry ta) throws X10FlashException, IOException {
+    	if (ta.getUnit().equals("000007DA")) {
+    		String result = WidgetTask.openYESNOBox(_curshell, "This unit ("+ta.getUnit() + ") is very sensitive and can brick the device. Do you really want to flash it ?");
+    		if (Integer.parseInt(result)==SWT.NO) {
+    			logger.warn("HWConfig unit skipped : "+ta.getUnit());
+    			return;
+    		}
+    	}
 		logger.info("Writing TA unit "+ta.getUnit()+". Value : "+ta.getDataHex());
 		if (!_bundle.simulate()) {
 			cmd.send(Command.CMD13, ta.getWordbyte(),false);  
