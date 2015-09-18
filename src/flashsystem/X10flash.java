@@ -147,36 +147,12 @@ public class X10flash {
 		ent.setData(new byte[] {state});
 		sendTAUnit(ent);
     }
-    
-    private void sendTA(File f) throws FileNotFoundException, IOException,X10FlashException {
-    	try {
-    		TaFile ta = new TaFile(f);
-    		logger.info("Flashing "+ta.getName());
-			Vector<TaEntry> entries = ta.entries();
-			for (int i=0;i<entries.size();i++) {
-				TaEntry tent = entries.get(i);
-				sendTAUnit(tent);
-			}
-    	}
-    	catch (TaParseException tae) {
-    		logger.error("Error parsing TA file. Skipping");
-    	}
-    }
 
     private void sendTA(TaFile ta) throws FileNotFoundException, IOException,X10FlashException {
     		logger.info("Flashing "+ta.getName()+" to partition "+ta.getPartition());
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
 				sendTAUnit(entries.get(i));
-			}
-    }
-
-    private void sendTA2(TaFile ta) throws FileNotFoundException, IOException,X10FlashException {
-    		logger.info("Flashing "+ta.getName()+" to partition "+ta.getPartition());
-			Vector<TaEntry> entries = ta.entries();
-			for (int i=0;i<entries.size();i++) {
-				TaEntry tent = entries.get(i);
-				sendTAUnit(tent);
 			}
     }
 
@@ -307,19 +283,14 @@ public class X10flash {
     }
     
     public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
-    	File f = new File(tafile);
-    	boolean taopened = false;
     	try {
-    		TaFile ta = new TaFile(f);
+    		TaFile ta = new TaFile(new File(tafile));
         	openTA(ta.getPartition());
-        	taopened = true;
         	sendTA(ta);
-    	}catch (TaParseException tae) {
-    		logger.error("Error parsing TA file. Skipping");
-    	}
-    	sendTA(new File(tafile));
-    	if (taopened) {
     		closeTA();
+    	}catch (TaParseException tae) {
+    		closeTA();
+    		logger.error("Error parsing TA file. Skipping");
     	}
 		LogProgress.initProgress(0);	    
     }
