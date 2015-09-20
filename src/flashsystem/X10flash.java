@@ -201,6 +201,7 @@ public class X10flash {
     }
 
     public void BackupTA() throws IOException, X10FlashException {
+    	logger.info("Making a TA backup");
     	String timeStamp = OS.getTimeStamp();
     	BackupTA(1, timeStamp);
     	BackupTA(2, timeStamp);
@@ -746,6 +747,7 @@ public class X10flash {
     	try {
 		    logger.info("Start Flashing");
 		    sendLoader();
+		    BackupTA();
 		    bc = getBootConfig();
 		    loadTAFiles();
 		    if (hasScript()) {
