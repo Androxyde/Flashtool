@@ -49,6 +49,7 @@ public class SeusSinTool {
 	    		 entryStream.close();
 	    		 streamOut.close();
 	    		 try {
+	    			 if (!out.getName().toUpperCase().endsWith("SIN")) {
 		    			 ZipFile subzip = new ZipFile(out);
 		    			 logger.info("Extracting "+out.getName());
 		    			 String subfolder = folder + File.separator+entry.getName().substring(0,entry.getName().lastIndexOf("."));
@@ -65,6 +66,7 @@ public class SeusSinTool {
 		    			 }
 		    			 subzip.close();
 		    			 out.delete();
+	    			 }
 	    		 } catch (Exception e1) {}
 	    	 }
 	    	 file.close();
