@@ -3,6 +3,7 @@ package org.util;
 import flashsystem.Bundle;
 import flashsystem.BundleEntry;
 import flashsystem.BundleMetaData;
+import flashsystem.SeusSinTool;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,6 +90,19 @@ public class XperiFirm {
 		meta.clear();
 		File srcdir = new File(sourcefolder);
 		File[] chld = srcdir.listFiles();
+		boolean xperifirmdecrypted=true;
+		for(int i = 0; i < chld.length; i++) {
+			if (chld[i].getName().toUpperCase().startsWith("FILE")) {
+				SeusSinTool.decryptAndExtract(chld[i].getAbsolutePath());
+				xperifirmdecrypted=false;
+			}
+		}
+		
+		if (!xperifirmdecrypted) {
+			srcdir = new File(sourcefolder+File.separator+"decrypted");
+			chld = srcdir.listFiles();
+		}
+		
 		for(int i = 0; i < chld.length; i++) {
 			if (chld[i].getName().toUpperCase().endsWith("SIN") || (chld[i].getName().toUpperCase().endsWith("TA") && !chld[i].getName().toUpperCase().contains("SIMLOCK")) || (chld[i].getName().toUpperCase().endsWith("XML") && (!chld[i].getName().toUpperCase().contains("UPDATE") && !chld[i].getName().toUpperCase().contains("FWINFO")))) {
 				meta.process(new BundleEntry(chld[i]));
