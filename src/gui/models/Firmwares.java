@@ -51,7 +51,7 @@ public class Firmwares {
 	  }
 
 	  public boolean hasFirmwares() {
-		  return !firmwares.isEmpty();
+		  return !getContent().isEmpty();
 	  }
 	  
 }

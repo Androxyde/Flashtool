@@ -82,6 +82,7 @@ public class FTFSelector extends Dialog {
 	private FirmwaresModel firms=null;
 	private Label lblFirmware;
 	private Composite composite;
+	private int currentselected;
 
 	/**
 	 * Create the dialog.
@@ -174,6 +175,8 @@ public class FTFSelector extends Dialog {
 		    });
 		tableFirmware.addSelectionListener(new SelectionAdapter() {
 		      public void widgetSelected(SelectionEvent event) {
+		    	  if (currentselected!=tableFirmware.getSelectionIndex()) {
+		    	  currentselected = tableFirmware.getSelectionIndex();
 		    	  IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
 		    	  Firmware firm = (Firmware)sel.getFirstElement();
 		    	  tableContentViewer.setInput(firm);
@@ -181,6 +184,7 @@ public class FTFSelector extends Dialog {
 		    	  result = firm.getBundle();
 		    	  btnCheckCmd25.setSelection(result.hasCmd25());
 		    	  updateCheckBoxes();
+		    	  }
 		      }
 		    });
 		
@@ -365,14 +369,7 @@ public class FTFSelector extends Dialog {
 							DeviceEntry ent = new DeviceEntry(res);
 							textDevice.setText(ent.getName());
 							firms.firmwares.setDevice(ent.getId());
-							tableFirmwareViewer.refresh();
-							tableContentViewer.refresh();
-							tableFirmware.select(0);
-						    if (tableFirmware.getSelection().length>0) {
-						    	IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
-						    	Firmware firm = (Firmware)sel.getFirstElement();
-						    	result = firm.getBundle();
-						    };
+							updateTables();
 						}
 					}
 				});
@@ -394,16 +391,11 @@ public class FTFSelector extends Dialog {
 				btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						textDevice.setText("");
-						firms.firmwares.setDevice("");
-						tableFirmwareViewer.refresh();
-						tableContentViewer.refresh();
-						tableFirmware.select(0);
-					    if (tableFirmware.getSelection().length>0) {
-					    	IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
-					    	Firmware firm = (Firmware)sel.getFirstElement();
-					    	result = firm.getBundle();
-					    };
+						if (textDevice.getText().length()>0) {
+							textDevice.setText("");
+							firms.firmwares.setDevice("");
+							updateTables();
+						}
 					}
 				});
 				fd_textDevice.right = new FormAttachment(btnNewButton_1, -6);
@@ -484,17 +476,19 @@ public class FTFSelector extends Dialog {
 						result.setCmd25(btnCheckCmd25.getSelection()?"true":"false");
 					}
 				});
+				firms = new FirmwaresModel(sourceFolder.getText());
 				updateTables();
 	}
 
 	public void updateTables() {
-		
-		firms = new FirmwaresModel(sourceFolder.getText());
 		tableFirmwareViewer.setInput(firms.firmwares);
 		tableFirmwareViewer.refresh();
 		tableContentViewer.setInput(firms.getFirstFirmware());
 		tableContentViewer.refresh();
-		tableFirmware.select(0);
+		if (tableFirmware.getItemCount()>0) {
+			tableFirmware.select(0);
+		}
+		currentselected=0;
 	    if (tableFirmware.getSelection().length>0) {
 	    	IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
 	    	Firmware firm = (Firmware)sel.getFirstElement();
