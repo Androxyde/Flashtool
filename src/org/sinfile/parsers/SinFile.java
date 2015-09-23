@@ -27,7 +27,6 @@ public class SinFile {
 	private long nbchunks=0;
 	private long filesize;
 
-	
 	public org.sinfile.parsers.v1.SinParser sinv1 = null;
 	public org.sinfile.parsers.v2.SinParser sinv2 = null;
 	public org.sinfile.parsers.v3.SinParser sinv3 = null;
@@ -67,8 +66,7 @@ public class SinFile {
         );
 
 		try {
-			fin=new FileInputStream(sinfile);
-			sinStream = new JBBPBitInputStream(fin);
+			openStreams();
 			version = sinStream.readByte();
 			if (version!=1 && version!=2 && version!=3) throw new SinFileException("Not a sin file");
 			if (version==1) {
@@ -87,11 +85,13 @@ public class SinFile {
 			if (version==3) {
 				sinv3 = sinParserV3.parse(sinStream).mapTo(org.sinfile.parsers.v3.SinParser.class);
 				sinv3.setLength(sinfile.length());
+				sinv3.setFile(sinfile);
 				if (!new String(sinv3.magic).equals("SIN")) throw new SinFileException("Error parsing sin file");
 				if (sinv3.hashLen>sinv3.headerLen) throw new SinFileException("Error parsing sin file");
 				sinv3.parseHash(sinStream);
+				openStreams();
+				sinStream.skip(sinv3.headerLen);
 				sinv3.parseDataHeader(sinStream);
-				sinv3.setFile(sinfile);
 				closeStreams();
 			}
 		} catch (Exception ioe) {
@@ -144,6 +144,12 @@ public class SinFile {
 		try {
 			bin.close();
 		} catch (Exception e) {}
+	}
+	
+	public void openStreams() throws FileNotFoundException {
+		closeStreams();
+		fin=new FileInputStream(sinfile);
+		sinStream = new JBBPBitInputStream(fin);
 	}
 	
 	public String getName() {

@@ -113,7 +113,8 @@ public class SinParser {
 				dataHeader.gptpLen=0;
 				dataHeader.mmcfLen=0;
 			}
-		  
+			dataType=getDataTypePriv();
+			dataSize = getDataSizePriv();
 	  }
 	  
 	  public void setLength(long s) {
@@ -121,8 +122,7 @@ public class SinParser {
 	  }
 	  
 	  
-	  public long getDataSize() throws IOException {
-		  dataType=getDataType();
+	  public long getDataSizePriv() throws IOException {
 		  if (dataSize>0) return dataSize;
 		  if (dataHeader.mmcfLen>0) {
 		  Object last = dataBlocks.lastElement();
@@ -137,10 +137,10 @@ public class SinParser {
 				  size+=this.blocks.blocks[i].length;
 			  }
 			  return size;
-		  }
-		  
+		  }		  
 	  }
-		public String getDataType(byte[] res) throws IOException {
+
+		public String getDataTypePriv(byte[] res) throws IOException {
 			if (BytesUtil.startsWith(res, new byte[] {0x7F,0x45,0x4C,0x46})) return "elf";
 			int pos = BytesUtil.indexOf(res, new byte[]{0x53,(byte)0xEF});
 			if (pos==-1) return "unknown";
@@ -155,7 +155,7 @@ public class SinParser {
 			return "ext4";
 		}
 
-		public String getDataType() throws IOException {
+		public String getDataTypePriv() throws IOException {
 			RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
 			byte[] res=null;
 			byte[] rescomp=null;
@@ -183,9 +183,17 @@ public class SinParser {
 				fin.read(res);
 				fin.close();
 			}
-			return getDataType(res);
+			return getDataTypePriv(res);
 		}
 		
+		public long getDataSize() {
+			return dataSize;
+		}
+		
+		public String getDataType() {
+			return dataType;
+		}
+
 		public void dumpImage() throws IOException{
 				RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
 				int count = 0;
@@ -194,10 +202,10 @@ public class SinParser {
 					bcount = dataBlocks.size();
 				else
 					bcount = blocks.blocks.length;
-				String ext = "."+getDataType();
+				String ext = "."+dataType;
 				String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+ext;
 				logger.info("Generating empty container file");
-				RandomAccessFile fout = OS.generateEmptyFile(foutname, getDataSize(), (byte)0xFF);
+				RandomAccessFile fout = OS.generateEmptyFile(foutname, dataSize, (byte)0xFF);
 				if (fout!=null) {
 					logger.info("Container generated. Now extracting data to container");
 					LogProgress.initProgress(bcount);
