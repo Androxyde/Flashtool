@@ -747,7 +747,8 @@ public class X10flash {
     	try {
 		    logger.info("Start Flashing");
 		    sendLoader();
-		    BackupTA();
+		    if (!_bundle.simulate())
+		    	BackupTA();
 		    bc = getBootConfig();
 		    loadTAFiles();
 		    if (hasScript()) {
