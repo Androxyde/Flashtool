@@ -54,6 +54,7 @@ public class XperiFirm {
 					cmdargs.add("\""+OS.getFolderFirmwaresDownloaded()+"\"");
 				}
 				else {
+					cmdargs.add("sh");
 					cmdargs.add(OS.getPathXperiFirmWrapper());
 					cmdargs.add(OS.getPathXperiFirm());
 					cmdargs.add(OS.getFolderFirmwaresDownloaded());
