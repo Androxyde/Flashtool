@@ -200,11 +200,15 @@ public class X10flash {
 			return null;
     }
 
-    public void BackupTA() throws IOException, X10FlashException {
+    public void BackupTA() {
     	logger.info("Making a TA backup");
     	String timeStamp = OS.getTimeStamp();
-    	BackupTA(1, timeStamp);
-    	BackupTA(2, timeStamp);
+    	try {
+    		BackupTA(1, timeStamp);
+    	} catch (Exception e) {}
+    	try {
+    		BackupTA(2, timeStamp);
+    	} catch (Exception e) {}
     }
 
     public void BackupTA(int partition, String timeStamp) throws IOException, X10FlashException {
@@ -497,7 +501,7 @@ public class X10flash {
     
     public void sendBootDelivery() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TaParseException, SinFileException {
     	try {
-    		if (_bundle.hasBootDelivery()) {
+    		if (bc!=null) {
     			XMLBootDelivery xmlboot = _bundle.getXMLBootDelivery();
     			if (!_bundle.simulate())
     				if (!xmlboot.mustUpdate(phoneprops.getProperty("BOOTVER"))) throw new BootDeliveryException("Boot delivery up to date. Nothing to do");
@@ -735,7 +739,13 @@ public class X10flash {
     }
 
     public boolean hasScript() {
-    	boolean has=new File(getFlashScript()).exists();
+    	boolean has=false;
+    	try {
+    		has=new File(getFlashScript()).exists();
+    	}
+    	catch (Exception e) {
+    		has=false;
+    	}
     	if (has) {
     		String result = WidgetTask.openYESNOBox(_curshell, "A FSC script is found. Do you want to use it ?");
     		return Integer.parseInt(result)==SWT.YES;
