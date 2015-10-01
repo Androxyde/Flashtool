@@ -109,9 +109,9 @@ public class XperiFirm {
 				meta.process(new BundleEntry(chld[i]));
 			}
 		}
-		srcdir = new File(sourcefolder+File.separator+"boot");
-		if (srcdir.exists()) {
-			chld = srcdir.listFiles();
+		File srcbootdir = new File(srcdir.getAbsolutePath()+File.separator+"boot");
+		if (srcbootdir.exists()) {
+			chld = srcbootdir.listFiles();
 			for(int i = 0; i < chld.length; i++) {
 				if (chld[i].getName().toUpperCase().endsWith("XML")) {
 					meta.process(new BundleEntry(chld[i]));
