@@ -316,7 +316,7 @@ public class FTFSelector extends Dialog {
 				          // Set the text box to the new selection
 				        	if (!sourceFolder.getText().equals(dir)) {
 				        		sourceFolder.setText(dir);
-				        		updateTables();
+				        		updateTables(true);
 				        	}
 				        }
 					}
@@ -369,7 +369,7 @@ public class FTFSelector extends Dialog {
 							DeviceEntry ent = new DeviceEntry(res);
 							textDevice.setText(ent.getName());
 							firms.firmwares.setDevice(ent.getId());
-							updateTables();
+							updateTables(false);
 						}
 					}
 				});
@@ -394,7 +394,7 @@ public class FTFSelector extends Dialog {
 						if (textDevice.getText().length()>0) {
 							textDevice.setText("");
 							firms.firmwares.setDevice("");
-							updateTables();
+							updateTables(false);
 						}
 					}
 				});
@@ -476,11 +476,15 @@ public class FTFSelector extends Dialog {
 						result.setCmd25(btnCheckCmd25.getSelection()?"true":"false");
 					}
 				});
-				firms = new FirmwaresModel(sourceFolder.getText());
-				updateTables();
+				
+				updateTables(true);
 	}
 
-	public void updateTables() {
+	public void updateTables(boolean folderchange) {
+		if (folderchange) {
+			firms = new FirmwaresModel(sourceFolder.getText());
+			textDevice.setText("");
+		}
 		tableFirmwareViewer.setInput(firms.firmwares);
 		tableFirmwareViewer.refresh();
 		tableContentViewer.setInput(firms.getFirstFirmware());
