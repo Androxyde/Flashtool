@@ -4,8 +4,9 @@
 	<property name="version" value="0.9.19.10"/>
 	<property name="progtime" value="04-10-2015 21:00:00"/>
 	
+	 
 	<target name="all" depends="core release"/>
-
+	
 	<target name="clean">
     	<mkdir dir="../../Deploy"/>
     	<delete dir="../../Deploy/FlashTool"/>
@@ -74,13 +75,5 @@
 				excludes="**/.svn"/>
 		</copy>
     </target>
-	
-	<taskdef resource="org/eclipse/jgit/ant/ant-tasks.properties">
-	       <classpath>
-	         <pathelement location="../libs/jgit.jar"/>
-	         <pathelement location="../libs/jgit.ant.jar"/>
-	         <pathelement location="../libs/jsch-0.1.51.jar"/>
-	       </classpath>
-	</taskdef>
 
 </project>
