@@ -8,8 +8,6 @@
 	<classpathentry kind="lib" path="libs/hsqldb2_2.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/xstream_1.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.51.jar"/>
-	<classpathentry kind="lib" path="libs/jna-4.1.0.jar"/>
-	<classpathentry kind="lib" path="libs/jna-platform-4.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/js.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/swt64.jar"/>
 	<classpathentry kind="lib" path="libs/com.ibm.icu.jar"/>
@@ -37,6 +35,8 @@
 	<classpathentry kind="lib" path="libs/jbbp-1.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-152.jar"/>
 	<classpathentry kind="lib" path="libs/guava_18.0.jar"/>
+	<classpathentry kind="lib" path="libs/jna-4.2.0.jar"/>
+	<classpathentry kind="lib" path="libs/jna-platform-4.2.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
