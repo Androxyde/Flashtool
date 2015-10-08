@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="libs/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="libs/hsqldb2_2.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/xstream_1.4.2.jar"/>
-	<classpathentry kind="lib" path="libs/js.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/swt64.jar"/>
 	<classpathentry kind="lib" path="libs/com.ibm.icu.jar"/>
 	<classpathentry kind="lib" path="libs/core.commands.jar"/>
@@ -40,6 +39,7 @@
 	<classpathentry kind="lib" path="libs/org.eclipse.jgit.archive-4.1.0.201509280440-r.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.7.12.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-log4j12-1.7.12.jar"/>
+	<classpathentry kind="lib" path="libs/js-1.7.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
