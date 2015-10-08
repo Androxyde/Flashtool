@@ -6,11 +6,13 @@ import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.OpenSshConfig.Host;
 import org.eclipse.jgit.transport.SshSessionFactory;
@@ -19,45 +21,88 @@ import com.jcraft.jsch.Session;
 public class DevicesGit {
 
 	private static String remotePath="https://github.com/Androxyde/devices.git";
+	private static String localPath=OS.getFolderDevices()+File.separator+".git";
     private static Repository localRepo;
     private static Git git;
     private static Logger logger = Logger.getLogger(DevicesGit.class);
     
-    public static void gitSync(String localPath) throws IOException, InvalidRemoteException, org.eclipse.jgit.api.errors.TransportException, GitAPIException {
+    public static void gitSync() throws IOException, InvalidRemoteException, org.eclipse.jgit.api.errors.TransportException, GitAPIException {
     	SshSessionFactory.setInstance(new JschConfigSessionFactory() {
     		  public void configure(Host hc, Session session) {
     		    session.setConfig("StrictHostKeyChecking", "no");
     		  };
     		}
     	);
-    	if (!new File(localPath+File.separator+".git").exists()) {
-    		if (new File(localPath).exists()) {
-    			logger.info("This is the first sync with devices. Renaming devices to devices.old");
-    			new File(localPath).renameTo(new File(localPath+".old"));
-    		}
+    	if (openRepository()) {
+    		pullRepository();
     	}
-    	if (!new File(localPath).exists()) {
-    		logger.info("Cloning devices repository");
-    		try {
-    			Git.cloneRepository().setURI(remotePath).setDirectory(new File(localPath)).call();
-    		} catch (Exception e) {
-    			logger.error("Cannot clone devices repository : "+e.getMessage());
-    		}
-    	}
-    	else {
-    		localRepo = new FileRepository(localPath + "/.git");
-    		git = new Git(localRepo);
-    		logger.info("Scanning devices folder for changes.");
-    		git.add().addFilepattern(".").call();
-    		if (git.status().call().getChanged().size()>0 || git.status().call().getAdded().size()>0 || git.status().call().getModified().size()>0) {
-        		logger.info("Changes have been found. Doing a hard reset (removing user modifications).");
-    			ResetCommand reset = git.reset();
-    			reset.setMode(ResetType.HARD);
-    			reset.setRef(Constants.HEAD);
-    			reset.call();
-    		}
-    		logger.info("Pulling changes from github.");
-			git.pull().call();
+    	else cloneRepository();
+    	closeRepository();
+    }
+
+    public static void cloneRepository() {
+		try {
+			logger.info("Cloning devices repository to "+localPath);
+	        File lPath = new File(localPath);
+	        lPath.mkdir();
+	        Git result = Git.cloneRepository()
+	                .setURI(remotePath)
+	                .setDirectory(lPath)
+	                .call();
+	        result.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+    public static boolean openRepository() {
+		try {
+			logger.info("Opening devices repository.");
+	        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+	        localRepo = builder.setGitDir(new File(localPath))
+	                .readEnvironment() // scan environment GIT_* variables
+	                .findGitDir() // scan up the file system tree
+	                .build();
+	        git = new Git(localRepo);
+	        return true;
+		} catch (Exception e) {
+			logger.info("Error opening devices repository.");
+			closeRepository();
+			return false;
+		}
+	}
+
+    public static void pullRepository() {
+    	try {
+	    	logger.info("Scanning devices folder for changes.");
+	    	git.add().addFilepattern(".").call();
+	    	Status status = git.status().call();
+	    	if (status.getChanged().size()>0 || status.getAdded().size()>0 || status.getModified().size()>0) {
+	    		logger.info("Changes have been found. Doing a hard reset (removing user modifications).");
+	    		ResetCommand reset = git.reset();
+	    		reset.setMode(ResetType.HARD);
+	    		reset.setRef(Constants.HEAD);
+	    		reset.call();
+	    	}
+	    	logger.info("Pulling changes from github.");
+	    	git.pull().call();
+    	} catch (Exception e) {
+    		logger.error(e.getMessage());
     	}
     }
+
+    public static void closeRepository() {
+    	logger.info("Quietly closing devices repository.");
+    	try {
+        	git.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	try {
+			localRepo.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
