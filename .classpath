@@ -37,6 +37,9 @@
 	<classpathentry kind="lib" path="libs/jopt-simple-4.9.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.53.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.jgit-4.1.0.201509280440-r.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.jgit.archive-4.1.0.201509280440-r.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-1.7.12.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-log4j12-1.7.12.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
