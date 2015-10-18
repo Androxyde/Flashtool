@@ -140,9 +140,9 @@ public class S1Packet {
 			return "Partition : "+BytesUtil.getInt(data);
 		if (getCommand()==0x0C) {
 			if (direction.equals("READ REPLY"))
-				return "Value : "+HexDump.toHex(data).replace("[", "").replace("]", "").replace(", ", "");
+				return "Value : "+HexDump.toHex(data);
 			else
-				return "Unit : "+HexDump.toHex(data).replace("[", "").replace("]", "").replace(", ", "");
+				return "Unit : "+HexDump.toHex(data);
 		}
 		return "";
 	}

@@ -1,7 +1,9 @@
 package org.ta.parsers;
 
+import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
+import org.util.BytesUtil;
 import org.util.HexDump;
 
 public class TAUnit {
@@ -41,6 +43,18 @@ public class TAUnit {
     }
     
     public String toString() {
-    	return HexDump.toHex(aUnitNumber) + HexDump.toHex(aUnitData);
+    	String result = HexDump.toHex(aUnitNumber) + " " + HexDump.toHex((short)aUnitData.length) + " ";
+    	try {
+	    	ByteArrayInputStream is = new ByteArrayInputStream(aUnitData);
+	    	byte[] part = new byte[16];
+	    	int nbread = is.read(part);
+	    	result += HexDump.toHex(BytesUtil.getReply(part, nbread));
+	    	
+	    	while ((nbread=is.read(part))>0) {
+	    		result+="\n              "+HexDump.toHex(BytesUtil.getReply(part, nbread));
+	    	}
+    	} catch (Exception e) {}
+    	return result;
     }
+
 }

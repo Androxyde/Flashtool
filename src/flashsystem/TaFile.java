@@ -22,8 +22,8 @@ public class TaFile {
 	    String partition="";
 	    boolean beginentry=false;
 	    while (_scanner.hasNextLine()) {
-	    	String line = _scanner.nextLine().trim();
-	    	if (line.startsWith("/")) continue;
+	    	String line = _scanner.nextLine();
+	    	if (line.startsWith("//")) continue;
 	    	if (!(line.length()<=4)) {
 	    		Scanner scanline = new Scanner(line);
 	    		scanline.useDelimiter(" ");

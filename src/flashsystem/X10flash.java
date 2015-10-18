@@ -7,6 +7,7 @@ import gui.tools.XMLBootDelivery;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.OS;
 import org.system.TextFile;
+import org.ta.parsers.TAUnit;
 import org.util.BytesUtil;
 import org.util.HexDump;
 import com.google.common.primitives.Bytes;
@@ -102,7 +104,7 @@ public class X10flash {
     	for (int i=0;i<bytes.length;i++) {
     		data[i]=(byte)Integer.parseInt(bytes[i]);
     	}
-    	logger.info("Set loader configuration : "+HexDump.toHex(data));
+    	logger.info("Set loader configuration : ["+HexDump.toHex(data)+"]");
     	if (!_bundle.simulate()) {
     		cmd.send(Command.CMD25,data,false);
     	}
@@ -170,13 +172,23 @@ public class X10flash {
 		} 	
     }
 
+    public void sendTAUnit(TAUnit ta) throws X10FlashException, IOException {
+    	if (ta.getUnitHex().equals("000007DA")) {
+    		String result = WidgetTask.openYESNOBox(_curshell, "This unit ("+ta.getUnitHex() + ") is very sensitive and can brick the device. Do you really want to flash it ?");
+    		if (Integer.parseInt(result)==SWT.NO) {
+    			logger.warn("HWConfig unit skipped : "+ta.getUnitHex());
+    			return;
+    		}
+    	}
+		logger.info("Writing TA unit "+ta.getUnitHex()+". Value : "+HexDump.toHex(ta.getUnitData()));
+		if (!_bundle.simulate()) {
+			cmd.send(Command.CMD13, BytesUtil.concatAll(BytesUtil.getBytesWord(ta.getUnitNumber(), 4), BytesUtil.getBytesWord(ta.getDataLength(),2),ta.getUnitData()),false);  
+		} 	
+    }
+
     public TaEntry dumpProperty(int unit) throws IOException, X10FlashException
     {
     		String sunit = HexDump.toHex(BytesUtil.getBytesWord(unit, 4));
-    		sunit = sunit.replace("[", "");
-    		sunit = sunit.replace("]", "");
-    		sunit = sunit.replace(",", "");
-    		sunit = sunit.replace(" ", "");
     		logger.info("Start Reading unit "+sunit);
 	        logger.debug((new StringBuilder("%%% read TA property id=")).append(unit).toString());
 	        try {
@@ -216,9 +228,9 @@ public class X10flash {
     	String folder = OS.getFolderRegisteredDevices()+File.separator+getPhoneProperty("MSN")+File.separator+"s1ta"+File.separator+timeStamp;
     	new File(folder).mkdirs();
     	TextFile tazone = new TextFile(folder+File.separator+partition+".ta","ISO8859-1");
-        tazone.open(false);
+    	tazone.open(false);
     	try {
-		    tazone.writeln(String.format("%02d", partition));
+		    tazone.writeln(HexDump.toHex((byte)partition));
 		    try {
 		    	logger.info("Start Dumping TA partition "+partition);
 		    	cmd.send(Command.CMD18, Command.VALNULL, false);
@@ -253,15 +265,11 @@ public class X10flash {
 		    	}
 		    	for (Map.Entry<Integer, byte[]> entry : treeMap.entrySet())
 		    	{
-		    	    int unit = entry.getKey();
-		    	    byte[] unitdate = entry.getValue();
-	    			String dataStr = HexDump.toHex(unitdate);
-	    			dataStr = dataStr.replace("[", "");
-		        	dataStr = dataStr.replace("]", "");
-		        	dataStr = dataStr.replace(",", "");
-		        	tazone.writeln(HexDump.toHex((int)unit) + " " + HexDump.toHex((short)unitdate.length) + " " + dataStr);
+		    		TAUnit tau = new TAUnit(entry.getKey(), entry.getValue());
+		    		if (tau.getUnitNumber()>0)
+		    			tazone.write(tau.toString());
+		    	    if (treeMap.lastEntry().getKey()!=entry.getKey()) tazone.write("\n");
 		    	}
-		    	
 		    }catch (X10FlashException e) {
 		    	throw e;
 		    }

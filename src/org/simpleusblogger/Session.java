@@ -110,7 +110,7 @@ public class Session {
 						else if (p.getCommand()==0x0C)
 							tl.add(HexDump.toHex(p.getData()));
 						else if (p.getCommand()==0x19)
-							tl.add(HexDump.toHex(p.getData()).replace("[", "").replace("]", "").replace(", ", ","));
+							tl.add(HexDump.toHex(p.getData()));
 						else tl.add("");
 						v.add(tl);
 					}

@@ -79,7 +79,7 @@ public class SinAdvanced extends Dialog {
 		fd_textPartition.left = new FormAttachment(lblSinVersion, 0, SWT.LEFT);
 		textPartition.setLayoutData(fd_textPartition);
 		try {
-			textPartition.setText(_sin.hasPartitionInfo()?HexDump.toHex(_sin.getPartitionInfo()).replace("[", "").replace("]", "").replace(", ",""):"");
+			textPartition.setText(_sin.hasPartitionInfo()?HexDump.toHex(_sin.getPartitionInfo()):"");
 		} catch (IOException ioe) {
 			logger.warn("Unable to get PartitionInfo. Leaving blank");
 			textPartition.setText("");

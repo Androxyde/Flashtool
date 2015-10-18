@@ -123,6 +123,9 @@ public class DeviceEntry {
 		return OS.getFolderMyDevices()+File.separator+getId();
 	}
 	
+	public String getFolderRegisteted() {
+		return OS.getFolderRegisteredDevices()+File.separator+this.getSerial();
+	}
 	public String getCleanDir() {
 		return OS.getFolderRegisteredDevices()+File.separator+getSerial()+File.separator+"clean"+File.separator+getBuildId();
 	}

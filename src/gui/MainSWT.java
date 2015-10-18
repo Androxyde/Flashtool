@@ -64,6 +64,7 @@ import org.util.XperiFirm;
 
 import flashsystem.Bundle;
 import flashsystem.X10flash;
+import gui.TARestore.TABag;
 import gui.tools.APKInstallJob;
 import gui.tools.BackupSystemJob;
 import gui.tools.BackupTAJob;
@@ -77,6 +78,7 @@ import gui.tools.GetULCodeJob;
 import gui.tools.MsgBox;
 import gui.tools.OldUnlockJob;
 import gui.tools.RawTAJob;
+import gui.tools.RestoreTAJob;
 import gui.tools.RootJob;
 import gui.tools.USBParseJob;
 import gui.tools.VersionCheckerJob;
@@ -105,6 +107,7 @@ public class MainSWT {
 	protected MenuItem mntmInstallBusybox;
 	protected MenuItem mntmRawBackup;
 	protected MenuItem mntmRawRestore;
+	protected MenuItem mntmTARestore;
 	protected VersionCheckerJob vcheck; 
 	private static Logger logger = Logger.getLogger(MainSWT.class);
 	
@@ -186,6 +189,7 @@ public class MainSWT {
 		WidgetTask.setMenuName(mntmNoDevice, "No Device");
 		WidgetTask.setEnabled(mntmNoDevice,false);
 		WidgetTask.setEnabled(mntmRawRestore,false);
+		WidgetTask.setEnabled(mntmTARestore,false);
 		WidgetTask.setEnabled(mntmRawBackup,false);
 		WidgetTask.setEnabled(tltmClean,false);
 		WidgetTask.setEnabled(tltmRecovery,false);
@@ -231,10 +235,12 @@ public class MainSWT {
 	    				boolean hasRoot = Devices.getCurrent().hasRoot();
 	    				WidgetTask.setEnabled(mntmRawRestore,hasRoot);
 	    				WidgetTask.setEnabled(mntmRawBackup,hasRoot);
+	    				WidgetTask.setEnabled(mntmTARestore,true);
 	    			}
 	    			else {
 	    				WidgetTask.setEnabled(mntmRawRestore,false);
-	    				WidgetTask.setEnabled(mntmRawBackup,false);	    				
+	    				WidgetTask.setEnabled(mntmRawBackup,false);
+	    				WidgetTask.setEnabled(mntmTARestore,false);
 	    			}
     			}
     			mntmSwitchPro.setText(ispro?"Switch Simple":"Switch Pro");
@@ -524,16 +530,73 @@ public class MainSWT {
 		Menu menu_9 = new Menu(mntmTrimArea);
 		mntmTrimArea.setMenu(menu_9);
 		
-		MenuItem mntmBackup = new MenuItem(menu_9, SWT.NONE);
-		mntmBackup.addSelectionListener(new SelectionAdapter() {
+		MenuItem mntmS = new MenuItem(menu_9, SWT.CASCADE);
+		mntmS.setText("S1");
+		
+		Menu menu_13 = new Menu(mntmS);
+		mntmS.setMenu(menu_13);
+		
+		MenuItem mntmTABackup = new MenuItem(menu_13, SWT.NONE);
+		mntmTABackup.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doBackupTA();
 			}
 		});
-		mntmBackup.setText("S1 Dump");
+		mntmTABackup.setText("Backup");
 		
-		mntmRawBackup = new MenuItem(menu_9, SWT.NONE);
+		mntmTARestore = new MenuItem(menu_13, SWT.NONE);
+		mntmTARestore.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TARestore restore = new TARestore(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				Vector<TABag> result = (Vector<TABag>)restore.open();
+				if (result==null) {
+					logger.info("Canceled TA restore task");
+				}
+				else {
+					boolean toflash = false;
+					for (int i = 0 ; i < result.size() ; i++) {
+						if (result.get(i).toflash.size()>0) toflash=true;
+					}
+					if (!toflash) {
+						logger.info("Nothing to do with TA restore task");
+					}
+					else {
+						Bundle bundle = new Bundle();
+						bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+						final X10flash flash = new X10flash(bundle,shlSonyericsson);
+						try {
+							logger.info("Please connect your device into flashmode.");
+							String connect = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
+							if (connect.equals("OK")) {
+								RestoreTAJob rjob = new RestoreTAJob("Flash");
+								rjob.setFlash(flash);
+								rjob.setTA(result);
+								rjob.schedule();
+							}
+							else
+								logger.info("Flash canceled");
+						}
+						catch (Exception ex){
+							logger.error(ex.getMessage());
+							logger.info("Flash canceled");
+							if (flash.getBundle()!=null)
+								flash.getBundle().close();
+						}
+					}
+				}
+			}
+		});
+		mntmTARestore.setText("Restore");
+		
+		MenuItem mntmRaw = new MenuItem(menu_9, SWT.CASCADE);
+		mntmRaw.setText("Raw device");
+		
+		Menu menu_14 = new Menu(mntmRaw);
+		mntmRaw.setMenu(menu_14);
+		
+		mntmRawBackup = new MenuItem(menu_14, SWT.NONE);
 		mntmRawBackup.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -546,7 +609,7 @@ public class MainSWT {
 		mntmRawBackup.setText("Backup");
 		mntmRawBackup.setEnabled(false);
 		
-		mntmRawRestore = new MenuItem(menu_9, SWT.NONE);
+		mntmRawRestore = new MenuItem(menu_14, SWT.NONE);
 		mntmRawRestore.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1095,14 +1158,15 @@ public class MainSWT {
     				boolean hasSU = Devices.getCurrent().hasSU();
     				WidgetTask.setEnabled(tltmRoot, !hasSU);
     				WidgetTask.setEnabled(tltmApkInstall, true);
+    				boolean hasRoot=false;
     				if (hasSU) {
         				logger.info("Checking root access");
-    					boolean hasRoot = Devices.getCurrent().hasRoot();
-						doGiveRoot(hasRoot);
+    					hasRoot = Devices.getCurrent().hasRoot();
     					if (hasRoot) {
     						doInstFlashtool();
     					}	
     				}
+    				doGiveRoot(hasRoot);
     			}
     			logger.debug("Now setting buttons availability - btnRoot");
     			logger.debug("mtmRootzergRush menu");
@@ -1158,6 +1222,7 @@ public class MainSWT {
 		if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
 			WidgetTask.setEnabled(mntmRawRestore,hasRoot);
 			WidgetTask.setEnabled(mntmRawBackup,hasRoot);
+			WidgetTask.setEnabled(mntmTARestore,true);
 		}
 		WidgetTask.setEnabled(tltmAskRoot,!hasRoot);
 		if (!Devices.isWaitingForReboot())
