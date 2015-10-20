@@ -29,13 +29,19 @@ public class TAFileParser {
     private boolean aFoundPartition = false;
     private boolean aContinuationData = false;
     private Vector<TAUnit> units = new Vector<TAUnit>();
+    private File tafile;
 
     public TAFileParser(File taf)  throws TAFileParseException, IOException {
+    	tafile=taf;
     	FileInputStream inputStream = new FileInputStream(taf);
     	this.parse(inputStream);
         inputStream.close();
     }
 
+    public String getName() {
+    	return tafile.getName();
+    }
+    
     public TAFileParser(InputStream inputStream) throws TAFileParseException, IOException {
         this.parse(inputStream);
         inputStream.close();
@@ -85,7 +91,6 @@ public class TAFileParser {
         }
         return -1;
     }
-
 
     public byte[] getUnitData() throws TAFileParseException, IOException {
         while (this.aContinuationData) {

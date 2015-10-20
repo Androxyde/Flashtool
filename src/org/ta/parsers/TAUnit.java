@@ -7,7 +7,8 @@ import org.util.BytesUtil;
 import org.util.HexDump;
 
 public class TAUnit {
-    private int aUnitNumber;
+
+	private int aUnitNumber;
     private byte[] aUnitData;
 
     public TAUnit(int l, byte[] arrby) {
@@ -15,11 +16,18 @@ public class TAUnit {
         this.aUnitData = arrby;
     }
 
+    public byte[] getFlashBytes() {
+    	byte [] head = BytesUtil.concatAll(BytesUtil.getBytesWord(aUnitNumber, 4), BytesUtil.getBytesWord(getDataLength(),4));
+    	if (aUnitData == null) return head;
+    	return BytesUtil.concatAll(head,aUnitData);
+    }
+
     public byte[] getUnitData() {
         return this.aUnitData;
     }
     
     public int getDataLength() {
+    	if (aUnitData==null) return 0;
     	return aUnitData.length;
     }
 
@@ -43,7 +51,7 @@ public class TAUnit {
     }
     
     public String toString() {
-    	String result = HexDump.toHex(aUnitNumber) + " " + HexDump.toHex((short)aUnitData.length) + " ";
+    	String result = HexDump.toHex(aUnitNumber) + " " + HexDump.toHex((short)getDataLength()) + " ";
     	try {
 	    	ByteArrayInputStream is = new ByteArrayInputStream(aUnitData);
 	    	byte[] part = new byte[16];
