@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Create Linux Package">
-
+	
 	<target name="all" depends="loadprops, binaries, dotar"/>
 
 	<target name="main_lib" depends="loadprops">
@@ -60,6 +60,10 @@
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib/jexec" perm="755"/>
 		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib" perm="755" includes="**/*.so"/>
 		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/linjre32/lib" perm="755" includes="**/*.so"/>
+		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre32/lib/security"/>
+		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre32/lib/security"/>		
+		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib/security"/>
+		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib/security"/>		
 	</target>
 	
 	<target name="binaries" depends="clean, main_lib, JRE">
