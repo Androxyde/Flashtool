@@ -4,13 +4,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import flashsystem.TaEntry;
+import org.ta.parsers.TAUnit;
+
 import flashsystem.X10flash;
 
 public class WriteTAJob extends Job {
 
 	X10flash flash = null;
-	TaEntry ta = null;
+	TAUnit ta = null;
 	boolean canceled = false;
 	boolean success = false;
 
@@ -26,7 +27,7 @@ public class WriteTAJob extends Job {
 		flash=f;
 	}
 
-	public void setTA(TaEntry t) {
+	public void setTA(TAUnit t) {
 		ta=t;
 	}
 	

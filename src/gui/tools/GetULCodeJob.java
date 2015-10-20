@@ -8,8 +8,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.logger.LogProgress;
 import org.system.DeviceChangedListener;
 import org.system.ULCodeFile;
+import org.ta.parsers.TAUnit;
+import org.util.HexDump;
 
-import flashsystem.TaEntry;
 import flashsystem.X10flash;
 
 public class GetULCodeJob extends Job {
@@ -26,11 +27,11 @@ public class GetULCodeJob extends Job {
 	boolean relocked = false;
 	private static Logger logger = Logger.getLogger(GetULCodeJob.class);
 
-	
+
 	public String getBLStatus() {
 		return blstatus;
 	}
-	
+
 	public String getULCode() {
 		return ulcode;
 	}
@@ -84,20 +85,20 @@ public class GetULCodeJob extends Job {
 					LogProgress.initProgress(1);
 		    		platform = flash.getCurrentDevice();
 					flash.openTA(2);
-					TaEntry ta=flash.dumpProperty(2129);
+					TAUnit ta=flash.readTA(2129);
 					flash.closeTA();
 					flash.closeDevice();
 					LogProgress.initProgress(0);
 					DeviceChangedListener.pause(false);
 					if (ta!=null)
-						phonecert = ta.getDataHex().replace(",","").replace("[", "").replace("[", "").trim();
+						phonecert = HexDump.toHex(ta.getUnitData());
 				}
 				if (phonecert.length()>874)
 					phonecert = phonecert.substring(489,489+383);
 			}
 			else {
 				flash.openTA(2);
-				TaEntry ta=flash.dumpProperty(2226);
+				TAUnit ta=flash.readTA(2226);
 				flash.closeTA();
 				serial = flash.getSerial();
 				if (ta==null) {
@@ -117,13 +118,13 @@ public class GetULCodeJob extends Job {
 				}
 				else {
 					alreadyunlocked=true;
-					if (ta.getDataSize()<=2) {
+					if (ta.getDataLength()<=2) {
 						relocked = true;
 						ULCodeFile uc = new ULCodeFile(serial);
 						ulcode = uc.getULCode();
 					}
 					else {
-						ulcode = ta.getDataString();
+						ulcode = new String(ta.getUnitData());
 						ULCodeFile uc = new ULCodeFile(serial);
 						uc.setCode(ulcode);
 					}
@@ -140,6 +141,6 @@ public class GetULCodeJob extends Job {
     
     public boolean isRelocked() {
     	return relocked;
-    }
+    } 
 
 }

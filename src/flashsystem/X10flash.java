@@ -7,7 +7,6 @@ import gui.tools.XMLBootDelivery;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.io.IOException;
@@ -24,6 +23,8 @@ import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.OS;
 import org.system.TextFile;
+import org.ta.parsers.TAFileParseException;
+import org.ta.parsers.TAFileParser;
 import org.ta.parsers.TAUnit;
 import org.util.BytesUtil;
 import org.util.HexDump;
@@ -51,9 +52,8 @@ public class X10flash {
     private String serial = "";
     private Shell _curshell;
     private static Logger logger = Logger.getLogger(X10flash.class);
-    private HashMap<Integer,TaEntry> TaPartition2 = new HashMap<Integer,TaEntry>();
+    private HashMap<Long,TAUnit> TaPartition2 = new HashMap<Long,TAUnit>();
     int loaderConfig = 0;
-    private String model;
     private XMLBootConfig bc=null;
 
     public X10flash(Bundle bundle, Shell shell) {
@@ -112,9 +112,7 @@ public class X10flash {
     
     public void setFlashTimestamp() throws IOException,X10FlashException {
 	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-	  	TaEntry tau = new TaEntry();
-	  	tau.setUnit(0x00002725);
-	  	tau.setData(BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
+	  	TAUnit tau = new TAUnit(0x00002725, BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
 	  	sendTAUnit(tau);
     }
     
@@ -122,54 +120,32 @@ public class X10flash {
     {
 	    	if (ongoing) {
 	    		openTA(2);
-	    		TaEntry ent = new TaEntry();
-	    		ent.setUnit(0x00002774);
-	    		ent.setData(new byte[] {0x01});
+	    		TAUnit ent = new TAUnit(0x00002774, new byte[] {0x01});
 	    		sendTAUnit(ent);
 	    		closeTA();
 	    	}
 	    	else {
 	    		openTA(2);
 	    	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-	    	  	TaEntry tau = new TaEntry();
-	    	  	tau.setUnit(0x00002725);
-	    	  	tau.setData(BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
+	    	  	TAUnit tau = new TAUnit(0x00002725, BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
 			  	sendTAUnit(tau);
-    			TaEntry ent = new TaEntry();
-	    		ent.setUnit(0x00002774);
-	    		ent.setData(new byte[] {0x00});
+    			TAUnit ent = new TAUnit(0x00002774, new byte[] {0x00});
     			sendTAUnit(ent);
 	    		closeTA();
 	    	}
     }
 
     public void setFlashStat(byte state)  throws IOException,X10FlashException {
-		TaEntry ent = new TaEntry();
-		ent.setUnit(0x00002774);
-		ent.setData(new byte[] {state});
+		TAUnit ent = new TAUnit(0x00002774, new byte[] {state});
 		sendTAUnit(ent);
     }
 
-    private void sendTA(TaFile ta) throws FileNotFoundException, IOException,X10FlashException {
+    private void sendTA(TAFileParser ta) throws FileNotFoundException, IOException,X10FlashException {
     		logger.info("Flashing "+ta.getName()+" to partition "+ta.getPartition());
-			Vector<TaEntry> entries = ta.entries();
+			Vector<TAUnit> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
 				sendTAUnit(entries.get(i));
 			}
-    }
-
-    public void sendTAUnit(TaEntry ta) throws X10FlashException, IOException {
-    	if (ta.getUnit().equals("000007DA")) {
-    		String result = WidgetTask.openYESNOBox(_curshell, "This unit ("+ta.getUnit() + ") is very sensitive and can brick the device. Do you really want to flash it ?");
-    		if (Integer.parseInt(result)==SWT.NO) {
-    			logger.warn("HWConfig unit skipped : "+ta.getUnit());
-    			return;
-    		}
-    	}
-		logger.info("Writing TA unit "+ta.getUnit()+". Value : "+ta.getDataHex());
-		if (!_bundle.simulate()) {
-			cmd.send(Command.CMD13, ta.getWordbyte(),false);  
-		} 	
     }
 
     public void sendTAUnit(TAUnit ta) throws X10FlashException, IOException {
@@ -182,11 +158,11 @@ public class X10flash {
     	}
 		logger.info("Writing TA unit "+ta.getUnitHex()+". Value : "+HexDump.toHex(ta.getUnitData()));
 		if (!_bundle.simulate()) {
-			cmd.send(Command.CMD13, BytesUtil.concatAll(BytesUtil.getBytesWord(ta.getUnitNumber(), 4), BytesUtil.getBytesWord(ta.getDataLength(),2),ta.getUnitData()),false);  
-		} 	
+			cmd.send(Command.CMD13, ta.getFlashBytes(),false);
+		}
     }
 
-    public TaEntry dumpProperty(int unit) throws IOException, X10FlashException
+    public TAUnit readTA(int unit) throws IOException, X10FlashException
     {
     		String sunit = HexDump.toHex(BytesUtil.getBytesWord(unit, 4));
     		logger.info("Start Reading unit "+sunit);
@@ -200,13 +176,7 @@ public class X10flash {
 	        	return null;
 	        }
 	        if (cmd.getLastReplyLength()>0) {
-        		TaEntry ta = new TaEntry();
-        		ta.setUnit(HexDump.toHex(unit));
-	        	String reply = cmd.getLastReplyHex();
-	        	reply = reply.replace("[", "");
-	        	reply = reply.replace("]", "");
-	        	reply = reply.replace(",", "");
-        		ta.addData(reply.trim());
+        		TAUnit ta = new TAUnit(unit, cmd.getLastReply());
         		return ta;
     		}
 			return null;
@@ -297,11 +267,11 @@ public class X10flash {
     
     public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
     	try {
-    		TaFile ta = new TaFile(new File(tafile));
+    		TAFileParser ta = new TAFileParser(new File(tafile));
         	openTA(ta.getPartition());
         	sendTA(ta);
     		closeTA();
-    	}catch (TaParseException tae) {
+    	}catch (TAFileParseException tae) {
     		closeTA();
     		logger.error("Error parsing TA file. Skipping");
     	}
@@ -461,7 +431,7 @@ public class X10flash {
     	taopen = false;
     }
 
-    public XMLBootConfig getBootConfig() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TaParseException, BootDeliveryException  {
+    public XMLBootConfig getBootConfig() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TAFileParseException, BootDeliveryException  {
 		if (!_bundle.hasBootDelivery()) return null;
 		logger.info("Parsing boot delivery");
 		XMLBootDelivery xml = _bundle.getXMLBootDelivery();
@@ -507,7 +477,7 @@ public class X10flash {
 		return found.get(found.size()-1);
     }
     
-    public void sendBootDelivery() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TaParseException, SinFileException {
+    public void sendBootDelivery() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TAFileParseException, SinFileException {
     	try {
     		if (bc!=null) {
     			XMLBootDelivery xmlboot = _bundle.getXMLBootDelivery();
@@ -515,7 +485,7 @@ public class X10flash {
     				if (!xmlboot.mustUpdate(phoneprops.getProperty("BOOTVER"))) throw new BootDeliveryException("Boot delivery up to date. Nothing to do");
 	    		logger.info("Going to flash boot delivery");
 				if (!bc.isComplete()) throw new BootDeliveryException ("Some files are missing from your boot delivery");
-				TaFile taf = new TaFile(new File(bc.getTA()));
+				TAFileParser taf = new TAFileParser(new File(bc.getTA()));
 				openTA(2);
 				SinFile sin = new SinFile(new File(bc.getAppsBootFile()));
 				sin.setChunkSize(maxpacketsize);
@@ -550,14 +520,14 @@ public class X10flash {
 					if (bent.getName().toUpperCase().endsWith(".TA")) {
 						if (!bent.getName().toUpperCase().contains("SIM"))
 						try {
-							TaFile ta = new TaFile(new File(bent.getAbsolutePath()));
-							Iterator<TaEntry> i = ta.entries().iterator();
+							TAFileParser ta = new TAFileParser(new File(bent.getAbsolutePath()));
+							Iterator<TAUnit> i = ta.entries().iterator();
 							while (i.hasNext()) {
-								TaEntry ent = i.next();
-								TaPartition2.put(BytesUtil.getInt(ent.getUnitbytes()),ent);
+								TAUnit ent = i.next();
+								TaPartition2.put(ent.getUnitNumber(),ent);
 							}
 						}
-						catch (TaParseException tae) {
+						catch (TAFileParseException tae) {
 				    		logger.error("Error parsing TA file. Skipping");
 				    	}
 						else {
@@ -568,11 +538,11 @@ public class X10flash {
 			}
 		try {
 			if (bc!=null) {
-				TaFile taf = new TaFile(new File(bc.getTA()));
-				Iterator<TaEntry> i = taf.entries().iterator();
+				TAFileParser taf = new TAFileParser(new File(bc.getTA()));
+				Iterator<TAUnit> i = taf.entries().iterator();
 				while (i.hasNext()) {
-					TaEntry ent = i.next();
-					TaPartition2.put(BytesUtil.getInt(ent.getUnitbytes()),ent);
+					TAUnit ent = i.next();
+					TaPartition2.put(ent.getUnitNumber(),ent);
 				}
 			}
 		} catch (Exception e) {
@@ -630,10 +600,10 @@ public class X10flash {
     	        		if (!intemplate) ignored.add(ent.getName());
     				}
     				if (ent.getName().endsWith(".ta")) {
-    					TaFile taf = new TaFile(new File(ent.getAbsolutePath()));
-    					Iterator<TaEntry> itaent = taf.entries().iterator();
+    					TAFileParser taf = new TAFileParser(new File(ent.getAbsolutePath()));
+    					Iterator<TAUnit> itaent = taf.entries().iterator();
     					while (itaent.hasNext()) {
-    						TaEntry taent = itaent.next();
+    						TAUnit taent = itaent.next();
         	        		Map<Integer,String> map =  tf.getMap();
         	        		Iterator<Integer> keys = map.keySet().iterator();
         	        		boolean intemplate = false;
@@ -644,13 +614,13 @@ public class X10flash {
         	        			String action = parsed[0];
         	        			if (action.equals("writeTA")) {
         	        				param = parsed[1];
-        	            			if (Integer.parseInt(taent.getUnit(),16) == Integer.parseInt(param)) {
+        	            			if (taent.getUnitNumber() == Long.parseLong(param)) {
         	            				intemplate=true;
         	            				break; 
         	            			}
         	        			}
         	        		}
-        	        		if (!intemplate) ignored.add("TA unit "+taent.getUnit());
+        	        		if (!intemplate) ignored.add("TA unit "+taent.getUnitHex());
     					}
     				}
     			}
@@ -731,7 +701,7 @@ public class X10flash {
     				}
     			}
     			else if (action.equals("writeTA")) {
-    				TaEntry unit = TaPartition2.get(Integer.parseInt(param));
+    				TAUnit unit = TaPartition2.get(Integer.parseInt(param));
     				if (unit != null)
     					this.sendTAUnit(unit);
     				else logger.warn("Unit "+param+" not found in bundle");
@@ -898,14 +868,14 @@ public class X10flash {
     	closeTA();
     }
 
-    public void sendTAFiles()  throws FileNotFoundException, IOException, X10FlashException, TaParseException {
+    public void sendTAFiles()  throws FileNotFoundException, IOException, X10FlashException, TAFileParseException {
     	openTA(2);
     	Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
     	while (e.hasNext()) {
     		Category c = e.next();
     		if (c.isTa()) {
     			BundleEntry entry = c.getEntries().iterator().next();
-    			TaFile taf = new TaFile(new File(entry.getAbsolutePath()));
+    			TAFileParser taf = new TAFileParser(new File(entry.getAbsolutePath()));
     			sendTA(taf);
     		}
     	}
