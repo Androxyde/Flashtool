@@ -1,23 +1,14 @@
 package gui;
 
-import java.io.File;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import libusb.LibUsbException;
 import linuxlib.JUsb;
-
 import org.logger.MyLogger;
-import org.sinfile.parsers.SinFile;
 import org.system.AWTKillerThread;
 import org.system.OS;
-import org.util.BytesUtil;
-import org.util.HexDump;
-
 import flashsystem.FlasherConsole;
-import flashsystem.TaEntry;
 
 public class Main {
 
