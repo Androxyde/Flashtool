@@ -5,16 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.Deflater;
-
 import linuxlib.JUsb;
-
 import org.adb.AdbUtility;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,7 +43,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.logger.TextAreaAppender;
-import org.simpleusblogger.Parser;
 import org.system.AdbPhoneThread;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
@@ -60,8 +56,6 @@ import org.system.OS;
 import org.system.Proxy;
 import org.system.StatusEvent;
 import org.system.StatusListener;
-import org.util.XperiFirm;
-
 import flashsystem.Bundle;
 import flashsystem.X10flash;
 import gui.TARestore.TABag;
@@ -80,11 +74,9 @@ import gui.tools.OldUnlockJob;
 import gui.tools.RawTAJob;
 import gui.tools.RestoreTAJob;
 import gui.tools.RootJob;
-import gui.tools.USBParseJob;
 import gui.tools.VersionCheckerJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
-import gui.tools.XperiFirmJob;
 import gui.tools.Yaffs2Job;
 
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -108,6 +100,7 @@ public class MainSWT {
 	protected MenuItem mntmRawBackup;
 	protected MenuItem mntmRawRestore;
 	protected MenuItem mntmTARestore;
+	protected MenuItem mntmBackupSystemApps;
 	protected VersionCheckerJob vcheck; 
 	private static Logger logger = Logger.getLogger(MainSWT.class);
 	
@@ -351,7 +344,7 @@ public class MainSWT {
 		});
 		mntmTowelroot.setText("Force towelroot");
 		
-		MenuItem mntmBackupSystemApps = new MenuItem(menu_device, SWT.NONE);
+		mntmBackupSystemApps = new MenuItem(menu_device, SWT.NONE);
 		mntmBackupSystemApps.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -549,8 +542,20 @@ public class MainSWT {
 		mntmTARestore.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TARestore restore = new TARestore(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-				Vector<TABag> result = (Vector<TABag>)restore.open();
+				Vector<TABag> result=null;
+				File srcFolder = new File(Devices.getCurrent().getFolderRegisteted()+File.separator+"s1ta");
+				if (srcFolder.exists()) {
+					if (srcFolder.listFiles().length>0) {
+						TARestore restore = new TARestore(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+						result = (Vector<TABag>)restore.open();
+					}
+					else {
+						logger.info("No backup found");
+					}
+				}
+				else {
+					logger.info("No backup found");
+				}
 				if (result==null) {
 					logger.info("Canceled TA restore task");
 				}
@@ -1143,6 +1148,7 @@ public class MainSWT {
     			WidgetTask.setEnabled(mntmNoDevice, true);
     			WidgetTask.setMenuName(mntmNoDevice, "My "+Devices.getCurrent().getId());
     			WidgetTask.setEnabled(mntmInstallBusybox,false);
+    			WidgetTask.setEnabled(mntmBackupSystemApps,false);
     			if (!Devices.isWaitingForReboot()) {
     				logger.info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
     				logger.info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());
@@ -1217,6 +1223,7 @@ public class MainSWT {
 		btnKernel.setEnabled(Devices.getCurrent().canKernel());*/
 		WidgetTask.setEnabled(tltmAskRoot,!hasRoot);
 		WidgetTask.setEnabled(mntmInstallBusybox,hasRoot);
+		WidgetTask.setEnabled(mntmBackupSystemApps,hasRoot);
 		WidgetTask.setEnabled(tltmClean,hasRoot);
 		WidgetTask.setEnabled(tltmRecovery,hasRoot&&Devices.getCurrent().canRecovery());
 		if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
