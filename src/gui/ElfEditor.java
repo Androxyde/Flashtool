@@ -203,15 +203,15 @@ public class ElfEditor extends Dialog {
 			byte[] ident = new byte[ph.getFileSize()<352?(int)ph.getFileSize():352];
 			fin.read(ident);
 			String identHex = HexDump.toHex(ident);
-			if (identHex.contains("1F, 8B"))
+			if (identHex.contains("1F 8B"))
 				ctype="ramdisk.gz";
-			else if (identHex.contains("00, 00, A0, E1"))
+			else if (identHex.contains("00 00 A0 E1"))
 				ctype="Image";
-			else if (identHex.contains("41, 52, 4D, 64"))
+			else if (identHex.contains("41 52 4D 64"))
 				ctype="Image";
-			else if (identHex.contains("51, 43, 44, 54"))
+			else if (identHex.contains("51 43 44 54"))
 				ctype="qcdt";
-			else if (identHex.contains("53, 31, 5F, 52, 50, 4D"))
+			else if (identHex.contains("53 31 5F 52 50 4D"))
 				ctype="rpm.bin";
 			else if (new String(ident).contains("S1_Root") || new String(ident).contains("S1_SW_Root"))
 				ctype="cert";
