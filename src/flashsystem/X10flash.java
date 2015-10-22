@@ -701,7 +701,7 @@ public class X10flash {
     				}
     			}
     			else if (action.equals("writeTA")) {
-    				TAUnit unit = TaPartition2.get(Integer.parseInt(param));
+    				TAUnit unit = TaPartition2.get(Long.parseLong(param));
     				if (unit != null)
     					this.sendTAUnit(unit);
     				else logger.warn("Unit "+param+" not found in bundle");
@@ -717,18 +717,21 @@ public class X10flash {
     }
 
     public boolean hasScript() {
-    	boolean has=false;
+    	File fsc=null;
     	try {
-    		has=new File(getFlashScript()).exists();
+    		fsc=new File(getFlashScript());
     	}
     	catch (Exception e) {
-    		has=false;
+    		fsc=null;
     	}
-    	if (has) {
-    		String result = WidgetTask.openYESNOBox(_curshell, "A FSC script is found. Do you want to use it ?");
-    		return Integer.parseInt(result)==SWT.YES;
+    	if (fsc!=null) {
+    		if (fsc.exists()) {
+    			String result = WidgetTask.openYESNOBox(_curshell, "A FSC script is found : "+fsc.getName()+". Do you want to use it ?");
+    			return Integer.parseInt(result)==SWT.YES;
+    		}
+    		else return false;
     	}
-    	return has;
+    	return false;
     }
 
     public void flashDevice() {
