@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
@@ -58,7 +59,7 @@ import org.system.StatusEvent;
 import org.system.StatusListener;
 import flashsystem.Bundle;
 import flashsystem.X10flash;
-import gui.TARestore.TABag;
+import gui.models.TABag;
 import gui.tools.APKInstallJob;
 import gui.tools.BackupSystemJob;
 import gui.tools.BackupTAJob;
@@ -546,8 +547,31 @@ public class MainSWT {
 				File srcFolder = new File(Devices.getCurrent().getFolderRegisteted()+File.separator+"s1ta");
 				if (srcFolder.exists()) {
 					if (srcFolder.listFiles().length>0) {
-						TARestore restore = new TARestore(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-						result = (Vector<TABag>)restore.open();
+						File[] chld = srcFolder.listFiles();
+						HashMap<String,Vector<TABag>> backupset = new HashMap<String, Vector<TABag>>();
+						for (int i=0; i < chld.length ; i++) {
+							File srcFolderBackup = new File(Devices.getCurrent().getFolderRegisteted()+File.separator+"s1ta"+File.separator+chld[i].getName());
+							File chldPartition[] = srcFolderBackup.listFiles();
+							Vector<TABag> bags = new Vector<TABag>();
+							for (int j=0;j<chldPartition.length;j++) {
+								try {
+									TABag bag = new TABag(chldPartition[j]);
+									if (bag.partition>0)
+										bags.add(bag);
+									
+								} catch (Exception ex) {}
+							}
+							if (bags.size()>0) {
+								backupset.put(chld[i].getName(), bags);
+							}
+						}
+						if (backupset.size()>0) {
+							TARestore restore = new TARestore(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+							result = (Vector<TABag>)restore.open(backupset);
+						}
+						else {
+							logger.info("No backup found");
+						}
 					}
 					else {
 						logger.info("No backup found");

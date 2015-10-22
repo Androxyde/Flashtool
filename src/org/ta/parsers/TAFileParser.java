@@ -83,6 +83,7 @@ public class TAFileParser {
         }
         String string = "";
         while ((string = this.aReader.readLine()) != null) {
+        	if (string.length()>62) throw new TAFileParseException("Data length per line exceeds 16 bytes for unit:[" + this.aUnit + "].");
             if (this.matchDataLine(string)) {
                 return this.aUnit;
             }
@@ -99,6 +100,7 @@ public class TAFileParser {
             if (string == null) {
                 throw new TAFileParseException("Expected more data for unit:[" + this.aUnit + "].");
             }
+            if (string.length()>62) throw new TAFileParseException("Data length per line exceeds 16 bytes for unit:[" + this.aUnit + "].");
             if (this.matchContinuationDataLine(string)) continue;
             throw new TAFileParseException("Expected more data for unit:[" + this.aUnit + "] at line:[" + string + "].");
         }

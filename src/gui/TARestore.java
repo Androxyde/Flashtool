@@ -1,6 +1,6 @@
 package gui;
 
-import gui.tools.WidgetTask;
+import gui.models.TABag;
 import gui.tools.WidgetsTool;
 import java.io.File;
 import java.util.Arrays;
@@ -29,12 +29,9 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.system.Devices;
 import org.ta.parsers.TAFileParser;
 import org.ta.parsers.TAUnit;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
 
 public class TARestore extends Dialog {
 
@@ -53,19 +50,6 @@ public class TARestore extends Dialog {
 	private Vector<TAUnit> toflash;
 	private Vector<TABag> result;
 
-	public class TABag {
-		public Vector<TAUnit> available;
-		public Vector<TAUnit> toflash;
-		public int partition;
-		public TABag(File file) {
-			try {
-				TAFileParser taf = new TAFileParser(file);
-				available = taf.entries();
-				toflash = new Vector<TAUnit>();
-				partition = taf.getPartition();
-			} catch (Exception e) {}
-		}
-	}
 	
 	/**
 	 * Create the dialog.
@@ -81,7 +65,8 @@ public class TARestore extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	public Object open() {
+	public Object open(HashMap<String,Vector<TABag>> backupset) {
+		this.backupset = backupset;
 		createContents();
 		WidgetsTool.setSize(shlTARestore);
 		
@@ -311,25 +296,14 @@ public class TARestore extends Dialog {
 		});
 		btnCancel.setText("Cancel");
 
-		File srcFolder = new File(Devices.getCurrent().getFolderRegisteted()+File.separator+"s1ta");
-		File[] chld = srcFolder.listFiles();
-		for (int i=0; i < chld.length ; i++) {
-			comboBackupset.add(chld[i].getName());
-			File srcFolderBackup = new File(Devices.getCurrent().getFolderRegisteted()+File.separator+"s1ta"+File.separator+chld[i].getName());
-			File chldPartition[] = srcFolderBackup.listFiles();
-			Vector<TABag> bags = new Vector<TABag>();
-			for (int j=0;j<chldPartition.length;j++) {
-				try {
-					TABag bag = new TABag(chldPartition[j]);
-					bags.add(bag);
-					
-				} catch (Exception e) {}
+		if (backupset.size()>0) {
+			Iterator keys = backupset.keySet().iterator();
+			while (keys.hasNext()) {
+				comboBackupset.add((String)keys.next());
 			}
-			backupset.put(chld[i].getName(), bags);
+			comboBackupset.select(0);
+			refreshPartitions();
 		}
-		comboBackupset.select(0);
-		refreshPartitions();
-
 	}
 
 	public void refreshPartitions() {

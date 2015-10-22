@@ -10,7 +10,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.logger.LogProgress;
 
 import flashsystem.X10flash;
-import gui.TARestore.TABag;
+import gui.models.TABag;
+
 
 public class RestoreTAJob extends Job {
 
