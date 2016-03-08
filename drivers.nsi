@@ -6,8 +6,8 @@ RequestExecutionLevel highest
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FlashTool Xperia Driver Pack"
-!define PRODUCT_VERSION "v1.8 (20141101)"
-!define PRODUCT_PUBLISHER "Androxyde & DooMLoRD"
+!define PRODUCT_VERSION "v1.9 (20160308)"
+!define PRODUCT_PUBLISHER "Androxyde, DooMLoRD & Bin4ry"
 !define PRODUCT_WEB_SITE "http://www.flashtool.net/"
 
 
@@ -331,6 +331,36 @@ Section /o "Xperia Z3 Tablet Compact Device Driver" SEC58
   File /r "Drivers\ADB\Xperia_Z3_Tablet_Compact\*"
 SectionEnd
 
+Section /o "Xperia Z3+ Device Driver" SEC59
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Z3_Plus"
+  File /r "Drivers\ADB\Xperia_Z3_Plus\*"
+SectionEnd
+
+Section /o "Xperia Z4 Device Driver" SEC60
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Z4"
+  File /r "Drivers\ADB\Xperia_Z4\*"
+SectionEnd
+
+Section /o "Xperia Z4 Tablet Device Driver" SEC61
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Z4_Tablet"
+  File /r "Drivers\ADB\Xperia_Z4_Tablet\*"
+SectionEnd
+
+Section /o "Xperia Z5 Device Driver" SEC62
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Z5"
+  File /r "Drivers\ADB\Xperia_Z5\*"
+SectionEnd
+
+Section /o "Xperia Z5 Compact Device Driver" SEC63
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Z5_Compact"
+  File /r "Drivers\ADB\Xperia_Z5_Compact\*"
+SectionEnd
+
+Section /o "Xperia Z5 Premium Device Driver" SEC64
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Z5_Premium"
+  File /r "Drivers\ADB\Xperia_Z5_Premium\*"
+SectionEnd
+
 Section -Post
   SetOutPath "$TEMP\Flashtool"
   File "Drivers\dpinst.xml"
@@ -405,6 +435,12 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC56} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC57} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC58} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC59} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC60} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC61} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC62} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC63} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC64} ""
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function .onInit
