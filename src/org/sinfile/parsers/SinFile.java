@@ -1,11 +1,15 @@
 package org.sinfile.parsers;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 import org.apache.log4j.Logger;
 import org.sinfile.parsers.v3.AddrBlock;
@@ -15,6 +19,7 @@ import org.util.BytesUtil;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
+import com.sun.prism.Image;
 
 public class SinFile {
 
@@ -23,9 +28,11 @@ public class SinFile {
 	JBBPBitInputStream sinStream = null;
 	FileInputStream fin = null;
 	BufferedInputStream bin = null;
-	private int packetsize=0;
+	private long packetsize=0;
 	private long nbchunks=0;
 	private long filesize;
+	long totalread = 0;
+	int partcount=0;
 
 	public org.sinfile.parsers.v1.SinParser sinv1 = null;
 	public org.sinfile.parsers.v2.SinParser sinv2 = null;
@@ -73,6 +80,7 @@ public class SinFile {
 				sinv1 = sinParserV1.parse(sinStream).mapTo(org.sinfile.parsers.v1.SinParser.class);
 				if (sinv1.hashLen>sinv1.headerLen) throw new SinFileException("Error parsing sin file");
 				sinv1.parseHash(sinStream);
+				sinv1.setFile(sinfile);
 				closeStreams();
 			}
 			if (version==2) {
@@ -102,7 +110,7 @@ public class SinFile {
 
 	public byte[] getHeader() throws IOException {
 		if (sinv1!=null) {
-			return null;
+			return sinv1.getHeader();
 		}
 		if (sinv2!=null) {
 			return sinv2.getHeader();
@@ -133,7 +141,7 @@ public class SinFile {
 			return "With spare";
 		return "unknown";
 	}
-
+ 
 	public void closeStreams() {
 		try {
 			sinStream.close();
@@ -258,7 +266,7 @@ public class SinFile {
 		}
 		return 0;
 	}
-	
+
 	public String getDataType() throws IOException {
 		if (sinv1!=null) {
 			return "";
@@ -310,7 +318,7 @@ public class SinFile {
 		}
 		return;		
 	}
-	
+
 	public static String getShortName(String pname) {
 		String name = pname;
 		int extpos = name.lastIndexOf(".");
@@ -336,7 +344,7 @@ public class SinFile {
 		return name;
 	}
 
-	public void setChunkSize(int size) {
+	public void setChunkSize(long size) {
 		packetsize=size;
 		filesize=sinfile.length()-getHeaderLength();
 		try {
@@ -345,38 +353,42 @@ public class SinFile {
 		} catch (Exception e) {}
 
 	}
-	
-	public int getChunkSize() {
+
+	public long getChunkSize() {
 		return packetsize;
 	}
-	
+
 	public long getNbChunks() throws IOException {
 		return nbchunks;
 	}
 
 	public void openForSending() throws IOException {
-		bin = new BufferedInputStream(new FileInputStream(sinfile));
+		fin = new FileInputStream(sinfile);
+		bin = new BufferedInputStream(fin);
 		bin.skip(getHeaderLength());
+		totalread=getHeaderLength();
+		partcount=0;
 	}
 	
 	public boolean hasData() throws IOException {
-		if (bin.available()==0) {
-			closeStreams();
-			return false;
-		}
-		return true;
+		return totalread < sinfile.length();
 	}
 	
-	public byte[] getNextChunk() throws IOException {
+	public void closeFromSending() {
 		try {
-			byte[] b = new byte[packetsize];
-			int nbread = bin.read(b);
-			if (nbread!=b.length) return BytesUtil.getReply(b, nbread);
-			return b;
-		}
-		catch (IOException ioe) {
-			return null;
-		}
+			bin.close();
+			fin.close();
+		} catch (Exception e) {}
+	}
+
+	public byte[] getNextChunk() throws IOException {
+			long remaining = sinfile.length()-totalread;
+			long bufsize=(remaining<packetsize)?remaining:packetsize;
+			byte[] buf = new byte[(int)bufsize];
+			int read = bin.read(buf);
+			totalread+=bufsize;
+			partcount++;
+			return buf;
 	}
 
 }
