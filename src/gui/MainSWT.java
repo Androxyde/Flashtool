@@ -112,6 +112,10 @@ public class MainSWT {
 		if (GlobalConfig.getProperty("gitauto")==null) GlobalConfig.setProperty("gitauto", "true");
 		Display.setAppName("Flashtool");
 		Display display = Display.getDefault();
+		GlobalConfig.setProperty("clientheight", Integer.toString(display.getClientArea().height));
+		GlobalConfig.setProperty("clientwidth", Integer.toString(display.getClientArea().width));
+		GlobalConfig.setProperty("ydpi", Integer.toString(display.getDPI().y));
+		GlobalConfig.setProperty("xdpi", Integer.toString(display.getDPI().x));
 		createContents();
 		WidgetsTool.setSize(shlSonyericsson);
 		guimode=true;
@@ -165,6 +169,8 @@ public class MainSWT {
 			}
 		};
 		killAdbandFastboot();
+		Devices.load();
+		logger.info("Starting phone detection");;
 		phoneWatchdog = new AdbPhoneThread();
 		phoneWatchdog.start();
 		phoneWatchdog.addStatusListener(phoneStatus);
@@ -461,9 +467,11 @@ public class MainSWT {
 						}
 
 						public void done(IJobChangeEvent event) {
-							String result = WidgetTask.openBundleCreator(shlSonyericsson,folder+File.separator+"decrypted");
-							if (result.equals("Cancel"))
-								logger.info("Bundle creation canceled");
+							if (new File(folder+File.separator+"decrypted").exists()) {
+								String result = WidgetTask.openBundleCreator(shlSonyericsson,folder+File.separator+"decrypted");
+								if (result.equals("Cancel"))
+									logger.info("Bundle creation canceled");
+							}
 						}
 
 						public void running(IJobChangeEvent event) {
