@@ -34,7 +34,12 @@ public class DecryptJob extends Job {
 			for (int i=0;i<files.size();i++) {
 				File f = (File)files.get(i);
 				logger.info("Decrypting "+f.getName());
-        		SeusSinTool.decryptAndExtract(f.getAbsolutePath());
+				try {
+					SeusSinTool.decryptAndExtract(f.getAbsolutePath());
+				}
+				catch (Exception e) {
+					logger.error(e.getMessage());
+				}
 			}
 			logger.info("Decryption finished");
 			return Status.OK_STATUS;

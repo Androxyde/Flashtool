@@ -98,13 +98,33 @@ public class SeusSinTool {
 	}
 	
 	public static boolean decrypt(File enc, File dec)  {
-		if (decryptUncrypted(enc,dec)) return true;
+		if (decryptGzipped(enc,dec)) return true;
 		if (decryptAES(enc,dec)) return true;
 		if (decryptRC4(enc,dec)) return true;
-		return false;
+		return decryptAsIs(enc,dec);
 	}
 
-	public static boolean decryptUncrypted(File enc, File dec) {
+	public static boolean decryptAsIs(File enc, File dec) {
+		FileOutputStream localFileOutputStream=null;
+		FileInputStream localFileInputStream=null;
+		try {
+			localFileInputStream = new FileInputStream(enc);
+		    localFileOutputStream = new FileOutputStream(dec);
+			ByteStreams.copy(localFileInputStream, localFileOutputStream);
+		    localFileOutputStream.close();
+		    localFileInputStream.close();
+		    return true;
+		} catch (Exception e) {
+			try {
+			    localFileOutputStream.close();
+			    localFileInputStream.close();
+			    dec.delete();
+			} catch (Exception e1) {}
+		    return false;
+		}		
+	}
+	
+	public static boolean decryptGzipped(File enc, File dec) {
 		FileOutputStream localFileOutputStream=null;
 		GZIPInputStream localGZIPInputStream=null;
 		try {
