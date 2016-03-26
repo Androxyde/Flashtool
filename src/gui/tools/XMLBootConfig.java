@@ -51,6 +51,9 @@ public class XMLBootConfig {
 		return "";
 	}
 
+	public boolean hasAppsBootFile() {
+		return getAppsBootFile().trim().length()>0;
+	}
 
 	public Vector<String> getOtherFiles() {
 		Vector<String> otherfiles = new Vector<String>();
@@ -128,19 +131,23 @@ public class XMLBootConfig {
 
 	public boolean isComplete() {
 		if (!new File(getTA()).exists()) {
-			logger.error("missing "+getTA());
+			logger.error("missing TA "+getTA());
 			return false;
 		}
-		if (!new File(getAppsBootFile()).exists()) {
-			logger.error("missing "+getAppsBootFile());
-			return false;
+		if (hasAppsBootFile()) {
+			if (!new File(getAppsBootFile()).exists()) {
+				logger.error("missing appsboot "+getAppsBootFile());
+				return false;
+			}
 		}
 		Iterator<String> i = getOtherFiles().iterator();
 		while (i.hasNext()) {
 			String f = i.next();
+			if (f.length()>0) { 
 			if (!new File(f).exists()) {
-				logger.error("missing "+f);
+				logger.error("missing file "+f); 
 				return false;
+			}
 			}
 		}
 		return true;
