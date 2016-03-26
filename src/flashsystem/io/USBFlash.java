@@ -14,6 +14,15 @@ public class USBFlash {
 
 	private static Logger logger = Logger.getLogger(USBFlash.class);
 	
+	public static void setUSBBufferSize(int size) {
+		if (OS.getName().equals("windows")) {
+			USBFlashWin32.setUSBBufferSize(size);
+		}
+		else {
+			USBFlashLinux.setUSBBufferSize(size);
+		}		
+	}
+
 	public static void open(String pid) throws IOException, Exception {
 		DeviceChangedListener.pause(true);
 		if (OS.getName().equals("windows")) {

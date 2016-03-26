@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.system.OS;
 
 import win32lib.JKernel32;
 
@@ -19,7 +20,12 @@ public class USBFlashLinux {
 	private static int lastflags;
 	private static byte[] lastreply;
 	private static Logger logger = Logger.getLogger(USBFlashLinux.class);
+	private static int buffersize=0;
 
+	public static void setUSBBufferSize(int size) {
+		buffersize=size;
+	}
+	
 	public static void linuxOpen(String pid) throws IOException, Exception  {
 			logger.info("Opening device for R/W");
 			JUsb.fillDevice(false);
@@ -30,7 +36,21 @@ public class USBFlashLinux {
 	public static boolean linuxWriteS1(S1Packet p) throws IOException,X10FlashException {
 		try {
 			JUsb.writeBytes(p.getHeaderWithChecksum());
-			JUsb.writeBytes(p.getDataArray());
+			if (p.getDataLength()>buffersize && buffersize>0) {
+				int totalread=0;
+				ByteArrayInputStream in = new ByteArrayInputStream(p.getDataArray());
+				while (totalread<p.getDataLength()) {
+					long remaining = p.getDataLength()-totalread;
+					long bufsize=(remaining<buffersize)?remaining:buffersize;
+					byte[] buf = new byte[(int)bufsize];
+					int read = in.read(buf);
+					JUsb.writeBytes(buf);
+					totalread+=read;
+				}
+				in.close();
+			}
+			else
+				JUsb.writeBytes(p.getDataArray());
 			JUsb.writeBytes(p.getCRC32());
 			logger.debug("OUT : " + p);
 			return true;

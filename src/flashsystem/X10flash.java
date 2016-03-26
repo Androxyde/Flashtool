@@ -48,7 +48,7 @@ public class X10flash {
     private boolean taopen = false;
     private boolean modded_loader=false;
     private String currentdevice = "";
-    private int maxpacketsize = 0;
+    private int maxS1packetsize = 0;
     private String serial = "";
     private Shell _curshell;
     private static Logger logger = Logger.getLogger(X10flash.class);
@@ -100,9 +100,10 @@ public class X10flash {
 
     public void setLoaderConfiguration(String param) throws X10FlashException,IOException {
     	String[] bytes = param.split(",");
+    	if (bytes.length==1) bytes = param.split(" ");
     	byte[] data = new byte[bytes.length];
     	for (int i=0;i<bytes.length;i++) {
-    		data[i]=(byte)Integer.parseInt(bytes[i]);
+    		data[i]=(byte)Integer.parseInt(bytes[i],16);
     	}
     	logger.info("Set loader configuration : ["+HexDump.toHex(data)+"]");
     	if (!_bundle.simulate()) {
@@ -190,7 +191,9 @@ public class X10flash {
     	} catch (Exception e) {}
     	try {
     		BackupTA(2, timeStamp);
-    	} catch (Exception e) {}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
     }
 
     public void BackupTA(int partition, String timeStamp) throws IOException, X10FlashException {
@@ -308,16 +311,18 @@ public class X10flash {
 				logger.debug("Sending part "+nbparts+" of "+sin.getNbChunks());
 				byte[] part = sin.getNextChunk();
 				if (!_bundle.simulate()) {
-					cmd.send(Command.CMD06, part, (nbparts!=sin.getNbChunks()));
+					cmd.send(Command.CMD06, part, sin.hasData());
 					if (USBFlash.getLastFlags() == 0)
 						getLastError();
 				}
 				nbparts++;
 			}
+	    	sin.closeFromSending();
 			//logger.info("Processing of "+sin.getShortFileName()+" finished.");
     	}
     	catch (Exception e) {
     		logger.error("Processing of "+sin.getName()+" finished with errors.");
+    		sin.closeFromSending();
     		e.printStackTrace();
     		throw new X10FlashException (e.getMessage());
     	}
@@ -353,6 +358,7 @@ public class X10flash {
 				loader = _bundle.getLoader().getAbsolutePath();
 			}
 			else {
+				System.out.println("no loader in bundle");
 				loader = getDefaultLoader();
 			}
 		}
@@ -385,28 +391,40 @@ public class X10flash {
 			hookDevice(true);
 		}
 	    if (!_bundle.simulate()) {
+	    	maxS1packetsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
+	    	logger.info("Max packet size set to "+maxS1packetsize+"K");
 	    	if (_bundle.getMaxBuffer()==0) {
-	    		maxpacketsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
-	    		logger.info("Max packet size set to "+maxpacketsize/1024+"K");
+	    		USBFlash.setUSBBufferSize(maxS1packetsize);
+	    		logger.info("USB buffer size set to "+maxS1packetsize+"K");
 	    	}
 	    	if (_bundle.getMaxBuffer()==1) {
-	    		maxpacketsize=512*1024;
-	    		logger.info("Max packet size forced to 512K");
+	    		USBFlash.setUSBBufferSize(512*1024);
+	    		logger.info("USB buffer size set to 512K");
 	    	}
 	    	if (_bundle.getMaxBuffer()==2) {
-	    		maxpacketsize=256*1024;
-	    		logger.info("Max packet size forced to 256K");
+	    		USBFlash.setUSBBufferSize(256*1024);
+	    		logger.info("USB buffer size set to 256K");
 	    	}
 	    	if (_bundle.getMaxBuffer()==3) {
-	    		maxpacketsize=128*1024;
-	    		logger.info("Max packet size forced to 128K");
+	    		USBFlash.setUSBBufferSize(128*1024);
+	    		logger.info("USB buffer size set to 128K");
+	    	}
+	    	if (_bundle.getMaxBuffer()==4) {
+	    		USBFlash.setUSBBufferSize(64*1024);
+	    		logger.info("USB buffer size set to 64K");
+	    	}
+	    	if (_bundle.getMaxBuffer()==5) {
+	    		USBFlash.setUSBBufferSize(32*1024);
+	    		logger.info("USB buffer size set to 32K");
 	    	}
 	    }
 	    else {
-	    	maxpacketsize=0x080000;
-	    	logger.info("Max packet size set to "+maxpacketsize);
+	    	maxS1packetsize=0x080000;
+	    	logger.info("Max packet size set to "+maxS1packetsize);
+	    	USBFlash.setUSBBufferSize(0x080000);
+	    	logger.info("USB buffer size set to "+maxS1packetsize);
 	    }
-	    LogProgress.initProgress(_bundle.getMaxProgress(maxpacketsize));
+	    LogProgress.initProgress(_bundle.getMaxProgress(maxS1packetsize));
     }
 
     public String getPhoneProperty(String property) {
@@ -486,11 +504,13 @@ public class X10flash {
 	    		logger.info("Going to flash boot delivery");
 				if (!bc.isComplete()) throw new BootDeliveryException ("Some files are missing from your boot delivery");
 				TAFileParser taf = new TAFileParser(new File(bc.getTA()));
-				openTA(2);
-				SinFile sin = new SinFile(new File(bc.getAppsBootFile()));
-				sin.setChunkSize(maxpacketsize);
-				uploadImage(sin);
-				closeTA();
+				if (bc.hasAppsBootFile()) {
+					openTA(2);
+					SinFile sin = new SinFile(new File(bc.getAppsBootFile()));
+					sin.setChunkSize(maxS1packetsize);
+					uploadImage(sin);
+					closeTA();
+				}
 				openTA(2);
 				sendTA(taf);
 				closeTA();
@@ -498,7 +518,7 @@ public class X10flash {
 				Iterator<String> otherfiles = bc.getOtherFiles().iterator();
 				while (otherfiles.hasNext()) {
 					SinFile sin1 = new SinFile(new File(otherfiles.next()));
-					sin1.setChunkSize(maxpacketsize);
+					sin1.setChunkSize(maxS1packetsize);
 					uploadImage(sin1);
 				}
 				closeTA();
@@ -646,8 +666,7 @@ public class X10flash {
     }
 
     public String getFlashScript() {
-      	String devid = Devices.getIdFromVariant(getCurrentDevice());
-    	DeviceEntry dev = Devices.getDevice(devid);
+    	DeviceEntry dev = Devices.getDeviceFromVariant(getCurrentDevice());
     	return dev.getFlashScript(getCurrentDevice(),_bundle.getVersion());
     }
   
@@ -680,7 +699,7 @@ public class X10flash {
     				BundleEntry b = _bundle.searchEntry(param);
     				if (b!=null) {
     					SinFile sin =new SinFile(new File(b.getAbsolutePath()));
-    					sin.setChunkSize(maxpacketsize);
+    					sin.setChunkSize(maxS1packetsize);
     					this.uploadImage(sin);
     				}
     				else {
@@ -688,7 +707,7 @@ public class X10flash {
     						String file = bc.getMatchingFile(param);
     						if (file!=null) {
     	    					SinFile sin =new SinFile(new File(file));
-    	    					sin.setChunkSize(maxpacketsize);
+    	    					sin.setChunkSize(maxS1packetsize);
     	    					this.uploadImage(sin);						
     						}
         					else {
@@ -738,8 +757,6 @@ public class X10flash {
     	try {
 		    logger.info("Start Flashing");
 		    sendLoader();
-		    if (!_bundle.simulate())
-		    	BackupTA();
 		    bc = getBootConfig();
 		    loadTAFiles();
 		    if (hasScript()) {
@@ -771,7 +788,7 @@ public class X10flash {
     		if (c.isPartition()) {
     			BundleEntry entry = c.getEntries().iterator().next();
     			SinFile sin = new SinFile(new File(entry.getAbsolutePath()));
-    			sin.setChunkSize(maxpacketsize);
+    			sin.setChunkSize(maxS1packetsize);
     			uploadImage(sin);
     		}
     	}
@@ -786,7 +803,7 @@ public class X10flash {
 				BundleEntry entry = c.getEntries().iterator().next();
 				if (isBoot(entry.getAbsolutePath())) {
 					SinFile sin = new SinFile(new File(entry.getAbsolutePath()));
-					sin.setChunkSize(maxpacketsize);
+					sin.setChunkSize(maxS1packetsize);
 					uploadImage(sin);
 				}
     		}
@@ -807,11 +824,11 @@ public class X10flash {
     		setLoaderConfiguration("00,01,00,00,00,01");
     		setLoaderConfiguration("00,01,00,00,00,03");
     		SinFile sinpreload = new SinFile(new File(preload.getAbsolutePath()));
-    		sinpreload.setChunkSize(maxpacketsize);
+    		sinpreload.setChunkSize(maxS1packetsize);
     		uploadImage(sinpreload);
     		setLoaderConfiguration("00,01,00,00,00,01");
     		SinFile sinsecro = new SinFile(new File(secro.getAbsolutePath()));
-    		sinsecro.setChunkSize(maxpacketsize);
+    		sinsecro.setChunkSize(maxS1packetsize);
     		uploadImage(sinsecro);    		
     		setLoaderConfiguration("00,01,00,00,00,00");
     	}
@@ -832,7 +849,7 @@ public class X10flash {
 				BundleEntry entry = c.getEntries().iterator().next();
 				if (isBoot(entry.getAbsolutePath())) continue;
 				SinFile sin = new SinFile(new File(entry.getAbsolutePath()));
-				sin.setChunkSize(maxpacketsize);
+				sin.setChunkSize(maxS1packetsize);
 				uploadImage(sin);
     		}
     	}
@@ -848,7 +865,7 @@ public class X10flash {
 				BundleEntry entry = c.getEntries().iterator().next();
 				if (isBoot(entry.getAbsolutePath())) continue;
 				SinFile sin = new SinFile(new File(entry.getAbsolutePath()));
-				sin.setChunkSize(maxpacketsize);
+				sin.setChunkSize(maxS1packetsize);
 				uploadImage(sin);
     		}
     	}
@@ -864,7 +881,7 @@ public class X10flash {
 				BundleEntry entry = c.getEntries().iterator().next();
 				if (isBoot(entry.getAbsolutePath())) continue;
 				SinFile sin = new SinFile(new File(entry.getAbsolutePath()));
-				sin.setChunkSize(maxpacketsize);
+				sin.setChunkSize(maxS1packetsize);
 				uploadImage(sin);
     		}
     	}
