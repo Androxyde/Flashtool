@@ -42,6 +42,24 @@ public class About extends Dialog {
 	public Object open() {
 		createContents();
 		WidgetsTool.setSize(shlAbout);
+		shlAbout.open();
+		shlAbout.layout();
+		Display display = getParent().getDisplay();
+		while (!shlAbout.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Create contents of the dialog.
+	 */
+	private void createContents() {
+		shlAbout = new Shell(getParent(), getStyle());
+		shlAbout.setSize(450, 246);
+		shlAbout.setText("About");
 		shlAbout.setLayout(new FormLayout());
 		
 		Label lblNewLabel = new Label(shlAbout, SWT.NONE);
@@ -133,25 +151,6 @@ public class About extends Dialog {
 		fd_lblDevshaft.top = new FormAttachment(lblManyThanksTo, 6);
 		lblDevshaft.setLayoutData(fd_lblDevshaft);
 		lblDevshaft.setText("DevShaft, IaguCool");
-		shlAbout.open();
-		shlAbout.layout();
-		Display display = getParent().getDisplay();
-		while (!shlAbout.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Create contents of the dialog.
-	 */
-	private void createContents() {
-		shlAbout = new Shell(getParent(), getStyle());
-		shlAbout.setSize(450, 246);
-		shlAbout.setText("About");
-
 	}
 
 	public static String getVersion() {
