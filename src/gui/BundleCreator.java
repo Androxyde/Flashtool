@@ -293,8 +293,7 @@ public class BundleCreator extends Dialog {
 				b.setBranding(branding.getText());
 				b.setCmd25(btnNoFinalVerification.getSelection()?"true":"false");
 				if (!b.hasLoader()) {
-					String result = Devices.getIdFromVariant(_variant);
-					DeviceEntry ent = new DeviceEntry(result);
+					DeviceEntry ent = Devices.getDeviceFromVariant(_variant);
 						if (ent.hasUnlockedLoader()) {
 							String res = WidgetTask.openLoaderSelect(shlBundler);
 							if (res.equals("U"))
