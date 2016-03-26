@@ -1,0 +1,305 @@
+;*******************************************************************
+;
+;  Copyright (c) 2014 Sony Mobile Communications AB
+;  File     : ggsomc.inf
+;  Contents : The Gordons Gate driver inf
+;
+;*******************************************************************
+
+[Version]
+Signature="$WINDOWS NT$"
+Provider=%SOMCName%
+Class=USB
+ClassGUID={36fc9e60-c465-11cf-8056-444553540000} 
+DriverVer=11/10/2014,3.1.0.0
+CatalogFile=ggsomc.cat
+
+[DestinationDirs]
+GGSOMC_CopyFiles = 12
+WDFCoInstaller_CopyFiles = 11
+
+[SourceDisksNames.x86]
+1 = %InstallationDiskName%,,,\x86
+
+[SourceDisksNames.Amd64]
+1 = %InstallationDiskName%,,,\x64
+
+[SourceDisksFiles]
+ggsomc.sys = 1
+ggflt.sys = 1
+WdfCoInstaller01009.dll=1
+
+[Manufacturer]
+%MfgName%=SOMC,NTx86,NTAmd64
+
+[SOMC.NTx86]
+; PID range xDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_1DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_2DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_3DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_4DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_5DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_6DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_7DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_8DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_9DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_BDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_CDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_DDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_EDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_FDDE
+
+; PID range ADEx
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE0
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE1
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE2
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE3
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE4
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE5
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE6
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE7
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE8
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE9
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEA
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEB
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEC
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADED
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEF
+
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_F165
+%DeviceDesc.HCB-100%=GGSOMC_Install, USB\VID_0FCE&PID_D064
+%DeviceDesc.HCB-120%=GGSOMC_Install, USB\VID_0FCE&PID_D083
+%DeviceDesc.HCB-105%=GGSOMC_Install, USB\VID_0FCE&PID_D0AA
+%DeviceDesc.HCB-100E%=GGSOMC_Install, USB\VID_0FCE&PID_D0A8
+%DeviceDesc.HCB-108%=GGSOMC_Install, USB\VID_0FCE&PID_D0F9
+%DeviceDesc.MBS-200%=GGSOMC_Install, USB\VID_0FCE&PID_D104
+%DeviceDesc.AB900%=GGSOMC_Install, USB\VID_0FCE&PID_D101
+%DeviceDesc.GEN%=GGSOMC_Install, USB\VID_0BDB&PID_100E
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F0AA
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F0F9
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F104
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F101
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_FFFF
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F0FA
+%DeviceDesc.X1Boot%=GGSOMC_Install, USB\VID_0FCE&PID_F106
+%DeviceDesc.ETS%=GGSOMC_Install, USB\VID_0FCE&PID_D14C
+
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_B00B
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_DEAF
+
+[SOMC.NTAmd64]
+; PID range xDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_1DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_2DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_3DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_4DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_5DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_6DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_7DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_8DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_9DDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_BDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_CDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_DDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_EDDE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_FDDE
+
+; PID range ADEx
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE0
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE1
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE2
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE3
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE4
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE5
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE6
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE7
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE8
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADE9
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEA
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEB
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEC
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADED
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEE
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_ADEF
+
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_F165
+%DeviceDesc.HCB-100%=GGSOMC_Install, USB\VID_0FCE&PID_D064
+%DeviceDesc.HCB-120%=GGSOMC_Install, USB\VID_0FCE&PID_D083
+%DeviceDesc.HCB-105%=GGSOMC_Install, USB\VID_0FCE&PID_D0AA
+%DeviceDesc.HCB-100E%=GGSOMC_Install, USB\VID_0FCE&PID_D0A8
+%DeviceDesc.HCB-108%=GGSOMC_Install, USB\VID_0FCE&PID_D0F9
+%DeviceDesc.MBS-200%=GGSOMC_Install, USB\VID_0FCE&PID_D104
+%DeviceDesc.AB900%=GGSOMC_Install, USB\VID_0FCE&PID_D101
+%DeviceDesc.GEN%=GGSOMC_Install, USB\VID_0BDB&PID_100E
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F0AA
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F0F9
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F104
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F101
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_FFFF
+%DeviceDesc.DFU%=GGSOMC_Install, USB\VID_0FCE&PID_F0FA
+%DeviceDesc.X1Boot%=GGSOMC_Install, USB\VID_0FCE&PID_F106
+%DeviceDesc.ETS%=GGSOMC_Install, USB\VID_0FCE&PID_D14C
+
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_B00B
+%DeviceDesc.Flash%=GGSOMC_Install, USB\VID_0FCE&PID_DEAF
+
+[GGSOMC_Install.NT]
+CopyFiles=GGSOMC_CopyFiles
+
+[GGSOMC_Install.NT.HW]
+AddReg=GGSOMC_Install.NT.HW.AddReg
+
+[GGSOMC_Install.NT.Services]
+Addservice=ggsomc, 0x00000002, GGSOMC_Install.Service
+Addservice=ggflt,, GGSOMC_Install.Filter_Service
+
+[GGSOMC_Install.Service]
+DisplayName=%SvcDesc%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\ggsomc.sys
+AddReg=GGSOMC_Install.Service_AddReg
+DelReg=GGSOMC_Install.Service_DelReg
+
+[GGSOMC_Install.Service_AddReg]
+HKR, "Parameters", "NextUSBPortId", 0x00010003, 1
+HKR, "Parameters\SLNames", "VID_0FCE&PID_1DDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_2DDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_3DDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_4DDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_5DDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_6DDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_7DDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_8DDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_9DDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_BDDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_CDDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_DDDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_EDDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_FDDE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE0", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE1", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE2", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE3", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE4", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE5", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE6", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE7", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE8", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADE9", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADEA", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADEB", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADEC", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADED", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADEE", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_ADEF", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_F165", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0BDB&PID_100E", 0x00000000, "EPIUSB"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_D064", 0x00000000, "HCB100"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_D083", 0x00000000, "HCB120"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_D0A8", 0x00000000, "HCB100E"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_D0AA", 0x00000000, "HCB105"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_D0F9", 0x00000000, "HCB108"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_D104", 0x00000000, "MBS200"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_D101", 0x00000000, "AB900"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_F0AA", 0x00000000, "SOMCDFU"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_FFFF", 0x00000000, "SOMCDFU"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_F0F9", 0x00000000, "SOMCDFU"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_F104", 0x00000000, "SOMCDFU"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_F101", 0x00000000, "SOMCDFU"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_F0FA", 0x00000000, "SOMCDFU"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_F106", 0x00000000, "X1Boot"
+HKR, "Parameters\SLNames", "VID_0FCE&PID_D14C", 0x00000000, "ETSUSB"
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_1DDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_2DDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_3DDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_4DDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_5DDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_6DDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_7DDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_8DDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_9DDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_BDDE", 0x00010001, 0x00000001
+; HKR, "Parameters\PNCheck", "VID_0FCE&PID_CDDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_DDDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_EDDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_FDDE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_F165", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0BDB&PID_100E", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE0", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE1", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE2", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE3", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE4", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE5", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE6", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE7", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE8", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADE9", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADEA", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADEB", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADEC", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADED", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADEE", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_ADEF", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_B00B", 0x00010001, 0x00000001
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_DEAF", 0x00010001, 0x00000001
+
+[GGSOMC_Install.Service_DelReg]
+HKR, "Parameters\PNCheck", "VID_0FCE&PID_CDDE"
+
+[GGSOMC_Install.Filter_Service]
+DisplayName=%SvcFltDesc%
+ServiceType=1
+StartType=3
+ErrorControl=0
+ServiceBinary=%12%\ggflt.sys
+
+[GGSOMC_Install.NT.HW.AddReg]
+HKR,, "LowerFilters", 0x00010000, "ggflt"
+
+[GGSOMC_CopyFiles]
+ggsomc.sys
+ggflt.sys
+
+[GGSOMC_Install.NT.CoInstallers]
+AddReg=WDFCoInstaller_AddReg
+CopyFiles=WDFCoInstaller_CopyFiles
+
+[WDFCoInstaller_CopyFiles]
+WdfCoInstaller01009.dll
+
+[WDFCoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000,"WdfCoInstaller01009.dll,WdfCoInstaller"
+
+[GGSOMC_Install.NT.Wdf]
+KmdfService=ggsomc,GGSOMC_WDFSection
+KmdfService=ggflt,GGSOMC_WDFSection
+
+[GGSOMC_WDFSection]
+KmdfLibraryVersion=1.9
+
+[Strings]
+SOMCName="Sony Mobile Communications"
+MfgName="Sony Mobile Communications"
+DeviceDesc.Flash="SOMC Flash Device"
+DeviceDesc.HCB-100="SOMC HCB-100 Device"
+DeviceDesc.HCB-120="SOMC HCB-120 Device"
+DeviceDesc.HCB-100E="SOMC HCB-100E Device"
+DeviceDesc.HCB-105="SOMC HCB-105 Device"
+DeviceDesc.HCB-108="SOMC HCB-108 Device" 
+DeviceDesc.MBS-200="SOMC MBS-200 Device"
+DeviceDesc.AB900="SOMC AB900 Device"
+DeviceDesc.DFU="SOMC DFU Device"
+DeviceDesc.GEN="Generic Flash Device"
+DeviceDesc.x1Boot="SOMC X1 Boot"
+DeviceDesc.ETS="SOMC ETS Device"
+SvcDesc="SOMC USB Flash Driver"
+SvcFltDesc="SOMC USB Flash Driver Filter"
+InstallationDiskName="SOMC Flash Installation"
