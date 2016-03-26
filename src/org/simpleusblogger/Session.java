@@ -45,7 +45,7 @@ public class Session {
 
 	public String saveScript() {
 		try {
-			DeviceEntry ent = Devices.getDevice(Devices.getIdFromVariant(model));
+			DeviceEntry ent = Devices.getDeviceFromVariant(model);
 			
 			String folder = "";
 			

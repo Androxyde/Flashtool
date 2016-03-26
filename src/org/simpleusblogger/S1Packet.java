@@ -33,7 +33,12 @@ public class S1Packet {
 		return nbparts;
 	}
 	
+	public byte[] getHeader() {
+		return BytesUtil.concatAll(command, flag, length);
+	}
+	
 	public boolean isHeaderOK() {
+		if (headercksum==0 && getCommandName().length()>0 && (getFlag()==1 || getFlag()==3 || getFlag()==7)) return true;
 		byte computed = calcSum(BytesUtil.concatAll(command, flag, length));
 		return (computed == headercksum) && (getCommandName().length() >0);
 	}
