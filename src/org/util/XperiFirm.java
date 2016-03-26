@@ -26,7 +26,8 @@ public class XperiFirm {
 	public static void run() throws IOException,JDOMException {
 			File f = new File(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.exe.config");
 			if (f.exists()) f.delete();
-			String version = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/version")).split("|")[0];
+			String version = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/version"));
+			version = version.substring(0,version.indexOf("|"));
 			String downloadurl = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/download"));
 			TextFile tf = new TextFile(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.version","ISO8859-15");
 			try {
