@@ -33,7 +33,6 @@
 	<classpathentry kind="lib" path="libs/org.eclipse.ui.forms_3.6.200.v20150506-2029.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.ui.workbench_3.107.0.v20150825-2206.jar"/>
 	<classpathentry kind="lib" path="libs/runtime_registry_compatibility.jar"/>
-	<classpathentry kind="lib" path="libs/xstream_1.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.104.1.v20150825-0743.jar"/>
 	<classpathentry kind="lib" path="libs/guava-19.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-4.2.2.jar"/>
@@ -42,5 +41,6 @@
 	<classpathentry kind="lib" path="libs/slf4j-api-1.7.19.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-log4j12-1.7.19.jar"/>
 	<classpathentry kind="lib" path="libs/rhino-1.7.7.1.jar"/>
+	<classpathentry kind="lib" path="libs/xstream-1.4.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
