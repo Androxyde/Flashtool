@@ -66,7 +66,7 @@ public class FlasherConsole {
 			phoneWatchdog.start();
 			phoneWatchdog.addStatusListener(phoneStatus);
 			}
-			else DeviceChangedListener.start();
+			else DeviceChangedListener.starts();
 	}
 
 	public static void exit() {
