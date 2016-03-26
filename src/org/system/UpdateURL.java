@@ -54,7 +54,7 @@ public class UpdateURL {
 	
 	public String getDeviceID() {
 		String uid = this.getParameter("model");
-		String id = Devices.getIdFromVariant(uid);
+		String id = Devices.getDeviceFromVariant(uid).getId();
 		if (id.equals(uid)) return "";
 		return id;
 	}
