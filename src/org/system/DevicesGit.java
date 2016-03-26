@@ -2,12 +2,12 @@ package org.system;
 
 import java.io.File;
 import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.lib.Constants;
@@ -42,8 +42,9 @@ public class DevicesGit {
 
     public static void cloneRepository() {
 		try {
-			logger.info("Cloning devices repository to "+localPath);
-	        File lPath = new File(localPath);
+			logger.info("Cloning devices repository to "+OS.getFolderDevices());
+	        File lPath = new File(OS.getFolderDevices());
+	        FileUtils.deleteDirectory(lPath);
 	        lPath.mkdir();
 	        Git result = Git.cloneRepository()
 	                .setURI(remotePath)
@@ -88,6 +89,9 @@ public class DevicesGit {
 	    	git.pull().call();
     	} catch (Exception e) {
     		logger.error(e.getMessage());
+    		logger.info("Trying to clone repository instead");
+    		closeRepository();
+    		cloneRepository();
     	}
     }
 
