@@ -1,6 +1,5 @@
 package org.system;
 
-
 public class PhoneThread extends Thread {
 
 	boolean done = false;

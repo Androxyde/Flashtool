@@ -4,7 +4,7 @@ public class DeviceChangedListener {
 
 	public static PhoneThread usbwatch;
 	
-	public static void start() {
+	public static void starts() {
 		usbwatch = new PhoneThread();
 		usbwatch.start();
 	}

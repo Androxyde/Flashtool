@@ -28,7 +28,8 @@ import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
 public class Devices  {
 
 	private static DeviceEntry _current=null;;
-	public static Properties props = null;
+	public static Properties devices = null;
+	public static Properties models = null;
 	private static boolean waitforreboot=false;
 	private static Logger logger = Logger.getLogger(Devices.class);
 	static DeviceIdent lastid = new DeviceIdent();
@@ -43,16 +44,16 @@ public class Devices  {
 	}
 
 	public static Enumeration<Object> listDevices(boolean reload) {
-		if (reload || props==null) load();
-		return props.keys();
+		if (reload || devices==null) load();
+		return devices.keys();
 	}
 	
 	
 	public static DeviceEntry getDevice(String device) {
 		try {
-			if (device==null) System.out.println("no device id");
-			if (props.containsKey(device))
-				return (DeviceEntry)props.get(device);
+			if (device==null) return null;
+			if (devices.containsKey(device))
+				return (DeviceEntry)devices.get(device);
 			else {
 				File f = new File(OS.getFolderMyDevices()+File.separator+device+".ftd");
 				if (f.exists()) {
@@ -81,7 +82,7 @@ public class Devices  {
 	
 	public static void setCurrent(String device) {
 		AdbUtility.init();
-		_current = (DeviceEntry)props.get(device);
+		_current = (DeviceEntry)devices.get(device);
 		_current.queryAll();
 	}
 	
@@ -89,9 +90,16 @@ public class Devices  {
 		return _current;
 	}
 	
-	private static void load() {
-		if (props==null) props=new Properties();
-		else props.clear();
+	public static void load() {
+		logger.info("Loading devices database");
+		if (devices==null) {
+			devices=new Properties();
+			models = new Properties();
+		}
+		else {
+			devices.clear();
+			models.clear();
+		}
 		File[] list = (new File(OS.getFolderMyDevices()).listFiles());
 		if (list==null) return;
 		for (int i=0;i<list.length;i++) {
@@ -103,8 +111,14 @@ public class Devices  {
 					if (!device.toLowerCase().equals("busybox") && !device.toLowerCase().equals(".git") && propfile.exists()) {
 						p.open("",propfile.getAbsolutePath());
 						DeviceEntry entry = new DeviceEntry(p);
-						if (device.equals(entry.getId()))
-							props.put(device, entry);
+						if (device.equals(entry.getId())) {
+							devices.put(device, entry);
+							Iterator<String> iv = entry.getVariantList().iterator();
+							while (iv.hasNext()) {
+								String variant = iv.next();
+								models.put(variant, entry);
+							}
+						}
 						else logger.error(device + " : this bundle is not valid");
 					}
 				}
@@ -123,8 +137,14 @@ public class Devices  {
 					if (!device.toLowerCase().equals("busybox") && !device.toLowerCase().equals(".git")) {
 						p.open("",new File(list[i].getPath()+OS.getFileSeparator()+device+".properties").getAbsolutePath());
 						DeviceEntry entry = new DeviceEntry(p);
-						if (device.equals(entry.getId()))
-							props.put(device, entry);
+						if (device.equals(entry.getId())) {
+							devices.put(device, entry);
+							Iterator<String> iv = entry.getVariantList().iterator();
+							while (iv.hasNext()) {
+								String variant = iv.next();
+								models.put(variant, entry);
+							}
+						}
 						else logger.error(device + " : this bundle is not valid");
 					}
 				}
@@ -133,6 +153,7 @@ public class Devices  {
 				}
 			}
 		}
+		logger.info("Loaded "+devices.size()+" devices");
 	}
 
 	public static void waitForReboot(boolean tobeforced) {
@@ -175,64 +196,31 @@ public class Devices  {
 	}
 
 	public static String identFromRecognition() {
-		Enumeration<Object> e = Devices.listDevices(true);
-		if (!e.hasMoreElements()) {
+		if (devices.isEmpty()) {
 			logger.error("No device is registered in Flashtool.");
 			logger.error("You can only flash devices.");
 			return "";
 		}
-		boolean found = false;
-		Properties founditems = new Properties();
-		founditems.clear();
-		Properties buildprop = new Properties();
-		buildprop.clear();
-		while (e.hasMoreElements()) {
-			DeviceEntry current = Devices.getDevice((String)e.nextElement());
-			String prop = current.getBuildProp();
-			if (!buildprop.containsKey(prop)) {
-				String readprop = DeviceProperties.getProperty(prop);
-				buildprop.setProperty(prop,readprop);
-			}
-			Iterator<String> i = current.getRecognitionList().iterator();
-			String localdev = buildprop.getProperty(prop);
-			while (i.hasNext()) {
-				String pattern = i.next().toUpperCase();
-				if (localdev.toUpperCase().equals(pattern)) {
-					founditems.put(current.getId(), current.getName());
-				}
-			}
-		}
-		if (founditems.size()==1) {
-			return (String)founditems.keys().nextElement();
-		}
-		else return "";
-	}
-
-	public static String getVariantName(String dev) {
-		Enumeration<Object> e = Devices.listDevices(true);
-		while (e.hasMoreElements()) {
-			DeviceEntry current = Devices.getDevice((String)e.nextElement());
-			if (current.getVariantList().contains(dev)) return current.getName() + " ("+dev+")";
-		}
-		return dev;
-	}
-
-	public static String getIdFromVariant(String variant) {
-		Enumeration<Object> e = Devices.listDevices(true);
-		while (e.hasMoreElements()) {
-			DeviceEntry current = Devices.getDevice((String)e.nextElement());
-			if (current.getVariantList().contains(variant)) return current.getId();
-		}
+		String dev = DeviceProperties.getProperty("ro.product.device");
+		String model = DeviceProperties.getProperty("ro.product.model");
+		DeviceEntry entry = Devices.getDeviceFromVariant(dev);
+		if (entry != null) return entry.getId();
+		entry = Devices.getDeviceFromVariant(model);
+		if (entry != null) return entry.getId();
 		return "";
 	}
-	
-	public static String getIdFromRecognition(String variant) {
-		Enumeration<Object> e = Devices.listDevices(true);
-		while (e.hasMoreElements()) {
-			DeviceEntry current = Devices.getDevice((String)e.nextElement());
-			if (current.getRecognitionList().contains(variant)) return current.getId();
+
+	public static String getVariantName(String variant) {
+		try {
+			return getDeviceFromVariant(variant).getName() + "(" + variant + ")";
+		} catch (Exception e) {
+			return "Not found ("+variant+")";
 		}
-		return "N/A";
+	}
+
+	public static DeviceEntry getDeviceFromVariant(String variant) 
+	{
+		return (DeviceEntry)models.get(variant);
 	}
 
 	public static DeviceIdent getLastConnected(boolean force) {
@@ -349,7 +337,7 @@ public class Devices  {
 	    Enumeration<String> e1 = AdbUtility.getDevices();
 	    if (e1.hasMoreElements()) {
 	    while (e1.hasMoreElements()) {
-	    	logger.info("      - "+e1.nextElement());
+	    	logger.info("      - "+e1.nextElement() + " (Device : " + DeviceProperties.getProperty("ro.product.device") + ". Model : "+DeviceProperties.getProperty("ro.product.model")+")");
 	    }
 	    }
 	    else logger.info("      - none");

@@ -57,7 +57,7 @@ public class AdbPhoneThread extends Thread {
 				    			  fireStatusChanged(new StatusEvent(GlobalState.getState(newid.getSerial(), newid.getPid()),true));
 				    		  }
 				    		  if (first) {
-				    			  DeviceChangedListener.start();
+				    			  DeviceChangedListener.starts();
 				    			  DeviceChangedListener.addStatusListener(listener);
 				    			  first = false;
 				    		  }
