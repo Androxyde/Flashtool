@@ -2,7 +2,9 @@ package gui;
 
 import gui.tools.WidgetsTool;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -23,7 +25,7 @@ public class About extends Dialog {
 	protected Object result;
 	protected Shell shlAbout;
 	public static String build = About.class.getPackage().getImplementationVersion();
-	private static Logger logger = Logger.getLogger(About.class);
+	static final Logger logger = LogManager.getLogger(About.class);
 
 	/**
 	 * Create the dialog.

@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import com.btr.jna.LibWinHttp;
 import com.btr.jna.Win32IESettings;
@@ -35,7 +37,7 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 	 * getProxySelector
 	 * @see com.btr.proxy.search.ProxySearchStrategy#getProxySelector()
 	 ************************************************************************/
-	private static Logger logger = Logger.getLogger(IEProxySearchStrategy.class);
+	static final Logger logger = LogManager.getLogger(IEProxySearchStrategy.class);
 	
 	public ProxySelector getProxySelector() throws ProxyException {
 		

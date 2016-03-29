@@ -6,13 +6,15 @@ import flashsystem.X10flash;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.system.DeviceChangedListener;
 import org.system.OS;
 
 public class USBFlash {
 
-	private static Logger logger = Logger.getLogger(USBFlash.class);
+	static final Logger logger = LogManager.getLogger(USBFlash.class);
 	
 	public static void setUSBBufferSize(int size) {
 		if (OS.getName().equals("windows")) {

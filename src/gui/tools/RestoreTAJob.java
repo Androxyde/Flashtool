@@ -2,7 +2,9 @@ package gui.tools;
 
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -18,7 +20,7 @@ public class RestoreTAJob extends Job {
 	X10flash flash = null;
 	Vector<TABag> bag = null;
 	boolean canceled = false;
-	private static Logger logger = Logger.getLogger(RestoreTAJob.class);
+	static final Logger logger = LogManager.getLogger(RestoreTAJob.class);
 	
 
 	public RestoreTAJob(String name) {

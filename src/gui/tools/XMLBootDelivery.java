@@ -1,6 +1,8 @@
 package gui.tools;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.jdom.input.SAXBuilder;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -17,7 +19,7 @@ public class XMLBootDelivery {
 
 	private Vector<XMLBootConfig> bootconfigs = new Vector<XMLBootConfig>();
 	private String bootversion;
-	private static Logger logger = Logger.getLogger(XMLBootDelivery.class);
+	static final Logger logger = LogManager.getLogger(XMLBootDelivery.class);
 
 	public XMLBootDelivery(File xmlsource) throws IOException, JDOMException {
 		SAXBuilder builder = new SAXBuilder();

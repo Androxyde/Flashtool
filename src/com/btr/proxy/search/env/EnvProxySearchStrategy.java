@@ -3,7 +3,8 @@ package com.btr.proxy.search.env;
 import java.net.ProxySelector;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.btr.proxy.search.ProxySearchStrategy;
 import com.btr.proxy.selector.misc.ProtocolDispatchSelector;
@@ -35,7 +36,7 @@ public class EnvProxySearchStrategy implements ProxySearchStrategy {
 	private String ftpProxy;
 	private String noProxy;
 	
-	private static Logger logger = Logger.getLogger(EnvProxySearchStrategy.class);
+	static final Logger logger = LogManager.getLogger(EnvProxySearchStrategy.class);
 	/*************************************************************************
 	 * Constructor
 	 * Will use the default environment variables.

@@ -6,7 +6,9 @@ import flashsystem.X10FlashException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.system.OS;
 
 import win32lib.JKernel32;
@@ -19,7 +21,7 @@ public class USBFlashLinux {
 	
 	private static int lastflags;
 	private static byte[] lastreply;
-	private static Logger logger = Logger.getLogger(USBFlashLinux.class);
+	static final Logger logger = LogManager.getLogger(USBFlashLinux.class);
 	private static int buffersize=0;
 
 	public static void setUSBBufferSize(int size) {

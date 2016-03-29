@@ -6,7 +6,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import com.btr.proxy.search.browser.firefox.FirefoxProxySearchStrategy;
 import com.btr.proxy.search.browser.ie.IEProxySearchStrategy;
@@ -45,7 +47,7 @@ public class ProxySearch implements ProxySearchStrategy {
 	private List<ProxySearchStrategy> strategies;
 	private int pacCacheSize;
 	private long pacCacheTTL;
-	private static Logger logger = Logger.getLogger(ProxySearch.class);
+	static final Logger logger = LogManager.getLogger(ProxySearch.class);
 	
 	/*****************************************************************************
 	 * Types of proxy detection supported by the builder.

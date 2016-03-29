@@ -2,7 +2,9 @@ package gui.tools;
 
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -15,7 +17,7 @@ public class FastBootToolBoxJob extends Job {
 	boolean canceled = false;
 	String _action = "";
 	String _image = "";
-	private static Logger logger = Logger.getLogger(FastBootToolBoxJob.class);
+	static final Logger logger = LogManager.getLogger(FastBootToolBoxJob.class);
 	
 	public FastBootToolBoxJob(String name) {
 		super(name);

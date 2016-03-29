@@ -6,7 +6,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /*****************************************************************************
  * PAC parser using the Rhino JavaScript engine bundled with Java 1.6<br/>
@@ -24,7 +25,7 @@ public class JavaxPacScriptParser implements PacScriptParser {
 
 	private final PacScriptSource source;
 	private final ScriptEngine engine;
-	private static Logger logger = Logger.getLogger(JavaxPacScriptParser.class);
+	static final Logger logger = LogManager.getLogger(JavaxPacScriptParser.class);
 	/*************************************************************************
 	 * Constructor
 	 * 

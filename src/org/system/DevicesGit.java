@@ -3,7 +3,9 @@ package org.system;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
@@ -24,7 +26,7 @@ public class DevicesGit {
 	private static String localPath=OS.getFolderDevices()+File.separator+".git";
     private static Repository localRepo;
     private static Git git;
-    private static Logger logger = Logger.getLogger(DevicesGit.class);
+    static final Logger logger = LogManager.getLogger(DevicesGit.class);
     
     public static void gitSync() throws IOException, InvalidRemoteException, org.eclipse.jgit.api.errors.TransportException, GitAPIException {
     	SshSessionFactory.setInstance(new JschConfigSessionFactory() {

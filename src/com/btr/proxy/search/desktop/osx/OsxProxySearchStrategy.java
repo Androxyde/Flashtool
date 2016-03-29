@@ -10,7 +10,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.btr.proxy.search.ProxySearchStrategy;
 import com.btr.proxy.search.browser.ie.IELocalByPassFilter;
@@ -55,7 +56,7 @@ public class OsxProxySearchStrategy implements ProxySearchStrategy {
 	
 	private static final String SETTINGS_FILE = "/Library/Preferences/SystemConfiguration/preferences.plist";
 		
-	private static Logger logger = Logger.getLogger(OsxProxySearchStrategy.class);
+	static final Logger logger = LogManager.getLogger(OsxProxySearchStrategy.class);
 	/*************************************************************************
 	 * ProxySelector
 	 * @see java.net.ProxySelector#ProxySelector()

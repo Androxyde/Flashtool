@@ -14,7 +14,6 @@ import java.util.jar.JarOutputStream;
 import java.util.zip.Deflater;
 import linuxlib.JUsb;
 import org.adb.AdbUtility;
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -79,8 +78,9 @@ import gui.tools.VersionCheckerJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
 import gui.tools.Yaffs2Job;
-
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MainSWT {
 
@@ -103,7 +103,7 @@ public class MainSWT {
 	protected MenuItem mntmTARestore;
 	protected MenuItem mntmBackupSystemApps;
 	protected VersionCheckerJob vcheck; 
-	private static Logger logger = Logger.getLogger(MainSWT.class);
+	static final Logger logger = LogManager.getLogger(MainSWT.class);
 	
 	/**
 	 * Open the window.
@@ -1084,7 +1084,6 @@ public class MainSWT {
 		StyledText logWindow = new StyledText(scrolledComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		logWindow.setEditable(false);
 		TextAreaAppender.setTextArea(logWindow);
-		MyLogger.setLogDest("textarea");
 		GlobalState.setGUI();
 		scrolledComposite.setContent(logWindow);
 		scrolledComposite.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -1137,7 +1136,7 @@ public class MainSWT {
 
 	public void exitProgram() {
 		try {
-			MyLogger.setLogDest("console");
+			MyLogger.setMode(MyLogger.CONSOLE_MODE);
 			logger.info("Stopping watchdogs and exiting ...");
 			if (GlobalConfig.getProperty("killadbonexit").equals("yes")) {
 				killAdbandFastboot();

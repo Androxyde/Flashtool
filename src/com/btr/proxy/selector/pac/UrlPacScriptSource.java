@@ -12,7 +12,8 @@ import java.net.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /*****************************************************************************
@@ -32,7 +33,7 @@ public class UrlPacScriptSource implements PacScriptSource {
 	private final String scriptUrl;
 	private String scriptContent;
 	private long expireAtMillis;
-	private static Logger logger = Logger.getLogger(UrlPacScriptSource.class);
+	static final Logger logger = LogManager.getLogger(UrlPacScriptSource.class);
 	
 	/*************************************************************************
 	 * Constructor

@@ -2,7 +2,8 @@ package com.btr.proxy.search.java;
 
 import java.net.ProxySelector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.btr.proxy.search.ProxySearchStrategy;
 import com.btr.proxy.selector.fixed.FixedProxySelector;
@@ -43,7 +44,7 @@ import com.btr.proxy.selector.whitelist.ProxyBypassListSelector;
 
 public class JavaProxySearchStrategy implements ProxySearchStrategy {
 	
-	private static Logger logger = Logger.getLogger(JavaProxySearchStrategy.class);
+	static final Logger logger = LogManager.getLogger(JavaProxySearchStrategy.class);
 	/*************************************************************************
 	 * Constructor
 	 * Will use the default environment variables.

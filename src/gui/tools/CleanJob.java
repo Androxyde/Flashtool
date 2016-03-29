@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.adb.AdbUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -20,7 +22,7 @@ import org.system.TextFile;
 public class CleanJob extends Job {
 
 	DeviceApps _apps;
-	private static Logger logger = Logger.getLogger(CleanJob.class);
+	static final Logger logger = LogManager.getLogger(CleanJob.class);
 	
 	public CleanJob(String name) {
 		super(name);

@@ -5,7 +5,9 @@ import gui.tools.WidgetsTool;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
@@ -34,7 +36,7 @@ public class HomeSelector extends Dialog {
 	protected Object result;
 	protected Shell shlHomeSelector;
 	private Text sourceFolder;
-	private static Logger logger = Logger.getLogger(HomeSelector.class);
+	static final Logger logger = LogManager.getLogger(HomeSelector.class);
 	private Button btnAccept;
 	private boolean cancelable = true;
 	

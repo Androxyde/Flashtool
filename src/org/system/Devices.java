@@ -9,7 +9,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 
 //import org.eclipse.swt.SWT;
@@ -31,7 +33,7 @@ public class Devices  {
 	public static Properties devices = null;
 	public static Properties models = null;
 	private static boolean waitforreboot=false;
-	private static Logger logger = Logger.getLogger(Devices.class);
+	static final Logger logger = LogManager.getLogger(Devices.class);
 	static DeviceIdent lastid = new DeviceIdent();
 	static String laststatus = "";
 

@@ -8,7 +8,9 @@ import java.io.RandomAccessFile;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.logger.LogProgress;
 import org.system.OS;
 import org.util.BytesUtil;
@@ -25,7 +27,7 @@ public class SinFile {
 	long nbchunks = 0;
 	long chunksize = 0;
 	SinFileHeader sinheader;
-	private static Logger logger = Logger.getLogger(SinFile.class);
+	static final Logger logger = LogManager.getLogger(SinFile.class);
 	
 	public SinFileHeader getSinHeader() {
 		return sinheader;

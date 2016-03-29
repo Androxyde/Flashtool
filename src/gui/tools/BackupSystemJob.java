@@ -4,7 +4,9 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.adb.AdbUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -15,7 +17,7 @@ import org.system.OS;
 
 public class BackupSystemJob extends Job {
 
-	private static Logger logger = Logger.getLogger(BackupSystemJob.class);
+	static final Logger logger = LogManager.getLogger(BackupSystemJob.class);
 	
 	public BackupSystemJob(String name) {
 		super(name);

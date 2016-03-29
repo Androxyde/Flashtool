@@ -1,7 +1,9 @@
 package gui.tools;
 
 import org.adb.AdbUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -13,7 +15,7 @@ import org.system.FTShell;
 public class BusyboxInstallJob extends Job {
 
 	String bbpath;
-	private static Logger logger = Logger.getLogger(BusyboxInstallJob.class);
+	static final Logger logger = LogManager.getLogger(BusyboxInstallJob.class);
 	
 	public BusyboxInstallJob(String name) {
 		super(name);

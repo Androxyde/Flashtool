@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.jdom.JDOMException;
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
@@ -21,7 +23,7 @@ import org.system.XMLFwInfo;
 
 public class XperiFirm {
 
-	private static Logger logger = Logger.getLogger(XperiFirm.class);
+	static final Logger logger = LogManager.getLogger(XperiFirm.class);
 
 	public static void run() throws IOException,JDOMException {
 			File f = new File(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.exe.config");

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.Level;
 import org.logger.LogProgress;
 import org.logger.MyLogger;
 import org.util.HexDump;
@@ -101,7 +102,7 @@ public class Command {
 
     private void writeCommand(int command, byte data[], boolean ongoing) throws X10FlashException, IOException {
     	if (!_simulate) {
-    			if (MyLogger.curlevel.equals("debug")) {
+    			if (MyLogger.getLevel()==Level.DEBUG) {
     				try {
     					Thread.sleep(125);
     				}catch (Exception e) {}

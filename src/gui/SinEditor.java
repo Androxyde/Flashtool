@@ -2,7 +2,9 @@ package gui;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -39,7 +41,7 @@ public class SinEditor extends Dialog {
 	private Text sourceFile;
 	private Button button;
 	private FormData fd_btnClose;
-	private static Logger logger = Logger.getLogger(SinEditor.class);
+	static final Logger logger = LogManager.getLogger(SinEditor.class);
 	
 	/**
 	 * Create the dialog.

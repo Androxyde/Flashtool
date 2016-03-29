@@ -1,6 +1,8 @@
 package gui.tools;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -11,7 +13,7 @@ public class FTDExplodeJob extends Job {
 
 	FTDEntry entry = null;
 	boolean canceled = false;
-	private static Logger logger = Logger.getLogger(FTDExplodeJob.class);
+	static final Logger logger = LogManager.getLogger(FTDExplodeJob.class);
 	
 	public FTDExplodeJob(String name) {
 		super(name);

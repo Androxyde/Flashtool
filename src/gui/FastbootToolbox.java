@@ -4,7 +4,9 @@ import gui.tools.WidgetTask;
 import gui.tools.FastBootToolBoxJob;
 import gui.tools.WidgetsTool;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -21,7 +23,7 @@ public class FastbootToolbox extends Dialog {
 
 	protected Object result;
 	protected Shell shlFastbootToolbox;
-	private static Logger logger = Logger.getLogger(FastbootToolbox.class);
+	static final Logger logger = LogManager.getLogger(FastbootToolbox.class);
 
 	/**
 	 * Create the dialog.

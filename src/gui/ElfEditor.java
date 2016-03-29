@@ -13,7 +13,9 @@ import nl.lxtreme.binutils.elf.Section;
 import nl.lxtreme.binutils.elf.Attribute;
 import nl.lxtreme.binutils.elf.Elf;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -42,7 +44,7 @@ public class ElfEditor extends Dialog {
 	private Text textNbParts;
 	private Elf elfobj;
 	private Button btnExtract;
-	private static Logger logger = Logger.getLogger(ElfEditor.class);
+	static final Logger logger = LogManager.getLogger(ElfEditor.class);
 	
 	/**
 	 * Create the dialog.

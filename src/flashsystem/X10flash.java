@@ -10,7 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.bouncycastle.util.io.Streams;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -51,7 +53,7 @@ public class X10flash {
     private int maxS1packetsize = 0;
     private String serial = "";
     private Shell _curshell;
-    private static Logger logger = Logger.getLogger(X10flash.class);
+    static final Logger logger = LogManager.getLogger(X10flash.class);
     private HashMap<Long,TAUnit> TaPartition2 = new HashMap<Long,TAUnit>();
     int loaderConfig = 0;
     private XMLBootConfig bc=null;

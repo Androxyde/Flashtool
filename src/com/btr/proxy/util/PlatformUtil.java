@@ -1,6 +1,7 @@
 package com.btr.proxy.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /*****************************************************************************
@@ -14,7 +15,7 @@ public class PlatformUtil {
 	public enum Platform {WIN, LINUX, MAC_OS, SOLARIS, OTHER} 
 	public enum Desktop  {WIN, KDE, GNOME, MAC_OS, OTHER} 
 	public enum Browser  {IE, FIREFOX}
-	private static Logger logger = Logger.getLogger(PlatformUtil.class);
+	static final Logger logger = LogManager.getLogger(PlatformUtil.class);
 	
 	/*************************************************************************
 	 * Gets the platform we are currently running on.

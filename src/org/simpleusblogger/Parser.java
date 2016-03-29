@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.system.TextFile;
 import org.util.HexDump;
 
@@ -19,7 +21,7 @@ import com.igormaznitsa.jbbp.io.JBBPByteOrder;
 
 public class Parser {
 	
-	private static Logger logger = Logger.getLogger(Parser.class);
+	static final Logger logger = LogManager.getLogger(Parser.class);
 	
 	static JBBPParser USBRecord = JBBPParser.prepare(
 			"<long irp;" +

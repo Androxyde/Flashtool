@@ -30,8 +30,8 @@ import java.util.zip.ZipInputStream;
 
 import javax.crypto.NoSuchPaddingException;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.lf5.util.StreamUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.logger.LogProgress;
 import org.util.HexDump;
 import com.google.common.io.BaseEncoding;
@@ -40,7 +40,7 @@ import java.util.zip.Adler32;
 
 public class OS {
 
-	private static Logger logger = Logger.getLogger(OS.class);
+	static final Logger logger = LogManager.getLogger(OS.class);
 	
 	public static String RC4Key = "DoL6FBfnYcNJBjH31Vnz6lKATTaDGe4y";
 	public static String AESKey = "qAp!wmvl!cOS7xSQV!aoR7Qz*neY^5Sx";
@@ -400,6 +400,7 @@ public class OS {
 		}
 		zis.closeEntry();
 		zis.close();
+		stream.close();
 	}
 
 	public static void viewAllThreads() {
@@ -576,8 +577,7 @@ public class OS {
 	      if (!targetDir.exists()) {
 	          targetDir.mkdirs();
 	      }
-	      byte[] zipfile = StreamUtils.getBytes(url.openStream());
-	      OS.ZipExplodeTo(new ByteArrayInputStream(zipfile),new File(OS.getFolderUserFlashtool()));
+	      OS.ZipExplodeTo(new BufferedInputStream(url.openStream()),new File(OS.getFolderUserFlashtool()));
 	  }
 	  
 	  public static void copyInputStream(InputStream in, OutputStream out) throws IOException {

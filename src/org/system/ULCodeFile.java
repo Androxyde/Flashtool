@@ -3,11 +3,13 @@ package org.system;
 import java.io.File;
 
 import org.adb.AdbUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class ULCodeFile extends TextFile {
 	
-	private static Logger logger = Logger.getLogger(ULCodeFile.class);
+	static final Logger logger = LogManager.getLogger(ULCodeFile.class);
 
 	public ULCodeFile(String serial) {
 		super(OS.getFolderRegisteredDevices()+File.separator+serial+File.separator+"ulcode.txt", "ISO-8859-1");

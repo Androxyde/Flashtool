@@ -4,7 +4,9 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 import org.adb.AdbUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class AdbPhoneThread extends Thread {
 	
@@ -16,7 +18,7 @@ public class AdbPhoneThread extends Thread {
 	private Scanner sc;
 	private StatusListener listener;
 	boolean first = true;
-	private static Logger logger = Logger.getLogger(AdbPhoneThread.class);
+	static final Logger logger = LogManager.getLogger(AdbPhoneThread.class);
 
 	public void done() {
 		done=true;

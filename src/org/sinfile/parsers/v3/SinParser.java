@@ -9,7 +9,9 @@ import java.util.Vector;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.logger.LogProgress;
 import org.system.OS;
 import org.util.BytesUtil;
@@ -38,7 +40,7 @@ public class SinParser {
 	public long size;
 	private File sinfile;
 	private long dataSize=0L;
-	private static Logger logger = Logger.getLogger(SinParser.class);
+	static final Logger logger = LogManager.getLogger(SinParser.class);
 	String dataType;
 	
 	public void setFile(File f) {

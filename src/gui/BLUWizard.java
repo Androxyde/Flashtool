@@ -6,7 +6,9 @@ import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
 import gui.tools.WriteTAJob;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.swt.program.Program;
@@ -36,7 +38,7 @@ public class BLUWizard extends Dialog {
 	private X10flash _flash;
 	private String _action;
 	private String _serial;
-	private static Logger logger = Logger.getLogger(BLUWizard.class);
+	static final Logger logger = LogManager.getLogger(BLUWizard.class);
 
 	/**
 	 * Create the dialog.

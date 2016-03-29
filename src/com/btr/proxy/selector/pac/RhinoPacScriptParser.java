@@ -2,7 +2,8 @@ package com.btr.proxy.selector.pac;
 
 import java.util.Calendar;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Scriptable;
@@ -34,7 +35,7 @@ public class RhinoPacScriptParser extends ScriptableObject implements PacScriptP
     private Scriptable scope;
     private PacScriptSource source;
     private static final PacScriptMethods SCRIPT_METHODS = new PacScriptMethods(); 
-    private static Logger logger = Logger.getLogger(RhinoPacScriptParser.class);
+    static final Logger logger = LogManager.getLogger(RhinoPacScriptParser.class);
     /*************************************************************************
      * Constructor
      * @param source the source for the PAC script.

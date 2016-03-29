@@ -9,7 +9,9 @@ import gui.About;
 import gui.MainSWT;
 
 import org.adb.AdbUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.logger.MyLogger;
 import org.sinfile.parsers.SinFile;
 import org.system.AdbPhoneThread;
@@ -28,7 +30,7 @@ public class FlasherConsole {
 	
 	private static AdbPhoneThread phoneWatchdog;
 	private static String fsep = OS.getFileSeparator();
-	private static Logger logger = Logger.getLogger(FlasherConsole.class);
+	static final Logger logger = LogManager.getLogger(FlasherConsole.class);
 	
 	public static void init(boolean withadb) {
 			logger.info("Flashtool "+About.getVersion());

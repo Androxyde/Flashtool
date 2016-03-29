@@ -7,7 +7,9 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Vector;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.system.Devices;
 import org.system.GlobalConfig;
 import org.system.OS;
@@ -24,7 +26,7 @@ public class AdbUtility  {
 	private static String shellpath = OS.getFolderCustom()+fsep+"shells";
 	private static String adbpath = OS.getPathAdb();
 	private static String shpath ="";
-	private static Logger logger = Logger.getLogger(AdbUtility.class);
+	static final Logger logger = LogManager.getLogger(AdbUtility.class);
 
 	public static void resetRoot() {
 		rootnative=false;

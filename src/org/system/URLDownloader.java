@@ -8,7 +8,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.logger.LogProgress;
 
 public class URLDownloader {
@@ -19,7 +21,7 @@ public class URLDownloader {
 	BufferedInputStream input = null;
 	RandomAccessFile outFile = null;
 	boolean canceled = false;
-	private static Logger logger = Logger.getLogger(URLDownloader.class);
+	static final Logger logger = LogManager.getLogger(URLDownloader.class);
 	
 	public long Download(String strurl, String filedest, long seek) throws IOException {
 		try {

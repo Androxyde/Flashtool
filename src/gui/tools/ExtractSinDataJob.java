@@ -1,6 +1,8 @@
 package gui.tools;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -13,7 +15,7 @@ public class ExtractSinDataJob extends Job {
 	boolean canceled = false;
 	SinFile sin;
 	private String mode="raw";
-	private static Logger logger = Logger.getLogger(ExtractSinDataJob.class);
+	static final Logger logger = LogManager.getLogger(ExtractSinDataJob.class);
 	
 	public ExtractSinDataJob(String name) {
 		super(name);

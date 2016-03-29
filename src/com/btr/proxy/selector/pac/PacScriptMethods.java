@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /***************************************************************************
  * Implementation of PAC JavaScript functions.
@@ -39,7 +40,7 @@ public class PacScriptMethods implements ScriptMethods {
             Arrays.asList("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"));
 
     private Calendar currentTime; 
-    private static Logger logger = Logger.getLogger(PacScriptMethods.class);    
+    static final Logger logger = LogManager.getLogger(PacScriptMethods.class);    
     /*************************************************************************
      * Constructor
      ************************************************************************/

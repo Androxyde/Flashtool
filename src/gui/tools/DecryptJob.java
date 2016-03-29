@@ -6,7 +6,9 @@ import java.io.File;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -17,7 +19,7 @@ public class DecryptJob extends Job {
 
 	boolean canceled = false;
 	Vector files;
-	private static Logger logger = Logger.getLogger(DecryptJob.class);
+	static final Logger logger = LogManager.getLogger(DecryptJob.class);
 	
 	public DecryptJob(String name) {
 		super(name);

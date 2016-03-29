@@ -11,7 +11,9 @@ import java.io.OutputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.system.OS;
 
 public class BundleEntry {
@@ -22,7 +24,7 @@ public class BundleEntry {
 	private String _category = "";
 	private String _internal = "";
 
-	private static Logger logger = Logger.getLogger(BundleEntry.class);
+	static final Logger logger = LogManager.getLogger(BundleEntry.class);
 
 	private String getExtension() {
 		if (fileentry!=null) {

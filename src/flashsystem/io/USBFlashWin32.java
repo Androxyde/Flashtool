@@ -7,7 +7,9 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.util.HexDump;
 
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
@@ -18,7 +20,7 @@ public class USBFlashWin32 {
 	
 	private static int lastflags;
 	private static byte[] lastreply;
-	private static Logger logger = Logger.getLogger(USBFlashWin32.class);
+	static final Logger logger = LogManager.getLogger(USBFlashWin32.class);
 	private static int buffersize=0;
 
 	public static void setUSBBufferSize(int size) {

@@ -1,6 +1,8 @@
 package gui.tools;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -14,7 +16,7 @@ public class FlashJob extends Job {
 	X10flash flash = null;
 	boolean canceled = false;
 	Shell _shell;
-	private static Logger logger = Logger.getLogger(FlashJob.class);
+	static final Logger logger = LogManager.getLogger(FlashJob.class);
 	
 	public FlashJob(String name) {
 		super(name);

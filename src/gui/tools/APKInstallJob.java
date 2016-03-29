@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 import org.adb.AdbUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,7 +23,7 @@ class APKFilter implements FilenameFilter {
 public class APKInstallJob extends Job {
 
 	String instpath;
-	private static Logger logger = Logger.getLogger(APKInstallJob.class);
+	static final Logger logger = LogManager.getLogger(APKInstallJob.class);
 
 	public APKInstallJob(String name) {
 		super(name);

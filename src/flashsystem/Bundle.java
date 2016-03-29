@@ -26,7 +26,9 @@ import java.util.jar.Manifest;
 import java.util.zip.Deflater;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.logger.LogProgress;
 import org.sinfile.parsers.SinFile;
 import org.system.Devices;
@@ -51,7 +53,7 @@ public final class Bundle {
     private BundleMetaData _meta;
     private boolean bootdeliveryflashed=false;
     private XMLBootDelivery xmlb;
-    private static Logger logger = Logger.getLogger(Bundle.class);
+    static final Logger logger = LogManager.getLogger(Bundle.class);
 
     public Bundle() {
     	_meta = new BundleMetaData();

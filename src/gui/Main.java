@@ -7,12 +7,16 @@ import libusb.LibUsbException;
 import linuxlib.JUsb;
 import org.logger.MyLogger;
 import org.system.AWTKillerThread;
+import org.system.GlobalConfig;
 import org.system.OS;
 import flashsystem.FlasherConsole;
 
 public class Main {
 
 	public static void main(String[] args) {
+		System.setProperty("log4j.configurationFile", MyLogger.class.getClassLoader().getResource("org/logger/config/log4j2.xml").getPath());
+		MyLogger.setMode(MyLogger.CONSOLE_MODE);
+		MyLogger.setLevel(GlobalConfig.getProperty("loglevel"));
 		OS.getFolderFirmwaresDownloaded();
 		OS.getFolderFirmwaresPrepared();
 		OS.getFolderFirmwaresSinExtracted();
@@ -24,12 +28,10 @@ public class Main {
 			OptionSet options = parseCmdLine(args);
 			Main.initLinuxUsb();
 			if (options.has("console")) {
-				MyLogger.setLogDest("console");
-				MyLogger.setLevel("info");
 				processConsole(options);
 			}
 			else {
-				MyLogger.setLogDest("textarea");
+				MyLogger.setMode(MyLogger.GUI_MODE);
 				MainSWT window = new MainSWT();
 				window.open();
 			}

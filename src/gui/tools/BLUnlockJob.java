@@ -1,7 +1,9 @@
 package gui.tools;
 
 import org.adb.FastbootUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -13,7 +15,7 @@ public class BLUnlockJob extends Job {
 	String ulcode;
 	boolean canceled = false;
 	boolean unlocksuccess = true;
-	private static Logger logger = Logger.getLogger(BLUnlockJob.class);
+	static final Logger logger = LogManager.getLogger(BLUnlockJob.class);
 
 	public boolean unlockSuccess() {
 		return unlocksuccess;

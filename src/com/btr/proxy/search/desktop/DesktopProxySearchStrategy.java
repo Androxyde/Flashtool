@@ -2,7 +2,10 @@ package com.btr.proxy.search.desktop;
 
 import java.net.ProxySelector;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import com.btr.proxy.search.ProxySearchStrategy;
 import com.btr.proxy.search.desktop.gnome.GnomeProxySearchStrategy;
@@ -23,7 +26,7 @@ import com.btr.proxy.util.PlatformUtil.Platform;
 
 public class DesktopProxySearchStrategy implements ProxySearchStrategy {
 
-	private static Logger logger = Logger.getLogger(DesktopProxySearchStrategy.class);
+	static final Logger logger = LogManager.getLogger(DesktopProxySearchStrategy.class);
 	
 	/*************************************************************************
 	 * Gets the default ProxySelector for the current platform.

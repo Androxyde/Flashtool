@@ -13,7 +13,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.adb.AdbUtility;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.swt.SWT;
 import org.util.BytesUtil;
 
@@ -21,7 +23,7 @@ public class FTDEntry {
 
 	File ftdfile;
 	Properties entry = new Properties();
-	private static Logger logger = Logger.getLogger(FTDEntry.class);
+	static final Logger logger = LogManager.getLogger(FTDEntry.class);
 
 	public FTDEntry(String id) throws FileNotFoundException, IOException {
 		ftdfile = new File(OS.getFolderMyDevices()+File.separator+id+".ftd");

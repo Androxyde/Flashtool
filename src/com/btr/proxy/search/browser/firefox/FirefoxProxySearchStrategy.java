@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import com.btr.proxy.search.ProxySearchStrategy;
 import com.btr.proxy.search.desktop.DesktopProxySearchStrategy;
@@ -63,7 +65,7 @@ public class FirefoxProxySearchStrategy implements ProxySearchStrategy {
 	
 	private FirefoxProfileSource profileScanner;
 	private FirefoxSettingParser settingsParser;
-	private static Logger logger = Logger.getLogger(FirefoxProxySearchStrategy.class);
+	static final Logger logger = LogManager.getLogger(FirefoxProxySearchStrategy.class);
 	
 	/*************************************************************************
 	 * ProxySelector

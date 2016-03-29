@@ -9,7 +9,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.btr.proxy.search.ProxySearchStrategy;
 import com.btr.proxy.util.ProxyException;
@@ -32,7 +33,7 @@ import com.btr.proxy.util.ProxyUtil;
 
 public class WpadProxySearchStrategy implements ProxySearchStrategy {
 	
-	private static Logger logger = Logger.getLogger(WpadProxySearchStrategy.class);
+	static final Logger logger = LogManager.getLogger(WpadProxySearchStrategy.class);
 	/*************************************************************************
 	 * Constructor
 	 ************************************************************************/

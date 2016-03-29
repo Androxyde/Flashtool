@@ -9,7 +9,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class ProcessBuilderWrapper {
 
@@ -17,7 +19,7 @@ public class ProcessBuilderWrapper {
     private StringWriter errors;
     private int status;
     private boolean print = false;
-    private static Logger logger = Logger.getLogger(ProcessBuilderWrapper.class);
+    static final Logger logger = LogManager.getLogger(ProcessBuilderWrapper.class);
 
     public ProcessBuilderWrapper(File directory, List<String> command) throws Exception {
     	run(directory, command);

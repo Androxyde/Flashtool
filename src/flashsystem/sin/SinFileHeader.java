@@ -4,7 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.util.BytesUtil;
 
 public class SinFileHeader {
@@ -24,7 +26,7 @@ public class SinFileHeader {
 	private long partitionsize;
 	private int chunksize;
 	private byte[] readarray;
-	private static Logger logger = Logger.getLogger(SinFileHeader.class);
+	static final Logger logger = LogManager.getLogger(SinFileHeader.class);
 	
 	public void setChunkSize(int size) {
 		chunksize = size;

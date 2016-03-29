@@ -1,7 +1,9 @@
 package gui.tools;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -12,7 +14,7 @@ public class DevicesSyncJob extends Job {
 
 	boolean canceled = false;
 	
-	private static Logger logger = Logger.getLogger(DevicesSyncJob.class);
+	static final Logger logger = LogManager.getLogger(DevicesSyncJob.class);
 
 	public DevicesSyncJob(String name) {
 		super(name);

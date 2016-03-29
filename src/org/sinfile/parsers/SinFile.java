@@ -11,7 +11,9 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.sinfile.parsers.v3.AddrBlock;
 import org.sinfile.parsers.v3.HashBlock;
 import org.system.OS;
@@ -38,7 +40,7 @@ public class SinFile {
 	public org.sinfile.parsers.v2.SinParser sinv2 = null;
 	public org.sinfile.parsers.v3.SinParser sinv3 = null;
 	
-	private static Logger logger = Logger.getLogger(SinFile.class);
+	static final Logger logger = LogManager.getLogger(SinFile.class);
 	
 	public SinFile(File f) throws SinFileException {
 		sinfile = f;
