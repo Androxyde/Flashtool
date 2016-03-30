@@ -36,6 +36,7 @@ public class DevicesGit {
     		}
     	);
     	if (openRepository()) {
+    		System.out.println("Open");
     		pullRepository();
     	}
     	else cloneRepository();
@@ -62,13 +63,17 @@ public class DevicesGit {
 		try {
 			logger.info("Opening devices repository.");
 	        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+	        System.out.println("Open1");
 	        localRepo = builder.setGitDir(new File(localPath))
 	                .readEnvironment() // scan environment GIT_* variables
 	                .findGitDir() // scan up the file system tree
 	                .build();
+	        System.out.println("Open2");
 	        git = new Git(localRepo);
+	        System.out.println("Open3");
 	        return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.info("Error opening devices repository.");
 			closeRepository();
 			return false;
