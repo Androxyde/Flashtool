@@ -1,10 +1,12 @@
 package gui;
 
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import libusb.LibUsbException;
 import linuxlib.JUsb;
+import java.io.IOException;
+import org.apache.logging.log4j.core.config.ConfigurationSource;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.logger.MyLogger;
 import org.system.AWTKillerThread;
 import org.system.GlobalConfig;
@@ -14,7 +16,15 @@ import flashsystem.FlasherConsole;
 public class Main {
 
 	public static void main(String[] args) {
-		System.setProperty("log4j.configurationFile", MyLogger.class.getClassLoader().getResource("org/logger/config/log4j2.xml").getPath());
+		try {
+			ConfigurationSource cs = new ConfigurationSource(Main.class.getClassLoader().getResourceAsStream("org/logger/config/log4j2.xml"));
+			Configurator.initialize(null, cs);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		//LoggerContext.getContext().setConfiguration(cs);
+		//System.setProperty("log4j.configurationFile", MyLogger.class.getClassLoader().getResource("org/logger/config/log4j2.xml").getPath());
 		MyLogger.setMode(MyLogger.CONSOLE_MODE);
 		MyLogger.setLevel(GlobalConfig.getProperty("loglevel"));
 		OS.getFolderFirmwaresDownloaded();
