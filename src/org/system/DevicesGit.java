@@ -12,6 +12,7 @@ import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -36,7 +37,6 @@ public class DevicesGit {
     		}
     	);
     	if (openRepository()) {
-    		System.out.println("Open");
     		pullRepository();
     	}
     	else cloneRepository();
@@ -63,14 +63,11 @@ public class DevicesGit {
 		try {
 			logger.info("Opening devices repository.");
 	        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-	        System.out.println("Open1");
 	        localRepo = builder.setGitDir(new File(localPath))
 	                .readEnvironment() // scan environment GIT_* variables
 	                .findGitDir() // scan up the file system tree
 	                .build();
-	        System.out.println("Open2");
 	        git = new Git(localRepo);
-	        System.out.println("Open3");
 	        return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -94,11 +91,13 @@ public class DevicesGit {
 	    	}
 	    	logger.info("Pulling changes from github.");
 	    	git.pull().call();
-    	} catch (Exception e) {
-    		logger.error(e.getMessage());
-    		logger.info("Trying to clone repository instead");
+    	} catch (NoHeadException e) {
+    		logger.info("Pull failed. Trying to clone repository instead");
     		closeRepository();
     		cloneRepository();
+    	}
+    	catch (Exception e1) {
+    		closeRepository();
     	}
     }
 
