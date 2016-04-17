@@ -110,7 +110,7 @@ public class Devices  {
 				String device = list[i].getPath().substring(list[i].getPath().lastIndexOf(OS.getFileSeparator())+1);
 				try {
 					File propfile = new File(list[i].getPath()+OS.getFileSeparator()+device+".properties");
-					if (!device.toLowerCase().equals("busybox") && !device.toLowerCase().equals(".git") && propfile.exists()) {
+					if (propfile.exists()) {
 						p.open("",propfile.getAbsolutePath());
 						DeviceEntry entry = new DeviceEntry(p);
 						if (device.equals(entry.getId())) {
@@ -136,8 +136,9 @@ public class Devices  {
 				PropertiesFile p = new PropertiesFile();
 				String device = list[i].getPath().substring(list[i].getPath().lastIndexOf(OS.getFileSeparator())+1);
 				try {
-					if (!device.toLowerCase().equals("busybox") && !device.toLowerCase().equals(".git")) {
-						p.open("",new File(list[i].getPath()+OS.getFileSeparator()+device+".properties").getAbsolutePath());
+					File propfile = new File(list[i].getPath()+OS.getFileSeparator()+device+".properties");
+					if (propfile.exists()) {
+						p.open("",propfile.getAbsolutePath());
 						DeviceEntry entry = new DeviceEntry(p);
 						if (device.equals(entry.getId())) {
 							devices.put(device, entry);
