@@ -127,13 +127,15 @@ public class SinParser {
 	  public long getDataSizePriv() throws IOException {
 		  if (dataSize>0) return dataSize;
 		  if (dataHeader.mmcfLen>0) {
-		  Object last = dataBlocks.lastElement();
-		  	if (last instanceof AddrBlock)
-		  		return ((AddrBlock)last).fileOffset+((AddrBlock)last).dataLen;
-		  	else
-		  		return ((LZ4ABlock)last).fileOffset+((LZ4ABlock)last).uncompDataLen;
+			  System.out.println("Size with mmcfLen");
+			  Object last = dataBlocks.lastElement();
+			  if (last instanceof AddrBlock)
+				  return ((AddrBlock)last).fileOffset+((AddrBlock)last).dataLen;
+			  else
+				  return ((LZ4ABlock)last).fileOffset+((LZ4ABlock)last).uncompDataLen;
 		  }
 		  else {
+			  System.out.println("Size without mmcfLen");
 			  long size=0;
 			  for (int i=0;i<this.blocks.blocks.length;i++) {
 				  size+=this.blocks.blocks[i].length;
@@ -144,7 +146,7 @@ public class SinParser {
 
 		public String getDataTypePriv(byte[] res) throws IOException {
 			if (BytesUtil.startsWith(res, new byte[] {0x7F,0x45,0x4C,0x46})) return "elf";
-			int pos = BytesUtil.indexOf(res, new byte[]{0x53,(byte)0xEF});
+			int pos = BytesUtil.indexOf(res, new byte[]{(byte)0x53,(byte)0xEF,(byte)0x01,(byte)0x00});
 			if (pos==-1) return "unknown";
 			pos = pos - 56;
 			byte[] header = new byte[58];
