@@ -87,9 +87,10 @@ public class SinFile {
 			}
 			if (version==2) {
 				sinv2 = sinParserV2.parse(sinStream).mapTo(org.sinfile.parsers.v2.SinParser.class);
+				sinv2.setLength(sinfile.length());
+				sinv2.setFile(sinfile);
 				if (sinv2.hashLen>sinv2.headerLen) throw new SinFileException("Error parsing sin file");
 				sinv2.parseHash(sinStream);
-				sinv2.setFile(sinfile);
 				closeStreams();
 			}
 			if (version==3) {
@@ -106,6 +107,7 @@ public class SinFile {
 			}
 		} catch (Exception ioe) {
 			closeStreams();
+			ioe.printStackTrace();
 			throw new SinFileException(ioe.getMessage());
 		}
 	}
@@ -274,7 +276,7 @@ public class SinFile {
 			return "";
 		}
 		if (sinv2!=null) {
-			return "";
+			return sinv2.getDataType();
 		}
 		if (sinv3!=null) {
 			return sinv3.getDataType();
@@ -287,7 +289,7 @@ public class SinFile {
 			return 0;
 		}
 		if (sinv2!=null) {
-			return 0;
+			return sinv2.getDataSize();
 		}
 		if (sinv3!=null) {
 			return sinv3.getDataSize();
@@ -300,7 +302,7 @@ public class SinFile {
 			return;
 		}
 		if (sinv2!=null) {
-			return;
+			sinv2.dumpImage();
 		}
 		if (sinv3!=null) {
 			sinv3.dumpImage();
@@ -313,7 +315,7 @@ public class SinFile {
 			return;
 		}
 		if (sinv2!=null) {
-			return;
+			sinv2.dumpHeader();
 		}
 		if (sinv3!=null) {
 			sinv3.dumpHeader();

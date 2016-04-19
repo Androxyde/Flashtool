@@ -36,13 +36,19 @@ public class SinParser {
 	  public int certLen;
 	  public byte[] cert;
 	  private File sinfile;
+	  private long size;
 	  private long dataSize=0L;
 	  static final Logger logger = LogManager.getLogger(SinParser.class);
+	  String dataType;
 	  
 	  public void setFile(File f) {
 		  sinfile = f;
 	  }
-	  
+
+	  public void setLength(long s) {
+		  size=s;
+	  }
+
 	  public void parseHash(JBBPBitInputStream sinStream) throws IOException {
 		  JBBPParser hashBlocksV2 = JBBPParser.prepare(
 		            "block[_] {int offset;"
@@ -50,10 +56,15 @@ public class SinParser {
 		                    + "byte hashLen;"
 		                    + "byte[hashLen] crc;}"
 		  );
-		  byte[] hashBlocks = sinStream.readByteArray(hashLen);
-		  blocks = hashBlocksV2.parse(hashBlocks).mapTo(org.sinfile.parsers.v2.HashBlocks.class);
-		  certLen = sinStream.readInt(JBBPByteOrder.BIG_ENDIAN);
-		  cert = sinStream.readByteArray(certLen);
+		  if (hashLen>0) {
+			  byte[] hashBlocks = sinStream.readByteArray(hashLen);
+			  blocks = hashBlocksV2.parse(hashBlocks).mapTo(org.sinfile.parsers.v2.HashBlocks.class);
+			  certLen = sinStream.readInt(JBBPByteOrder.BIG_ENDIAN);
+			  cert = sinStream.readByteArray(certLen);
+			  if (blocks.block.length==1 && blocks.block[0].offset!=0) blocks.block[0].offset=0; 
+		  }
+		  dataType=getDataTypePriv();
+		  dataSize = getDataSizePriv();
 	  }
 
 	  public byte[] getHeader()  throws IOException {
@@ -77,9 +88,19 @@ public class SinParser {
 			return buff;
 	  }
 
-	  public String getDataType(byte[] res) throws IOException {
+	  public long getDataSizePriv() throws IOException {
+		  if (dataSize>0) return dataSize;
+		  if (hashLen==0) dataSize=size-headerLen;
+		  else {
+			  HashBlock last = blocks.block[blocks.block.length-1];
+			  dataSize=last.offset+last.length;
+		  }
+		  return dataSize;
+	  }
+
+		public String getDataTypePriv(byte[] res) throws IOException {
 			if (BytesUtil.startsWith(res, new byte[] {0x7F,0x45,0x4C,0x46})) return "elf";
-			int pos = BytesUtil.indexOf(res, new byte[]{0x53,(byte)0xEF});
+			int pos = BytesUtil.indexOf(res, new byte[]{(byte)0x53,(byte)0xEF,(byte)0x01,(byte)0x00});
 			if (pos==-1) return "unknown";
 			pos = pos - 56;
 			byte[] header = new byte[58];
@@ -90,58 +111,78 @@ public class SinParser {
 			long blockcount = BytesUtil.getInt(bcount);
 			dataSize = blockcount*4L*1024L;
 			return "ext4";
-	  }
+		}
 
-	  public String getDataType() throws IOException {
+		public String getDataTypePriv() throws IOException {
 			RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
 			byte[] res=null;
-			/*
-			byte[] rescomp=null;
-			res = new byte[blocks.block[0].length];
-			fin.seek(getDataOffset());
-			fin.read(res);
-			fin.close();*/		
-			return getDataType(res);
-	  }
+			fin.seek(headerLen);
+			if (hashLen==0) {
+				res = new byte[(int)size-headerLen];
+				fin.read(res);
+			}
+			else {
+				int i=0;
+				while (i < blocks.block.length && blocks.block[i].offset==0 ) {
+					res = new byte[blocks.block[i].length];
+					fin.read(res);
+					i++;
+				}
+			}
+			fin.close();
+			return getDataTypePriv(res);
+		}
+
+		public long getDataSize() {
+			return dataSize;
+		}
+
+		public String getDataType() {
+			return dataType;
+		}
 
 	  public void dumpImage() throws IOException {
-/*			try {
-				// First I write partition info bytearray in a .partinfo file
-				if (hasPartitionInfo()) {
-					FileOutputStream foutpart = new FileOutputStream(new File(getPartInfoFileName()));
-					foutpart.write(sinheader.getPartitionInfo());
-					foutpart.flush();
-					foutpart.close();
-				}		
+			try {
+				RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
 				logger.info("Generating container file");
 				String ext = "."+getDataType();
 				String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+ext;
+				RandomAccessFile fout = OS.generateEmptyFile(foutname, dataSize, (byte)0xFF);
 				logger.info("Finished Generating container file");
-				RandomAccessFile findata = new RandomAccessFile(sinfile,"r");		
 				// Positionning in files
 				logger.info("Extracting data into container");
-				findata.seek(sinheader.getHeaderSize());
-				Vector<SinHashBlock> blocks = sinheader.getHashBlocks();
-				LogProgress.initProgress(blocks.size());
-				for (int i=0;i<blocks.size();i++) {
-					SinHashBlock b = blocks.elementAt(i);
-					byte[] data = new byte[b.getLength()];
-					findata.read(data);
-					b.validate(data);
-					fout.seek(blocks.size()==1?0:b.getOffset());
+				fin.seek(headerLen);
+				LogProgress.initProgress(blocks.block.length);
+				for (int i=0;i<blocks.block.length;i++) {
+					HashBlock b = blocks.block[i];
+					byte[] data = new byte[b.length];
+					fin.read(data);
+					if (!b.validate(data)) throw new Exception("Corrupted data");
+					fout.seek(blocks.block.length==1?0:b.offset);
 					fout.write(data);
 					LogProgress.updateProgress();
 				}
 				LogProgress.initProgress(0);
 				fout.close();
-				findata.close();
-				logger.info("Data Extraction finished");
+				logger.info("Extraction finished to "+foutname);
 			}
 			catch (Exception e) {
 				logger.error("Error while extracting data : "+e.getMessage());
 				LogProgress.initProgress(0);
 				e.printStackTrace();
-			}*/
+			}
+		}
+
+	  public void dumpHeader()  throws IOException {
+			RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
+			String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+".header";
+			RandomAccessFile fout = new RandomAccessFile(foutname,"rw");
+			byte[] buff = new byte[headerLen];
+			fin.read(buff);
+			fout.write(buff);
+			fout.close();
+			fin.close();
+			logger.info("Extraction finished to "+foutname);
 		}
 
 }

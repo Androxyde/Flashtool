@@ -127,7 +127,6 @@ public class SinParser {
 	  public long getDataSizePriv() throws IOException {
 		  if (dataSize>0) return dataSize;
 		  if (dataHeader.mmcfLen>0) {
-			  System.out.println("Size with mmcfLen");
 			  Object last = dataBlocks.lastElement();
 			  if (last instanceof AddrBlock)
 				  return ((AddrBlock)last).fileOffset+((AddrBlock)last).dataLen;
@@ -135,7 +134,6 @@ public class SinParser {
 				  return ((LZ4ABlock)last).fileOffset+((LZ4ABlock)last).uncompDataLen;
 		  }
 		  else {
-			  System.out.println("Size without mmcfLen");
 			  long size=0;
 			  for (int i=0;i<this.blocks.blocks.length;i++) {
 				  size+=this.blocks.blocks[i].length;
