@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.logger.LogProgress;
+import org.sinfile.parsers.v1.PartitionInfo;
 import org.sinfile.parsers.v3.AddrBlock;
 import org.sinfile.parsers.v3.LZ4ABlock;
 import org.system.OS;
@@ -33,13 +34,14 @@ public class SinParser {
 	  @Bin public byte compression;
 	  @Bin public int hashLen;
 	  public HashBlocks blocks;
+	  public PartitionInfo parti;
 	  public int certLen;
 	  public byte[] cert;
 	  private File sinfile;
 	  private long size;
 	  private long dataSize=0L;
-	  static final Logger logger = LogManager.getLogger(SinParser.class);
 	  String dataType;
+	  static final Logger logger = LogManager.getLogger(SinParser.class);
 	  
 	  public void setFile(File f) {
 		  sinfile = f;
@@ -62,6 +64,16 @@ public class SinParser {
 			  certLen = sinStream.readInt(JBBPByteOrder.BIG_ENDIAN);
 			  cert = sinStream.readByteArray(certLen);
 			  if (blocks.block.length==1 && blocks.block[0].offset!=0) blocks.block[0].offset=0; 
+			  if (blocks.block[0].length==16) {
+				  byte[] partinfo = sinStream.readByteArray(16);
+				  JBBPParser partInfo = JBBPParser.prepare(
+				            "<int mot1;"
+				          + "<int mot2;"
+				          + "<int offset;"
+				          + "<int blockcount;"
+				  );
+				  parti = partInfo.parse(partinfo).mapTo(org.sinfile.parsers.v1.PartitionInfo.class);
+			  }
 		  }
 		  dataType=getDataTypePriv();
 		  dataSize = getDataSizePriv();

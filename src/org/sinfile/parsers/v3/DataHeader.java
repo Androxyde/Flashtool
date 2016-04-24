@@ -8,6 +8,6 @@ public class DataHeader {
 	@Bin public int mmcfLen;
 	@Bin public byte[] gptpMagic;
 	@Bin public int gptpLen;
-	@Bin public byte[] uuid;
+	@Bin public byte[] gptpuid;
 	public byte[] addrList;
 }

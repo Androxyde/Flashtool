@@ -12,7 +12,11 @@ public class HashBlock {
 	@Bin public byte[] crc;
 	
 	public boolean validate(byte[] data) {
-		String checksum = OS.getSHA256(data);
+		String checksum="";
+		if (hashLen==20)
+			checksum = OS.getSHA1(data);
+		if (hashLen==32)
+			checksum = OS.getSHA256(data);
 		return checksum.equals(HexDump.toHex(crc));
 	}
 }

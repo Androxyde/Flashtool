@@ -80,9 +80,10 @@ public class SinFile {
 			if (version!=1 && version!=2 && version!=3) throw new SinFileException("Not a sin file");
 			if (version==1) {
 				sinv1 = sinParserV1.parse(sinStream).mapTo(org.sinfile.parsers.v1.SinParser.class);
+				sinv1.setLength(sinfile.length());
+				sinv1.setFile(sinfile);
 				if (sinv1.hashLen>sinv1.headerLen) throw new SinFileException("Error parsing sin file");
 				sinv1.parseHash(sinStream);
-				sinv1.setFile(sinfile);
 				closeStreams();
 			}
 			if (version==2) {
@@ -143,7 +144,21 @@ public class SinFile {
 			return "Without spare";
 		if (getPartitionType()==0x0A)
 			return "With spare";
-		return "unknown";
+		if (getPartitionType()==0x20)
+			return "Loader";
+		if (getPartitionType()==0)
+			return "Loader";
+		if (getPartitionType()==3)
+			return "Boot";
+		if (getPartitionType()==0x24)
+			return "MBR";
+		if (getPartitionType()==14)
+			return "MBR";
+		if (getPartitionType()==15)
+			return "Without spare";
+		if (getPartitionType()==0x27)
+			return "MMC";
+		return String.valueOf(getPartitionType());
 	}
  
 	public void closeStreams() {
@@ -231,13 +246,13 @@ public class SinFile {
 
 	public boolean hasPartitionInfo() {
 		if (sinv1!=null) {
-			return false;
+			return sinv1.hasPartitionInfo();
 		}
 		if (sinv2!=null) {
 			return sinv2.hasPartitionInfo();
 		}
 		if (sinv3!=null) {
-			return false;
+			return sinv3.hasPartitionInfo();
 		}
 		return false;
 	}
@@ -245,13 +260,13 @@ public class SinFile {
 	public byte[] getPartitionInfo() throws IOException {
 		if (hasPartitionInfo()) {
 			if (sinv1!=null) {
-				return null;
+				return sinv1.getPartitionInfo();
 			}
 			if (sinv2!=null) {
 				return sinv2.getPartitionInfo();
 			}
 			if (sinv3!=null) {
-				return null;
+				return sinv3.getPartitionInfo();
 			}
 			return null;
 		}
@@ -273,7 +288,7 @@ public class SinFile {
 
 	public String getDataType() throws IOException {
 		if (sinv1!=null) {
-			return "";
+			return sinv1.getDataType();
 		}
 		if (sinv2!=null) {
 			return sinv2.getDataType();
@@ -286,7 +301,7 @@ public class SinFile {
 	
 	public long getDataSize() throws IOException{
 		if (sinv1!=null) {
-			return 0;
+			return sinv1.getDataSize()/1024/1024;
 		}
 		if (sinv2!=null) {
 			return sinv2.getDataSize();
@@ -299,7 +314,7 @@ public class SinFile {
 
 	public void dumpImage() throws IOException{
 		if (sinv1!=null) {
-			return;
+			sinv1.dumpImage();
 		}
 		if (sinv2!=null) {
 			sinv2.dumpImage();

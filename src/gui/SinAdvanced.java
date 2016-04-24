@@ -108,7 +108,7 @@ public class SinAdvanced extends Dialog {
 		fd_lblSpare.top = new FormAttachment(textPartition, 6);
 		fd_lblSpare.left = new FormAttachment(lblSinVersion, 0, SWT.LEFT);
 		lblSpare.setLayoutData(fd_lblSpare);
-		lblSpare.setText("Spare Info :");
+		lblSpare.setText("Partition Type :");
 		
 		textContent = new Text(shlSinEditor, SWT.BORDER);
 		textContent.setEditable(false);

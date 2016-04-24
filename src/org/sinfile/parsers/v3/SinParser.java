@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.logger.LogProgress;
+import org.sinfile.parsers.v1.PartitionInfo;
 import org.system.OS;
 import org.util.BytesUtil;
 
@@ -40,6 +41,7 @@ public class SinParser {
 	public long size;
 	private File sinfile;
 	private long dataSize=0L;
+	public byte[] partitioninfo = null;
 	static final Logger logger = LogManager.getLogger(SinParser.class);
 	String dataType;
 	
@@ -67,7 +69,7 @@ public class SinParser {
 				  + "int mmcfLen;"
 	              + "byte[4] gptpMagic;"
 				  + "int gptpLen;"
-	              + "byte[16] uuid;"
+	              + "byte[gptpLen-8] gptpuid;"
 	        );
 
 			JBBPParser addrBlocksParser = JBBPParser.prepare(
@@ -93,8 +95,9 @@ public class SinParser {
 		    // First hash block seems to be Data header (addr map)
 			dheader = sinStream.readByteArray(blocks.blocks[0].length);
 			JBBPBitInputStream dheaderStream = new JBBPBitInputStream(new ByteArrayInputStream(dheader));
-			dataHeader = dataHeaderParser.parse(dheaderStream).mapTo(DataHeader.class);
-			if (new String(dataHeader.mmcfMagic).equals("MMCF")) {
+			if (new String(dheaderStream.readByteArray(4)).equals("MMCF")) {
+				dheaderStream.reset();
+				dataHeader = dataHeaderParser.parse(dheaderStream).mapTo(DataHeader.class);
 				dataHeader.addrList = dheaderStream.readByteArray(dataHeader.mmcfLen-dataHeader.gptpLen);
 				JBBPBitInputStream addrListStream = new JBBPBitInputStream(new ByteArrayInputStream(dataHeader.addrList));
 				byte[] amagic = new byte[4];
@@ -112,6 +115,7 @@ public class SinParser {
 				}
 			}
 			else {
+				dataHeader = new DataHeader();
 				dataHeader.gptpLen=0;
 				dataHeader.mmcfLen=0;
 			}
@@ -186,6 +190,14 @@ public class SinParser {
 				fin.close();
 			}
 			return getDataTypePriv(res);
+		}
+		
+		public boolean hasPartitionInfo() {
+			return false;
+		}
+		
+		public byte[] getPartitionInfo() {
+			return null;
 		}
 		
 		public long getDataSize() {
