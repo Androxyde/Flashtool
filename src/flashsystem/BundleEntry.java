@@ -45,14 +45,21 @@ public class BundleEntry {
 	
 	public BundleEntry(File f) {
 		fileentry = f;
-		_category = BundleEntry.getShortName(fileentry.getName()).toUpperCase();
+		if (f.getName().toUpperCase().endsWith("FSC"))
+			_category = "FSC";
+		else
+			_category = BundleEntry.getShortName(fileentry.getName()).toUpperCase();
 		_internal = org.sinfile.parsers.SinFile.getShortName(fileentry.getName())+getExtension();
 	}
 
 	public BundleEntry(JarFile jf, JarEntry j) {
 		jarentry = j;
 		jarfile = jf;
-		_category = BundleEntry.getShortName(jarentry.getName()).toUpperCase();
+		if (jarentry.getName().toUpperCase().endsWith("FSC")) {
+			_category = "FSC";
+		}
+		else
+			_category = BundleEntry.getShortName(jarentry.getName()).toUpperCase();
 		_internal = org.sinfile.parsers.SinFile.getShortName(jarentry.getName())+getExtension();
 	}
 

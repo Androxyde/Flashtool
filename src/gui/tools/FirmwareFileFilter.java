@@ -6,7 +6,7 @@ import java.io.FileFilter;
 public class FirmwareFileFilter implements FileFilter
 {
 	private final String[] okFileExtensions = 
-		new String[] {"sin", "ta"};
+		new String[] {"sin", "ta", "fsc"};
 
   public boolean accept(File file)
   {

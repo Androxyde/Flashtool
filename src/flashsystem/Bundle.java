@@ -92,7 +92,7 @@ public final class Bundle {
 			while (e.hasMoreElements()) {
 				BundleEntry entry = new BundleEntry(_firmware,e.nextElement());
 				if (!entry.getName().toUpperCase().startsWith("BOOT/")) {
-				if (entry.getName().toUpperCase().endsWith("SIN") || entry.getName().toUpperCase().endsWith("TA") || entry.getName().toUpperCase().endsWith("XML")) {
+				if (entry.getName().toUpperCase().endsWith("FSC") || entry.getName().toUpperCase().endsWith("SIN") || entry.getName().toUpperCase().endsWith("TA") || entry.getName().toUpperCase().endsWith("XML")) {
 					try {
 						_meta.process(entry);
 					}
@@ -132,6 +132,16 @@ public final class Bundle {
 
 	public void setLoader(File loader) {
 		BundleEntry entry = new BundleEntry(loader);
+		try {
+			if (_meta!=null)
+				_meta.process(entry);
+		}
+		catch (Exception e) {
+		}
+	}
+
+	public void setFsc(File fsc) {
+		BundleEntry entry = new BundleEntry(fsc);
 		try {
 			if (_meta!=null)
 				_meta.process(entry);
@@ -181,8 +191,20 @@ public final class Bundle {
 		return _meta.getLoader()!=null;
 	}
 
+	public boolean hasFsc() {
+		return _meta.getFsc()!=null;
+	}
+
 	public BundleEntry getLoader() throws IOException, FileNotFoundException {
 		return _meta.getLoader().getEntries().iterator().next();
+	}
+
+	public BundleEntry getFsc() throws IOException, FileNotFoundException {
+		try {
+			return _meta.getFsc().getEntries().iterator().next();
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 	public boolean hasBootDelivery() {
@@ -284,7 +306,21 @@ public final class Bundle {
           out.write(buffer, 0, nRead);
         }
         inLdr.close();
-		Enumeration<BundleEntry> e = allEntries();
+		BundleEntry fsc = this.getFsc();
+		if (fsc!=null) {
+			logger.info("Adding "+fsc.getName()+" to the bundle as "+fsc.getInternal());
+		    JarEntry jarAddFsc = new JarEntry(fsc.getInternal());
+	        out.putNextEntry(jarAddFsc);
+	        InputStream inFsc = fsc.getInputStream();
+	        while (true) {
+	          int nRead = inFsc.read(buffer, 0, buffer.length);
+	          if (nRead <= 0)
+	            break;
+	          out.write(buffer, 0, nRead);
+	        }
+	        inFsc.close();
+		}
+        Enumeration<BundleEntry> e = allEntries();
 		while (e.hasMoreElements()) {
 			BundleEntry entry = e.nextElement();
 			logger.info("Adding "+entry.getName()+" to the bundle as "+entry.getInternal());
@@ -442,6 +478,8 @@ public final class Bundle {
 			}
 			if (hasLoader())
 				getLoader().saveTo(OS.getFolderFirmwaresPrepared());
+			if (hasFsc())
+				getFsc().saveTo(OS.getFolderFirmwaresPrepared());
 			return true;
 		}
 		catch (Exception e) {

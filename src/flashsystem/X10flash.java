@@ -360,7 +360,6 @@ public class X10flash {
 				loader = _bundle.getLoader().getAbsolutePath();
 			}
 			else {
-				System.out.println("no loader in bundle");
 				loader = getDefaultLoader();
 			}
 		}
@@ -669,6 +668,12 @@ public class X10flash {
     }
 
     public String getFlashScript() {
+    	try {
+    		if (_bundle.hasFsc()) {
+    			return _bundle.getFsc().getAbsolutePath();
+    		}
+    	} catch (Exception e) {
+    	}
     	DeviceEntry dev = Devices.getDeviceFromVariant(getCurrentDevice());
     	return dev.getFlashScript(getCurrentDevice(),_bundle.getVersion());
     }
@@ -748,6 +753,7 @@ public class X10flash {
     	}
     	if (fsc!=null) {
     		if (fsc.exists()) {
+    			if (_bundle.hasFsc()) return true;
     			String result = WidgetTask.openYESNOBox(_curshell, "A FSC script is found : "+fsc.getName()+". Do you want to use it ?");
     			return Integer.parseInt(result)==SWT.YES;
     		}
@@ -763,7 +769,8 @@ public class X10flash {
 		    bc = getBootConfig();
 		    loadTAFiles();
 		    if (hasScript()) {
-		    	if (checkScript())
+		    	if (_bundle.hasFsc()) runScript();
+		    	else if (checkScript())
 		    		runScript();
 		    }
 		    else {

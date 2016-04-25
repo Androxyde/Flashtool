@@ -13,12 +13,17 @@ public class BundleMetaData {
 	MyTreeSet<Category> _categex = new MyTreeSet<Category>();
 	MyTreeSet<Category> _categta = new MyTreeSet<Category>();
 	Category loader=null;
+	Category fsc=null;
 	
 	public BundleMetaData() {
 	}
 
 	public Category getLoader() {
 		return loader;
+	}
+	
+	public Category getFsc() {
+		return fsc;
 	}
 	
 	public Set<Category> getWipe() {
@@ -96,6 +101,9 @@ public class BundleMetaData {
 				cat.setEnabled(true);
 			if (cat.getId().equals("LOADER")) 
 				loader=cat;
+			else if (cat.getId().equals("FSC")) {
+				fsc=cat;
+			}
 			else
 				_categex.add(cat);
 		}
@@ -110,6 +118,10 @@ public class BundleMetaData {
 	public void remove(BundleEntry f) {
 		if (f.getCategory().equals("LOADER")) {
 			loader=null;
+			return;
+		}
+		if (f.getCategory().equals("FSC")) {
+			fsc=null;
 			return;
 		}
 		try {

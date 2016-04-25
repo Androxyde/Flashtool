@@ -130,7 +130,7 @@ public class BundleCreator extends Dialog {
 		File srcdir = new File(sourceFolder.getText());
 		File[] chld = srcdir.listFiles();
 		for(int i = 0; i < chld.length; i++) {
-			if (chld[i].getName().toUpperCase().endsWith("SIN") || (chld[i].getName().toUpperCase().endsWith("TA")) || (chld[i].getName().toUpperCase().endsWith("XML") && (!chld[i].getName().toUpperCase().contains("UPDATE") && !chld[i].getName().toUpperCase().contains("FWINFO")))) {
+			if (chld[i].getName().toUpperCase().endsWith("FSC") || chld[i].getName().toUpperCase().endsWith("SIN") || (chld[i].getName().toUpperCase().endsWith("TA")) || (chld[i].getName().toUpperCase().endsWith("XML") && (!chld[i].getName().toUpperCase().contains("UPDATE") && !chld[i].getName().toUpperCase().contains("FWINFO")))) {
 				files.add(new BundleEntry(chld[i]));
 			}
 		}
@@ -311,6 +311,17 @@ public class BundleCreator extends Dialog {
 							b.setLoader(new File(ent.getLoader()));
 						}
 				}
+				if (!b.hasFsc()) {
+					DeviceEntry dev = Devices.getDeviceFromVariant(_variant);
+			    	String fscpath = dev.getFlashScript(_variant,version.getText());
+			    	File fsc = new File(fscpath);
+			    	if (fsc.exists()) {
+		    			String result = WidgetTask.openYESNOBox(shlBundler, "A FSC script is found : "+fsc.getName()+". Do you want to add it ?");
+		    			if (Integer.parseInt(result)==SWT.YES) {
+		    				b.setFsc(fsc);
+		    			}
+			    	}
+				}
 				createFTFJob j = new createFTFJob("Create FTF");
 				j.setBundle(b);
 				j.schedule();
@@ -441,7 +452,7 @@ public class BundleCreator extends Dialog {
 		    			File srcdir = new File(sourceFolder.getText());
 		    			File[] chld = srcdir.listFiles();
 		    			for(int i = 0; i < chld.length; i++) {
-		    				if (chld[i].getName().toUpperCase().endsWith("SIN") || (chld[i].getName().toUpperCase().endsWith("TA")) || (chld[i].getName().toUpperCase().endsWith("XML") && (!chld[i].getName().toUpperCase().contains("UPDATE") && !chld[i].getName().toUpperCase().contains("FWINFO")))) {
+		    				if (chld[i].getName().toUpperCase().endsWith("FSC") || chld[i].getName().toUpperCase().endsWith("SIN") || (chld[i].getName().toUpperCase().endsWith("TA")) || (chld[i].getName().toUpperCase().endsWith("XML") && (!chld[i].getName().toUpperCase().contains("UPDATE") && !chld[i].getName().toUpperCase().contains("FWINFO")))) {
 		    					files.add(new BundleEntry(chld[i]));
 		    				}
 		    			}
