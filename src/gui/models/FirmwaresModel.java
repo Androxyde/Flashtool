@@ -18,7 +18,6 @@ public class FirmwaresModel {
 					firmwares.add(new Firmware(chld[i].getAbsolutePath(),jf.getManifest().getMainAttributes().getValue("device"), jf.getManifest().getMainAttributes().getValue("version"), jf.getManifest().getMainAttributes().getValue("branding")));
 				}
 				catch (Exception e) {
-					System.out.println("Error opening "+ chld[i].getName());
 					e.printStackTrace();}
 			}
 	  }
