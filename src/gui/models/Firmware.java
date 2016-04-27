@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.system.Devices;
+
 import flashsystem.Bundle;
 import flashsystem.BundleEntry;
 import flashsystem.Category;
@@ -14,6 +16,7 @@ import flashsystem.Category;
 public class Firmware {
 	  private String fileName;
 	  private String device;
+	  private String device_name;
 	  private String version;
 	  private String branding;
 	  private Firmwares firmwares;
@@ -28,6 +31,7 @@ public class Firmware {
 	  public Firmware(String pfilename, String pdevice, String pversion, String pbranding) throws Exception {
 	    fileName = pfilename;
 	    device = pdevice;
+	    device_name = Devices.getVariantName(pdevice);
 	    version = pversion;
 	    branding = pbranding;
 	    content = new LinkedList();
@@ -48,6 +52,10 @@ public class Firmware {
 	  public String getDevice() {
 	    return device;
 	  }
+
+	  public String getDeviceName() {
+		    return device_name;
+		  }
 
 	  public String getVersion() {
 		    return version;

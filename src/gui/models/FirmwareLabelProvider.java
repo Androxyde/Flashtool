@@ -30,7 +30,7 @@ public class FirmwareLabelProvider implements ITableLabelProvider {
 	      text = firmware.getFilename();
 	      break;
 	    case 1:
-	      text = firmware.getDevice();
+	      text = firmware.getDeviceName();
 	      break;
 	    case 2:
 	      text = firmware.getVersion();
