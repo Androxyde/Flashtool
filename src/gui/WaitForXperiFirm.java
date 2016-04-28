@@ -74,6 +74,7 @@ public class WaitForXperiFirm extends Dialog {
 		shlWaiForXperiFirm.setSize(365, 128);
 		shlWaiForXperiFirm.setText("Running XperiFirm");
 		XperiFirmJob xj = new XperiFirmJob("XperiFirm");
+		xj.setShell(shlWaiForXperiFirm);
 		xj.addJobChangeListener(new IJobChangeListener() {
 			public void aboutToRun(IJobChangeEvent event) {
 			}

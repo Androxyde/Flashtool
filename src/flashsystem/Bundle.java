@@ -478,8 +478,9 @@ public final class Bundle {
 			}
 			if (hasLoader())
 				getLoader().saveTo(OS.getFolderFirmwaresPrepared());
-			if (hasFsc())
+			if (hasFsc()) {
 				getFsc().saveTo(OS.getFolderFirmwaresPrepared());
+			}
 			return true;
 		}
 		catch (Exception e) {

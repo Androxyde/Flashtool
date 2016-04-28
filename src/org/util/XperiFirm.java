@@ -4,6 +4,7 @@ import flashsystem.Bundle;
 import flashsystem.BundleEntry;
 import flashsystem.BundleMetaData;
 import flashsystem.SeusSinTool;
+import gui.tools.WidgetTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +15,11 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.jdom.JDOMException;
+import org.system.DeviceEntry;
+import org.system.Devices;
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
 import org.system.TextFile;
@@ -24,15 +28,20 @@ import org.system.XMLFwInfo;
 public class XperiFirm {
 
 	static final Logger logger = LogManager.getLogger(XperiFirm.class);
+	static Shell _parent;
 
-	public static void run() throws IOException,JDOMException {
-			File f = new File(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.exe.config");
-			if (f.exists()) f.delete();
-			String version = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/version"));
-			version = version.substring(0,version.indexOf("|"));
-			String downloadurl = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/download"));
-			TextFile tf = new TextFile(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.version","ISO8859-15");
+	public static void run(Shell parent) throws IOException,JDOMException {
+			_parent = parent;
+			TextFile tf=null;
+			String version = null;
+			String downloadurl=null;
 			try {
+				File f = new File(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.exe.config");
+				if (f.exists()) f.delete();
+				version = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/version"));
+				version = version.substring(0,version.indexOf("|"));
+				downloadurl = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/download"));
+				tf = new TextFile(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.version","ISO8859-15");
 				tf.readLines();
 				if (!version.equals(tf.getLines().iterator().next())) {
 					tf.open(false);
@@ -42,11 +51,13 @@ public class XperiFirm {
 					tf.close();
 				}
 			} catch (Exception fne) {
-				tf.open(false);
-				logger.info("Downloading latest XperiFirm");
-				OS.unpackArchive(new URL(downloadurl), new File(OS.getFolderUserFlashtool()));			tf.write(version);
-				tf.write(version);
-				tf.close();
+				if (tf!=null) {
+					tf.open(false);
+					logger.info("Downloading latest XperiFirm");
+					OS.unpackArchive(new URL(downloadurl), new File(OS.getFolderUserFlashtool()));			tf.write(version);
+					tf.write(version);
+					tf.close();
+				}
 			}
 			ProcessBuilderWrapper command=null;
 			try {
@@ -108,7 +119,7 @@ public class XperiFirm {
 		}
 		
 		for(int i = 0; i < chld.length; i++) {
-			if (chld[i].getName().toUpperCase().endsWith("SIN") || (chld[i].getName().toUpperCase().endsWith("TA") && !chld[i].getName().toUpperCase().contains("SIMLOCK")) || (chld[i].getName().toUpperCase().endsWith("XML") && (!chld[i].getName().toUpperCase().contains("UPDATE") && !chld[i].getName().toUpperCase().contains("FWINFO")))) {
+			if (chld[i].getName().toUpperCase().endsWith("FSC") || chld[i].getName().toUpperCase().endsWith("SIN") || (chld[i].getName().toUpperCase().endsWith("TA") && !chld[i].getName().toUpperCase().contains("SIMLOCK")) || (chld[i].getName().toUpperCase().endsWith("XML") && (!chld[i].getName().toUpperCase().contains("UPDATE") && !chld[i].getName().toUpperCase().contains("FWINFO")))) {
 				meta.process(new BundleEntry(chld[i]));
 			}
 		}
@@ -129,6 +140,17 @@ public class XperiFirm {
 		b.setCDA(info.getCDA());
 		b.setRevision(info.getRevision());
 		b.setCmd25("false");
+		if (!b.hasFsc()) {
+			DeviceEntry dev = Devices.getDeviceFromVariant(info.getModel());
+	    	String fscpath = dev.getFlashScript(info.getModel(),info.getVersion());
+	    	File fsc = new File(fscpath);
+	    	if (fsc.exists()) {
+    			String result = WidgetTask.openYESNOBox(_parent, "A FSC script is found : "+fsc.getName()+". Do you want to add it ?");
+    			if (Integer.parseInt(result)==SWT.YES) {
+    				b.setFsc(fsc);
+    			}
+	    	}
+		}
 		b.createFTF();
 		TextFile tf = new TextFile(sourcefolder+File.separator+"bundled","ISO8859-15");
 		tf.open(true);
