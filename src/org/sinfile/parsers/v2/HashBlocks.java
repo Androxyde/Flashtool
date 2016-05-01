@@ -12,7 +12,6 @@ public class HashBlocks {
     		int spare = block[1].length%131072;
     		for (int i=1;i<block.length;i++) {
     			int newoffset=block[i].offset+(spare*(i-1));
-    			System.out.println(i+" "+block[i].length+" "+block[i].offset+" "+ newoffset);
     			block[i].offset = block[i].offset+(spare*(i-1));
     		}
     	}
