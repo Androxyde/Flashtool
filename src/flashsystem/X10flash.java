@@ -331,70 +331,45 @@ public class X10flash {
     }
 
     private String getDefaultLoader() {
-    	int nbfound = 0;
+    	DeviceEntry ent = Devices.getDeviceFromVariant(getCurrentDevice());
     	String loader = "";
-    	Enumeration<Object> e = Devices.listDevices(true);
-    	while (e.hasMoreElements()) {
-    		DeviceEntry current = Devices.getDevice((String)e.nextElement());
-    		if (current.getRecognition().contains(getCurrentDevice())) {
-    			nbfound++;
-    			if (modded_loader) {
-    				loader = current.getLoaderUnlocked();
-    			}
-    			else {
-    				loader=current.getLoader();
-    			}
-    		}
+    	if (ent!=null) {
+    		if (modded_loader)
+    			loader=ent.getLoaderUnlocked();
+    		else
+    			loader=ent.getLoader();
     	}
-    	if ((nbfound == 0) || (nbfound > 1)) 
-    		return "";
     	if (modded_loader)
 			logger.info("Using an unofficial loader");
+		if (loader.length()==0) {
+			String device = WidgetTask.openDeviceSelector(_curshell);
+			if (device.length()>0) {
+				ent = new DeviceEntry(device);
+				loader = ent.getLoader();				
+			}
+		}
     	return loader;
     }
 
     public void sendLoader() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
-    	String loader = "";
-		if (!modded_loader) {
-			if (_bundle.hasLoader()) {
-				loader = _bundle.getLoader().getAbsolutePath();
-			}
-			else {
-				loader = getDefaultLoader();
-			}
+    	if (_bundle.hasLoader()) {
+			SinFile sin = new SinFile(new File(_bundle.getLoader().getAbsolutePath()));
+			if (sin.getVersion()>=2)
+				sin.setChunkSize(0x10000);
+			else
+				sin.setChunkSize(0x1000);
+			uploadImage(sin);
+			if (!_bundle.simulate())
+				USBFlash.readS1Reply();
 		}
-		else {
-			loader = getDefaultLoader();
-			if (!new File(loader).exists()) loader="";
-			if (loader.length()==0)
-				if (_bundle.hasLoader()) {
-					logger.info("Device loader has not been identified. Using the one from the bundle");
-					loader = _bundle.getLoader().getAbsolutePath();
-				}
-		}
-		if (loader.length()==0) {
-			String device = WidgetTask.openDeviceSelector(_curshell);
-			if (device.length()==0)
-				throw new X10FlashException("No loader found for this device");
-			else {
-				DeviceEntry ent = new DeviceEntry(device);
-				loader = ent.getLoader();				
-			}
-		}
-		SinFile sin = new SinFile(new File(loader));
-		if (sin.getVersion()>=2)
-			sin.setChunkSize(0x10000);
-		else
-			sin.setChunkSize(0x1000);
-		uploadImage(sin);
+    	else logger.warn("No loader found or set manually. Skipping loader");
 		if (!_bundle.simulate()) {
-			USBFlash.readS1Reply();
 			hookDevice(true);
 		}
 	    if (!_bundle.simulate())
 	    	maxS1packetsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
 	    else
-	    	maxS1packetsize=maxS1packetsize=0x080000;
+	    	maxS1packetsize=0x080000;
 	    	if ((maxS1packetsize/1024)<1024)
 	    		logger.info("Max packet size set to "+maxS1packetsize/1024+"K");
 	    	else
@@ -765,6 +740,17 @@ public class X10flash {
     public void flashDevice() {
     	try {
 		    logger.info("Start Flashing");
+		    if (!_bundle.hasLoader() || modded_loader) {
+		    	if (modded_loader)
+		    		logger.info("Searching for a modded loader");
+		    	else
+		    		logger.info("No loader in the bundle. Searching for one");
+		    	String loader = getDefaultLoader();
+		    	if (new File(loader).exists()) {
+		    		_bundle.setLoader(new File(loader));
+		    	}
+		    	else logger.info("No matching loader found");
+		    }
 		    sendLoader();
 		    bc = getBootConfig();
 		    loadTAFiles();
@@ -996,7 +982,7 @@ public class X10flash {
 		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
-		if (printProps) {
+		if (printProps && _bundle.hasLoader()) {
 			logger.debug("After loader command reply (hook) : "+cmd01string);
 			logger.info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Boot version : "+phoneprops.getProperty("BOOTVER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
 		}

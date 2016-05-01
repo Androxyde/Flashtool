@@ -80,6 +80,20 @@ public class BundleMetaData {
 		return _categ;
 	}
 
+	public void setLoader(BundleEntry f) throws Exception {
+		Category cat = new Category();
+		cat.setId(f.getCategory());
+		cat.addEntry(f);
+		loader=cat;
+	}
+
+	public void setFsc(BundleEntry f) throws Exception {
+		Category cat = new Category();
+		cat.setId(f.getCategory());
+		cat.addEntry(f);
+		fsc=cat;
+	}
+
 	public void process(BundleEntry f) throws Exception {
 		if (f.getName().equals("fwinfo.xml")) return;
 		Category cat = new Category();

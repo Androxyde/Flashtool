@@ -131,12 +131,14 @@ public final class Bundle {
 	}
 
 	public void setLoader(File loader) {
-		BundleEntry entry = new BundleEntry(loader);
-		try {
-			if (_meta!=null)
-				_meta.process(entry);
-		}
-		catch (Exception e) {
+		if (loader.exists()) {
+			BundleEntry entry = new BundleEntry(loader);
+			try {
+				if (_meta!=null)
+					_meta.setLoader(entry);
+			}
+			catch (Exception e) {
+			}
 		}
 	}
 
@@ -144,7 +146,7 @@ public final class Bundle {
 		BundleEntry entry = new BundleEntry(fsc);
 		try {
 			if (_meta!=null)
-				_meta.process(entry);
+				_meta.setFsc(entry);
 		}
 		catch (Exception e) {
 		}
@@ -196,15 +198,15 @@ public final class Bundle {
 	}
 
 	public BundleEntry getLoader() throws IOException, FileNotFoundException {
-		return _meta.getLoader().getEntries().iterator().next();
+		if (hasLoader())
+			return _meta.getLoader().getEntries().iterator().next();
+		return null;
 	}
 
 	public BundleEntry getFsc() throws IOException, FileNotFoundException {
-		try {
+		if (hasFsc())
 			return _meta.getFsc().getEntries().iterator().next();
-		} catch (NullPointerException e) {
 			return null;
-		}
 	}
 
 	public boolean hasBootDelivery() {
@@ -215,7 +217,9 @@ public final class Bundle {
 	}
 
 	public BundleEntry getBootDelivery()  throws IOException, FileNotFoundException {
-		return _meta.get("BOOT_DELIVERY").getEntries().iterator().next();
+		if (hasBootDelivery())
+			return _meta.get("BOOT_DELIVERY").getEntries().iterator().next();
+		return null;
 	}
 
 	public boolean simulate() {
@@ -294,18 +298,20 @@ public final class Bundle {
 			size += esize.nextElement().getSize();
 		}
 		LogProgress.initProgress(size/10240+(size%10240>0?1:0));
-		BundleEntry ldr = getLoader();
-		logger.info("Adding "+ldr.getName()+" to the bundle as "+ldr.getInternal());
-	    JarEntry jarAddLdr = new JarEntry(ldr.getInternal());
-        out.putNextEntry(jarAddLdr);
-        InputStream inLdr = ldr.getInputStream();
-        while (true) {
-          int nRead = inLdr.read(buffer, 0, buffer.length);
-          if (nRead <= 0)
-            break;
-          out.write(buffer, 0, nRead);
-        }
-        inLdr.close();
+		if (hasLoader()) {
+			BundleEntry ldr = getLoader();
+			logger.info("Adding "+ldr.getName()+" to the bundle as "+ldr.getInternal());
+		    JarEntry jarAddLdr = new JarEntry(ldr.getInternal());
+	        out.putNextEntry(jarAddLdr);
+	        InputStream inLdr = ldr.getInputStream();
+	        while (true) {
+	          int nRead = inLdr.read(buffer, 0, buffer.length);
+	          if (nRead <= 0)
+	            break;
+	          out.write(buffer, 0, nRead);
+	        }
+	        inLdr.close();
+		}
 		BundleEntry fsc = this.getFsc();
 		if (fsc!=null) {
 			logger.info("Adding "+fsc.getName()+" to the bundle as "+fsc.getInternal());
@@ -387,17 +393,19 @@ public final class Bundle {
 		int maxdatasize=0;
 		int maxloadersize=0;
 		try {
-			SinFile loader = new SinFile(new File(getLoader().getAbsolutePath()));
-			if (loader.getVersion()>=2) {
-				maxloadersize=0x10000;
-			}
-			else {
-				maxloadersize=0x1000;
-			}
+			if (hasLoader()) {
+				SinFile loader = new SinFile(new File(getLoader().getAbsolutePath()));
+				if (loader.getVersion()>=2) {
+					maxloadersize=0x10000;
+				}
+				else {
+					maxloadersize=0x1000;
+				}
+			} else maxloadersize=0x1000;
 		}
 		catch (Exception e) {
 			maxloadersize=0x1000;
-		}	
+		}
 	    Iterator<Category> e = getMeta().getAllEntries(true).iterator();
 	    long totalsize = 8;
 	    while (e.hasNext()) {

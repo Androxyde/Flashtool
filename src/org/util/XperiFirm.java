@@ -142,14 +142,16 @@ public class XperiFirm {
 		b.setCmd25("false");
 		if (!b.hasFsc()) {
 			DeviceEntry dev = Devices.getDeviceFromVariant(info.getModel());
-	    	String fscpath = dev.getFlashScript(info.getModel(),info.getVersion());
-	    	File fsc = new File(fscpath);
-	    	if (fsc.exists()) {
-    			String result = WidgetTask.openYESNOBox(_parent, "A FSC script is found : "+fsc.getName()+". Do you want to add it ?");
-    			if (Integer.parseInt(result)==SWT.YES) {
-    				b.setFsc(fsc);
-    			}
-	    	}
+			if (dev!=null) {
+		    	String fscpath = dev.getFlashScript(info.getModel(),info.getVersion());
+		    	File fsc = new File(fscpath);
+		    	if (fsc.exists()) {
+	    			String result = WidgetTask.openYESNOBox(_parent, "A FSC script is found : "+fsc.getName()+". Do you want to add it ?");
+	    			if (Integer.parseInt(result)==SWT.YES) {
+	    				b.setFsc(fsc);
+	    			}
+		    	}
+			}
 		}
 		b.createFTF();
 		TextFile tf = new TextFile(sourcefolder+File.separator+"bundled","ISO8859-15");
