@@ -940,7 +940,7 @@ public class MainSWT {
 
 		ToolBar toolBar = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
 		FormData fd_toolBar = new FormData();
-		fd_toolBar.right = new FormAttachment(0, 392);
+		fd_toolBar.right = new FormAttachment(0, 440);
 		fd_toolBar.top = new FormAttachment(0, 10);
 		fd_toolBar.left = new FormAttachment(0, 10);
 		toolBar.setLayoutData(fd_toolBar);
@@ -1061,6 +1061,9 @@ public class MainSWT {
 			}
 		});
 		tltmNewItem_1.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/download_32.png"));
+		
+		ToolItem tltmNewItem_2 = new ToolItem(toolBar, SWT.NONE);
+		tltmNewItem_2.setEnabled(false);
 		
 		ProgressBar progressBar = new ProgressBar(shlSonyericsson, SWT.NONE);
 		fd_btnSaveLog.bottom = new FormAttachment(100, -43);
