@@ -292,6 +292,7 @@ public class BundleCreator extends Dialog {
 				b.setVersion(version.getText());
 				b.setBranding(branding.getText());
 				b.setCmd25(btnNoFinalVerification.getSelection()?"true":"false");
+				b.setNoErase(sourceFolder.getText()+File.separator+"update.xml");
 				if (!b.hasLoader()) {
 					DeviceEntry ent = Devices.getDeviceFromVariant(_variant);
 						if (ent.hasUnlockedLoader()) {

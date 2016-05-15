@@ -44,6 +44,7 @@
 	<classpathentry kind="lib" path="libs/slf4j-api-1.7.19.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-ext-1.7.19.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j-impl-2.5.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.105.0.v20160427-1439.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.105.0.v20160510-0922.jar"/>
+	<classpathentry kind="lib" path="libs/jsr305-3.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.sinfile.parsers.SinFile;
 
 
 public class XMLBootConfig {
@@ -32,7 +33,7 @@ public class XMLBootConfig {
 		Iterator<String> file = files.iterator();
 		while(file.hasNext()) {
 			String name = file.next();
-			if (name.startsWith(match))
+			if (SinFile.getShortName(name).equals(match))
 				matched.add(name);
 		}
 		if (matched.size()==1)
@@ -99,17 +100,20 @@ public class XMLBootConfig {
 		return attributes.getProperty(att, " ");
 	}
 	
-	public boolean matches(String otp_lock_status, String otp_data, String idcode) {
+	public boolean matches(String otp_lock_status, String otp_data, String idcode, String plfroot) {
 		boolean check_otp_lock_status=true;
 		boolean check_otp_data=true;
 		boolean check_idcode=true;
+		boolean check_plfroot=true;
 		if (attributes.containsKey("OTP_LOCK_STATUS_1"))
 			check_otp_lock_status=otp_lock_status.equals(getAttribute("OTP_LOCK_STATUS_1"));
 		if (attributes.containsKey("OTP_DATA_1"))
 			check_otp_data=otp_data.equals(getAttribute("OTP_DATA_1"));
 		if (attributes.containsKey("IDCODE_1"))
 			check_idcode=idcode.substring(1).equals(getAttribute("IDCODE_1").substring(1));
-		return (check_otp_lock_status && check_otp_data && check_idcode); 
+		if (attributes.containsKey("PLF_ROOT_1"))
+			check_plfroot=plfroot.equals(getAttribute("PLF_ROOT_1"));
+		return (check_otp_lock_status && check_otp_data && check_idcode && check_plfroot); 
 	}
 
 	public int compare(XMLBootConfig c) {

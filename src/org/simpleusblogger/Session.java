@@ -78,13 +78,15 @@ public class Session {
 		boolean start = false;
 		while (i.hasNext()) {
 			S1Packet p = i.next();
-			if (p.getSin().toLowerCase().startsWith("loader")) {
-				start = true;
-				continue;
-			}
-			if (start) {
 				TableLine tl = new TableLine();
-				if (p.getDirection().equals("WRITE") && p.getCommand()!=1) {
+/*				if (p.getDirection().equals("READ REPLY")) {
+					if (p.getCommand()==1) {
+						tl.add("readLoaderInfos");
+						tl.add("");
+						v.add(tl);
+					}
+				}*/
+				if (p.getDirection().equals("WRITE")) {
 					if (p.getCommand()==0x0D) {
 						if (p.getTA().getUnitNumber()==10100) {
 							tl.add("setFlashState");
@@ -115,7 +117,6 @@ public class Session {
 						v.add(tl);
 					}
 				}
-			}
 			count++;
 		}
 		return v;

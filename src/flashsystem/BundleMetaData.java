@@ -1,23 +1,49 @@
 package flashsystem;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Vector;
 
 import org.util.MyTreeSet;
-//import org.lang.Language;
 
 public class BundleMetaData {
 
 	MyTreeSet<Category> _categwipe = new MyTreeSet<Category>();
 	MyTreeSet<Category> _categex = new MyTreeSet<Category>();
-	MyTreeSet<Category> _categta = new MyTreeSet<Category>();
 	Category loader=null;
 	Category fsc=null;
+	Vector<String> noerase = new Vector<String>();
 	
 	public BundleMetaData() {
 	}
 
+	public String getNoEraseAsString() {
+		return noerase.toString().replace("[", "").replace("]", "").replace(" ", "");
+	}
+	public void setNoErase(String noerase) {
+		if (noerase!=null) {
+			if (noerase.toUpperCase().equals(noerase)) {
+				String tovect[] = noerase.split(",");
+				for (int i=0;i<tovect.length;i++)
+					this.noerase.addElement(tovect[i]);
+			}
+			else {
+				String noerasecateg="";
+				String lnoerase[]=noerase.split(",");
+				for (int i=0;i<lnoerase.length;i++) {
+					this.noerase.addElement(BundleEntry.getShortName(lnoerase[i]).toUpperCase());
+				}
+			}
+		}
+		if (this.noerase.size()==0) {
+			this.noerase.addElement("APPS_LOG");
+			this.noerase.addElement("USERDATA");
+			this.noerase.addElement("SSD");
+			this.noerase.addElement("DIAG");
+			this.noerase.addElement("B2B");
+		}
+	}
+	
 	public Category getLoader() {
 		return loader;
 	}
@@ -32,10 +58,6 @@ public class BundleMetaData {
 
 	public Set<Category> getExclude() {
 		return _categex;
-	}
-
-	public Set<Category> getTA() {
-		return _categta;
 	}
 	
 	public Set<Category> getAllEntries(boolean checked) {
@@ -99,27 +121,28 @@ public class BundleMetaData {
 		Category cat = new Category();
 		cat.setId(f.getCategory());
 		cat.addEntry(f);
-		if (cat.getId().startsWith("APPS_LOG") ||
-			cat.getId().startsWith("USERDATA") ||
-			cat.getId().startsWith("SSD") ||
-			cat.getId().startsWith("DIAG") ||
-			cat.getId().startsWith("B2B")
-		   ) {
+
+		if (cat.getId().equals("LOADER")) {
+			loader=cat;
+			return;
+		}
+
+		if (cat.getId().equals("FSC")) {
+			fsc=cat;
+			return;
+		}
+
+		if (noerase.contains(cat.getId()) && !cat.isTa()){
 			cat.setEnabled(false);
 			_categwipe.add(cat);
 		}
 		else {
 			if (cat.getId().startsWith("SIMLOCK"))
 				cat.setEnabled(false);
-			else
-				cat.setEnabled(true);
-			if (cat.getId().equals("LOADER")) 
-				loader=cat;
-			else if (cat.getId().equals("FSC")) {
-				fsc=cat;
-			}
-			else
-				_categex.add(cat);
+			else if (cat.isTa() && noerase.contains(cat.getId()))
+				cat.setEnabled((false));
+			else cat.setEnabled(true);
+			_categex.add(cat);
 		}
 	}
 	
@@ -147,7 +170,6 @@ public class BundleMetaData {
 	}
 	
 	public Category get(String categ) {
-		//if (categ.equals("LOADER")) return loader;
 		Category c = _categex.get(categ);
 		if (c==null) c = _categwipe.get(categ);
 		return c;
@@ -156,6 +178,5 @@ public class BundleMetaData {
 	public void clear() {
 		_categex.clear();
 		_categwipe.clear();
-		_categta.clear();
 	}
 }

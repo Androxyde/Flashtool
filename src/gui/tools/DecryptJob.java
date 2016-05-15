@@ -3,12 +3,14 @@ package gui.tools;
 import flashsystem.SeusSinTool;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.atteo.xmlcombiner.XmlCombiner;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -33,8 +35,10 @@ public class DecryptJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
     	try {
     		FileUtils.deleteDirectory(new File(((File)files.get(0)).getParent()+File.separator+"decrypted"));
+    		String decryptfolder="";
 			for (int i=0;i<files.size();i++) {
 				File f = (File)files.get(i);
+				decryptfolder=f.getParentFile().getAbsolutePath()+File.separator+"decrypted";
 				logger.info("Decrypting "+f.getName());
 				try {
 					SeusSinTool.decryptAndExtract(f.getAbsolutePath());
@@ -42,6 +46,24 @@ public class DecryptJob extends Job {
 				catch (Exception e) {
 					logger.error(e.getMessage());
 				}
+			}
+			File update = new File(decryptfolder+File.separator+"update.xml");
+			File update1 = new File(decryptfolder+File.separator+"update1.xml");
+			File newupdate = new File(decryptfolder+File.separator+"update2.xml");
+			if (update.exists() && update1.exists()) {
+				XmlCombiner combiner = new XmlCombiner();
+				FileInputStream fi1 = new FileInputStream(update);
+				combiner.combine(fi1);
+				FileInputStream fi2 = new FileInputStream(update1);
+				combiner.combine(fi2);
+				FileOutputStream fo = new FileOutputStream(newupdate);
+				combiner.buildDocument(fo);
+				fi1.close();
+				fi2.close();
+				fo.close();
+				update.delete();
+				update1.delete();
+				newupdate.renameTo(update);
 			}
 			logger.info("Decryption finished");
 			return Status.OK_STATUS;

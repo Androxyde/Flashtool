@@ -33,6 +33,8 @@ import org.logger.LogProgress;
 import org.sinfile.parsers.SinFile;
 import org.system.Devices;
 import org.system.OS;
+import org.system.XMLUpdate;
+
 import com.turn.ttorrent.common.Torrent;
 
 public final class Bundle {
@@ -82,6 +84,7 @@ public final class Bundle {
 		try {
 			_firmware = new JarFile(path);
 			_meta = new BundleMetaData();
+			_meta.setNoErase(_firmware.getManifest().getMainAttributes().getValue("noerase"));
 			logger.debug("Creating bundle from ftf file : "+_firmware.getName());
 			_device = _firmware.getManifest().getMainAttributes().getValue("device");
 			_version = _firmware.getManifest().getMainAttributes().getValue("version");
@@ -197,6 +200,14 @@ public final class Bundle {
 		return _meta.getFsc()!=null;
 	}
 
+	public void setNoErase(String file) {
+		try {
+			XMLUpdate upd = new XMLUpdate(new File(file));
+			_meta.setNoErase(upd.getNoErase());
+		} catch (Exception e) {
+		}
+	}
+
 	public BundleEntry getLoader() throws IOException, FileNotFoundException {
 		if (hasLoader())
 			return _meta.getLoader().getEntries().iterator().next();
@@ -204,9 +215,7 @@ public final class Bundle {
 	}
 
 	public BundleEntry getFsc() throws IOException, FileNotFoundException {
-		if (hasFsc())
 			return _meta.getFsc().getEntries().iterator().next();
-			return null;
 	}
 
 	public boolean hasBootDelivery() {
@@ -288,6 +297,7 @@ public final class Bundle {
 		sbuf.append("revision: "+_revision+"\n");
 		sbuf.append("device: "+_device+"\n");
 		sbuf.append("cmd25: "+_cmd25+"\n");
+		sbuf.append("noerase: "+this.getMeta().getNoEraseAsString()+"\n");
 		Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf.toString().getBytes("UTF-8")));
 	    FileOutputStream stream = new FileOutputStream(ftf);
 	    JarOutputStream out = new JarOutputStream(stream, manifest);
@@ -312,19 +322,21 @@ public final class Bundle {
 	        }
 	        inLdr.close();
 		}
-		BundleEntry fsc = this.getFsc();
-		if (fsc!=null) {
-			logger.info("Adding "+fsc.getName()+" to the bundle as "+fsc.getInternal());
-		    JarEntry jarAddFsc = new JarEntry(fsc.getInternal());
-	        out.putNextEntry(jarAddFsc);
-	        InputStream inFsc = fsc.getInputStream();
-	        while (true) {
-	          int nRead = inFsc.read(buffer, 0, buffer.length);
-	          if (nRead <= 0)
-	            break;
-	          out.write(buffer, 0, nRead);
-	        }
-	        inFsc.close();
+		if (hasFsc()) {
+			BundleEntry fsc = getFsc();
+			if (fsc!=null) {
+				logger.info("Adding "+fsc.getName()+" to the bundle as "+fsc.getInternal());
+			    JarEntry jarAddFsc = new JarEntry(fsc.getInternal());
+		        out.putNextEntry(jarAddFsc);
+		        InputStream inFsc = fsc.getInputStream();
+		        while (true) {
+		          int nRead = inFsc.read(buffer, 0, buffer.length);
+		          if (nRead <= 0)
+		            break;
+		          out.write(buffer, 0, nRead);
+		        }
+		        inFsc.close();
+			}
 		}
         Enumeration<BundleEntry> e = allEntries();
 		while (e.hasMoreElements()) {
@@ -383,10 +395,6 @@ public final class Bundle {
 	    fout.close();
 	    logger.info("Torrent file creation finished");
 	    LogProgress.initProgress(0);
-	}
-
-	private void saveEntry(BundleEntry entry) throws IOException {
-		entry.saveTo(OS.getFolderFirmwaresPrepared());
 	}
 	
 	public long getMaxLoaderProgress() {

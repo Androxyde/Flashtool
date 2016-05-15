@@ -359,15 +359,15 @@ public class X10flash {
 			else
 				sin.setChunkSize(0x1000);
 			uploadImage(sin);
-			if (!_bundle.simulate())
-				USBFlash.readS1Reply();
+			if (!_bundle.simulate()) {
+				USBFlash.readS1Reply();		
+			}
 		}
     	else logger.warn("No loader found or set manually. Skipping loader");
-		if (!_bundle.simulate()) {
-			hookDevice(true);
-		}
-	    if (!_bundle.simulate())
+	    if (!_bundle.simulate()) {
 	    	maxS1packetsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
+	    	hookDevice(true);
+	    }
 	    else
 	    	maxS1packetsize=0x080000;
 	    	if ((maxS1packetsize/1024)<1024)
@@ -436,7 +436,7 @@ public class X10flash {
     		while (e.hasMoreElements()) {
     			// We get matching bootconfig from all configs
     			XMLBootConfig bc=e.nextElement();
-    			if (bc.matches(phoneprops.getProperty("OTP_LOCK_STATUS_1"), phoneprops.getProperty("OTP_DATA_1"), phoneprops.getProperty("IDCODE_1")))
+    			if (bc.matches(phoneprops.getProperty("OTP_LOCK_STATUS_1"), phoneprops.getProperty("OTP_DATA_1"), phoneprops.getProperty("IDCODE_1"), phoneprops.getProperty("PLF_ROOT_1")))
     				found.add(bc);
     		}
 		}
@@ -569,58 +569,12 @@ public class X10flash {
     public boolean checkScript() {
     	try {
     		Vector<String> ignored = new Vector<String>();
-    		TextFile tf = new TextFile(getFlashScript(),"ISO8859-1");
-    		Iterator<Category> e = _bundle.getMeta().getAllEntries(true).iterator();
-    		while (e.hasNext()) {
-    			Category cat = e.next();
-    			Iterator<BundleEntry> icat = cat.getEntries().iterator();
-    			while (icat.hasNext()) {
-    				BundleEntry ent = icat.next();
-    				if (ent.getName().equals("loader.sin")) continue;
-    				if (ent.getName().endsWith(".sin")) {
-    	        		Map<Integer,String> map =  tf.getMap();
-    	        		Iterator<Integer> keys = map.keySet().iterator();
-    	        		boolean intemplate = false;
-    	        		while (keys.hasNext()) {
-    	        			String line = map.get(keys.next());
-    	        			String param="";
-    	        			String[] parsed = line.split(":");
-    	        			String action = parsed[0];
-    	        			if (action.equals("uploadImage")) {
-    	        				param = parsed[1];
-    	            			if (ent.getName().contains(param)) {
-    	            				intemplate=true;
-    	            				break; 
-    	            			}
-    	        			}
-    	        		}
-    	        		if (!intemplate) ignored.add(ent.getName());
-    				}
-    				if (ent.getName().endsWith(".ta")) {
-    					TAFileParser taf = new TAFileParser(new File(ent.getAbsolutePath()));
-    					Iterator<TAUnit> itaent = taf.entries().iterator();
-    					while (itaent.hasNext()) {
-    						TAUnit taent = itaent.next();
-        	        		Map<Integer,String> map =  tf.getMap();
-        	        		Iterator<Integer> keys = map.keySet().iterator();
-        	        		boolean intemplate = false;
-        	        		while (keys.hasNext()) {
-        	        			String line = map.get(keys.next());
-        	        			String param="";
-        	        			String[] parsed = line.split(":");
-        	        			String action = parsed[0];
-        	        			if (action.equals("writeTA")) {
-        	        				param = parsed[1];
-        	            			if (taent.getUnitNumber() == Long.parseLong(param)) {
-        	            				intemplate=true;
-        	            				break; 
-        	            			}
-        	        			}
-        	        		}
-        	        		if (!intemplate) ignored.add("TA unit "+taent.getUnitHex());
-    					}
-    				}
-    			}
+    		FlashScript flashscript = new FlashScript(getFlashScript());
+    		flashscript.setBootConfig(bc);
+    		Iterator<Category> icategs = _bundle.getMeta().getAllEntries(true).iterator();
+    		while (icategs.hasNext()) {
+    			Category cat = icategs.next();
+    			if (!flashscript.hasCategory(cat)) ignored.add(cat.getId());
     		}
     		if (ignored.size()>0) {
     			Enumeration eignored = ignored.elements();
@@ -755,8 +709,7 @@ public class X10flash {
 		    bc = getBootConfig();
 		    loadTAFiles();
 		    if (hasScript()) {
-		    	if (_bundle.hasFsc()) runScript();
-		    	else if (checkScript())
+		    	if (checkScript())
 		    		runScript();
 		    }
 		    else {
@@ -975,14 +928,16 @@ public class X10flash {
     }
 
     public void hookDevice(boolean printProps) throws X10FlashException,IOException {
-		cmd.send(Command.CMD01, Command.VALNULL, false);
-		cmd01string = cmd.getLastReplyString();
-		logger.debug(cmd01string);
-		phoneprops.update(cmd01string);
-		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
-		if (phoneprops.getProperty("VER").startsWith("r"))
-			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
-		if (printProps && _bundle.hasLoader()) {
+    	if (printProps && _bundle.hasLoader()) {
+			cmd.send(Command.CMD01, Command.VALNULL, false);
+			cmd01string = cmd.getLastReplyString();
+			logger.debug(cmd01string);
+			phoneprops.update(cmd01string);
+			if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
+			if (phoneprops.getProperty("VER").startsWith("r"))
+				phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
+    	}
+		if (printProps) {
 			logger.debug("After loader command reply (hook) : "+cmd01string);
 			logger.info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Boot version : "+phoneprops.getProperty("BOOTVER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
 		}

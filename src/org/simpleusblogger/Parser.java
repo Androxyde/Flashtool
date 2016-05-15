@@ -5,6 +5,7 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.logging.log4j.LogManager;
@@ -72,6 +73,7 @@ public class Parser {
 					JBBPBitInputStream dataStream = new JBBPBitInputStream(new ByteArrayInputStream(rec.data));
 					S1Packet p = S1Packet.parse(dataStream).mapTo(S1Packet.class);
 					if (p.isHeaderOK()) {
+						
 						if (rec.header.usb_TransferBufferLength > 13) {
 							p.addData(dataStream.readByteArray(rec.data.length-13));
 						}
@@ -101,6 +103,10 @@ public class Parser {
 				}
 			}
 			usbStream.close();
+			Iterator<S1Packet> ipacket = session.getPackets();
+			while (ipacket.hasNext()) {
+				S1Packet p = ipacket.next();
+			}
 			return session;
 	  }
 	  

@@ -1386,7 +1386,9 @@ public class MainSWT {
 
 	public void doBLUnlock() {
 		try {
-			final X10flash flash = new X10flash(new Bundle(),shlSonyericsson);
+			Bundle b = new Bundle();
+			b.setMaxBuffer(512*1024);
+			final X10flash flash = new X10flash(b,shlSonyericsson);
 			logger.info("Please connect your device into flashmode.");
 			String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
 			if (result.equals("OK")) {
@@ -1494,6 +1496,7 @@ public class MainSWT {
 		WidgetTask.openOKBox(shlSonyericsson, "WARNING : This action will not create a backup of your TA.");
 		Bundle bundle = new Bundle();
 		bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+		bundle.setMaxBuffer(512*1024);
 		final X10flash flash = new X10flash(bundle,shlSonyericsson);
 		try {
 			logger.info("Please connect your device into flashmode.");

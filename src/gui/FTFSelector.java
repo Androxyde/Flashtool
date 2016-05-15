@@ -441,7 +441,7 @@ public class FTFSelector extends Dialog {
 					}
 				});
 				comboUSBBuffer.setItems(new String[] {"Device maxsize", "512K", "256K", "128K", "64K", "32K"});
-				comboUSBBuffer.select(2);
+				comboUSBBuffer.select(1);
 				maxbuffer=comboUSBBuffer.getSelectionIndex();
 				btnCancel = new Button(shlFirmwareSelector, SWT.NONE);
 				FormData fd_btnCancel = new FormData();
