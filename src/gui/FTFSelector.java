@@ -2,11 +2,10 @@ package gui;
 
 import flashsystem.Bundle;
 import flashsystem.Category;
-
-import java.io.File;
-import java.util.Enumeration;
 import java.util.Iterator;
 
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -33,31 +32,29 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
-
 import gui.models.ContentContentProvider;
 import gui.models.ContentLabelProvider;
 import gui.models.Firmware;
-import gui.models.FirmwareContentProvider;
-import gui.models.FirmwareLabelProvider;
-import gui.models.FirmwaresModel;
+import gui.models.MyTreeContentProvider;
+import gui.models.MyTreeLabelProvider;
+import gui.models.TreeDeviceCustomizationRelease;
+import gui.models.TreeDevices;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
-
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.layout.TreeColumnLayout;
 
 public class FTFSelector extends Dialog {
 
 	protected Bundle result;
 	protected Shell shlFirmwareSelector;
-	//private Properties hasCmd25 = new Properties();
-	//private String filename="";
-	//private Button btnOK=null;
-	private TableViewer tableFirmwareViewer;
 	private TableViewer tableContentViewer;
-	private Table tableFirmware;
 	private Table tableContent;
 	private Text sourceFolder;
 	private Composite compositeContent;
@@ -79,10 +76,13 @@ public class FTFSelector extends Dialog {
 	private Text textDevice;
 	private Label lblNewLabel_1;
 	private FormData fd_compositeFirmware;
-	private FirmwaresModel firms=null;
+	private TreeDevices firms=null;
 	private Label lblFirmware;
 	private Composite composite;
-	private int currentselected;
+	private Firmware currentfirm=null;
+	private Composite FirmwareCompositeViewer;
+	private Tree FirmwareTree;
+	private TreeViewer FirmwareTreeViewer;
 
 	/**
 	 * Create the dialog.
@@ -138,55 +138,6 @@ public class FTFSelector extends Dialog {
 		fd_compositeFirmware.left = new FormAttachment(0, 10);
 		compositeFirmware.setLayoutData(fd_compositeFirmware);
 		compositeFirmware.setLayout(new FillLayout(SWT.HORIZONTAL));
-		
-		tableFirmwareViewer = new TableViewer(compositeFirmware,SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.SINGLE);
-		tableFirmwareViewer.setContentProvider(new FirmwareContentProvider());
-		tableFirmwareViewer.setLabelProvider(new FirmwareLabelProvider());
-
-		
-		tableFirmware = tableFirmwareViewer.getTable();
-		TableColumn[] columns = new TableColumn[4];
-		columns[0] = new TableColumn(tableFirmware, SWT.NONE);
-		columns[0].setText("Filename");
-		columns[1] = new TableColumn(tableFirmware, SWT.NONE);
-		columns[1].setText("Device");
-		columns[2] = new TableColumn(tableFirmware, SWT.NONE);
-		columns[2].setText("Version");
-		columns[3] = new TableColumn(tableFirmware, SWT.NONE);
-		columns[3].setText("Branding");
-	    for (int i = 0, n = tableFirmware.getColumnCount(); i < n; i++) {
-	    	tableFirmware.getColumn(i).pack();
-	    	if (i==0) {
-	    		tableFirmware.getColumn(i).setWidth(0);tableFirmware.getColumn(i).setResizable(false);
-	    	}
-	    	if (i==1)
-	    		tableFirmware.getColumn(i).setWidth(60);
-		    if (i==2)
-		    	tableFirmware.getColumn(i).setWidth(100);
-		    if (i==3)
-		    	tableFirmware.getColumn(i).setWidth(180);
-	    }
-		tableFirmware.setHeaderVisible(true);
-		tableFirmware.setLinesVisible(true);
-		tableFirmware.addListener(SWT.DefaultSelection, new Listener() {
-		      public void handleEvent(Event e) {
-		        shlFirmwareSelector.dispose();
-		      }
-		    });
-		tableFirmware.addSelectionListener(new SelectionAdapter() {
-		      public void widgetSelected(SelectionEvent event) {
-		    	  if (currentselected!=tableFirmware.getSelectionIndex()) {
-		    	  currentselected = tableFirmware.getSelectionIndex();
-		    	  IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
-		    	  Firmware firm = (Firmware)sel.getFirstElement();
-		    	  tableContentViewer.setInput(firm);
-		    	  tableContentViewer.refresh();
-		    	  result = firm.getBundle();
-		    	  btnCheckCmd25.setSelection(result.hasCmd25());
-		    	  updateCheckBoxes();
-		    	  }
-		      }
-		    });
 		
 		compositeContent = new Composite(shlFirmwareSelector, SWT.NONE);
 		fd_compositeFirmware.bottom = new FormAttachment(compositeContent, 0, SWT.BOTTOM);
@@ -368,7 +319,7 @@ public class FTFSelector extends Dialog {
 						if (res.length()>0) {
 							DeviceEntry ent = new DeviceEntry(res);
 							textDevice.setText(ent.getName());
-							firms.firmwares.setDevice(ent.getId());
+							firms.setDeviceFilter(ent.getId());
 							updateTables(false);
 						}
 					}
@@ -393,7 +344,7 @@ public class FTFSelector extends Dialog {
 					public void widgetSelected(SelectionEvent e) {
 						if (textDevice.getText().length()>0) {
 							textDevice.setText("");
-							firms.firmwares.setDevice("");
+							firms.setDeviceFilter("");
 							updateTables(false);
 						}
 					}
@@ -413,6 +364,56 @@ public class FTFSelector extends Dialog {
 				fd_composite.bottom = new FormAttachment(100, -4);
 				fd_composite.right = new FormAttachment(lblWipe, -144, SWT.RIGHT);
 				fd_composite.left = new FormAttachment(compositeFirmware, 0, SWT.LEFT);
+				
+				FirmwareCompositeViewer = new Composite(compositeFirmware, SWT.NONE);
+				FirmwareCompositeViewer.setLayout(new TreeColumnLayout());
+				
+				FirmwareTreeViewer = new TreeViewer(FirmwareCompositeViewer, SWT.BORDER|SWT.SINGLE);
+				FirmwareTreeViewer.setContentProvider(new MyTreeContentProvider());
+				FirmwareTreeViewer.setLabelProvider(new MyTreeLabelProvider());
+
+				FirmwareTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+					  @Override
+					  public void doubleClick(DoubleClickEvent event) {
+					    TreeViewer viewer = (TreeViewer) event.getViewer();
+					    IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection(); 
+					    Object selectedNode = thisSelection.getFirstElement();
+				    	  if (selectedNode instanceof TreeDeviceCustomizationRelease) {
+				    		  TreeDeviceCustomizationRelease rel = (TreeDeviceCustomizationRelease)selectedNode;
+				    		  currentfirm=rel.getFirmware();
+				    		  result=currentfirm.getBundle();
+				    		  if (tableContentViewer.getInput()!=currentfirm)
+				    			  updateCheckBoxes();
+				    		  btnFlash.setEnabled(true);
+				    		  shlFirmwareSelector.dispose();
+				    	  }
+
+					  }
+					}); 
+
+				FirmwareTree = FirmwareTreeViewer.getTree();
+				FirmwareTree.setHeaderVisible(true);
+				FirmwareTree.setLinesVisible(true);
+				FirmwareTree.addListener(SWT.Selection, new Listener() {
+				      public void handleEvent(Event e) {
+				    	  TreeItem selection = FirmwareTree.getSelection()[0];
+				    	  if (selection.getData() instanceof TreeDeviceCustomizationRelease) {
+				    		  TreeDeviceCustomizationRelease rel = (TreeDeviceCustomizationRelease)selection.getData();
+				    		  currentfirm=rel.getFirmware();
+				    		  result=currentfirm.getBundle();
+				    		  if (tableContentViewer.getInput()!=currentfirm)
+				    			  updateCheckBoxes();
+				    		  btnFlash.setEnabled(true);
+				    	  }
+				    	  else {
+				    		  btnFlash.setEnabled(false);
+				    		  currentfirm=null;
+				    		  result=null;
+				    		  if (tableContent.getItemCount()>0)
+				    			  updateCheckBoxes();
+				    	  }
+				      }
+				    });
 				composite.setLayoutData(fd_composite);
 				
 				
@@ -483,23 +484,22 @@ public class FTFSelector extends Dialog {
 
 	public void updateTables(boolean folderchange) {
 		if (folderchange) {
-			firms = new FirmwaresModel(sourceFolder.getText());
+			firms = new TreeDevices(sourceFolder.getText());
 			textDevice.setText("");
 		}
-		tableFirmwareViewer.setInput(firms.firmwares);
-		tableFirmwareViewer.refresh();
-		tableContentViewer.setInput(firms.getFirstFirmware());
-		tableContentViewer.refresh();
-		if (tableFirmware.getItemCount()>0) {
-			tableFirmware.select(0);
-		}
-		currentselected=0;
-	    if (tableFirmware.getSelection().length>0) {
+		FirmwareTreeViewer.setInput(firms);
+		FirmwareTreeViewer.refresh();
+		//tableContentViewer.setInput(firms.getFirstFirmware());
+		//tableContentViewer.refresh();
+		//if (tableFirmware.getItemCount()>0) {
+		//	tableFirmware.select(0);
+		//}
+	    /*if (tableFirmware.getSelection().length>0) {
 	    	IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
 	    	Firmware firm = (Firmware)sel.getFirstElement();
 	    	result = firm.getBundle();
-	    }
-	    updateCheckBoxes();
+	    }*/
+	    //updateCheckBoxes();
 	}
 	
 	public void updateCheckBoxes() {
@@ -521,54 +521,48 @@ public class FTFSelector extends Dialog {
 		compositeWipe.layout();
 		compositeExclude.setSize(compositeExclude.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		compositeExclude.layout();
-		if (!tableFirmwareViewer.getSelection().isEmpty()) {
-			IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
-	    	Firmware firm = (Firmware)sel.getFirstElement();
-			
-			Iterator<Category> exclude = result.getMeta().getExclude().iterator();
-	    	while (exclude.hasNext()) {
-				Category categ = exclude.next();
-				if (!(categ.isSin() || categ.isBootDelivery())) continue; 
-				Button btnExclude = new Button(compositeExclude, SWT.CHECK);
-				btnExclude.setText(categ.getId());
-				btnExclude.setSelection(!categ.isEnabled());
-				compositeExclude.setSize(compositeExclude.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-				compositeExclude.layout();
-				btnExclude.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-				    	IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
-				    	Firmware firm = (Firmware)sel.getFirstElement();
-						Button b = (Button)e.widget;
-				    	if (b.getSelection()) firm.disableCateg(b.getText());
-				    	else firm.enableCateg(b.getText());
-						tableContentViewer.setInput(firm);
-						tableContentViewer.refresh();
-					}
-				});
-	    	}
+		
+		if (currentfirm!=null) {
+		Iterator<Category> exclude = result.getMeta().getExclude().iterator();
+	    while (exclude.hasNext()) {
+			Category categ = exclude.next();
+			if (!(categ.isSin() || categ.isBootDelivery())) continue; 
+			Button btnExclude = new Button(compositeExclude, SWT.CHECK);
+			btnExclude.setText(categ.getId());
+			btnExclude.setSelection(!categ.isEnabled());
+			compositeExclude.setSize(compositeExclude.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			compositeExclude.layout();
+			btnExclude.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Button b = (Button)e.widget;
+				    if (b.getSelection()) currentfirm.disableCateg(b.getText());
+				    else currentfirm.enableCateg(b.getText());
+					tableContentViewer.setInput(currentfirm);
+					tableContentViewer.refresh();
+				}
+			});
+	    }
 
-	    	Iterator<Category> wipe = result.getMeta().getWipe().iterator();
-	    	while (wipe.hasNext()) {
-				Category categ = wipe.next();
-				Button btnWipe = new Button(compositeWipe, SWT.CHECK);
-				btnWipe.setText(categ.getId());
-				btnWipe.setSelection(categ.isEnabled());
-				compositeWipe.setSize(compositeWipe.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-				compositeWipe.layout();
-				btnWipe.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						Button b = (Button)e.widget;
-				    	IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
-				    	Firmware firm = (Firmware)sel.getFirstElement();
-				    	if (b.getSelection()) firm.enableCateg(b.getText());
-				    	else firm.disableCateg(b.getText());
-						tableContentViewer.setInput(firm);
-						tableContentViewer.refresh();
-					}
-				});
-	    	}
+	    Iterator<Category> wipe = result.getMeta().getWipe().iterator();
+	    while (wipe.hasNext()) {
+			Category categ = wipe.next();
+			Button btnWipe = new Button(compositeWipe, SWT.CHECK);
+			btnWipe.setText(categ.getId());
+			btnWipe.setSelection(categ.isEnabled());
+			compositeWipe.setSize(compositeWipe.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			compositeWipe.layout();
+			btnWipe.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Button b = (Button)e.widget;
+				    if (b.getSelection()) currentfirm.enableCateg(b.getText());
+				    else currentfirm.disableCateg(b.getText());
+					tableContentViewer.setInput(currentfirm);
+					tableContentViewer.refresh();
+				}
+			});
+	    }
 	    	
 			Iterator<Category> miscta = result.getMeta().getExclude().iterator();
 	    	while (miscta.hasNext()) {
@@ -582,18 +576,18 @@ public class FTFSelector extends Dialog {
 				btnMisc.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-				    	IStructuredSelection sel = (IStructuredSelection) tableFirmwareViewer.getSelection();
-				    	Firmware firm = (Firmware)sel.getFirstElement();
 						Button b = (Button)e.widget;
 						if (b.getText().startsWith("SIMLOCK") && !b.getSelection())
 							WidgetTask.openOKBox(shlFirmwareSelector, "Warning, Including SIMLOCK can lead to a device brick. Do this only if you know what you do.");
-				    	if (b.getSelection()) firm.disableCateg(b.getText());
-				    	else firm.enableCateg(b.getText());
-						tableContentViewer.setInput(firm);
+				    	if (b.getSelection()) currentfirm.disableCateg(b.getText());
+				    	else currentfirm.enableCateg(b.getText());
+						tableContentViewer.setInput(currentfirm);
 						tableContentViewer.refresh();
 					}
 				});
 	    	}
 		}
+		tableContentViewer.setInput(currentfirm);
+		tableContentViewer.refresh();
 	}
 }
