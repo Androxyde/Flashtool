@@ -28,8 +28,10 @@ public class MyLogger {
 	public static final int CONSOLE_MODE=1;
 	public static final int GUI_MODE=2;
 	
-	public static void writeFile() {
-		StringBuilderAppender.writeFile(MyLogger.getTimeStamp());
+	public static String writeFile() {
+		String fname = MyLogger.getTimeStamp();
+		StringBuilderAppender.writeFile(fname);
+		return fname;
 	}
 	
 	public static void setMode(int mode) {

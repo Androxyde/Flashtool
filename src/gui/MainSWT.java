@@ -982,7 +982,8 @@ public class MainSWT {
 		btnSaveLog.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MyLogger.writeFile();
+				String saved = MyLogger.writeFile();
+				WidgetTask.openOKBox(shlSonyericsson, "Logfile saved to "+OS.getFolderUserFlashtool()+File.separator+"flashtool_"+saved+".log");
 			}
 		});
 		FormData fd_btnSaveLog = new FormData();
