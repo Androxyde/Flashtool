@@ -365,8 +365,8 @@ public class X10flash {
 		}
     	else logger.warn("No loader found or set manually. Skipping loader");
 	    if (!_bundle.simulate()) {
-	    	maxS1packetsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
 	    	hookDevice(true);
+	    	maxS1packetsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
 	    }
 	    else
 	    	maxS1packetsize=0x080000;
