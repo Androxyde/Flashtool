@@ -1321,7 +1321,7 @@ public class MainSWT {
 	
 	public void doFlashmode(final String pftfpath, final String pftfname) throws Exception {
 		try {
-			FTFSelector ftfsel = new FTFSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+			FTFSelector1 ftfsel = new FTFSelector1(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
 			if (bundle !=null) {
 				logger.info("Selected "+bundle);
