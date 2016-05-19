@@ -528,6 +528,7 @@ public class FTFSelector extends Dialog {
 			Category categ = exclude.next();
 			if (!(categ.isSin() || categ.isBootDelivery())) continue; 
 			Button btnExclude = new Button(compositeExclude, SWT.CHECK);
+			WidgetsTool.setSize(btnExclude);
 			btnExclude.setText(categ.getId());
 			btnExclude.setSelection(!categ.isEnabled());
 			compositeExclude.setSize(compositeExclude.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -548,6 +549,7 @@ public class FTFSelector extends Dialog {
 	    while (wipe.hasNext()) {
 			Category categ = wipe.next();
 			Button btnWipe = new Button(compositeWipe, SWT.CHECK);
+			WidgetsTool.setSize(btnWipe);
 			btnWipe.setText(categ.getId());
 			btnWipe.setSelection(categ.isEnabled());
 			compositeWipe.setSize(compositeWipe.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -569,6 +571,7 @@ public class FTFSelector extends Dialog {
 				Category categ = miscta.next();
 				if (!categ.isTa()) continue; 
 				Button btnMisc = new Button(compositeMisc, SWT.CHECK);
+				WidgetsTool.setSize(btnMisc);
 				btnMisc.setText(categ.getId());
 				btnMisc.setSelection(!categ.isEnabled());
 				compositeMisc.setSize(compositeMisc.computeSize(SWT.DEFAULT, SWT.DEFAULT));

@@ -938,14 +938,14 @@ public class MainSWT {
 		if (GlobalConfig.getProperty("loglevel").equals("error"))
 			mntmError.setSelection(true);
 
-		ToolBar toolBar = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
-		FormData fd_toolBar = new FormData();
-		fd_toolBar.right = new FormAttachment(0, 440);
-		fd_toolBar.top = new FormAttachment(0, 10);
-		fd_toolBar.left = new FormAttachment(0, 10);
-		toolBar.setLayoutData(fd_toolBar);
+		ToolBar flashtoolToolBar = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
+		FormData fd_flashtoolToolBar = new FormData();
+		fd_flashtoolToolBar.right = new FormAttachment(0, 440);
+		fd_flashtoolToolBar.top = new FormAttachment(0, 10);
+		fd_flashtoolToolBar.left = new FormAttachment(0, 10);
+		flashtoolToolBar.setLayoutData(fd_flashtoolToolBar);
 		
-		tltmFlash = new ToolItem(toolBar, SWT.NONE);
+		tltmFlash = new ToolItem(flashtoolToolBar, SWT.NONE);
 		tltmFlash.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -957,7 +957,7 @@ public class MainSWT {
 		tltmFlash.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/flash_32.png"));
 		tltmFlash.setToolTipText("Flash device");
 		
-		tltmBLU = new ToolItem(toolBar, SWT.NONE);
+		tltmBLU = new ToolItem(flashtoolToolBar, SWT.NONE);
 		tltmBLU.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -967,7 +967,7 @@ public class MainSWT {
 		tltmBLU.setToolTipText("Bootloader Unlock");
 		tltmBLU.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/blu_32.png"));
 		
-		tltmRoot = new ToolItem(toolBar, SWT.NONE);
+		tltmRoot = new ToolItem(flashtoolToolBar, SWT.NONE);
 		tltmRoot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -992,7 +992,7 @@ public class MainSWT {
 		btnSaveLog.setLayoutData(fd_btnSaveLog);
 		btnSaveLog.setText("Save log");
 		
-		tltmAskRoot = new ToolItem(toolBar, SWT.NONE);
+		tltmAskRoot = new ToolItem(flashtoolToolBar, SWT.NONE);
 		tltmAskRoot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1003,7 +1003,7 @@ public class MainSWT {
 		tltmAskRoot.setEnabled(false);
 		tltmAskRoot.setToolTipText("Ask for root permissions");
 		
-		tltmApkInstall = new ToolItem(toolBar, SWT.NONE);
+		tltmApkInstall = new ToolItem(flashtoolToolBar, SWT.NONE);
 		tltmApkInstall.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1022,7 +1022,7 @@ public class MainSWT {
 		tltmApkInstall.setEnabled(false);
 		tltmApkInstall.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/customize_32.png"));
 		
-		tltmClean = new ToolItem(toolBar, SWT.NONE);
+		tltmClean = new ToolItem(flashtoolToolBar, SWT.NONE);
 		tltmClean.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1042,7 +1042,7 @@ public class MainSWT {
 		tltmClean.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/clean_32.png"));
 		tltmClean.setEnabled(false);
 		
-		tltmRecovery = new ToolItem(toolBar, SWT.NONE);
+		tltmRecovery = new ToolItem(flashtoolToolBar, SWT.NONE);
 		tltmRecovery.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1053,7 +1053,7 @@ public class MainSWT {
 		tltmRecovery.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/recovery_32.png"));
 		tltmRecovery.setEnabled(false);
 		
-		ToolItem tltmNewItem_1 = new ToolItem(toolBar, SWT.NONE);
+		ToolItem tltmNewItem_1 = new ToolItem(flashtoolToolBar, SWT.NONE);
 		tltmNewItem_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1063,7 +1063,7 @@ public class MainSWT {
 		});
 		tltmNewItem_1.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/download_32.png"));
 		
-		ToolItem tltmNewItem_2 = new ToolItem(toolBar, SWT.NONE);
+		ToolItem tltmNewItem_2 = new ToolItem(flashtoolToolBar, SWT.NONE);
 		tltmNewItem_2.setEnabled(false);
 		
 		ProgressBar progressBar = new ProgressBar(shlSonyericsson, SWT.NONE);
@@ -1076,37 +1076,37 @@ public class MainSWT {
 		fd_progressBar.top = new FormAttachment(btnSaveLog, 6);
 		progressBar.setLayoutData(fd_progressBar);
 		
-		ScrolledComposite scrolledComposite = new ScrolledComposite(shlSonyericsson, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		FormData fd_scrolledComposite = new FormData();
-		fd_scrolledComposite.bottom = new FormAttachment(btnSaveLog, -6);
-		fd_scrolledComposite.left = new FormAttachment(0, 10);
-		fd_scrolledComposite.right = new FormAttachment(100, -10);
-		scrolledComposite.setLayoutData(fd_scrolledComposite);
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
+		ScrolledComposite scrolledLog = new ScrolledComposite(shlSonyericsson, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		FormData fd_scrolledLog = new FormData();
+		fd_scrolledLog.bottom = new FormAttachment(btnSaveLog, -6);
+		fd_scrolledLog.left = new FormAttachment(0, 10);
+		fd_scrolledLog.right = new FormAttachment(100, -10);
+		scrolledLog.setLayoutData(fd_scrolledLog);
+		scrolledLog.setExpandHorizontal(true);
+		scrolledLog.setExpandVertical(true);
 		
-		StyledText logWindow = new StyledText(scrolledComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		StyledText logWindow = new StyledText(scrolledLog, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		logWindow.setEditable(false);
 		TextAreaAppender.setTextArea(logWindow);
 		GlobalState.setGUI();
-		scrolledComposite.setContent(logWindow);
-		scrolledComposite.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		scrolledLog.setContent(logWindow);
+		scrolledLog.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		
-		ToolBar toolBar_1 = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
-		fd_scrolledComposite.top = new FormAttachment(toolBar_1, 2);
-		FormData fd_toolBar_1 = new FormData();
-		fd_toolBar_1.top = new FormAttachment(0, 10);
-		fd_toolBar_1.right = new FormAttachment(btnSaveLog, 0, SWT.RIGHT);
-		toolBar_1.setLayoutData(fd_toolBar_1);
+		ToolBar paypalToolbar = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
+		fd_scrolledLog.top = new FormAttachment(paypalToolbar, 2);
+		FormData fd_paypalToolbar = new FormData();
+		fd_paypalToolbar.top = new FormAttachment(0, 10);
+		fd_paypalToolbar.right = new FormAttachment(btnSaveLog, 0, SWT.RIGHT);
+		paypalToolbar.setLayoutData(fd_paypalToolbar);
 		
-		ToolItem tltmNewItem = new ToolItem(toolBar_1, SWT.NONE);
-		tltmNewItem.addSelectionListener(new SelectionAdapter() {
+		ToolItem paypalItem = new ToolItem(paypalToolbar, SWT.NONE);
+		paypalItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Program.launch("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PPWH7M9MNCEPA");
 			}
 		});
-		tltmNewItem.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/paypal.png"));
+		paypalItem.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/paypal.png"));
 /*		try {
 		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
 		} catch (Exception e) {
