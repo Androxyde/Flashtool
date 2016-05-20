@@ -1306,7 +1306,7 @@ public class MainSWT {
 	public void doFlash() throws Exception {
 		String select = WidgetTask.openBootModeSelector(shlSonyericsson);
 		if (select.equals("flashmode")) {
-			doFlashmode("","");
+			doFlashmode(OS.getFolderFirmwares(),"");
 		}
 		else if (select.equals("fastboot"))
 			doFastBoot();
