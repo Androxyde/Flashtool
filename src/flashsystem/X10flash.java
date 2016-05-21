@@ -352,6 +352,17 @@ public class X10flash {
     }
 
     public void sendLoader() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
+	    if (!_bundle.hasLoader() || modded_loader) {
+	    	if (modded_loader)
+	    		logger.info("Searching for a modded loader");
+	    	else
+	    		logger.info("No loader in the bundle. Searching for one");
+	    	String loader = getDefaultLoader();
+	    	if (new File(loader).exists()) {
+	    		_bundle.setLoader(new File(loader));
+	    	}
+	    	else logger.info("No matching loader found");
+	    }
     	if (_bundle.hasLoader()) {
 			SinFile sin = new SinFile(new File(_bundle.getLoader().getAbsolutePath()));
 			if (sin.getVersion()>=2)
@@ -694,17 +705,6 @@ public class X10flash {
     public void flashDevice() {
     	try {
 		    logger.info("Start Flashing");
-		    if (!_bundle.hasLoader() || modded_loader) {
-		    	if (modded_loader)
-		    		logger.info("Searching for a modded loader");
-		    	else
-		    		logger.info("No loader in the bundle. Searching for one");
-		    	String loader = getDefaultLoader();
-		    	if (new File(loader).exists()) {
-		    		_bundle.setLoader(new File(loader));
-		    	}
-		    	else logger.info("No matching loader found");
-		    }
 		    sendLoader();
 		    bc = getBootConfig();
 		    loadTAFiles();
