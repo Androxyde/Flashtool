@@ -26,7 +26,6 @@ public class BootModeSelector extends Dialog {
 	Button btnFlashmode;
 	private Button btnFastboot;
 	private Button btnCancel;
-	private Composite composite;
 
 	/**
 	 * Create the dialog.
@@ -46,44 +45,7 @@ public class BootModeSelector extends Dialog {
 		createContents();
 		WidgetsTool.setSize(shell);
 		
-		composite = new Composite(shell, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
-		FormData fd_composite = new FormData();
-		fd_composite.bottom = new FormAttachment(100, -10);
-		fd_composite.right = new FormAttachment(100, -10);
-		fd_composite.left = new FormAttachment(0, 87);
-		composite.setLayoutData(fd_composite);
-		
 		Composite compositeSelector = new Composite(shell, SWT.NONE);
-		fd_composite.top = new FormAttachment(0, 75);
-		
-		Button btnOK = new Button(composite, SWT.NONE);
-		GridData gd_btnOK = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnOK.widthHint = 52;
-		btnOK.setLayoutData(gd_btnOK);
-		btnOK.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (btnFlashmode.getSelection()) result="flashmode";
-				else result="fastboot";
-				shell.dispose();
-			}
-		});
-		btnOK.setText("Ok");
-		new Label(composite, SWT.NONE);
-		
-		btnCancel = new Button(composite, SWT.NONE);
-		GridData gd_btnCancel = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_btnCancel.widthHint = 58;
-		btnCancel.setLayoutData(gd_btnCancel);
-		btnCancel.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				result = "";
-				shell.dispose();
-			}
-		});
-		btnCancel.setText("Cancel");
 		FormData fd_compositeSelector = new FormData();
 		fd_compositeSelector.top = new FormAttachment(0, 10);
 		fd_compositeSelector.left = new FormAttachment(0, 10);
@@ -98,6 +60,35 @@ public class BootModeSelector extends Dialog {
 		btnFastboot = new Button(compositeSelector, SWT.RADIO);
 		btnFastboot.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		btnFastboot.setText("Fastboot mode");
+		
+		Button btnOK = new Button(shell, SWT.NONE);
+		FormData fd_btnOK = new FormData();
+		btnOK.setLayoutData(fd_btnOK);
+		btnOK.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (btnFlashmode.getSelection()) result="flashmode";
+				else result="fastboot";
+				shell.dispose();
+			}
+		});
+		btnOK.setText("Ok");
+		
+		btnCancel = new Button(shell, SWT.NONE);
+		fd_btnOK.bottom = new FormAttachment(btnCancel, 0, SWT.BOTTOM);
+		fd_btnOK.right = new FormAttachment(btnCancel, -6);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
+		fd_btnCancel.right = new FormAttachment(100, -10);
+		btnCancel.setLayoutData(fd_btnCancel);
+		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				result = "";
+				shell.dispose();
+			}
+		});
+		btnCancel.setText("Cancel");
 		shell.open();
 		shell.layout();
 		Display display = getParent().getDisplay();
@@ -120,7 +111,7 @@ public class BootModeSelector extends Dialog {
 		    	  event.doit = true;
 		      }
 		    });
-		shell.setSize(249, 148);
+		shell.setSize(272, 144);
 		shell.setText(getText());
 		shell.setLayout(new FormLayout());
 
