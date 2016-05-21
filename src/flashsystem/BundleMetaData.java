@@ -132,15 +132,13 @@ public class BundleMetaData {
 			return;
 		}
 
-		if (noerase.contains(cat.getId()) && !cat.isTa()){
+		if (noerase.contains(cat.getId())){
 			cat.setEnabled(false);
 			_categwipe.add(cat);
 		}
 		else {
 			if (cat.getId().startsWith("SIMLOCK"))
 				cat.setEnabled(false);
-			else if (cat.isTa() && noerase.contains(cat.getId()))
-				cat.setEnabled((false));
 			else cat.setEnabled(true);
 			_categex.add(cat);
 		}
