@@ -129,7 +129,7 @@ public class FTFSelector1 extends Dialog {
 		textSourceFolder = new Text(compositeSearch, SWT.BORDER);
 		textSourceFolder.setEditable(false);
 		GridData gd_textSourceFolder = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_textSourceFolder.widthHint = 540;
+		gd_textSourceFolder.widthHint = 517;
 		textSourceFolder.setLayoutData(gd_textSourceFolder);
 		
 		btnSourcefolder = new Button(compositeSearch, SWT.NONE);
