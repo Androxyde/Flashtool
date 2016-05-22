@@ -1,10 +1,8 @@
 package gui;
 
 import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -15,14 +13,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-
-
-
-
-
 import gui.tools.CreateSinAsJob;
-import gui.tools.WidgetsTool;
-
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
@@ -57,7 +48,6 @@ public class SinAdvanced extends Dialog {
 	public Object open(SinFile sin) {
 		_sin = sin;
 		createContents();
-		WidgetsTool.setSize(shlSinEditor);
 		
 		Label lblSinVersion = new Label(shlSinEditor, SWT.NONE);
 		FormData fd_lblSinVersion = new FormData();

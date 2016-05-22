@@ -4,12 +4,9 @@ import gui.models.TableLine;
 import gui.models.TableSorter;
 import gui.models.VectorContentProvider;
 import gui.models.VectorLabelProvider;
-import gui.tools.WidgetsTool;
-
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
-
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -55,7 +52,6 @@ public class DeviceSelector extends Dialog {
 	public Object open() {
 		createContents();
 		fillTable();
-		WidgetsTool.setSize(shlDeviceSelector);
 		shlDeviceSelector.open();
 		shlDeviceSelector.layout();
 		Display display = getParent().getDisplay();
@@ -74,7 +70,6 @@ public class DeviceSelector extends Dialog {
 	public Object open(Properties p) {
 		createContents();
 		fillTable(p);
-		WidgetsTool.setSize(shlDeviceSelector);
 		shlDeviceSelector.open();
 		shlDeviceSelector.layout();
 		Display display = getParent().getDisplay();

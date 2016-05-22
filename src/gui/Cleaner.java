@@ -1,12 +1,9 @@
 package gui;
 
-import gui.tools.WidgetsTool;
 import gui.tools.DeviceApps;
-
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -67,7 +64,6 @@ public class Cleaner extends Dialog {
 	public DeviceApps open() {
 		init();
 		createContents();
-		WidgetsTool.setSize(shlDecruptWizard);		
 		Button btnProfile = new Button(shlDecruptWizard, SWT.NONE);
 		btnProfile.addSelectionListener(new SelectionAdapter() {
 			@Override

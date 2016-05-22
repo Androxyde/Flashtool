@@ -5,14 +5,11 @@ import gui.models.TableSorter;
 import gui.models.VectorContentProvider;
 import gui.models.VectorLabelProvider;
 import gui.tools.USBParseJob;
-import gui.tools.WidgetsTool;
-
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
-
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.viewers.TableViewer;
@@ -81,8 +78,6 @@ public class USBLogviewer extends Dialog {
 		
 		createContents();
 		createTriggers();
-		
-		WidgetsTool.setSize(shlUSBLogviewer);
 		
 		lblSavedPath = new Label(shlUSBLogviewer, SWT.NONE);
 		FormData fd_lblSavedPath = new FormData();

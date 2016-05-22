@@ -1,15 +1,11 @@
 package gui;
 
-import gui.tools.WidgetsTool;
-
 import java.io.File;
 import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -54,7 +50,6 @@ public class TABackupSelector extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shlTABackupSelector);
 		shlTABackupSelector.open();
 		shlTABackupSelector.layout();
 		Display display = getParent().getDisplay();

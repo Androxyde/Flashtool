@@ -1,21 +1,16 @@
 package gui;
 
-import gui.tools.WidgetsTool;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-
 import nl.lxtreme.binutils.elf.ProgramHeader;
 import nl.lxtreme.binutils.elf.Section;
 import nl.lxtreme.binutils.elf.Attribute;
 import nl.lxtreme.binutils.elf.Elf;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -62,7 +57,6 @@ public class ElfEditor extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shlElfExtractor);
 		shlElfExtractor.open();
 		shlElfExtractor.layout();
 		Display display = getParent().getDisplay();

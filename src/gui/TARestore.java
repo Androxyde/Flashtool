@@ -1,7 +1,6 @@
 package gui;
 
 import gui.models.TABag;
-import gui.tools.WidgetsTool;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,7 +67,6 @@ public class TARestore extends Dialog {
 	public Object open(HashMap<String,Vector<TABag>> backupset) {
 		this.backupset = backupset;
 		createContents();
-		WidgetsTool.setSize(shlTARestore);
 		
 		shlTARestore.open();
 		shlTARestore.layout();

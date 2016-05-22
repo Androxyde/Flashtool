@@ -3,8 +3,6 @@ package gui;
 import gui.tools.DevicesSyncJob;
 import gui.tools.USBParseJob;
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
-
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.swt.widgets.Dialog;
@@ -44,7 +42,6 @@ public class WaitForUSBParser extends Dialog {
 	 */
 	public Object open(String file, String folder) {
 		createContents(file,folder);
-		WidgetsTool.setSize(shlWaiForDevicesSync);
 		
 		Label lblNewLabel = new Label(shlWaiForDevicesSync, SWT.NONE);
 		lblNewLabel.setBounds(10, 32, 323, 15);

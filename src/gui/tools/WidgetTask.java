@@ -12,7 +12,6 @@ import gui.LoaderSelect;
 import gui.RootPackageSelector;
 import gui.TABackupSelector;
 import gui.TABackupSet;
-import gui.UpdateURLFeeder;
 import gui.VariantSelector;
 import gui.WaitDeviceForFastboot;
 import gui.WaitDeviceForFlashmode;
@@ -217,20 +216,6 @@ public class WidgetTask {
 		return (String)res.getResult();
 	}
 
-	public static String openUpdateURLFeeder(final Shell parent) {
-		final Result res = new Result();
-		Display.getDefault().syncExec(
-				new Runnable() {
-					public void run() {
-			    		UpdateURLFeeder dial = new UpdateURLFeeder(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
-			    		Object obj = dial.open();
-						res.setResult(obj);
-						
-					}
-				}
-		);
-		return (String)res.getResult();
-	}
 
 	public static String openTABackupSet(final Shell parent) {
 		final Result res = new Result();

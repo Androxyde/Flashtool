@@ -1,13 +1,9 @@
 package gui;
 
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
-
 import java.io.File;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
@@ -57,7 +53,6 @@ public class HomeSelector extends Dialog {
 	public Object open(boolean pcancelable) {
 		cancelable = pcancelable;
 		createContents();
-		WidgetsTool.setSize(shlHomeSelector);
 		
 		Button btnCancel = new Button(shlHomeSelector, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {

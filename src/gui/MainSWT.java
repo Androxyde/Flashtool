@@ -76,7 +76,6 @@ import gui.tools.RestoreTAJob;
 import gui.tools.RootJob;
 import gui.tools.VersionCheckerJob;
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
 import gui.tools.Yaffs2Job;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.apache.logging.log4j.LogManager;
@@ -117,7 +116,6 @@ public class MainSWT {
 		GlobalConfig.setProperty("ydpi", Integer.toString(display.getDPI().y));
 		GlobalConfig.setProperty("xdpi", Integer.toString(display.getDPI().x));
 		createContents();
-		WidgetsTool.setSize(shlSonyericsson);
 		guimode=true;
 		shlSonyericsson.open();
 		shlSonyericsson.layout();

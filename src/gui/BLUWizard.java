@@ -3,7 +3,6 @@ package gui;
 import flashsystem.X10flash;
 import gui.tools.BLUnlockJob;
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
 import gui.tools.WriteTAJob;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +31,9 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.RowLayout;
+import swing2swt.layout.FlowLayout;
+import swing2swt.layout.BoxLayout;
 
 public class BLUWizard extends Dialog {
 
@@ -80,42 +82,9 @@ public class BLUWizard extends Dialog {
 			btnGetUnlock.setEnabled(false);
 			textULCODE.setEditable(false);
 		}
-		WidgetsTool.setSize(shlBootloaderUnlockWizard);
-		
-		composite = new Composite(shlBootloaderUnlockWizard, SWT.BORDER);
-		fd_btnGetUnlock.top = new FormAttachment(composite, 6);
-		composite.setLayout(new GridLayout(2, false));
-		FormData fd_composite = new FormData();
-		fd_composite.top = new FormAttachment(0, 10);
-		fd_composite.right = new FormAttachment(100, -10);
-		fd_composite.left = new FormAttachment(0, 10);
-		composite.setLayoutData(fd_composite);
-		
-		lblImei = new Label(composite, SWT.NONE);
-		lblImei.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		lblImei.setText("IMEI : ");
-
-		textIMEI = new Text(composite, SWT.BORDER);
-		textIMEI.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textIMEI.setEditable(false);
 		textIMEI.setText(imei);
-		
-		composite_1 = new Composite(shlBootloaderUnlockWizard, SWT.BORDER);
-		fd_btnUnlock.top = new FormAttachment(composite_1, 6);
-		fd_composite.left = new FormAttachment(composite_1, 0, SWT.LEFT);
-		composite_1.setLayout(new GridLayout(2, false));
-		FormData fd_composite_1 = new FormData();
-		fd_composite_1.right = new FormAttachment(100, -10);
-		fd_composite_1.top = new FormAttachment(btnGetUnlock, 6);
-		fd_composite_1.left = new FormAttachment(0, 10);
-		composite_1.setLayoutData(fd_composite_1);
-		
-		lblUnlockCode = new Label(composite_1, SWT.NONE);
-		lblUnlockCode.setText("Unlock Code :");
-		
-		textULCODE = new Text(composite_1, SWT.BORDER);
-		textULCODE.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		textULCODE.setText(ulcode);
+		
 		shlBootloaderUnlockWizard.open();
 		shlBootloaderUnlockWizard.layout();
 		Display display = getParent().getDisplay();
@@ -139,7 +108,7 @@ public class BLUWizard extends Dialog {
 		    	  event.doit = true;
 		      }
 		    });
-		shlBootloaderUnlockWizard.setSize(326, 214);
+		shlBootloaderUnlockWizard.setSize(326, 162);
 		if (_action.equals("R"))
 			shlBootloaderUnlockWizard.setText("BootLoader Relock Wizard");
 		else
@@ -148,8 +117,8 @@ public class BLUWizard extends Dialog {
 		
 		btnGetUnlock = new Button(shlBootloaderUnlockWizard, SWT.NONE);
 		fd_btnGetUnlock = new FormData();
-		fd_btnGetUnlock.right = new FormAttachment(100, -96);
-		fd_btnGetUnlock.left = new FormAttachment(0, 104);
+		fd_btnGetUnlock.left = new FormAttachment(0, 10);
+		fd_btnGetUnlock.bottom = new FormAttachment(100, -10);
 		btnGetUnlock.setLayoutData(fd_btnGetUnlock);
 		btnGetUnlock.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -161,8 +130,9 @@ public class BLUWizard extends Dialog {
 		
 		btnUnlock = new Button(shlBootloaderUnlockWizard, SWT.NONE);
 		fd_btnUnlock = new FormData();
-		fd_btnUnlock.right = new FormAttachment(100, -129);
-		fd_btnUnlock.left = new FormAttachment(0, 131);
+		fd_btnUnlock.top = new FormAttachment(btnGetUnlock, 0, SWT.TOP);
+		fd_btnUnlock.left = new FormAttachment(btnGetUnlock, 2);
+		fd_btnUnlock.right = new FormAttachment(100, -128);
 		btnUnlock.setLayoutData(fd_btnUnlock);
 		btnUnlock.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -258,7 +228,42 @@ public class BLUWizard extends Dialog {
 			}
 		});
 		btnCancel.setText("Cancel");
+		composite = new Composite(shlBootloaderUnlockWizard, SWT.NONE);
+		composite.setLayout(new GridLayout(2, false));
+		FormData fd_composite = new FormData();
+		fd_composite.top = new FormAttachment(0, 10);
+		fd_composite.right = new FormAttachment(100, -10);
+		fd_composite.left = new FormAttachment(0, 10);
+		composite.setLayoutData(fd_composite);
+		
+		lblImei = new Label(composite, SWT.NONE);
+		GridData gd_lblImei = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblImei.widthHint = 85;
+		lblImei.setLayoutData(gd_lblImei);
+		lblImei.setText("IMEI : ");
 
+		textIMEI = new Text(composite, SWT.BORDER);
+		textIMEI.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		textIMEI.setEditable(false);
+
+		
+		composite_1 = new Composite(shlBootloaderUnlockWizard, SWT.NONE);
+		fd_composite.left = new FormAttachment(composite_1, 0, SWT.LEFT);
+		composite_1.setLayout(new GridLayout(2, false));
+		FormData fd_composite_1 = new FormData();
+		fd_composite_1.top = new FormAttachment(composite, 6);
+		fd_composite_1.left = new FormAttachment(btnGetUnlock, 0, SWT.LEFT);
+		fd_composite_1.right = new FormAttachment(100, -10);
+		composite_1.setLayoutData(fd_composite_1);
+		
+		lblUnlockCode = new Label(composite_1, SWT.NONE);
+		GridData gd_lblUnlockCode = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblUnlockCode.widthHint = 85;
+		lblUnlockCode.setLayoutData(gd_lblUnlockCode);
+		lblUnlockCode.setText("Unlock Code :");
+		
+		textULCODE = new Text(composite_1, SWT.BORDER);
+		textULCODE.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 	}
 
 	public void showErrorMessageBox(String message) {

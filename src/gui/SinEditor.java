@@ -1,10 +1,8 @@
 package gui;
 
 import java.io.File;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -15,10 +13,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-
 import gui.tools.ExtractSinDataJob;
-import gui.tools.WidgetsTool;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.FormLayout;
@@ -59,8 +54,7 @@ public class SinEditor extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shlSinEditor);
-		
+
 		shlSinEditor.open();
 		shlSinEditor.layout();
 		Display display = getParent().getDisplay();

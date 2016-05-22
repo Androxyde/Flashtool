@@ -8,7 +8,6 @@ import gui.models.CategoriesContentProvider;
 import gui.models.CategoriesModel;
 import gui.models.SinfilesLabelProvider;
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
 import gui.tools.createFTFJob;
 
 import java.io.File;
@@ -108,7 +107,6 @@ public class BundleCreator extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shlBundler);
 		
 		shlBundler.open();
 		shlBundler.layout();
@@ -123,7 +121,6 @@ public class BundleCreator extends Dialog {
 
 	public Object open(String folder) {
 		createContents();
-		WidgetsTool.setSize(shlBundler);
 		sourceFolder.setText(folder);
 		meta.clear();
 		files = new Vector<BundleEntry>();

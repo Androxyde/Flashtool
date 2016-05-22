@@ -2,11 +2,8 @@ package gui;
 
 import gui.tools.WidgetTask;
 import gui.tools.FastBootToolBoxJob;
-import gui.tools.WidgetsTool;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -40,7 +37,6 @@ public class FastbootToolbox extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shlFastbootToolbox);
 		shlFastbootToolbox.open();
 		shlFastbootToolbox.layout();
 		Display display = getParent().getDisplay();

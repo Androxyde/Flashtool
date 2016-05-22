@@ -13,7 +13,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import gui.tools.SearchFastbootJob;
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
 import org.eclipse.swt.widgets.Label;
 
 public class WaitDeviceForFastboot extends Dialog {
@@ -38,7 +37,6 @@ public class WaitDeviceForFastboot extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shlWaitForFastbootmode);
 		shlWaitForFastbootmode.open();
 		shlWaitForFastbootmode.layout();
 		shlWaitForFastbootmode.addListener(SWT.Close, new Listener() {

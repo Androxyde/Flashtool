@@ -1,7 +1,5 @@
 package gui;
 
-import gui.tools.WidgetsTool;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -34,7 +32,6 @@ public class LoaderSelect extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shell);
 		shell.open();
 		shell.layout();
 		Display display = getParent().getDisplay();

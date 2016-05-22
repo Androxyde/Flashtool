@@ -1,9 +1,7 @@
 package gui;
 
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
 import gui.tools.XperiFirmJob;
-
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.swt.widgets.Dialog;
@@ -38,7 +36,6 @@ public class WaitForXperiFirm extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shlWaiForXperiFirm);
 		
 		Label lblNewLabel = new Label(shlWaiForXperiFirm, SWT.NONE);
 		lblNewLabel.setBounds(10, 32, 323, 15);

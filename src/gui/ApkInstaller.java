@@ -1,6 +1,5 @@
 package gui;
 
-import gui.tools.WidgetsTool;
 
 import java.io.File;
 import java.util.Vector;
@@ -53,7 +52,6 @@ public class ApkInstaller extends Dialog {
 	 */
 	public String open() {
 		createContents();
-		WidgetsTool.setSize(shlApkInstaller);
 		shlApkInstaller.open();
 		shlApkInstaller.layout();
 		Display display = getParent().getDisplay();

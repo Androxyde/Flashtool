@@ -1,8 +1,6 @@
 package gui;
 
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
-
 import java.util.Vector;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -41,7 +39,6 @@ public class TABackupSet extends Dialog {
 	 */
 	public String open() {
 		createContents();
-		WidgetsTool.setSize(shlBackupName);
 		
 		Label lblBackupName = new Label(shlBackupName, SWT.NONE);
 		FormData fd_lblBackupName = new FormData();

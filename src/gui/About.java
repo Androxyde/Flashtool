@@ -1,6 +1,5 @@
 package gui;
 
-import gui.tools.WidgetsTool;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,7 +50,6 @@ public class About extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shlAbout);
 		
 		Composite composite = new Composite(shlAbout, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));

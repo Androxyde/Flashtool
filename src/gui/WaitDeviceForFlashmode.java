@@ -13,7 +13,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import flashsystem.X10flash;
 import gui.tools.SearchJob;
-import gui.tools.WidgetsTool;
 import org.eclipse.swt.widgets.Label;
 
 public class WaitDeviceForFlashmode extends Dialog {
@@ -38,7 +37,6 @@ public class WaitDeviceForFlashmode extends Dialog {
 	 */
 	public Object open(final X10flash flash) {
 		createContents();
-		WidgetsTool.setSize(shlWaitForFlashmode);
 		shlWaitForFlashmode.open();
 		shlWaitForFlashmode.layout();
 		shlWaitForFlashmode.addListener(SWT.Close, new Listener() {

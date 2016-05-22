@@ -2,11 +2,8 @@ package gui;
 
 import gui.tools.DeviceApps;
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
-
 import java.io.File;
 import java.util.Vector;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
@@ -53,7 +50,6 @@ public class ProfileSave extends Dialog {
 	public String open(DeviceApps apps) {
 		_apps=apps;
 		createContents();
-		WidgetsTool.setSize(shlProfileSave);
 		shlProfileSave.open();
 		shlProfileSave.layout();
 		Display display = getParent().getDisplay();

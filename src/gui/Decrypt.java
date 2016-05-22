@@ -1,7 +1,5 @@
 package gui;
 
-import gui.tools.WidgetsTool;
-
 import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
@@ -55,7 +53,6 @@ public class Decrypt extends Dialog {
 	 */
 	public Vector open() {
 		createContents();
-		WidgetsTool.setSize(shlDecruptWizard);
 		shlDecruptWizard.open();
 		shlDecruptWizard.layout();
 		Display display = getParent().getDisplay();

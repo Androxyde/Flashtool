@@ -18,7 +18,6 @@ import gui.models.MyTreeLabelProvider;
 import gui.models.TreeDeviceCustomizationRelease;
 import gui.models.TreeDevices;
 import gui.tools.WidgetTask;
-import gui.tools.WidgetsTool;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.layout.FormData;
@@ -83,8 +82,6 @@ public class FTFSelector extends Dialog {
 	public Object open(String pathname, String ftfname) {
 
 		createContents();
-		
-		WidgetsTool.setSize(shlFirmwareSelector);
 		
 		btnFlash = new Button(shlFirmwareSelector, SWT.NONE);
 		FormData fd_btnFlash = new FormData();
@@ -377,8 +374,7 @@ public class FTFSelector extends Dialog {
 				}
 				else {
 					btnWipe = new Button(compositeWipeContent, SWT.CHECK);
-				}				
-				WidgetsTool.setSize(btnWipe);
+				}
 				btnWipe.setText(categ.getId());
 				btnWipe.setSelection(categ.isEnabled());
 				if (categ.isTa()) {
@@ -412,7 +408,6 @@ public class FTFSelector extends Dialog {
 				else {
 					btnExclude = new Button(compositeExcludeContent, SWT.CHECK);
 				}
-				WidgetsTool.setSize(btnExclude);
 				btnExclude.setText(categ.getId());
 				btnExclude.setSelection(!categ.isEnabled());
 				compositeExcludeContent.setSize(compositeExcludeContent.computeSize(SWT.DEFAULT, SWT.DEFAULT));

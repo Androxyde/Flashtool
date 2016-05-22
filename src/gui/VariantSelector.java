@@ -1,11 +1,8 @@
 package gui;
 
-import gui.tools.WidgetsTool;
-
 import java.io.File;
 import java.util.HashSet;
 import java.util.Vector;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -52,7 +49,6 @@ public class VariantSelector extends Dialog {
 		if (variantlist.size()==0) return null;
 		currentVariant = variantlist;
 		createContents();
-		WidgetsTool.setSize(shlVariantSelector);
 		shlVariantSelector.open();
 		shlVariantSelector.layout();
 		Display display = getParent().getDisplay();

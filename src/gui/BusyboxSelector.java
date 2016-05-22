@@ -1,10 +1,7 @@
 package gui;
 
-import gui.tools.WidgetsTool;
-
 import java.io.File;
 import java.util.Vector;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -49,7 +46,6 @@ public class BusyboxSelector extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shlBusyboxSelector);
 		shlBusyboxSelector.open();
 		shlBusyboxSelector.layout();
 		Display display = getParent().getDisplay();

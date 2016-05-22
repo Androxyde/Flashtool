@@ -1,6 +1,5 @@
 package gui;
 
-import gui.tools.WidgetsTool;
 
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -43,7 +42,6 @@ public class BootModeSelector extends Dialog {
 	 */
 	public Object open() {
 		createContents();
-		WidgetsTool.setSize(shell);
 		
 		Composite compositeSelector = new Composite(shell, SWT.NONE);
 		FormData fd_compositeSelector = new FormData();
