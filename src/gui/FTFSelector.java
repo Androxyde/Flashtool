@@ -73,6 +73,7 @@ public class FTFSelector extends Dialog {
 	private Composite compositeExcludeContent;
 	private Composite compositeExcludeTA;
 	private Button btnFilter;
+	private FormData fd_compositeExclude;
 	
 	public FTFSelector(Shell parent, int style) {
 		super(parent, style);
@@ -84,6 +85,21 @@ public class FTFSelector extends Dialog {
 		createContents();
 		
 		WidgetsTool.setSize(shlFirmwareSelector);
+		
+		btnFlash = new Button(shlFirmwareSelector, SWT.NONE);
+		FormData fd_btnFlash = new FormData();
+		
+		fd_btnFlash.bottom = new FormAttachment(100, -10);
+		btnFlash.setLayoutData(fd_btnFlash);
+		btnFlash.setText("Flash");
+		
+		btnCancel = new Button(shlFirmwareSelector, SWT.NONE);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.right = new FormAttachment(100, -10);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
+		fd_btnFlash.right = new FormAttachment(btnCancel, -6);
+		btnCancel.setLayoutData(fd_btnCancel);
+		btnCancel.setText("Cancel");
 		
 		feedContent(pathname, ftfname);
 		setProviders();
@@ -109,16 +125,17 @@ public class FTFSelector extends Dialog {
 		
 		// Creation du Shell
 		shlFirmwareSelector = new Shell(getParent(), getStyle());
-		shlFirmwareSelector.setSize(714, 496);
+		shlFirmwareSelector.setSize(714, 497);
 		shlFirmwareSelector.setText("Firmware Selector");
 		shlFirmwareSelector.setLayout(new FormLayout());
 		
 		// Search bar
 		compositeSearch = new Composite(shlFirmwareSelector, SWT.NONE);
 		FormData fd_compositeSearch = new FormData();
+		fd_compositeSearch.left = new FormAttachment(0, 10);
+		fd_compositeSearch.right = new FormAttachment(100, -10);
 		fd_compositeSearch.top = new FormAttachment(0, 10);
 		fd_compositeSearch.bottom = new FormAttachment(0, 45);
-		fd_compositeSearch.left = new FormAttachment(0, 10);
 		compositeSearch.setLayoutData(fd_compositeSearch);
 		compositeSearch.setLayout(new GridLayout(3, false));
 		
@@ -138,16 +155,17 @@ public class FTFSelector extends Dialog {
 		
 		// Settings bar
 		compositeSettings = new Composite(shlFirmwareSelector, SWT.NONE);
-		fd_compositeSearch.right = new FormAttachment(compositeSettings, 0, SWT.RIGHT);
 		FormData fd_compositeSettings = new FormData();
-		fd_compositeSettings.right = new FormAttachment(100, -10);
+		fd_compositeSettings.right = new FormAttachment(100, -197);
 		fd_compositeSettings.top = new FormAttachment(0, 422);
 		fd_compositeSettings.left = new FormAttachment(0, 10);
 		compositeSettings.setLayoutData(fd_compositeSettings);
-		compositeSettings.setLayout(new GridLayout(7, false));
+		compositeSettings.setLayout(new GridLayout(6, false));
+		
 		
 		btnCheckSimulate = new Button(compositeSettings, SWT.CHECK);
 		btnCheckSimulate.setText("Simulate");
+		new Label(compositeSettings, SWT.NONE);
 		
 		btnCheckFinal = new Button(compositeSettings, SWT.CHECK);
 		btnCheckFinal.setText("Disable final verification");
@@ -159,18 +177,12 @@ public class FTFSelector extends Dialog {
 		
 		comboUSBBuffer = new Combo(compositeSettings, SWT.READ_ONLY);
 		comboUSBBuffer.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-		
-		btnFlash = new Button(compositeSettings, SWT.NONE);
-		btnFlash.setText("Flash");
-		
-		btnCancel = new Button(compositeSettings, SWT.NONE);
-		btnCancel.setText("Cancel");
 
 		Composite compositeFirmwares = new Composite(shlFirmwareSelector, SWT.NONE);
 		compositeFirmwares.setLayout(new GridLayout(1, false));
 		FormData fd_compositeFirmwares = new FormData();
-		fd_compositeFirmwares.left = new FormAttachment(0, 10);
 		fd_compositeFirmwares.bottom = new FormAttachment(compositeSettings, -6);
+		fd_compositeFirmwares.left = new FormAttachment(0, 10);
 		compositeFirmwares.setLayoutData(fd_compositeFirmwares);
 		
 		Composite compositeFilter = new Composite(shlFirmwareSelector, SWT.NONE);
@@ -206,9 +218,9 @@ public class FTFSelector extends Dialog {
 		fd_compositeFirmwares.right = new FormAttachment(compositeContent, -6);
 		compositeContent.setLayout(new GridLayout(1, false));
 		FormData fd_compositeContent = new FormData();
-		fd_compositeContent.left = new FormAttachment(0, 225);
-		fd_compositeContent.top = new FormAttachment(compositeFirmwares, 0, SWT.TOP);
 		fd_compositeContent.bottom = new FormAttachment(compositeSettings, -6);
+		fd_compositeContent.top = new FormAttachment(compositeFilter, 6);
+		fd_compositeContent.left = new FormAttachment(0, 225);
 		compositeContent.setLayoutData(fd_compositeContent);
 		
 		Label lblContent = new Label(compositeContent, SWT.NONE);
@@ -223,9 +235,9 @@ public class FTFSelector extends Dialog {
 		fd_compositeContent.right = new FormAttachment(compositeWipe, -6);
 		compositeWipe.setLayout(new GridLayout(1, false));
 		FormData fd_compositeWipe = new FormData();
-		fd_compositeWipe.left = new FormAttachment(0, 401);
-		fd_compositeWipe.top = new FormAttachment(compositeFirmwares, 0, SWT.TOP);
 		fd_compositeWipe.bottom = new FormAttachment(compositeSettings, -6);
+		fd_compositeWipe.top = new FormAttachment(compositeFilter, 6);
+		fd_compositeWipe.left = new FormAttachment(0, 401);
 		compositeWipe.setLayoutData(fd_compositeWipe);
 		
 		Label lblWipe = new Label(compositeWipe, SWT.NONE);
@@ -263,11 +275,11 @@ public class FTFSelector extends Dialog {
 		compositeWipeTA.setLayout(new GridLayout(1, false));
 		scrolledCompositeWipeTA.setContent(compositeWipeTA);
 		compositeExclude.setLayout(new GridLayout(1, false));
-		FormData fd_compositeExclude = new FormData();
-		fd_compositeExclude.top = new FormAttachment(compositeFirmwares, 0, SWT.TOP);
-		fd_compositeExclude.bottom = new FormAttachment(compositeSettings, -6);
+		fd_compositeExclude = new FormData();
+		fd_compositeExclude.top = new FormAttachment(compositeSearch, 47);
 		fd_compositeExclude.left = new FormAttachment(0, 543);
 		fd_compositeExclude.right = new FormAttachment(100, -10);
+		fd_compositeExclude.bottom = new FormAttachment(compositeSettings, -6);
 		compositeExclude.setLayoutData(fd_compositeExclude);
 		
 		Label lblExclude = new Label(compositeExclude, SWT.NONE);
