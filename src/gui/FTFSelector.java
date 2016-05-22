@@ -276,7 +276,7 @@ public class FTFSelector extends Dialog {
 		scrolledCompositeWipeTA.setContent(compositeWipeTA);
 		compositeExclude.setLayout(new GridLayout(1, false));
 		fd_compositeExclude = new FormData();
-		fd_compositeExclude.top = new FormAttachment(compositeSearch, 47);
+		fd_compositeExclude.top = new FormAttachment(compositeFilter, 6);
 		fd_compositeExclude.left = new FormAttachment(0, 543);
 		fd_compositeExclude.right = new FormAttachment(100, -10);
 		fd_compositeExclude.bottom = new FormAttachment(compositeSettings, -6);
