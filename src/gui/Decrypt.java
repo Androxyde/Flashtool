@@ -120,7 +120,7 @@ public class Decrypt extends Dialog {
 		FormData fd_list_1 = new FormData();
 		fd_list_1.bottom = new FormAttachment(list, 0, SWT.BOTTOM);
 		fd_list_1.top = new FormAttachment(list, 0, SWT.TOP);
-		fd_list_1.right = new FormAttachment(0, 522);
+		fd_list_1.right = new FormAttachment(100,-10);
 		fd_list_1.left = new FormAttachment(0, 282);
 		list_1.setLayoutData(fd_list_1);
 
@@ -159,7 +159,8 @@ public class Decrypt extends Dialog {
 		
 		Button btnCancel = new Button(shlDecruptWizard, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.right = new FormAttachment(100, -11);
+		fd_btnCancel.right = new FormAttachment(100, -10);
+		fd_btnCancel.bottom = new FormAttachment(100,-10);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -170,10 +171,10 @@ public class Decrypt extends Dialog {
 		btnCancel.setText("Cancel");
 		
 		Button btnConvert = new Button(shlDecruptWizard, SWT.NONE);
-		fd_btnCancel.top = new FormAttachment(btnConvert, 0, SWT.TOP);
+		
 		FormData fd_btnConvert = new FormData();
-		fd_btnConvert.right = new FormAttachment(100, -71);
-		fd_btnConvert.top = new FormAttachment(list_1, 7);
+		fd_btnConvert.right = new FormAttachment(btnCancel, -6);
+		fd_btnConvert.bottom = new FormAttachment(100,-10);
 		btnConvert.setLayoutData(fd_btnConvert);
 		btnConvert.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -188,8 +189,8 @@ public class Decrypt extends Dialog {
 		composite.setLayout(new GridLayout(3, false));
 		FormData fd_composite = new FormData();
 		fd_composite.bottom = new FormAttachment(lblAvailableFiles, -6);
-		fd_composite.left = new FormAttachment(list, 0, SWT.LEFT);
-		fd_composite.right = new FormAttachment(list_1, 0, SWT.RIGHT);
+		fd_composite.left = new FormAttachment(0,10);
+		fd_composite.right = new FormAttachment(100,-10);
 		fd_composite.top = new FormAttachment(0, 10);
 		composite.setLayoutData(fd_composite);
 		

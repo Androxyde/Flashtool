@@ -389,7 +389,10 @@ public class FTFSelector extends Dialog {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						Button b = (Button)e.widget;
-					    if (b.getSelection()) currentfirm.enableCateg(b.getText());
+					    if (b.getSelection()) {
+					    	if (b.getText().equals("SIMLOCK")) WidgetTask.openOKBox(shlFirmwareSelector, "Including simlock can lead to loss of network");
+					    	currentfirm.enableCateg(b.getText());
+					    }
 					    else currentfirm.disableCateg(b.getText());
 					    tableViewerContent.setInput(currentfirm);
 						tableViewerContent.refresh();
@@ -425,7 +428,10 @@ public class FTFSelector extends Dialog {
 					public void widgetSelected(SelectionEvent e) {
 						Button b = (Button)e.widget;
 					    if (b.getSelection()) currentfirm.disableCateg(b.getText());
-					    else currentfirm.enableCateg(b.getText());
+					    else {
+					    	if (b.getText().equals("SIMLOCK")) WidgetTask.openOKBox(shlFirmwareSelector, "Including simlock can lead to loss of network");
+					    	currentfirm.enableCateg(b.getText());
+					    }
 					    tableViewerContent.setInput(currentfirm);
 					    tableViewerContent.refresh();
 					}

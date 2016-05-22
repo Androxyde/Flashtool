@@ -72,8 +72,8 @@ public class Cleaner extends Dialog {
 			}
 		});
 		FormData fd_btnProfile = new FormData();
-		fd_btnProfile.bottom = new FormAttachment(btnCancel, 0, SWT.BOTTOM);
-		fd_btnProfile.left = new FormAttachment(listInstalled, 0, SWT.LEFT);
+		fd_btnProfile.bottom = new FormAttachment(100, -10);
+		fd_btnProfile.left = new FormAttachment(0,10);
 		btnProfile.setLayoutData(fd_btnProfile);
 		btnProfile.setText("Save profile");
 		
@@ -93,8 +93,8 @@ public class Cleaner extends Dialog {
 			}
 		});
 		FormData fd_btnSaveAsNew = new FormData();
-		fd_btnSaveAsNew.left = new FormAttachment(btnProfile, 5);
-		fd_btnSaveAsNew.bottom = new FormAttachment(btnCancel, 0, SWT.BOTTOM);
+		fd_btnSaveAsNew.left = new FormAttachment(btnProfile, 6);
+		fd_btnSaveAsNew.bottom = new FormAttachment(100,-10);
 		btnSaveAsNew.setLayoutData(fd_btnSaveAsNew);
 		btnSaveAsNew.setText("Save as new profile");
 		shlDecruptWizard.open();
@@ -206,7 +206,7 @@ public class Cleaner extends Dialog {
 		btnCancel = new Button(shlDecruptWizard, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.bottom = new FormAttachment(100, -10);
-		fd_btnCancel.right = new FormAttachment(listToRemove, 0, SWT.RIGHT);
+		fd_btnCancel.right = new FormAttachment(100,-10);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -219,7 +219,7 @@ public class Cleaner extends Dialog {
 		
 		Button btnClean = new Button(shlDecruptWizard, SWT.NONE);
 		FormData fd_btnClean = new FormData();
-		fd_btnClean.top = new FormAttachment(btnCancel, 0, SWT.TOP);
+		fd_btnClean.bottom = new FormAttachment(100, -10);
 		fd_btnClean.right = new FormAttachment(btnCancel, -6);
 		btnClean.setLayoutData(fd_btnClean);
 		btnClean.addSelectionListener(new SelectionAdapter() {

@@ -42,6 +42,7 @@ public class BundleMetaData {
 			this.noerase.addElement("DIAG");
 			this.noerase.addElement("B2B");
 		}
+		this.noerase.addElement("SIMLOCK");
 	}
 	
 	public Category getLoader() {
@@ -137,9 +138,7 @@ public class BundleMetaData {
 			_categwipe.add(cat);
 		}
 		else {
-			if (cat.getId().startsWith("SIMLOCK"))
-				cat.setEnabled(false);
-			else cat.setEnabled(true);
+			cat.setEnabled(true);
 			_categex.add(cat);
 		}
 	}

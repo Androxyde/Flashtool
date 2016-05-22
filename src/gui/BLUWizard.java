@@ -4,10 +4,8 @@ import flashsystem.X10flash;
 import gui.tools.BLUnlockJob;
 import gui.tools.WidgetTask;
 import gui.tools.WriteTAJob;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.swt.program.Program;
@@ -31,7 +29,6 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.RowLayout;
 
 public class BLUWizard extends Dialog {
 

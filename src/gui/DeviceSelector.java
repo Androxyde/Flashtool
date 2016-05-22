@@ -108,7 +108,7 @@ public class DeviceSelector extends Dialog {
 		compositeTable.setLayout(new FillLayout(SWT.HORIZONTAL));
 		FormData fd_compositeTable = new FormData();
 		fd_compositeTable.bottom = new FormAttachment(btnCancel, -6);
-		fd_compositeTable.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
+		fd_compositeTable.right = new FormAttachment(100,-10);
 		fd_compositeTable.top = new FormAttachment(0, 10);
 		fd_compositeTable.left = new FormAttachment(0, 10);
 		compositeTable.setLayoutData(fd_compositeTable);

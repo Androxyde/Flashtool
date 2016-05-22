@@ -12,7 +12,6 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
-import org.system.Devices;
 import org.system.OS;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -69,6 +68,7 @@ public class BusyboxSelector extends Dialog {
 		btnCancel = new Button(shlBusyboxSelector, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.right = new FormAttachment(100, -10);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -80,9 +80,8 @@ public class BusyboxSelector extends Dialog {
 		btnCancel.setText("Cancel");
 		ListViewer listBusyboxViewer = new ListViewer(shlBusyboxSelector, SWT.BORDER | SWT.V_SCROLL);
 		listBusybox = listBusyboxViewer.getList();
-		fd_btnCancel.top = new FormAttachment(listBusybox, 6);
 		FormData fd_listBusybox = new FormData();
-		fd_listBusybox.bottom = new FormAttachment(100, -41);
+		fd_listBusybox.bottom = new FormAttachment(btnCancel, -6);
 		fd_listBusybox.top = new FormAttachment(0, 10);
 		fd_listBusybox.right = new FormAttachment(100, -10);
 		fd_listBusybox.left = new FormAttachment(0, 10);
