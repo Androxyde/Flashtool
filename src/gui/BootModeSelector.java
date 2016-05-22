@@ -111,7 +111,7 @@ public class BootModeSelector extends Dialog {
 		    	  event.doit = true;
 		      }
 		    });
-		shell.setSize(272, 144);
+		shell.setSize(272, 110);
 		shell.setText(getText());
 		shell.setLayout(new FormLayout());
 

@@ -988,7 +988,6 @@ public class MainSWT {
 		});
 		FormData fd_btnSaveLog = new FormData();
 		fd_btnSaveLog.right = new FormAttachment(100, -10);
-		fd_btnSaveLog.left = new FormAttachment(100, -95);
 		btnSaveLog.setLayoutData(fd_btnSaveLog);
 		btnSaveLog.setText("Save log");
 		
@@ -1067,13 +1066,13 @@ public class MainSWT {
 		tltmNewItem_2.setEnabled(false);
 		
 		ProgressBar progressBar = new ProgressBar(shlSonyericsson, SWT.NONE);
-		fd_btnSaveLog.bottom = new FormAttachment(100, -43);
+		fd_btnSaveLog.bottom = new FormAttachment(progressBar, -6, SWT.TOP);
 		progressBar.setState(SWT.NORMAL);
 		LogProgress.registerProgressBar(progressBar);
 		FormData fd_progressBar = new FormData();
 		fd_progressBar.left = new FormAttachment(0, 10);
 		fd_progressBar.right = new FormAttachment(100, -10);
-		fd_progressBar.top = new FormAttachment(btnSaveLog, 6);
+		fd_progressBar.bottom = new FormAttachment(100, -10);
 		progressBar.setLayoutData(fd_progressBar);
 		
 		ScrolledComposite scrolledLog = new ScrolledComposite(shlSonyericsson, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -1096,7 +1095,7 @@ public class MainSWT {
 		fd_scrolledLog.top = new FormAttachment(paypalToolbar, 2);
 		FormData fd_paypalToolbar = new FormData();
 		fd_paypalToolbar.top = new FormAttachment(0, 10);
-		fd_paypalToolbar.right = new FormAttachment(btnSaveLog, 0, SWT.RIGHT);
+		fd_paypalToolbar.right = new FormAttachment(100, -10);
 		paypalToolbar.setLayoutData(fd_paypalToolbar);
 		
 		ToolItem paypalItem = new ToolItem(paypalToolbar, SWT.NONE);
@@ -1321,7 +1320,7 @@ public class MainSWT {
 	
 	public void doFlashmode(final String pftfpath, final String pftfname) throws Exception {
 		try {
-			FTFSelector1 ftfsel = new FTFSelector1(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+			FTFSelector ftfsel = new FTFSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
 			if (bundle !=null) {
 				logger.info("Selected "+bundle);

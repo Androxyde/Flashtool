@@ -70,7 +70,7 @@ public class ApkInstaller extends Dialog {
 	 */
 	private void createContents() {
 		shlApkInstaller = new Shell(getParent(), getStyle());
-		shlApkInstaller.setSize(539, 302);
+		shlApkInstaller.setSize(539, 312);
 		shlApkInstaller.setText("Apk Installer");
 		shlApkInstaller.setLayout(new FormLayout());
 		
@@ -86,9 +86,9 @@ public class ApkInstaller extends Dialog {
 			  public void widgetDefaultSelected(SelectionEvent e) {}
 			});
 		FormData fd_listApk = new FormData();
-		fd_listApk.bottom = new FormAttachment(0, 229);
-		fd_listApk.top = new FormAttachment(0, 71);
+		
 		fd_listApk.left = new FormAttachment(0, 10);
+		fd_listApk.right = new FormAttachment(100, -10);
 		listApk.setLayoutData(fd_listApk);
 
 	    listViewerApk.setContentProvider(new IStructuredContentProvider() {
@@ -118,16 +118,15 @@ public class ApkInstaller extends Dialog {
 
 		Label lblAvailableFiles = new Label(shlApkInstaller, SWT.NONE);
 		FormData fd_lblAvailableFiles = new FormData();
-		fd_lblAvailableFiles.right = new FormAttachment(0, 115);
-		fd_lblAvailableFiles.top = new FormAttachment(0, 51);
+		
 		fd_lblAvailableFiles.left = new FormAttachment(0, 10);
 		lblAvailableFiles.setLayoutData(fd_lblAvailableFiles);
 		lblAvailableFiles.setText("Available files :");
 		
 		Button btnCancel = new Button(shlApkInstaller, SWT.NONE);
-		fd_listApk.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
+		
 		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.right = new FormAttachment(100, -11);
+		fd_btnCancel.right = new FormAttachment(100, -10);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -137,12 +136,16 @@ public class ApkInstaller extends Dialog {
 			}
 		});
 		btnCancel.setText("Cancel");
+		fd_listApk.right = new FormAttachment(100, -10);
+		fd_listApk.top = new FormAttachment(lblAvailableFiles, 6);
+		fd_listApk.bottom = new FormAttachment(btnCancel, -6,SWT.TOP);
 		
 		btnInstall = new Button(shlApkInstaller, SWT.NONE);
 		btnInstall.setEnabled(false);
-		fd_btnCancel.top = new FormAttachment(btnInstall, 0, SWT.TOP);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
 		FormData fd_btnInstall = new FormData();
-		fd_btnInstall.right = new FormAttachment(100, -71);
+		fd_btnInstall.bottom = new FormAttachment(100, -10);
+		fd_btnInstall.right = new FormAttachment(btnCancel, -6);
 		btnInstall.setLayoutData(fd_btnInstall);
 		btnInstall.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -153,28 +156,27 @@ public class ApkInstaller extends Dialog {
 		});
 		btnInstall.setText("Install");
 		
-		Composite composite = new Composite(shlApkInstaller, SWT.NONE);
-		fd_btnInstall.top = new FormAttachment(composite, 191);
-		composite.setLayout(new GridLayout(3, false));
-		FormData fd_composite = new FormData();
-		fd_composite.right = new FormAttachment(100, -11);
-		fd_composite.left = new FormAttachment(0, 10);
-		fd_composite.bottom = new FormAttachment(lblAvailableFiles, -6);
-		fd_composite.top = new FormAttachment(0, 10);
-		composite.setLayoutData(fd_composite);
+		Composite compositeFolder = new Composite(shlApkInstaller, SWT.NONE);
+		compositeFolder.setLayout(new GridLayout(3, false));
+		FormData fd_compositeFolder = new FormData();
+		fd_compositeFolder.right = new FormAttachment(100, -10);
+		fd_compositeFolder.left = new FormAttachment(0, 10);
+		fd_compositeFolder.top = new FormAttachment(0, 10);
+		compositeFolder.setLayoutData(fd_compositeFolder);
+		fd_lblAvailableFiles.top = new FormAttachment(compositeFolder, 10,SWT.BOTTOM);
 		
-		Label lblSourceFolder = new Label(composite, SWT.NONE);
+		Label lblSourceFolder = new Label(compositeFolder, SWT.NONE);
 		GridData gd_lblSourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_lblSourceFolder.widthHint = 92;
 		lblSourceFolder.setLayoutData(gd_lblSourceFolder);
 		lblSourceFolder.setText("Source Folder : ");
-		txtSourceFolder = new Text(composite, SWT.BORDER);
+		txtSourceFolder = new Text(compositeFolder, SWT.BORDER);
 		GridData gd_txtSourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_txtSourceFolder.widthHint = 359;
 		txtSourceFolder.setLayoutData(gd_txtSourceFolder);
 		
-		Button btnSourceFolder = new Button(composite, SWT.NONE);
-		GridData gd_btnSourceFolder = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		Button btnSourceFolder = new Button(compositeFolder, SWT.NONE);
+		GridData gd_btnSourceFolder = new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1);
 		gd_btnSourceFolder.widthHint = 85;
 		btnSourceFolder.setLayoutData(gd_btnSourceFolder);
 		btnSourceFolder.addSelectionListener(new SelectionAdapter() {
