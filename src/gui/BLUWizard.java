@@ -32,8 +32,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
-import swing2swt.layout.FlowLayout;
-import swing2swt.layout.BoxLayout;
 
 public class BLUWizard extends Dialog {
 
