@@ -81,8 +81,7 @@ public class USBLogviewer extends Dialog {
 		
 		lblSavedPath = new Label(shlUSBLogviewer, SWT.NONE);
 		FormData fd_lblSavedPath = new FormData();
-		fd_lblSavedPath.right = new FormAttachment(btnParse, -45);
-		fd_lblSavedPath.bottom = new FormAttachment(100, -10);
+		fd_lblSavedPath.bottom = new FormAttachment(100, -15);
 		fd_lblSavedPath.left = new FormAttachment(0, 10);
 		lblSavedPath.setLayoutData(fd_lblSavedPath);
 		formToolkit.adapt(lblSavedPath, true, true);
@@ -120,10 +119,10 @@ public class USBLogviewer extends Dialog {
 		compositeTable = new Composite(shlUSBLogviewer, SWT.NONE);
 		compositeTable.setLayout(new FillLayout(SWT.HORIZONTAL));
 		FormData fd_compositeTable = new FormData();
-		fd_compositeTable.bottom = new FormAttachment(btnClose, -6);
-		fd_compositeTable.right = new FormAttachment(btnClose, 0, SWT.RIGHT);
+		
+		fd_compositeTable.right = new FormAttachment(100, -10);
 		fd_compositeTable.left = new FormAttachment(0, 10);
-		fd_compositeTable.top = new FormAttachment(0, 98);
+		fd_compositeTable.bottom = new FormAttachment(btnClose, -6);
 		compositeTable.setLayoutData(fd_compositeTable);
 		
 		tableViewer = new TableViewer(compositeTable,SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.SINGLE);
@@ -142,10 +141,12 @@ public class USBLogviewer extends Dialog {
 		Composite composite = new Composite(shlUSBLogviewer, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
 		FormData fd_composite = new FormData();
-		fd_composite.bottom = new FormAttachment(compositeTable, -23);
 		fd_composite.top = new FormAttachment(0, 10);
 		fd_composite.left = new FormAttachment(0, 10);
+		fd_composite.right = new FormAttachment(100, -10);
 		composite.setLayoutData(fd_composite);
+		
+		fd_compositeTable.top = new FormAttachment(composite, 6);
 		
 		lblLogfile = formToolkit.createLabel(composite, "USB Log file :", SWT.NONE);
 		
@@ -178,7 +179,7 @@ public class USBLogviewer extends Dialog {
 		btnSourceFolder.setText("...");
 		btnParse = new Button(shlUSBLogviewer, SWT.NONE);
 		FormData fd_btnParse = new FormData();
-		fd_btnParse.bottom = new FormAttachment(btnClose, 0, SWT.BOTTOM);
+		fd_btnParse.bottom = new FormAttachment(100,-10);
 		fd_btnParse.right = new FormAttachment(btnClose, -6);
 		btnParse.setLayoutData(fd_btnParse);
 		formToolkit.adapt(btnParse, true, true);

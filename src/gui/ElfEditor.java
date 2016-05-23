@@ -73,7 +73,7 @@ public class ElfEditor extends Dialog {
 	 */
 	private void createContents() {
 		shlElfExtractor = new Shell(getParent(), getStyle());
-		shlElfExtractor.setSize(538, 153);
+		shlElfExtractor.setSize(538, 160);
 		shlElfExtractor.setText("Elf Extractor");
 		shlElfExtractor.setLayout(new FormLayout());
 		
@@ -81,7 +81,8 @@ public class ElfEditor extends Dialog {
 		composite.setLayout(new GridLayout(3, false));
 		FormData fd_composite = new FormData();
 		fd_composite.top = new FormAttachment(0, 10);
-		fd_composite.right = new FormAttachment(100, -9);
+		fd_composite.right = new FormAttachment(100, -10);
+		fd_composite.left = new FormAttachment(0, 10);
 		composite.setLayoutData(fd_composite);
 		
 		Label lblElfFile = new Label(composite, SWT.NONE);
@@ -144,10 +145,9 @@ public class ElfEditor extends Dialog {
 		Composite composite_1 = new Composite(shlElfExtractor, SWT.NONE);
 		composite_1.setLayout(new GridLayout(3, false));
 		FormData fd_composite_1 = new FormData();
-		fd_composite_1.bottom = new FormAttachment(composite, 38, SWT.BOTTOM);
-		fd_composite_1.top = new FormAttachment(composite, 7);
-		fd_composite_1.left = new FormAttachment(composite, 0, SWT.LEFT);
-		fd_composite_1.right = new FormAttachment(100, -9);
+		fd_composite_1.left = new FormAttachment(0,10);
+		fd_composite_1.right = new FormAttachment(100, -10);
+		fd_composite_1.top = new FormAttachment(composite, 6);
 		composite_1.setLayoutData(fd_composite_1);
 		
 		Label lblNewLabel = new Label(composite_1, SWT.NONE);
@@ -182,8 +182,8 @@ public class ElfEditor extends Dialog {
 			}
 		});
 		FormData fd_btnClose = new FormData();
-		fd_btnClose.top = new FormAttachment(composite_1, 6);
-		fd_btnClose.right = new FormAttachment(composite, 0, SWT.RIGHT);
+		fd_btnClose.bottom = new FormAttachment(100, -10);
+		fd_btnClose.right = new FormAttachment(100,-10);
 		btnClose.setLayoutData(fd_btnClose);
 		btnClose.setText("Close");
 

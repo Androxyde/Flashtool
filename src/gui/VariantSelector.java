@@ -65,7 +65,7 @@ public class VariantSelector extends Dialog {
 	 */
 	private void createContents() {
 		shlVariantSelector = new Shell(getParent(), getStyle());
-		shlVariantSelector.setSize(168, 434);
+		shlVariantSelector.setSize(181, 350);
 		shlVariantSelector.setText("Variant Selector");
 		shlVariantSelector.setLayout(new FormLayout());
 		
@@ -83,12 +83,12 @@ public class VariantSelector extends Dialog {
 		btnCancel.setText("Cancel");
 		ListViewer listVariantViewer = new ListViewer(shlVariantSelector, SWT.BORDER | SWT.V_SCROLL);
 		listVariant = listVariantViewer.getList();
-		fd_btnCancel.top = new FormAttachment(listVariant, 6);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
 		FormData fd_listVariant = new FormData();
-		fd_listVariant.bottom = new FormAttachment(100, -41);
 		fd_listVariant.top = new FormAttachment(0, 10);
 		fd_listVariant.right = new FormAttachment(100, -10);
 		fd_listVariant.left = new FormAttachment(0, 10);
+		fd_listVariant.bottom = new FormAttachment(btnCancel, -6);
 		listVariant.setLayoutData(fd_listVariant);
 		listVariant.addListener(SWT.DefaultSelection, new Listener() {
 		      public void handleEvent(Event e) {

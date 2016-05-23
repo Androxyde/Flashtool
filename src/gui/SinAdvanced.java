@@ -19,6 +19,9 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.sinfile.parsers.SinFile;
 import org.util.HexDump;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 public class SinAdvanced extends Dialog {
 
@@ -48,80 +51,8 @@ public class SinAdvanced extends Dialog {
 	public Object open(SinFile sin) {
 		_sin = sin;
 		createContents();
-		
-		Label lblSinVersion = new Label(shlSinEditor, SWT.NONE);
-		FormData fd_lblSinVersion = new FormData();
-		fd_lblSinVersion.top = new FormAttachment(0, 10);
-		fd_lblSinVersion.left = new FormAttachment(0, 10);
-		lblSinVersion.setLayoutData(fd_lblSinVersion);
-		lblSinVersion.setText("Sin version :");
-		
-		textVersion = new Text(shlSinEditor, SWT.BORDER);
-		textVersion.setEditable(false);
-		FormData fd_textVersion = new FormData();
-		fd_textVersion.right = new FormAttachment(100, -215);
-		fd_textVersion.left = new FormAttachment(0, 10);
-		fd_textVersion.top = new FormAttachment(lblSinVersion, 6);
-		textVersion.setLayoutData(fd_textVersion);
-		textVersion.setText(Integer.toString(_sin.getVersion()));
-		
-		textPartition = new Text(shlSinEditor, SWT.BORDER);
-		textPartition.setEditable(false);
-		FormData fd_textPartition = new FormData();
-		fd_textPartition.left = new FormAttachment(lblSinVersion, 0, SWT.LEFT);
-		textPartition.setLayoutData(fd_textPartition);
 		try {
-			textPartition.setText(_sin.hasPartitionInfo()?HexDump.toHex(_sin.getPartitionInfo()):"");
-		} catch (IOException ioe) {
-			logger.warn("Unable to get PartitionInfo. Leaving blank");
-			textPartition.setText("");
-		}
-		textSpare = new Text(shlSinEditor, SWT.BORDER);
-		textSpare.setEditable(false);
-		FormData fd_textSpare = new FormData();
-		fd_textSpare.right = new FormAttachment(100, -131);
-		fd_textSpare.left = new FormAttachment(0, 10);
-		textSpare.setLayoutData(fd_textSpare);
-		textSpare.setText(_sin.getPartypeString());
-		
-		Label lblPartition = new Label(shlSinEditor, SWT.NONE);
-		fd_textPartition.top = new FormAttachment(lblPartition, 6);
-		FormData fd_lblPartition = new FormData();
-		fd_lblPartition.top = new FormAttachment(textVersion, 6);
-		fd_lblPartition.left = new FormAttachment(lblSinVersion, 0, SWT.LEFT);
-		lblPartition.setLayoutData(fd_lblPartition);
-		lblPartition.setText("Partition Info :");
-		
-		Label lblSpare = new Label(shlSinEditor, SWT.NONE);
-		fd_textSpare.top = new FormAttachment(lblSpare, 6);
-		FormData fd_lblSpare = new FormData();
-		fd_lblSpare.top = new FormAttachment(textPartition, 6);
-		fd_lblSpare.left = new FormAttachment(lblSinVersion, 0, SWT.LEFT);
-		lblSpare.setLayoutData(fd_lblSpare);
-		lblSpare.setText("Partition Type :");
-		
-		textContent = new Text(shlSinEditor, SWT.BORDER);
-		textContent.setEditable(false);
-		FormData fd_textContent = new FormData();
-		fd_textContent.right = new FormAttachment(lblSinVersion, 0, SWT.RIGHT);
-		fd_textContent.left = new FormAttachment(lblSinVersion, 0, SWT.LEFT);
-		textContent.setLayoutData(fd_textContent);
-		try {
-			textContent.setText(_sin.getDataType());
-		}
-		catch (Exception e) {
-		}
-		
-		Label lblContentType = new Label(shlSinEditor, SWT.NONE);
-		fd_textContent.top = new FormAttachment(lblContentType, 6);
-		FormData fd_lblContentType = new FormData();
-		fd_lblContentType.top = new FormAttachment(textSpare, 6);
-		fd_lblContentType.left = new FormAttachment(lblSinVersion, 0, SWT.LEFT);
-		lblContentType.setLayoutData(fd_lblContentType);
-		lblContentType.setText("Content Type :");
-		
 		Button btnClose = new Button(shlSinEditor, SWT.NONE);
-		fd_textPartition.right = new FormAttachment(btnClose, -12, SWT.RIGHT);
 		btnClose.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -160,10 +91,59 @@ public class SinAdvanced extends Dialog {
 			}
 		});
 		FormData fd_btnCreateSinAs = new FormData();
-		fd_btnCreateSinAs.top = new FormAttachment(btnClose, 0, SWT.TOP);
+		fd_btnCreateSinAs.bottom = new FormAttachment(100, -10);
 		fd_btnCreateSinAs.right = new FormAttachment(btnClose, -6);
 		btnCreateSinAs.setLayoutData(fd_btnCreateSinAs);
 		btnCreateSinAs.setText("Create Sin As");
+		btnCreateSinAs.setEnabled(_sin.getVersion()==1);
+		
+		Composite composite = new Composite(shlSinEditor, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+		FormData fd_composite = new FormData();
+		fd_composite.right = new FormAttachment(100, -10);
+		fd_composite.left = new FormAttachment(0, 10);
+		fd_composite.top = new FormAttachment(0, 10);
+		
+		
+		composite.setLayoutData(fd_composite);
+		
+		Label lblSinVersion = new Label(composite, SWT.NONE);
+		lblSinVersion.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		lblSinVersion.setText("Sin version :");
+		
+		textVersion = new Text(composite, SWT.BORDER);
+		textVersion.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		textVersion.setEditable(false);
+		textVersion.setText(Integer.toString(_sin.getVersion()));
+		
+		Label lblPartition = new Label(composite, SWT.NONE);
+		lblPartition.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		lblPartition.setText("Partition Info :");
+		
+		textPartition = new Text(composite, SWT.BORDER);
+		GridData gd_textPartition = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_textPartition.widthHint = 121;
+		textPartition.setLayoutData(gd_textPartition);
+		textPartition.setEditable(false);
+		textPartition.setText(_sin.hasPartitionInfo()?HexDump.toHex(_sin.getPartitionInfo()):"");
+		
+		Label lblSpare = new Label(composite, SWT.NONE);
+		lblSpare.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		lblSpare.setText("Partition Type :");
+		textSpare = new Text(composite, SWT.BORDER);
+		textSpare.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		textSpare.setEditable(false);
+		textSpare.setText(_sin.getPartypeString());
+		
+		Label lblContentType = new Label(composite, SWT.NONE);
+		lblContentType.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		lblContentType.setText("Content Type :");
+		
+		textContent = new Text(composite, SWT.BORDER);
+		textContent.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		textContent.setEditable(false);
+		textContent.setText(_sin.getDataType());
+		} catch (Exception e) {}
 		
 		shlSinEditor.open();
 		shlSinEditor.layout();
@@ -181,7 +161,7 @@ public class SinAdvanced extends Dialog {
 	 */
 	private void createContents() {
 		shlSinEditor = new Shell(getParent(), getStyle());
-		shlSinEditor.setSize(254, 275);
+		shlSinEditor.setSize(254, 276);
 		shlSinEditor.setText("Advanced Sin Editor");
 		shlSinEditor.setLayout(new FormLayout());
 	}

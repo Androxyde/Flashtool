@@ -70,15 +70,15 @@ public class WaitDeviceForFastboot extends Dialog {
 	 */
 	private void createContents() {
 		shlWaitForFastbootmode = new Shell(getParent(), getStyle());
-		shlWaitForFastbootmode.setSize(472, 600);
+		shlWaitForFastbootmode.setSize(500, 600);
 		shlWaitForFastbootmode.setText("Wait for Fastboot Mode");
 		shlWaitForFastbootmode.setLayout(new FormLayout());
 		
 		Composite composite2012 = new Composite(shlWaitForFastbootmode, SWT.NONE);
 		FormData fd_composite2012 = new FormData();
+		fd_composite2012.left = new FormAttachment(0, 10);
 		fd_composite2012.top = new FormAttachment(0, 77);
 		fd_composite2012.bottom = new FormAttachment(0, 202);
-		fd_composite2012.left = new FormAttachment(0, 10);
 		composite2012.setLayoutData(fd_composite2012);
 		composite2012.setLayout(new GridLayout(1, false));
 		
@@ -104,7 +104,7 @@ public class WaitDeviceForFastboot extends Dialog {
 		Composite composite2012GIF = new Composite(shlWaitForFastbootmode, SWT.NONE);
 		fd_composite2012.right = new FormAttachment(composite2012GIF, -6);
 		FormData fd_composite2012GIF = new FormData();
-		fd_composite2012GIF.left = new FormAttachment(0, 190);
+		fd_composite2012GIF.left = new FormAttachment(0, 206);
 		fd_composite2012GIF.right = new FormAttachment(100, -10);
 		fd_composite2012GIF.top = new FormAttachment(0, 10);
 		composite2012GIF.setLayoutData(fd_composite2012GIF);
@@ -126,7 +126,6 @@ public class WaitDeviceForFastboot extends Dialog {
 		FormData fd_composite2011GIF = new FormData();
 		fd_composite2011GIF.right = new FormAttachment(100, -10);
 		fd_composite2011GIF.top = new FormAttachment(composite2012GIF, 6);
-		fd_composite2011GIF.bottom = new FormAttachment(100, -44);
 		composite2011GIF.setLayoutData(fd_composite2011GIF);
 		composite2011GIF.setLayout(new FormLayout());
 		
@@ -143,6 +142,7 @@ public class WaitDeviceForFastboot extends Dialog {
 		
 		
 		Button btnCancel = new Button(shlWaitForFastbootmode, SWT.NONE);
+		fd_composite2011GIF.bottom = new FormAttachment(btnCancel, -9);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.right = new FormAttachment(100,-10);
 		fd_btnCancel.bottom = new FormAttachment(100, -10);
@@ -158,11 +158,11 @@ public class WaitDeviceForFastboot extends Dialog {
 		btnCancel.setText("Cancel");
 		
 		Composite composite2011 = new Composite(shlWaitForFastbootmode, SWT.NONE);
-		fd_composite2011GIF.left = new FormAttachment(composite2011, 6);
+		fd_composite2011GIF.left = new FormAttachment(0, 206);
 		FormData fd_composite2011 = new FormData();
-		fd_composite2011.right = new FormAttachment(composite2012, 0, SWT.RIGHT);
 		fd_composite2011.bottom = new FormAttachment(100, -141);
 		fd_composite2011.top = new FormAttachment(composite2012, 123);
+		fd_composite2011.right = new FormAttachment(composite2011GIF, -6);
 		fd_composite2011.left = new FormAttachment(0, 10);
 		composite2011.setLayoutData(fd_composite2011);
 		composite2011.setLayout(new GridLayout(1, false));

@@ -66,13 +66,14 @@ public class ProfileSave extends Dialog {
 	 */
 	private void createContents() {
 		shlProfileSave = new Shell(getParent(), getStyle());
-		shlProfileSave.setSize(421, 130);
+		shlProfileSave.setSize(421, 114);
 		shlProfileSave.setText("Profile Name");
 		shlProfileSave.setLayout(new FormLayout());
 		
 		Button btnCancel = new Button(shlProfileSave, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.right = new FormAttachment(100, -10);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -86,8 +87,8 @@ public class ProfileSave extends Dialog {
 		btnsave = new Button(shlProfileSave, SWT.NONE);
 		btnsave.setEnabled(false);
 		FormData fd_btnsave = new FormData();
-		fd_btnsave.top = new FormAttachment(btnCancel, 0, SWT.TOP);
-		fd_btnsave.right = new FormAttachment(btnCancel, -9);
+		fd_btnsave.bottom = new FormAttachment(100,-10);
+		fd_btnsave.right = new FormAttachment(btnCancel, -6);
 		btnsave.setLayoutData(fd_btnsave);
 		btnsave.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -108,13 +109,11 @@ public class ProfileSave extends Dialog {
 		btnsave.setText("Save");
 		
 		Composite composite = new Composite(shlProfileSave, SWT.NONE);
-		fd_btnCancel.top = new FormAttachment(0, 68);
 		composite.setLayout(new GridLayout(2, false));
 		FormData fd_composite = new FormData();
-		fd_composite.bottom = new FormAttachment(btnCancel, -6);
 		fd_composite.left = new FormAttachment(0, 10);
 		fd_composite.top = new FormAttachment(0, 10);
-		fd_composite.right = new FormAttachment(100, -11);
+		fd_composite.right = new FormAttachment(100, -10);
 		composite.setLayoutData(fd_composite);
 		
 		Label lblName = new Label(composite, SWT.NONE);
@@ -133,7 +132,7 @@ public class ProfileSave extends Dialog {
 					btnsave.setEnabled(false);
 			}
 		});
-		GridData gd_txtProfileName = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		GridData gd_txtProfileName = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_txtProfileName.widthHint = 270;
 		txtProfileName.setLayoutData(gd_txtProfileName);
 	}

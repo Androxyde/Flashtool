@@ -9,6 +9,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.layout.GridData;
 
 public class RootPackageSelector extends Dialog {
 
@@ -54,19 +61,15 @@ public class RootPackageSelector extends Dialog {
 		    	  event.doit = true;
 		      }
 		    });
-		shell.setSize(229, 128);
+		shell.setSize(228, 121);
 		shell.setText(getText());
-		
-		btnSuperuser = new Button(shell, SWT.RADIO);
-		btnSuperuser.setBounds(42, 10, 171, 16);
-		btnSuperuser.setText("Superuser");
-		btnSuperuser.setSelection(true);
-		
-		Button btnSuperSU = new Button(shell, SWT.RADIO);
-		btnSuperSU.setBounds(42, 32, 171, 16);
-		btnSuperSU.setText("SuperSU");
+		shell.setLayout(new FormLayout());
 		
 		Button btnCancel = new Button(shell, SWT.NONE);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.right = new FormAttachment(100, -10);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
+		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -74,10 +77,13 @@ public class RootPackageSelector extends Dialog {
 				shell.dispose();
 			}
 		});
-		btnCancel.setBounds(138, 64, 75, 25);
 		btnCancel.setText("Cancel");
 		
 		Button btnOK = new Button(shell, SWT.NONE);
+		FormData fd_btnOK = new FormData();
+		fd_btnOK.right = new FormAttachment(btnCancel, -10);
+		fd_btnOK.bottom = new FormAttachment(100, -10);
+		btnOK.setLayoutData(fd_btnOK);
 		btnOK.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -86,8 +92,23 @@ public class RootPackageSelector extends Dialog {
 				shell.dispose();
 			}
 		});
-		btnOK.setBounds(57, 64, 75, 25);
 		btnOK.setText("Ok");
+		
+		Composite composite = new Composite(shell, SWT.NONE);
+		FormData fd_composite = new FormData();
+		fd_composite.left = new FormAttachment(0, 10);
+		fd_composite.top = new FormAttachment(0, 10);
+		composite.setLayoutData(fd_composite);
+		composite.setLayout(new GridLayout(1, false));
+		
+		btnSuperuser = new Button(composite, SWT.RADIO);
+		btnSuperuser.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		btnSuperuser.setText("Superuser");
+		btnSuperuser.setSelection(true);
+		
+		Button btnSuperSU = new Button(composite, SWT.RADIO);
+		btnSuperSU.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		btnSuperSU.setText("SuperSU");
 
 	}
 }
