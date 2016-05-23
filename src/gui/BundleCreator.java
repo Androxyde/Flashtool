@@ -157,7 +157,7 @@ public class BundleCreator extends Dialog {
 	 */
 	private void createContents() {
 		shlBundler = new Shell(getParent(), getStyle());
-		shlBundler.setSize(626, 447);
+		shlBundler.setSize(664, 466);
 		shlBundler.setText("Bundler");
 		shlBundler.setLayout(new FormLayout());
 		

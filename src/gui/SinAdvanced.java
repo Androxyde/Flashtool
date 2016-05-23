@@ -161,7 +161,7 @@ public class SinAdvanced extends Dialog {
 	 */
 	private void createContents() {
 		shlSinEditor = new Shell(getParent(), getStyle());
-		shlSinEditor.setSize(254, 276);
+		shlSinEditor.setSize(299, 297);
 		shlSinEditor.setText("Advanced Sin Editor");
 		shlSinEditor.setLayout(new FormLayout());
 	}

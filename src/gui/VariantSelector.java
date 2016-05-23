@@ -65,7 +65,7 @@ public class VariantSelector extends Dialog {
 	 */
 	private void createContents() {
 		shlVariantSelector = new Shell(getParent(), getStyle());
-		shlVariantSelector.setSize(181, 350);
+		shlVariantSelector.setSize(209, 350);
 		shlVariantSelector.setText("Variant Selector");
 		shlVariantSelector.setLayout(new FormLayout());
 		
