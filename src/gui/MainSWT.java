@@ -627,6 +627,73 @@ public class MainSWT {
 		});
 		mntmTARestore.setText("Restore");
 		
+		MenuItem mntmFlashSingleTA = new MenuItem(menu_13, SWT.NONE);
+		mntmFlashSingleTA.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Vector<TABag> result=null;
+				FileDialog dlg = new FileDialog(shlSonyericsson);
+				dlg.setFilterExtensions(new String[]{"*.ta"});
+				dlg.setText("TA File Chooser");
+				String dir = dlg.open();
+				File taf = new File(dir);
+				HashMap<String,Vector<TABag>> backupset = new HashMap<String, Vector<TABag>>();
+				if (taf.exists()) {
+					Vector<TABag> bags = new Vector<TABag>();
+					try {
+						TABag bag = new TABag(taf);
+						if (bag.partition>0)
+							bags.add(bag);
+					} catch (Exception ex) {}
+					if (bags.size()>0)
+						backupset.put(taf.getName(), bags);
+				}
+				if (backupset.size()>0) {
+					TARestore restore = new TARestore(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+					result = (Vector<TABag>)restore.open(backupset);
+				}
+				else {
+					logger.info("No TA file selected");
+				}
+			if (result==null) {
+				logger.info("Canceled TA restore task");
+			}
+			else {
+				boolean toflash = false;
+				for (int i = 0 ; i < result.size() ; i++) {
+					if (result.get(i).toflash.size()>0) toflash=true;
+				}
+				if (!toflash) {
+					logger.info("Nothing to do with TA restore task");
+				}
+				else {
+					Bundle bundle = new Bundle();
+					bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+					final X10flash flash = new X10flash(bundle,shlSonyericsson);
+					try {
+						logger.info("Please connect your device into flashmode.");
+						String connect = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
+						if (connect.equals("OK")) {
+							RestoreTAJob rjob = new RestoreTAJob("Flash");
+							rjob.setFlash(flash);
+							rjob.setTA(result);
+							rjob.schedule();
+						}
+						else
+							logger.info("Flash canceled");
+					}
+					catch (Exception ex){
+						logger.error(ex.getMessage());
+						logger.info("Flash canceled");
+						if (flash.getBundle()!=null)
+							flash.getBundle().close();
+					}
+				}
+			}
+		}
+		});
+		mntmFlashSingleTA.setText("Flash TA file");
+		
 		MenuItem mntmRaw = new MenuItem(menu_9, SWT.CASCADE);
 		mntmRaw.setText("Raw device");
 		
@@ -1493,7 +1560,7 @@ public class MainSWT {
 	}
 
 	public void doBackupTA() {
-		WidgetTask.openOKBox(shlSonyericsson, "WARNING : This action will not create a backup of your TA.");
+		WidgetTask.openOKBox(shlSonyericsson, "WARNING : This task will not create a FULL backup of your TA.");
 		Bundle bundle = new Bundle();
 		bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
 		bundle.setMaxBuffer(512*1024);

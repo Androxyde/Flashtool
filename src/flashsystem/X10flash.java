@@ -594,7 +594,7 @@ public class X10flash {
     				dynmsg=dynmsg+eignored.nextElement();
     				if (eignored.hasMoreElements()) dynmsg = dynmsg + ",";
     			}
-    			String result = WidgetTask.openYESNOBox(_curshell, "Those data will not be flashed : "+dynmsg+". Do you want to continue ?");
+    			String result = WidgetTask.openYESNOBox(_curshell, "Those data are not in the FSC script and will be skipped : \n"+dynmsg+".\n Do you want to continue ?");
     			if (Integer.parseInt(result) == SWT.YES) {
     				return true;
     			}

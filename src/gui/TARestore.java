@@ -1,6 +1,8 @@
 package gui;
 
 import gui.models.TABag;
+import gui.tools.WidgetTask;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,6 +33,8 @@ import org.eclipse.swt.graphics.Image;
 import org.ta.parsers.TAFileParser;
 import org.ta.parsers.TAUnit;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 
 public class TARestore extends Dialog {
 
@@ -186,8 +190,35 @@ public class TARestore extends Dialog {
 		    }
 
 		  });
+
+		listViewerTAUnits.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent arg0) {
+				String unit = listViewerTAUnits.getList().getSelection()[0];
+				Iterator<TAUnit> iunit = available.iterator();
+				while (iunit.hasNext()) {
+					TAUnit u = iunit.next();
+					if (u.getUnitHex().equals(unit))
+						WidgetTask.openTAUnitViewer(shlTARestore,u.getUnitData());
+				}
+				
+				
+			}
+		});
 		
 		listViewerTAUnitsToFlash = new ListViewer(shlTARestore, SWT.BORDER | SWT.V_SCROLL);
+		listViewerTAUnitsToFlash.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent arg0) {
+				String unit = listViewerTAUnitsToFlash.getList().getSelection()[0];
+				Iterator<TAUnit> iunit = toflash.iterator();
+				while (iunit.hasNext()) {
+					TAUnit u = iunit.next();
+					if (u.getUnitHex().equals(unit))
+						WidgetTask.openTAUnitViewer(shlTARestore,u.getUnitData());
+				}
+				
+				
+			}
+		});
 		List listTAUnitsToFlash = listViewerTAUnitsToFlash.getList();
 		FormData fd_listTAUnitsToFlash = new FormData();
 		fd_listTAUnitsToFlash.top = new FormAttachment(lblTAFlash, 6);

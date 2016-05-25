@@ -52,7 +52,7 @@ public class USBLogviewer extends Dialog {
 	private Text textSinFolder;
 	private Button btnClose;
 	private Composite compositeTable;
-	private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
+	//private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
 	private Label lblLogfile;
 	private Text textLogFile;
 	private Button btnParse;
@@ -81,10 +81,10 @@ public class USBLogviewer extends Dialog {
 		
 		lblSavedPath = new Label(shlUSBLogviewer, SWT.NONE);
 		FormData fd_lblSavedPath = new FormData();
+		fd_lblSavedPath.right = new FormAttachment(btnParse, -6);
 		fd_lblSavedPath.bottom = new FormAttachment(100, -15);
 		fd_lblSavedPath.left = new FormAttachment(0, 10);
 		lblSavedPath.setLayoutData(fd_lblSavedPath);
-		formToolkit.adapt(lblSavedPath, true, true);
 		
 		
 		shlUSBLogviewer.open();
@@ -138,43 +138,42 @@ public class USBLogviewer extends Dialog {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		TableSorter sort = new TableSorter(tableViewer);
-		Composite composite = new Composite(shlUSBLogviewer, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
-		FormData fd_composite = new FormData();
-		fd_composite.top = new FormAttachment(0, 10);
-		fd_composite.left = new FormAttachment(0, 10);
-		fd_composite.right = new FormAttachment(100, -10);
-		composite.setLayoutData(fd_composite);
+		Composite compositeSource = new Composite(shlUSBLogviewer, SWT.NONE);
+		compositeSource.setLayout(new GridLayout(3, false));
+		FormData fd_compositeSource = new FormData();
+		fd_compositeSource.top = new FormAttachment(0, 10);
+		fd_compositeSource.left = new FormAttachment(0, 10);
+		fd_compositeSource.right = new FormAttachment(100, -10);
+		compositeSource.setLayoutData(fd_compositeSource);
 		
-		fd_compositeTable.top = new FormAttachment(composite, 6);
+		fd_compositeTable.top = new FormAttachment(compositeSource, 6);
 		
-		lblLogfile = formToolkit.createLabel(composite, "USB Log file :", SWT.NONE);
+		lblLogfile = new Label(compositeSource, SWT.BORDER);
+		lblLogfile.setText("USB Log file :");
 		
-		textLogFile = new Text(composite, SWT.BORDER);
+		textLogFile = new Text(compositeSource, SWT.BORDER);
 		textLogFile.setEditable(false);
 		GridData gd_textLogFile = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_textLogFile.widthHint = 471;
 		textLogFile.setLayoutData(gd_textLogFile);
-		formToolkit.adapt(textLogFile, true, true);
 		
-		btnLogFile = new Button(composite, SWT.NONE);
+		btnLogFile = new Button(compositeSource, SWT.NONE);
 		btnLogFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		formToolkit.adapt(btnLogFile, true, true);
 		btnLogFile.setText("...");
 		
-		Label lblSinfolder = new Label(composite, SWT.NONE);
+		Label lblSinfolder = new Label(compositeSource, SWT.NONE);
 		GridData gd_lblSinfolder = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		gd_lblSinfolder.widthHint = 110;
 		lblSinfolder.setLayoutData(gd_lblSinfolder);
 		lblSinfolder.setText("Source folder :");
 		
-		textSinFolder = new Text(composite, SWT.BORDER);
+		textSinFolder = new Text(compositeSource, SWT.BORDER);
 		textSinFolder.setEditable(false);
 		GridData gd_textSinFolder = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
 		gd_textSinFolder.widthHint = 509;
 		textSinFolder.setLayoutData(gd_textSinFolder);
 		
-		btnSourceFolder = new Button(composite, SWT.NONE);
+		btnSourceFolder = new Button(compositeSource, SWT.NONE);
 		GridData gd_btnSourceFolder = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_btnSourceFolder.widthHint = 46;
 		btnSourceFolder.setLayoutData(gd_btnSourceFolder);
@@ -184,7 +183,6 @@ public class USBLogviewer extends Dialog {
 		fd_btnParse.bottom = new FormAttachment(100,-10);
 		fd_btnParse.right = new FormAttachment(btnClose, -6);
 		btnParse.setLayoutData(fd_btnParse);
-		formToolkit.adapt(btnParse, true, true);
 		btnParse.setText("Parse");
 
 	}
