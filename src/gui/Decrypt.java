@@ -196,12 +196,12 @@ public class Decrypt extends Dialog {
 		
 		Label lblSourceFolder = new Label(composite, SWT.NONE);
 		GridData gd_lblSourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblSourceFolder.widthHint = 92;
+		gd_lblSourceFolder.widthHint = 106;
 		lblSourceFolder.setLayoutData(gd_lblSourceFolder);
 		lblSourceFolder.setText("Source Folder : ");
 		txtSourceFolder = new Text(composite, SWT.BORDER);
 		GridData gd_txtSourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_txtSourceFolder.widthHint = 359;
+		gd_txtSourceFolder.widthHint = 338;
 		txtSourceFolder.setLayoutData(gd_txtSourceFolder);
 		
 		Button btnSourceFolder = new Button(composite, SWT.NONE);

@@ -61,7 +61,7 @@ public class BusyboxSelector extends Dialog {
 	 */
 	private void createContents() {
 		shlBusyboxSelector = new Shell(getParent(), getStyle());
-		shlBusyboxSelector.setSize(225, 434);
+		shlBusyboxSelector.setSize(265, 434);
 		shlBusyboxSelector.setText("Busybox Selector");
 		shlBusyboxSelector.setLayout(new FormLayout());
 		

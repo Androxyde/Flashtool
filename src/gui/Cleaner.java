@@ -154,11 +154,11 @@ public class Cleaner extends Dialog {
 
 		Label lblInstalled = new Label(shlDecruptWizard, SWT.NONE);
 		FormData fd_lblInstalled = new FormData();
-		fd_lblInstalled.right = new FormAttachment(0, 115);
+		fd_lblInstalled.right = new FormAttachment(0, 173);
 		fd_lblInstalled.top = new FormAttachment(0, 51);
 		fd_lblInstalled.left = new FormAttachment(0, 10);
 		lblInstalled.setLayoutData(fd_lblInstalled);
-		lblInstalled.setText("Installed on device");
+		lblInstalled.setText("Installed on device :");
 		
 		listViewerToRemove = new ListViewer(shlDecruptWizard, SWT.BORDER | SWT.V_SCROLL);
 		listViewerToRemove.setSorter(new ViewerSorter());
@@ -198,10 +198,11 @@ public class Cleaner extends Dialog {
 		
 		Label lbltoremove = new Label(shlDecruptWizard, SWT.NONE);
 		FormData fd_lbltoremove = new FormData();
+		fd_lbltoremove.right = new FormAttachment(0, 415);
 		fd_lbltoremove.top = new FormAttachment(0, 51);
 		fd_lbltoremove.left = new FormAttachment(0, 282);
 		lbltoremove.setLayoutData(fd_lbltoremove);
-		lbltoremove.setText("To be removed");
+		lbltoremove.setText("To be removed :");
 		
 		btnCancel = new Button(shlDecruptWizard, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
@@ -235,9 +236,9 @@ public class Cleaner extends Dialog {
 		compositeProfile.setLayout(new GridLayout(2, false));
 		FormData fd_compositeProfile = new FormData();
 		fd_compositeProfile.bottom = new FormAttachment(lblInstalled, -6);
+		fd_compositeProfile.top = new FormAttachment(0, 10);
 		fd_compositeProfile.left = new FormAttachment(listInstalled, 0, SWT.LEFT);
 		fd_compositeProfile.right = new FormAttachment(listToRemove, 0, SWT.RIGHT);
-		fd_compositeProfile.top = new FormAttachment(0, 10);
 		compositeProfile.setLayoutData(fd_compositeProfile);
 		
 		Label lblProfile = new Label(compositeProfile, SWT.NONE);

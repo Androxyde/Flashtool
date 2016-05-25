@@ -152,28 +152,30 @@ public class USBLogviewer extends Dialog {
 		
 		textLogFile = new Text(composite, SWT.BORDER);
 		textLogFile.setEditable(false);
-		textLogFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_textLogFile = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_textLogFile.widthHint = 471;
+		textLogFile.setLayoutData(gd_textLogFile);
 		formToolkit.adapt(textLogFile, true, true);
 		
 		btnLogFile = new Button(composite, SWT.NONE);
-		btnLogFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnLogFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		formToolkit.adapt(btnLogFile, true, true);
 		btnLogFile.setText("...");
 		
 		Label lblSinfolder = new Label(composite, SWT.NONE);
 		GridData gd_lblSinfolder = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_lblSinfolder.widthHint = 93;
+		gd_lblSinfolder.widthHint = 110;
 		lblSinfolder.setLayoutData(gd_lblSinfolder);
 		lblSinfolder.setText("Source folder :");
 		
 		textSinFolder = new Text(composite, SWT.BORDER);
 		textSinFolder.setEditable(false);
 		GridData gd_textSinFolder = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
-		gd_textSinFolder.widthHint = 513;
+		gd_textSinFolder.widthHint = 509;
 		textSinFolder.setLayoutData(gd_textSinFolder);
 		
 		btnSourceFolder = new Button(composite, SWT.NONE);
-		GridData gd_btnSourceFolder = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		GridData gd_btnSourceFolder = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_btnSourceFolder.widthHint = 46;
 		btnSourceFolder.setLayoutData(gd_btnSourceFolder);
 		btnSourceFolder.setText("...");

@@ -406,14 +406,14 @@ public class BundleCreator extends Dialog {
 		
 		lblSelectSourceFolder = new Label(compositeFolderSearch, SWT.NONE);
 		GridData gd_lblSelectSourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblSelectSourceFolder.widthHint = 121;
+		gd_lblSelectSourceFolder.widthHint = 151;
 		lblSelectSourceFolder.setLayoutData(gd_lblSelectSourceFolder);
 		lblSelectSourceFolder.setText("Select source folder :");
 		
 		sourceFolder = new Text(compositeFolderSearch, SWT.BORDER);
 		sourceFolder.setEditable(false);
 		GridData gd_sourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_sourceFolder.widthHint = 428;
+		gd_sourceFolder.widthHint = 415;
 		sourceFolder.setLayoutData(gd_sourceFolder);
 		
 		btnSelectFolder = new Button(compositeFolderSearch, SWT.NONE);

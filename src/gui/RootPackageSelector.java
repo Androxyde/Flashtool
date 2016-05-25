@@ -61,7 +61,7 @@ public class RootPackageSelector extends Dialog {
 		    	  event.doit = true;
 		      }
 		    });
-		shell.setSize(243, 137);
+		shell.setSize(310, 144);
 		shell.setText(getText());
 		shell.setLayout(new FormLayout());
 		

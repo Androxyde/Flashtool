@@ -152,7 +152,7 @@ public class ElfEditor extends Dialog {
 		
 		Label lblNewLabel = new Label(composite_1, SWT.NONE);
 		GridData gd_lblNewLabel = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_lblNewLabel.widthHint = 112;
+		gd_lblNewLabel.widthHint = 129;
 		lblNewLabel.setLayoutData(gd_lblNewLabel);
 		lblNewLabel.setText("Number of parts : ");
 		
