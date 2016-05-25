@@ -109,7 +109,16 @@ public class RawTAJob extends Job {
     	try {
 			if (!Devices.getCurrent().isBusyboxInstalled(false))
 				Devices.getCurrent().doBusyboxHelper();
-			String backupset = WidgetTask.openTABackupSelector(_shell);
+			
+			File srcdir = new File(folder);
+			String backupset="";
+			if (srcdir.exists()) {
+				File[] chld = srcdir.listFiles();
+				if (chld.length>0)
+					backupset = WidgetTask.openTABackupSelector(_shell);
+				else logger.info("No backup");
+			}
+			else logger.info("No backup");
 			if (backupset.length()==0) {
 				throw new Exception("Operation canceled");
 			} 

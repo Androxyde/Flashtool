@@ -353,7 +353,6 @@ public class BundleCreator extends Dialog {
 			}
 		});
 		fd_btnToRight = new FormData();
-		fd_btnToRight.left = new FormAttachment(0, 353);
 		fd_btnToRight.right = new FormAttachment(100, -224);
 		btnToRight.setLayoutData(fd_btnToRight);
 		btnToRight.setText("->");
@@ -394,8 +393,7 @@ public class BundleCreator extends Dialog {
 		});
 		FormData fd_btnNewToLeft = new FormData();
 		fd_btnNewToLeft.top = new FormAttachment(btnToRight, 23);
-		fd_btnNewToLeft.right = new FormAttachment(btnToRight, 0, SWT.RIGHT);
-		fd_btnNewToLeft.left = new FormAttachment(0, 353);
+		fd_btnNewToLeft.right = new FormAttachment(100, -224);
 		btnNewToLeft.setLayoutData(fd_btnNewToLeft);
 		btnNewToLeft.setText("<-");
 		Composite compositeFolderSearch = new Composite(shlBundler, SWT.NONE);
@@ -494,8 +492,10 @@ public class BundleCreator extends Dialog {
 				if (result.length()>0) {
 					DeviceEntry ent = new DeviceEntry(result);
 					String variant = WidgetTask.openVariantSelector(ent.getId(),shlBundler);
-					device.setText(ent.getName() + " ("+variant+")");
-					_variant=variant;
+					if (!variant.equals(ent.getId())) {
+						device.setText(ent.getName() + " ("+variant+")");
+						_variant=variant;
+					}
 				}
 			}
 		});

@@ -73,7 +73,7 @@ public class ElfEditor extends Dialog {
 	 */
 	private void createContents() {
 		shlElfExtractor = new Shell(getParent(), getStyle());
-		shlElfExtractor.setSize(538, 160);
+		shlElfExtractor.setSize(538, 172);
 		shlElfExtractor.setText("Elf Extractor");
 		shlElfExtractor.setLayout(new FormLayout());
 		

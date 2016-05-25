@@ -54,24 +54,6 @@ public class HomeSelector extends Dialog {
 		cancelable = pcancelable;
 		createContents();
 		
-		Button btnCancel = new Button(shlHomeSelector, SWT.NONE);
-		btnCancel.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (cancelable) {
-					result = "";
-					shlHomeSelector.dispose();
-				}
-		    	else {
-		    		WidgetTask.openOKBox(shlHomeSelector, "You must choose a user home folder");
-		    	}
-			}
-		});
-		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.bottom = new FormAttachment(btnAccept, 0, SWT.BOTTOM);
-		fd_btnCancel.right = new FormAttachment(btnAccept, -6);
-		btnCancel.setLayoutData(fd_btnCancel);
-		btnCancel.setText("Cancel");
 		shlHomeSelector.open();
 		shlHomeSelector.layout();
 		Display display = getParent().getDisplay();
@@ -157,7 +139,26 @@ public class HomeSelector extends Dialog {
 		btnFolderChoose.setLayoutData(gd_btnFolderChoose);
 		btnFolderChoose.setText("...");
 		btnFolderChoose.setFont(SWTResourceManager.getFont("Arial", 11, SWT.NORMAL));
-		
+
+		Button btnCancel = new Button(shlHomeSelector, SWT.NONE);
+		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (cancelable) {
+					result = "";
+					shlHomeSelector.dispose();
+				}
+		    	else {
+		    		WidgetTask.openOKBox(shlHomeSelector, "You must choose a user home folder");
+		    	}
+			}
+		});
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.right = new FormAttachment(100,-10);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
+		btnCancel.setLayoutData(fd_btnCancel);
+		btnCancel.setText("Cancel");
+
 		btnAccept = new Button(shlHomeSelector, SWT.NONE);
 		btnAccept.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -171,7 +172,7 @@ public class HomeSelector extends Dialog {
 		});
 		FormData fd_btnAccept = new FormData();
 		fd_btnAccept.bottom = new FormAttachment(100, -10);
-		fd_btnAccept.right = new FormAttachment(100, -10);
+		fd_btnAccept.right = new FormAttachment(btnCancel, -6);
 		btnAccept.setLayoutData(fd_btnAccept);
 		btnAccept.setText("Accept");
 

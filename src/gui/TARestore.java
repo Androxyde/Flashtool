@@ -84,7 +84,7 @@ public class TARestore extends Dialog {
 	 */
 	private void createContents() {
 		shlTARestore = new Shell(getParent(), getStyle());
-		shlTARestore.setSize(273, 427);
+		shlTARestore.setSize(317, 427);
 		shlTARestore.setText("TA Restore");
 		shlTARestore.addListener(SWT.Close, new Listener() {
 		      public void handleEvent(Event event) {
@@ -95,8 +95,8 @@ public class TARestore extends Dialog {
 		shlTARestore.setLayout(new FormLayout());
 		Label lblBackupset = new Label(shlTARestore, SWT.NONE);
 		FormData fd_lblBackupset = new FormData();
-		fd_lblBackupset.top = new FormAttachment(0, 9);
-		fd_lblBackupset.left = new FormAttachment(0, 5);
+		
+		fd_lblBackupset.left = new FormAttachment(0, 10);
 		lblBackupset.setLayoutData(fd_lblBackupset);
 		lblBackupset.setText("Backupset :");
 		
@@ -104,7 +104,8 @@ public class TARestore extends Dialog {
 		FormData fd_comboBackupset = new FormData();
 		fd_comboBackupset.left = new FormAttachment(lblBackupset, 35);
 		fd_comboBackupset.right = new FormAttachment(100, -10);
-		fd_comboBackupset.top = new FormAttachment(0, 5);
+		fd_comboBackupset.top = new FormAttachment(0, 10);
+		fd_lblBackupset.top = new FormAttachment(comboBackupset, 4, SWT.TOP);
 		comboBackupset.setLayoutData(fd_comboBackupset);
 		comboBackupset.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -117,15 +118,16 @@ public class TARestore extends Dialog {
 		
 		Label lblPartition = new Label(shlTARestore, SWT.NONE);
 		FormData fd_lblPartition = new FormData();
-		fd_lblPartition.top = new FormAttachment(0, 37);
-		fd_lblPartition.left = new FormAttachment(0, 5);
+		
+		fd_lblPartition.left = new FormAttachment(0, 10);
 		lblPartition.setLayoutData(fd_lblPartition);
 		lblPartition.setText("Partition : ");
 		
 		comboPartition = new Combo(shlTARestore, SWT.READ_ONLY);
 		FormData fd_comboPartition = new FormData();
-		fd_comboPartition.top = new FormAttachment(0, 33);
-		fd_comboPartition.left = new FormAttachment(0, 100);
+		fd_comboPartition.top = new FormAttachment(comboBackupset, 6);
+		fd_comboPartition.left = new FormAttachment(comboBackupset, 0, SWT.LEFT);
+		fd_lblPartition.top = new FormAttachment(comboPartition, 4, SWT.TOP);
 		comboPartition.setLayoutData(fd_comboPartition);
 		comboPartition.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -135,25 +137,24 @@ public class TARestore extends Dialog {
 		});
 		lblTAlist = new Label(shlTARestore, SWT.NONE);
 		FormData fd_lblTAlist = new FormData();
-		fd_lblTAlist.left = new FormAttachment(lblBackupset, 0, SWT.LEFT);
 		lblTAlist.setLayoutData(fd_lblTAlist);
 		lblTAlist.setText("TA Unit list :");
 		lblTAFlash = new Label(shlTARestore, SWT.NONE);
 		FormData fd_lblTAFlash = new FormData();
-		fd_lblTAFlash.left = new FormAttachment(lblTAlist, 74);
-		fd_lblTAFlash.right = new FormAttachment(100, -40);
+		;
 		fd_lblTAFlash.top = new FormAttachment(lblTAlist, 0, SWT.TOP);
 		lblTAFlash.setLayoutData(fd_lblTAFlash);
 		lblTAFlash.setText("TA Unit to flash :");
 		
 		listViewerTAUnits = new ListViewer(shlTARestore, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		listTAUnits = listViewerTAUnits.getList();
-		fd_lblTAlist.bottom = new FormAttachment(listTAUnits, -6);
+		fd_lblTAlist.top = new FormAttachment(comboPartition, 6);
+		fd_lblTAlist.left = new FormAttachment(0, 10);
+		
 		FormData fd_listTAUnits = new FormData();
-		fd_listTAUnits.bottom = new FormAttachment(100, -41);
-		fd_listTAUnits.top = new FormAttachment(comboPartition, 38);
-		fd_listTAUnits.left = new FormAttachment(lblBackupset, 0, SWT.LEFT);
-		fd_listTAUnits.right = new FormAttachment(0, 105);
+		fd_listTAUnits.top = new FormAttachment(lblTAlist, 6);
+		fd_listTAUnits.right = new FormAttachment(100, -175);
+		fd_listTAUnits.left = new FormAttachment(0,10);
 		listTAUnits.setLayoutData(fd_listTAUnits);
 		listViewerTAUnits.setContentProvider(new IStructuredContentProvider() {
 		    public Object[] getElements(Object inputElement) {
@@ -189,11 +190,11 @@ public class TARestore extends Dialog {
 		listViewerTAUnitsToFlash = new ListViewer(shlTARestore, SWT.BORDER | SWT.V_SCROLL);
 		List listTAUnitsToFlash = listViewerTAUnitsToFlash.getList();
 		FormData fd_listTAUnitsToFlash = new FormData();
-		fd_listTAUnitsToFlash.right = new FormAttachment(comboBackupset, 0, SWT.RIGHT);
-		fd_listTAUnitsToFlash.left = new FormAttachment(lblTAFlash, 10, SWT.LEFT);
-		fd_listTAUnitsToFlash.bottom = new FormAttachment(listTAUnits, 0, SWT.BOTTOM);
-		fd_listTAUnitsToFlash.top = new FormAttachment(listTAUnits, 0, SWT.TOP);
+		fd_listTAUnitsToFlash.top = new FormAttachment(lblTAFlash, 6);
+		fd_listTAUnitsToFlash.right = new FormAttachment(100, -10);
+		fd_listTAUnitsToFlash.left = new FormAttachment(listTAUnits, 40, SWT.RIGHT);
 		listTAUnitsToFlash.setLayoutData(fd_listTAUnitsToFlash);
+		fd_lblTAFlash.left = new FormAttachment(listTAUnitsToFlash, 0, SWT.LEFT);
 		listViewerTAUnitsToFlash.setContentProvider(new IStructuredContentProvider() {
 		    public Object[] getElements(Object inputElement) {
 		      Vector v = (Vector)inputElement;
@@ -226,8 +227,8 @@ public class TARestore extends Dialog {
 		  });
 		btnLtoR = new Button(shlTARestore, SWT.NONE);
 		FormData fd_btnLtoR = new FormData();
-		fd_btnLtoR.top = new FormAttachment(comboPartition, 81);
-		fd_btnLtoR.left = new FormAttachment(listTAUnits, 6);
+		fd_btnLtoR.top = new FormAttachment(lblTAFlash, 50);
+		fd_btnLtoR.right = new FormAttachment(listTAUnitsToFlash, -6);
 		btnLtoR.setLayoutData(fd_btnLtoR);
 		btnLtoR.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -247,8 +248,8 @@ public class TARestore extends Dialog {
 		
 		Button btnRtoL = new Button(shlTARestore, SWT.NONE);
 		FormData fd_btnRtoL = new FormData();
-		fd_btnRtoL.bottom = new FormAttachment(100, -93);
-		fd_btnRtoL.left = new FormAttachment(listTAUnits, 6);
+		fd_btnRtoL.bottom = new FormAttachment(100, -92);
+		fd_btnRtoL.right = new FormAttachment(listTAUnitsToFlash, -6);
 		btnRtoL.setLayoutData(fd_btnRtoL);
 		btnRtoL.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -267,10 +268,8 @@ public class TARestore extends Dialog {
 		btnRtoL.setText("<-");
 		
 		Button btnFlash = new Button(shlTARestore, SWT.NONE);
-		FormData fd_btnFlash = new FormData();
-		fd_btnFlash.top = new FormAttachment(listTAUnitsToFlash, 6);
-		fd_btnFlash.left = new FormAttachment(lblTAFlash, 0, SWT.LEFT);
-		btnFlash.setLayoutData(fd_btnFlash);
+		fd_listTAUnitsToFlash.bottom = new FormAttachment(btnFlash, -6);
+		
 		btnFlash.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -281,10 +280,14 @@ public class TARestore extends Dialog {
 		
 		btnCancel = new Button(shlTARestore, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.left = new FormAttachment(btnFlash, 13);
 		fd_btnCancel.right = new FormAttachment(100, -10);
-		fd_btnCancel.top = new FormAttachment(btnFlash, 0, SWT.TOP);
+		fd_btnCancel.bottom = new FormAttachment(100,-10);
+		FormData fd_btnFlash = new FormData();
+		fd_btnFlash.bottom = new FormAttachment(100,-10);
+		fd_btnFlash.right = new FormAttachment(btnCancel, -6);
+		btnFlash.setLayoutData(fd_btnFlash);
 		btnCancel.setLayoutData(fd_btnCancel);
+		fd_listTAUnits.bottom = new FormAttachment(btnCancel, -6);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

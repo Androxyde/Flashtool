@@ -73,6 +73,7 @@ public class TABackupSelector extends Dialog {
 		btnCancel = new Button(shlTABackupSelector, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.right = new FormAttachment(100, -10);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -84,9 +85,8 @@ public class TABackupSelector extends Dialog {
 		btnCancel.setText("Cancel");
 		ListViewer listTAViewer = new ListViewer(shlTABackupSelector, SWT.BORDER | SWT.V_SCROLL);
 		listTA = listTAViewer.getList();
-		fd_btnCancel.top = new FormAttachment(listTA, 6);
 		FormData fd_listTA = new FormData();
-		fd_listTA.bottom = new FormAttachment(100, -41);
+		fd_listTA.bottom = new FormAttachment(btnCancel, -6, SWT.TOP);
 		fd_listTA.top = new FormAttachment(0, 10);
 		fd_listTA.right = new FormAttachment(100, -10);
 		fd_listTA.left = new FormAttachment(0, 10);

@@ -72,7 +72,7 @@ public class SinEditor extends Dialog {
 	 */
 	private void createContents() {
 		shlSinEditor = new Shell(getParent(), getStyle());
-		shlSinEditor.setSize(528, 159);
+		shlSinEditor.setSize(528, 166);
 		shlSinEditor.setText("Sin Editor");
 		shlSinEditor.setLayout(new FormLayout());
 		

@@ -556,11 +556,12 @@ public class MainSWT {
 						File[] chld = srcFolder.listFiles();
 						HashMap<String,Vector<TABag>> backupset = new HashMap<String, Vector<TABag>>();
 						for (int i=0; i < chld.length ; i++) {
-							File srcFolderBackup = new File(Devices.getCurrent().getFolderRegisteted()+File.separator+"s1ta"+File.separator+chld[i].getName());
+							File srcFolderBackup = new File(srcFolder.getAbsolutePath()+File.separator+chld[i].getName());
 							File chldPartition[] = srcFolderBackup.listFiles();
 							Vector<TABag> bags = new Vector<TABag>();
 							for (int j=0;j<chldPartition.length;j++) {
 								try {
+									System.out.println("parsing "+chldPartition[j].getAbsolutePath());
 									TABag bag = new TABag(chldPartition[j]);
 									if (bag.partition>0)
 										bags.add(bag);
@@ -572,6 +573,7 @@ public class MainSWT {
 							}
 						}
 						if (backupset.size()>0) {
+							System.out.println("running TARestore UI");
 							TARestore restore = new TARestore(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 							result = (Vector<TABag>)restore.open(backupset);
 						}

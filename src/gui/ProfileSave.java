@@ -66,7 +66,7 @@ public class ProfileSave extends Dialog {
 	 */
 	private void createContents() {
 		shlProfileSave = new Shell(getParent(), getStyle());
-		shlProfileSave.setSize(421, 114);
+		shlProfileSave.setSize(421, 123);
 		shlProfileSave.setText("Profile Name");
 		shlProfileSave.setLayout(new FormLayout());
 		

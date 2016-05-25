@@ -60,7 +60,7 @@ public class LoaderSelect extends Dialog {
 		    	  event.doit = true;
 		      }
 		    });
-		shell.setSize(261, 124);
+		shell.setSize(281, 143);
 		shell.setText(getText());
 		shell.setLayout(new FormLayout());
 		

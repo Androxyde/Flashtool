@@ -11,7 +11,7 @@ import gui.DeviceSelector;
 import gui.LoaderSelect;
 import gui.RootPackageSelector;
 import gui.TABackupSelector;
-import gui.TABackupSet;
+//import gui.TABackupSet;
 import gui.VariantSelector;
 import gui.WaitDeviceForFastboot;
 import gui.WaitDeviceForFlashmode;
@@ -217,7 +217,7 @@ public class WidgetTask {
 	}
 
 
-	public static String openTABackupSet(final Shell parent) {
+/*	public static String openTABackupSets(final Shell parent) {
 		final Result res = new Result();
 		Display.getDefault().syncExec(
 				new Runnable() {
@@ -230,7 +230,7 @@ public class WidgetTask {
 				}
 		);
 		return (String)res.getResult();
-	}
+	}*/
 
 	public static String openTABackupSelector(final Shell parent) {
 		final Result res = new Result();
