@@ -97,7 +97,7 @@ public class TAUnitViewer extends Dialog {
 	 */
 	private void createContents() {
 		shlTAUnitViewer = new Shell(getParent(), getStyle());
-		shlTAUnitViewer.setSize(260, 294);
+		shlTAUnitViewer.setSize(733, 397);
 		shlTAUnitViewer.setText("TA Unit Viewer");
 		shlTAUnitViewer.setLayout(new FormLayout());
 		
@@ -110,9 +110,9 @@ public class TAUnitViewer extends Dialog {
 		
 		ScrolledComposite scrolledComposite = new ScrolledComposite(shlTAUnitViewer, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		FormData fd_scrolledComposite = new FormData();
-		fd_scrolledComposite.right = new FormAttachment(0, 231);
-		fd_scrolledComposite.top = new FormAttachment(0,10);
 		fd_scrolledComposite.left = new FormAttachment(0, 10);
+		fd_scrolledComposite.bottom = new FormAttachment(100, -41);
+		fd_scrolledComposite.top = new FormAttachment(0, 10);
 		scrolledComposite.setLayoutData(fd_scrolledComposite);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
@@ -122,7 +122,7 @@ public class TAUnitViewer extends Dialog {
 		scrolledComposite.setContent(composite);
 		scrolledComposite.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-		hxed = new SwtHexEdit(composite,SWT.BORDER,30,8,6);
+		hxed = new SwtHexEdit(composite,SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL,30,16,6);
 		FormData fd_hxed = new FormData();
 		fd_hxed.top = new FormAttachment(0);
 		fd_hxed.left = new FormAttachment(0);
@@ -131,11 +131,12 @@ public class TAUnitViewer extends Dialog {
 		hxed.setLayoutData(fd_hxed);
 		
 		scrolledComposite_1 = new ScrolledComposite(shlTAUnitViewer, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		fd_scrolledComposite.right = new FormAttachment(100, -300);
 		FormData fd_scrolledComposite_1 = new FormData();
-		fd_scrolledComposite_1.bottom = new FormAttachment(btnClose, -8);
-		fd_scrolledComposite_1.top = new FormAttachment(scrolledComposite, 6);
-		fd_scrolledComposite_1.right = new FormAttachment(100, -11);
-		fd_scrolledComposite_1.left = new FormAttachment(0, 10);
+		fd_scrolledComposite_1.left = new FormAttachment(scrolledComposite, 6);
+		fd_scrolledComposite_1.right = new FormAttachment(100, -10);
+		fd_scrolledComposite_1.bottom = new FormAttachment(btnClose, -6);
+		fd_scrolledComposite_1.top = new FormAttachment(0, 10);
 		scrolledComposite_1.setLayoutData(fd_scrolledComposite_1);
 		scrolledComposite_1.setExpandHorizontal(true);
 		scrolledComposite_1.setExpandVertical(true);
@@ -143,7 +144,7 @@ public class TAUnitViewer extends Dialog {
 		composite_1 = new Composite(scrolledComposite_1, SWT.NONE);
 		
 		styledText = new StyledText(composite_1, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		styledText.setBounds(0, 0, 229, 99);
+		styledText.setBounds(0, 0, 280, 313);
 		scrolledComposite_1.setContent(composite_1);
 	}
 
@@ -161,7 +162,9 @@ public class TAUnitViewer extends Dialog {
 	
 	public void feedContent(byte[] content) {
 		hxed.setByteData(content);
+		hxed.setInsertMode(false);
 		hxed.redraw();
 		styledText.setText(new String(content));
+		styledText.setEditable(false);
 	}
 }
