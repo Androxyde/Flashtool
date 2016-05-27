@@ -311,7 +311,6 @@ public class TARestore extends Dialog {
 		btnCancel.setText("Cancel");
 		
 		CTabFolder tabFolder = new CTabFolder(shlTARestore, SWT.NONE);
-		fd_btnRtoL.bottom = new FormAttachment(tabFolder, -44);
 		fd_listTAUnits.bottom = new FormAttachment(tabFolder, -6);
 		fd_listTAUnitsToFlash.bottom = new FormAttachment(tabFolder, -6);
 		FormData fd_tabFolder = new FormData();
