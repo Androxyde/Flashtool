@@ -109,7 +109,7 @@ public class TARestore extends Dialog {
 	 * Create contents of the dialog.
 	 */
 	private void createContents() {
-		shlTARestore = new Shell(getParent(), SWT.DIALOG_TRIM);
+		shlTARestore = new Shell(getParent(), getStyle());
 		shlTARestore.setSize(661, 500);
 		shlTARestore.setText("TA Restore");
 		shlTARestore.addListener(SWT.Close, new Listener() {
