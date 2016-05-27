@@ -44,6 +44,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -72,9 +73,7 @@ public class TARestore extends Dialog {
 	private Vector<TAUnit> available;
 	private Vector<TAUnit> toflash;
 	private Vector<TABag> result;
-	private SwtHexEdit hxed;
-	private StyledText styledTextAscii;
-	private Label lblInfos;
+	CTabItemWithHexViewer hexviewer;
 
 	
 	/**
@@ -111,7 +110,7 @@ public class TARestore extends Dialog {
 	 */
 	private void createContents() {
 		shlTARestore = new Shell(getParent(), SWT.DIALOG_TRIM);
-		shlTARestore.setSize(728, 427);
+		shlTARestore.setSize(661, 500);
 		shlTARestore.setText("TA Restore");
 		shlTARestore.addListener(SWT.Close, new Listener() {
 		      public void handleEvent(Event event) {
@@ -120,55 +119,22 @@ public class TARestore extends Dialog {
 		      }
 		    });
 		shlTARestore.setLayout(new FormLayout());
-		Label lblBackupset = new Label(shlTARestore, SWT.NONE);
-		FormData fd_lblBackupset = new FormData();
-		
-		fd_lblBackupset.left = new FormAttachment(0, 10);
-		lblBackupset.setLayoutData(fd_lblBackupset);
-		lblBackupset.setText("Backupset :");
-		
-		comboBackupset = new Combo(shlTARestore, SWT.READ_ONLY);
-		FormData fd_comboBackupset = new FormData();
-		fd_comboBackupset.left = new FormAttachment(lblBackupset, 35);
-		fd_comboBackupset.right = new FormAttachment(100, -10);
-		fd_comboBackupset.top = new FormAttachment(0, 10);
-		fd_lblBackupset.top = new FormAttachment(comboBackupset, 4, SWT.TOP);
-		comboBackupset.setLayoutData(fd_comboBackupset);
-		comboBackupset.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				refreshPartitions();
-			}
-		});
-		
-				comboBackupset.select(0);
-		
-		Label lblPartition = new Label(shlTARestore, SWT.NONE);
-		FormData fd_lblPartition = new FormData();
-		
-		fd_lblPartition.left = new FormAttachment(0, 10);
-		lblPartition.setLayoutData(fd_lblPartition);
-		lblPartition.setText("Partition : ");
-		
-		comboPartition = new Combo(shlTARestore, SWT.READ_ONLY);
-		FormData fd_comboPartition = new FormData();
-		fd_comboPartition.top = new FormAttachment(comboBackupset, 6);
-		fd_comboPartition.left = new FormAttachment(comboBackupset, 0, SWT.LEFT);
-		fd_lblPartition.top = new FormAttachment(comboPartition, 4, SWT.TOP);
-		comboPartition.setLayoutData(fd_comboPartition);
-		comboPartition.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				refreshUnits();
-			}
-		});
+		Composite composite = new Composite(shlTARestore, SWT.NONE);
+		composite.setLayout(new GridLayout(4, false));
+		FormData fd_composite = new FormData();
+		fd_composite.top = new FormAttachment(0, 10);
+		fd_composite.left = new FormAttachment(0,115);
+		fd_composite.right = new FormAttachment(100,-115);
+		composite.setLayoutData(fd_composite);
+
 		lblTAlist = new Label(shlTARestore, SWT.NONE);
 		FormData fd_lblTAlist = new FormData();
+		
 		lblTAlist.setLayoutData(fd_lblTAlist);
 		lblTAlist.setText("TA Unit list :");
 		lblTAFlash = new Label(shlTARestore, SWT.NONE);
 		FormData fd_lblTAFlash = new FormData();
-		fd_lblTAFlash.top = new FormAttachment(lblTAlist, 0, SWT.TOP);
+		
 		;
 		lblTAFlash.setLayoutData(fd_lblTAFlash);
 		lblTAFlash.setText("TA Unit to flash :");
@@ -180,43 +146,17 @@ public class TARestore extends Dialog {
 				if (selection.size()==1) {
 					listViewerTAUnitsToFlash.setSelection(StructuredSelection.EMPTY);
 					TAUnit u = (TAUnit)selection.getFirstElement();
-					hxed.setByteData(u.getUnitData());
-					styledTextAscii.setText("");
-					lblInfos.setText("Unit length : "+u.getDataLength());
-					JBBPBitInputStream is = new JBBPBitInputStream(new ByteArrayInputStream(u.getUnitData()));
-					byte res[]=null;
-					int totalread = 48;
-					int total = u.getUnitData().length;
-					try {
-						while (is.hasAvailableData()) {
-							total = total -totalread;
-							if (total >= 0)
-								res = is.readByteArray(totalread);
-							else
-								res = is.readByteArray(totalread+total);
-							for (int readI = 0; readI < res.length; readI++) {
-								byte b = res[readI];
-								if (b<32 || b>=127) {
-									// ASCII printable:
-									res[readI] = '.';
-								}
-							}
-							styledTextAscii.setCaretOffset(styledTextAscii.getText().length());
-							styledTextAscii.insert(new String(res)+"\n");
-						}
-						is.close();
-					} catch (Exception e) {}
+					hexviewer.loadContent(u.getUnitData());
 				}
 			}
 		});
 		listTAUnits = listViewerTAUnits.getList();
-		fd_lblTAlist.top = new FormAttachment(comboPartition, 6);
-		fd_lblTAlist.left = new FormAttachment(0, 10);
+		fd_lblTAlist.left = new FormAttachment(listTAUnits, 0, SWT.LEFT);
 		
 		FormData fd_listTAUnits = new FormData();
-		fd_listTAUnits.width = 100;
 		fd_listTAUnits.top = new FormAttachment(lblTAlist, 6);
-		fd_listTAUnits.left = new FormAttachment(0, 10);
+		fd_listTAUnits.left = new FormAttachment(composite, 0, SWT.LEFT);
+		fd_listTAUnits.width = 100;
 		listTAUnits.setLayoutData(fd_listTAUnits);
 		listViewerTAUnits.setContentProvider(new IStructuredContentProvider() {
 		    public Object[] getElements(Object inputElement) {
@@ -253,8 +193,8 @@ public class TARestore extends Dialog {
 		List listTAUnitsToFlash = listViewerTAUnitsToFlash.getList();
 		fd_lblTAFlash.left = new FormAttachment(listTAUnitsToFlash, 0, SWT.LEFT);
 		FormData fd_listTAUnitsToFlash = new FormData();
-		
 		fd_listTAUnitsToFlash.top = new FormAttachment(lblTAFlash, 6);
+		fd_listTAUnitsToFlash.right = new FormAttachment(composite, 0, SWT.RIGHT);
 		fd_listTAUnitsToFlash.width = 100;
 		listTAUnitsToFlash.setLayoutData(fd_listTAUnitsToFlash);
 		listViewerTAUnitsToFlash.setContentProvider(new IStructuredContentProvider() {
@@ -294,48 +234,21 @@ public class TARestore extends Dialog {
 				if (selection.size()==1) {
 					listViewerTAUnits.setSelection(StructuredSelection.EMPTY);
 					TAUnit u = (TAUnit)selection.getFirstElement();
-					hxed.setByteData(u.getUnitData());
-					styledTextAscii.setText("");
-					lblInfos.setText("Unit length : "+u.getDataLength());
-					JBBPBitInputStream is = new JBBPBitInputStream(new ByteArrayInputStream(u.getUnitData()));
-					byte res[]=null;
-					int totalread = 48;
-					int total = u.getUnitData().length;
-					try {
-						while (is.hasAvailableData()) {
-							total = total -totalread;
-							if (total >= 0)
-								res = is.readByteArray(totalread);
-							else
-								res = is.readByteArray(totalread+total);
-							for (int readI = 0; readI < res.length; readI++) {
-								byte b = res[readI];
-								if (b<32 || b>=127) {
-									// ASCII printable:
-									res[readI] = '.';
-								}
-							}
-							styledTextAscii.setCaretOffset(styledTextAscii.getText().length());
-							styledTextAscii.insert(new String(res)+"\n");
-						}
-						is.close();
-					} catch (Exception e) {}
+					hexviewer.loadContent(u.getUnitData());
 				}
 			}
 		});
 		btnLtoR = new Button(shlTARestore, SWT.NONE);
-		fd_listTAUnitsToFlash.left = new FormAttachment(btnLtoR, 6);
 		FormData fd_btnLtoR = new FormData();
-		fd_btnLtoR.left = new FormAttachment(listTAUnits, 6);
+		fd_btnLtoR.top = new FormAttachment(composite, 57);
+		fd_btnLtoR.left = new FormAttachment(listTAUnits, 69);
 		btnLtoR.setLayoutData(fd_btnLtoR);
 		btnLtoR.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = (IStructuredSelection)listViewerTAUnits.getSelection();
 				Iterator i = selection.iterator();
-				hxed.setByteData(new byte[]{});
-				styledTextAscii.setText("");
-				lblInfos.setText("");
+				hexviewer.loadContent(new byte[]{});
 				while (i.hasNext()) {
 					TAUnit u = (TAUnit)i.next();
 					available.remove(u);
@@ -348,19 +261,16 @@ public class TARestore extends Dialog {
 		btnLtoR.setText("->");
 		
 		Button btnRtoL = new Button(shlTARestore, SWT.NONE);
-		fd_btnLtoR.bottom = new FormAttachment(btnRtoL, -19);
 		FormData fd_btnRtoL = new FormData();
-		fd_btnRtoL.top = new FormAttachment(0, 233);
-		fd_btnRtoL.left = new FormAttachment(listTAUnits, 6);
+		fd_btnRtoL.top = new FormAttachment(btnLtoR, 6);
+		fd_btnRtoL.right = new FormAttachment(btnLtoR, 0, SWT.RIGHT);
 		btnRtoL.setLayoutData(fd_btnRtoL);
 		btnRtoL.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = (IStructuredSelection)listViewerTAUnitsToFlash.getSelection();
 				Iterator i = selection.iterator();
-				hxed.setByteData(new byte[]{});
-				styledTextAscii.setText("");
-				lblInfos.setText("");
+				hexviewer.loadContent(new byte[]{});
 				while (i.hasNext()) {
 					TAUnit u = (TAUnit)i.next();
 					available.add(u);
@@ -383,7 +293,6 @@ public class TARestore extends Dialog {
 		btnFlash.setText("Flash");
 		
 		btnCancel = new Button(shlTARestore, SWT.NONE);
-		fd_listTAUnits.bottom = new FormAttachment(btnCancel, -6);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.right = new FormAttachment(100, -10);
 		fd_btnCancel.bottom = new FormAttachment(100,-10);
@@ -392,7 +301,6 @@ public class TARestore extends Dialog {
 		fd_btnFlash.right = new FormAttachment(btnCancel, -6);
 		btnFlash.setLayoutData(fd_btnFlash);
 		btnCancel.setLayoutData(fd_btnCancel);
-		fd_listTAUnitsToFlash.bottom = new FormAttachment(btnCancel, -6);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -402,55 +310,53 @@ public class TARestore extends Dialog {
 		});
 		btnCancel.setText("Cancel");
 		
-		TabFolder tabFolder = new TabFolder(shlTARestore, SWT.NONE);
+		CTabFolder tabFolder = new CTabFolder(shlTARestore, SWT.NONE);
+		fd_btnRtoL.bottom = new FormAttachment(tabFolder, -44);
+		fd_listTAUnits.bottom = new FormAttachment(tabFolder, -6);
+		fd_listTAUnitsToFlash.bottom = new FormAttachment(tabFolder, -6);
 		FormData fd_tabFolder = new FormData();
-		fd_tabFolder.bottom = new FormAttachment(btnCancel, -6);
+		fd_tabFolder.left = new FormAttachment(0, 10);
 		fd_tabFolder.right = new FormAttachment(100, -10);
-		fd_tabFolder.top = new FormAttachment(lblTAlist, 0, SWT.TOP);
-		fd_tabFolder.left = new FormAttachment(listTAUnitsToFlash, 6);
+		fd_tabFolder.bottom = new FormAttachment(btnCancel, -8);
+		fd_tabFolder.top = new FormAttachment(0, 200);
 		tabFolder.setLayoutData(fd_tabFolder);
+		hexviewer = new CTabItemWithHexViewer(tabFolder,"TA unit content",SWT.BORDER);
 		
-		TabItem tbtmHexa = new TabItem(tabFolder, SWT.NONE);
-		tbtmHexa.setText("Hexadecimal");
-		
-		ScrolledComposite scrolledCompositeHexa = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		tbtmHexa.setControl(scrolledCompositeHexa);
-		scrolledCompositeHexa.setExpandHorizontal(true);
-		scrolledCompositeHexa.setExpandVertical(true);
-		
-		Composite compositeHexa = new Composite(scrolledCompositeHexa, SWT.NONE);
-		scrolledCompositeHexa.setContent(compositeHexa);
-		scrolledCompositeHexa.setMinSize(compositeHexa.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		compositeHexa.setLayout(new FormLayout());
-		hxed = new SwtHexEdit(compositeHexa,SWT.H_SCROLL | SWT.V_SCROLL,30,16,6);
-		FormData fd_hxed = new FormData();
-		fd_hxed.bottom = new FormAttachment(0, 257);
-		fd_hxed.right = new FormAttachment(0, 444);
-		fd_hxed.top = new FormAttachment(0);
-		fd_hxed.left = new FormAttachment(0, 5);
-		hxed.setLayoutData(fd_hxed);
-		hxed.setInsertMode(false);
-		hxed.setEditable(false);
-
-		TabItem tbtmAscii = new TabItem(tabFolder, SWT.NONE);
-		tbtmAscii.setText("Ascii");
-		
-		
-		styledTextAscii = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		FontData fontData = new FontData();
-		fontData.height=10;
-		fontData.setName("Courier");
-		styledTextAscii.setFont(new Font( shlTARestore.getDisplay(), fontData));
-		styledTextAscii.setEditable(false);
-
-		tbtmAscii.setControl(styledTextAscii);
-		
-		lblInfos = new Label(shlTARestore, SWT.NONE);
-		FormData fd_lblInfos = new FormData();
-		fd_lblInfos.top = new FormAttachment(comboBackupset, 10);
-		fd_lblInfos.right = new FormAttachment(100, -10);
-		fd_lblInfos.left = new FormAttachment(100, -337);
-		lblInfos.setLayoutData(fd_lblInfos);
+		Label lblBackupset = new Label(composite, SWT.NONE);
+		lblBackupset.setAlignment(SWT.RIGHT);
+		GridData gd_lblBackupset = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblBackupset.widthHint = 74;
+		lblBackupset.setLayoutData(gd_lblBackupset);
+		lblBackupset.setText("Backupset :");
+		fd_lblTAlist.top = new FormAttachment(composite,6);
+		fd_lblTAFlash.top = new FormAttachment(composite, 6);
+				comboBackupset = new Combo(composite, SWT.READ_ONLY);
+				GridData gd_comboBackupset = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+				gd_comboBackupset.widthHint = 122;
+				comboBackupset.setLayoutData(gd_comboBackupset);
+				
+				Label lblPartition = new Label(composite, SWT.NONE);
+				lblPartition.setAlignment(SWT.RIGHT);
+				lblPartition.setText("Partition :");
+				GridData gd_lblPartition = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+				gd_lblPartition.widthHint = 76;
+				lblPartition.setLayoutData(gd_lblPartition);
+				
+				comboPartition = new Combo(composite, SWT.READ_ONLY);
+				comboPartition.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						refreshUnits();
+					}
+				});
+				comboBackupset.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						refreshPartitions();
+					}
+				});
+				
+				comboBackupset.select(0);
 		
 
 		if (backupset.size()>0) {
@@ -485,9 +391,7 @@ public class TARestore extends Dialog {
 			listViewerTAUnits.refresh();
 			listViewerTAUnitsToFlash.setInput(toflash);
 			listViewerTAUnitsToFlash.refresh();
-			hxed.setByteData(new byte[]{});
-			styledTextAscii.setText("");
-			lblInfos.setText("");
+			hexviewer.loadContent(new byte[]{});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
