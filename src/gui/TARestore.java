@@ -214,7 +214,7 @@ public class TARestore extends Dialog {
 		fd_lblTAlist.left = new FormAttachment(0, 10);
 		
 		FormData fd_listTAUnits = new FormData();
-		fd_listTAUnits.width = 80;
+		fd_listTAUnits.width = 100;
 		fd_listTAUnits.top = new FormAttachment(lblTAlist, 6);
 		fd_listTAUnits.left = new FormAttachment(0, 10);
 		listTAUnits.setLayoutData(fd_listTAUnits);
@@ -253,9 +253,9 @@ public class TARestore extends Dialog {
 		List listTAUnitsToFlash = listViewerTAUnitsToFlash.getList();
 		fd_lblTAFlash.left = new FormAttachment(listTAUnitsToFlash, 0, SWT.LEFT);
 		FormData fd_listTAUnitsToFlash = new FormData();
-		fd_listTAUnitsToFlash.bottom = new FormAttachment(100, -41);
+		
 		fd_listTAUnitsToFlash.top = new FormAttachment(lblTAFlash, 6);
-		fd_listTAUnitsToFlash.width = 80;
+		fd_listTAUnitsToFlash.width = 100;
 		listTAUnitsToFlash.setLayoutData(fd_listTAUnitsToFlash);
 		listViewerTAUnitsToFlash.setContentProvider(new IStructuredContentProvider() {
 		    public Object[] getElements(Object inputElement) {
@@ -392,6 +392,7 @@ public class TARestore extends Dialog {
 		fd_btnFlash.right = new FormAttachment(btnCancel, -6);
 		btnFlash.setLayoutData(fd_btnFlash);
 		btnCancel.setLayoutData(fd_btnCancel);
+		fd_listTAUnitsToFlash.bottom = new FormAttachment(btnCancel, -6);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
