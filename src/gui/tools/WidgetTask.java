@@ -11,7 +11,6 @@ import gui.DeviceSelector;
 import gui.LoaderSelect;
 import gui.RootPackageSelector;
 import gui.TABackupSelector;
-import gui.TAUnitViewer;
 //import gui.TABackupSet;
 import gui.VariantSelector;
 import gui.WaitDeviceForFastboot;
@@ -91,18 +90,6 @@ public class WidgetTask {
 				}
 		);
 		return (String)res.getResult();
-	}
-
-	public static void openTAUnitViewer(final Shell parent, byte[] content) {
-		Display.getDefault().syncExec(
-				new Runnable() {
-					public void run() {
-			    		TAUnitViewer uv = new TAUnitViewer(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
-			    		uv.open(content);
-						
-					}
-				}
-		);
 	}
 
 	public static String openVariantSelector(final String devid, final Shell parent) {

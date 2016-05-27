@@ -526,6 +526,7 @@ public class SwtHexEdit extends Composite implements FocusListener
     
 	public void verifyHexKeyEvent(VerifyEvent ev)
 	{
+		if (hexpart.getEditable()) {
 		// find relative caret position in the hex part
 		int relpos = getCaretByteRelativePositionH(hexpart.getCaretOffset());
 		int bpos = caret2BytePositionH(hexpart.getCaretOffset());
@@ -543,6 +544,7 @@ public class SwtHexEdit extends Composite implements FocusListener
 		{
 
 			// insert or overwrite a byte
+			
 			if( insertMode )
 			{
 				// vor einem Byte: insert a byte into the array
@@ -578,6 +580,7 @@ public class SwtHexEdit extends Composite implements FocusListener
 			nibblePosition = Math.min( nibblePosition+1, byteData.length*2 );
 			callModifiedListeners();
 			hexFormatter();
+
 		}
         
 		// Special chars
@@ -738,6 +741,7 @@ public class SwtHexEdit extends Composite implements FocusListener
 			case 16777224:  // Ende
 				ev.doit = true;
 				break;
+		}
 		}
 	}
 
@@ -960,5 +964,7 @@ public class SwtHexEdit extends Composite implements FocusListener
 		notifyListeners(SWT.FocusOut, ev );
     }
     
-
+    public void setEditable(boolean editable) {
+    	hexpart.setEditable(editable);
+    }
 }
