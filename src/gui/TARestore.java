@@ -332,7 +332,7 @@ public class TARestore extends Dialog {
 		fd_lblTAFlash.top = new FormAttachment(composite, 6);
 				comboBackupset = new Combo(composite, SWT.READ_ONLY);
 				GridData gd_comboBackupset = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-				gd_comboBackupset.widthHint = 122;
+				gd_comboBackupset.widthHint = 174;
 				comboBackupset.setLayoutData(gd_comboBackupset);
 				
 				Label lblPartition = new Label(composite, SWT.NONE);
