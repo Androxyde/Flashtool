@@ -31,6 +31,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.system.DeviceEntry;
+import org.system.GlobalConfig;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Table;
 
@@ -377,6 +378,8 @@ public class FTFSelector extends Dialog {
 				}
 				btnWipe.setText(categ.getId());
 				btnWipe.setSelection(categ.isEnabled());
+				if (categ.getId().equals("SIMLOCK") && GlobalConfig.getProperty("devfeatures").equals("no"))
+					btnWipe.setEnabled(false);
 				if (categ.isTa()) {
 					compositeWipeTA.setSize(compositeWipeTA.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 					compositeWipeTA.layout();

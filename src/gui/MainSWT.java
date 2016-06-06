@@ -1386,6 +1386,9 @@ public class MainSWT {
 	
 	public void doFlashmode(final String pftfpath, final String pftfname) throws Exception {
 		try {
+			if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
+				WidgetTask.openOKBox(shlSonyericsson, "Warning, you are in Pro mode\n\nIn this mode, SIMLOCK is selectable if part of the bundle.\nThis can break your device.\nIf you are unsure, switch back to simple more before pressing flash button.");
+			}
 			FTFSelector ftfsel = new FTFSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
 			if (bundle !=null) {
