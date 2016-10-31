@@ -35,6 +35,9 @@ public class RawTAJob extends Job {
 	String _action = "";
 	Shell _shell;
 	static final Logger logger = LogManager.getLogger(RawTAJob.class);
+	String phonetemp = "/data/local/tmp";
+	String tafilename = "ta.dd";
+	String tafilenamebefore="tabefore.dd";
 	
 	public void setAction(String action) {
 		_action = action;
@@ -70,23 +73,23 @@ public class RawTAJob extends Job {
 			if (!Devices.getCurrent().isBusyboxInstalled(false))
 				Devices.getCurrent().doBusyboxHelper();
 			new File(folder).mkdirs();
-			String partition = "/dev/block/platform/msm_sdcc.1/by-name/TA";
-			if (!AdbUtility.exists(partition)) {
+			String partition = AdbUtility.run("su -c 'export PATH=$PATH:/data/local/tmp;busybox find /dev/block/platform -name TA'");
+			if (!AdbUtility.existsRoot(partition)) {
+				System.out.println("not exist");
 				partition = AdbUtility.run("export PATH=$PATH:/data/local/tmp;busybox cat /proc/partitions|busybox grep -w 2048|busybox awk '{print $4}'");
-				System.out.println(partition);
 				if (partition.length()==0)
 					throw new Exception("Your phone is not compatible");
 				partition = "/dev/block/"+partition;
 			}
 			logger.info("Begin backup of "+partition);
-			long transferred = AdbUtility.rawBackup(partition, "/mnt/sdcard/ta.dd");
+			long transferred = AdbUtility.rawBackup(partition, phonetemp+File.separator+tafilename);
 			if (transferred == 0L)
 				throw new Exception("Erreur when doing raw backup");
 			Properties hash = new Properties();
 			hash.setProperty("partition", AdbUtility.getMD5(partition));
-			AdbUtility.pull("/mnt/sdcard/ta.dd", folder);
-			AdbUtility.run("rm -f /mnt/sdcard/ta.dd");
-			hash.setProperty("local", OS.getMD5(new File(folder+File.separator+"ta.dd")).toUpperCase());
+			AdbUtility.pull(phonetemp+File.separator+tafilename, folder);
+			AdbUtility.run("rm -f "+phonetemp+File.separator+tafilename);
+			hash.setProperty("local", OS.getMD5(new File(folder+File.separator+tafilename)).toUpperCase());
 			logger.info("End of backup");
 			if (hash.getProperty("local").equals(hash.getProperty("partition"))) {
 				logger.info("Backup is OK");
@@ -94,9 +97,9 @@ public class RawTAJob extends Job {
 			}
 			else throw new Exception("Backup is not OK");
 		} catch (Exception ex) {
-			new File(folder+"ta.dd").delete();
+			new File(folder+tafilename).delete();
 			try {
-				AdbUtility.run("rm -f /mnt/sdcard/ta.dd");
+				AdbUtility.run("rm -f "+phonetemp+File.separator+tafilename);
 			} catch (Exception ex1) {}
 			logger.error(ex.getMessage()); 
 		}
@@ -145,29 +148,29 @@ public class RawTAJob extends Job {
 			Properties hash = new Properties();
 			hash.setProperty("stored", attr.getValue("md5"));
 			
-			if (!new File(folderprepared+File.separator+"ta.dd").exists())
-				throw new Exception(folderprepared+File.separator+"ta.dd"+" does not exist");
-			hash.setProperty("local", OS.getMD5(new File(folderprepared+File.separator+"ta.dd")).toUpperCase());
+			if (!new File(folderprepared+File.separator+tafilename).exists())
+				throw new Exception(folderprepared+File.separator+tafilename+" does not exist");
+			hash.setProperty("local", OS.getMD5(new File(folderprepared+File.separator+tafilename)).toUpperCase());
 			if (!hash.getProperty("stored").equals(hash.getProperty("local")))
 				throw new Exception("Error during extraction. Bundle is corrupted");
 
-			AdbUtility.push(folderprepared+File.separator+"ta.dd","/mnt/sdcard/");
-			hash.setProperty("remote", AdbUtility.getMD5("/mnt/sdcard/ta.dd"));
+			AdbUtility.push(folderprepared+File.separator+tafilename,phonetemp);
+			hash.setProperty("remote", AdbUtility.getMD5(phonetemp+"/"+tafilename));
 			if (!hash.getProperty("local").equals(hash.getProperty("remote")))
 				throw new Exception("Local file and remote file do not match");
 			hash.setProperty("partitionbefore", AdbUtility.getMD5(partition));
 			if (hash.getProperty("remote").equals(hash.getProperty("partitionbefore")))
 				throw new Exception("Backup and current partition match. Nothing to be done. Aborting");
 			logger.info("Making a backup on device before flashing.");
-			long transferred = AdbUtility.rawBackup(partition, "/mnt/sdcard/tabefore.dd");
+			long transferred = AdbUtility.rawBackup(partition, phonetemp+"/"+tafilenamebefore);
 			if (transferred == 0)
 				throw new Exception("Failed to take a backup before flashing new TA. Aborting");
 			logger.info("Flashing new TA.");
-			transferred = AdbUtility.rawBackup("/mnt/sdcard/ta.dd", partition);
+			transferred = AdbUtility.rawBackup(phonetemp+"/"+tafilename, partition);
 			hash.setProperty("partitionafter", AdbUtility.getMD5(partition));
 			if (!hash.getProperty("remote").equals(hash.getProperty("partitionafter"))) {
 				logger.error("Error flashing new TA. Reverting back to the previous TA.");
-				transferred = AdbUtility.rawBackup("/mnt/sdcard/tabefore.dd", partition);
+				transferred = AdbUtility.rawBackup(phonetemp+"/"+tafilenamebefore, partition);
 				if (transferred == 0L)
 					throw new Exception("Failed to restore previous TA");
 				logger.info("Restore previous TA OK");
@@ -182,7 +185,7 @@ public class RawTAJob extends Job {
     }
 
     public void createFTA(String partition, String folder) {
-    	File tadd = new File(folder+File.separator+"ta.dd");
+    	File tadd = new File(folder+File.separator+tafilename);
     	String timestamp = OS.getTimeStamp();
 		File fta = new File(folder+File.separator+timestamp+".fta");
 		byte buffer[] = new byte[10240];
@@ -200,7 +203,7 @@ public class RawTAJob extends Job {
 		    JarOutputStream out = new JarOutputStream(stream, manifest);
 		    out.setLevel(Deflater.BEST_SPEED);
 			logger.info("Creating backupset bundle");
-		    JarEntry jarAdd = new JarEntry("ta.dd");
+		    JarEntry jarAdd = new JarEntry(tafilename);
 	        out.putNextEntry(jarAdd);
 	        InputStream in = new FileInputStream(tadd);
 	        while (true) {

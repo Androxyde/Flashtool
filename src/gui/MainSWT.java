@@ -56,6 +56,7 @@ import org.system.OS;
 import org.system.Proxy;
 import org.system.StatusEvent;
 import org.system.StatusListener;
+import org.ta.parsers.TARawParser;
 import flashsystem.Bundle;
 import flashsystem.X10flash;
 import gui.models.TABag;
@@ -101,6 +102,8 @@ public class MainSWT {
 	protected MenuItem mntmRawRestore;
 	protected MenuItem mntmTARestore;
 	protected MenuItem mntmBackupSystemApps;
+	protected MenuItem mntmFlashSingleTA;
+	protected MenuItem mntmFlashFromRaw;
 	protected VersionCheckerJob vcheck; 
 	static final Logger logger = LogManager.getLogger(MainSWT.class);
 	
@@ -544,7 +547,7 @@ public class MainSWT {
 			}
 		});
 		mntmTABackup.setText("Backup");
-		
+
 		mntmTARestore = new MenuItem(menu_13, SWT.NONE);
 		mntmTARestore.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -625,7 +628,7 @@ public class MainSWT {
 		});
 		mntmTARestore.setText("Restore");
 		
-		MenuItem mntmFlashSingleTA = new MenuItem(menu_13, SWT.NONE);
+		mntmFlashSingleTA = new MenuItem(menu_13, SWT.NONE);
 		mntmFlashSingleTA.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -725,6 +728,36 @@ public class MainSWT {
 		mntmRawRestore.setText("Restore");
 		mntmRawRestore.setEnabled(false);
 		
+		mntmFlashFromRaw = new MenuItem(menu_13, SWT.NONE);
+		mntmFlashFromRaw.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dlg = new FileDialog(shlSonyericsson);
+				dlg.setFilterExtensions(new String[]{"*.*"});
+				dlg.setText("TA File Chooser");
+				String dir = dlg.open();
+				if (dir!=null) {
+					try {
+					logger.info("Parsing " + dir+". Please wait");
+					TARawParser p = new TARawParser(new File(dir));
+					HashMap<String,Vector<TABag>> backup = new HashMap<String, Vector<TABag>>();
+					backup.put("rawta", p.getBags());
+					if (backup.size()>0) {
+						TARestore restore = new TARestore(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+						Vector<TABag> result = (Vector<TABag>)restore.open(backup);
+					}
+					else {
+						logger.info("Bad TA image. Aborting");
+					}
+					} catch (Exception exc) {}
+		    	}
+				else {
+					logger.info("Operation canceled");
+				}
+			}
+		});
+		mntmFlashFromRaw.setText("Flash from raw image");
+
 		MenuItem mntmUsbLogParser = new MenuItem(AdvancedMenu, SWT.NONE);
 		mntmUsbLogParser.addSelectionListener(new SelectionAdapter() {
 			@Override

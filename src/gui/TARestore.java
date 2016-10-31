@@ -13,6 +13,7 @@ import java.util.Vector;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
@@ -20,6 +21,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -35,15 +38,24 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.ta.parsers.TAFileParser;
+import org.ta.parsers.TARawParser;
 import org.ta.parsers.TAUnit;
+import org.util.HexDump;
 
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
 
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.system.DeviceEntry;
+import org.system.DeviceIdent;
+import org.system.Devices;
+import org.system.OS;
+import org.system.TextFile;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -74,7 +86,10 @@ public class TARestore extends Dialog {
 	private Vector<TAUnit> toflash;
 	private Vector<TABag> result;
 	CTabItemWithHexViewer hexviewer;
-
+	static final Logger logger = LogManager.getLogger(TARestore.class);
+	String device = "";
+	String serial = "";
+	DeviceEntry id = null;
 	
 	/**
 	 * Create the dialog.
@@ -151,6 +166,31 @@ public class TARestore extends Dialog {
 			}
 		});
 		listTAUnits = listViewerTAUnits.getList();
+		Menu menu1 = new Menu(listTAUnits);
+        MenuItem item = new MenuItem(menu1, SWT.PUSH);
+        item.setText("Save Unit to file");
+		item.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection)listViewerTAUnits.getSelection();
+				Iterator i = selection.iterator();
+				while (i.hasNext()) {
+					TAUnit u = (TAUnit)i.next();
+					try {
+						String folder = OS.getFolderRegisteredDevices()+File.separator+serial+File.separator+"s1ta";
+						new File(folder).mkdir();
+						TextFile t = new TextFile(folder+File.separator+u.getUnitHex()+".ta","ISO8859-15");
+						t.open(false);
+						t.writeln(HexDump.toHex((byte)Integer.parseInt(comboPartition.getText())));
+						t.writeln(u.toString());
+						t.close();
+						logger.info("Unit saved to "+folder+File.separator+u.getUnitHex()+".ta");
+					} catch (Exception ex) {}
+				}
+			}
+		});
+
+        listTAUnits.setMenu(menu1);
 		fd_lblTAlist.left = new FormAttachment(listTAUnits, 0, SWT.LEFT);
 		
 		FormData fd_listTAUnits = new FormData();
@@ -365,6 +405,18 @@ public class TARestore extends Dialog {
 			}
 			comboBackupset.select(0);
 			refreshPartitions();
+			TABag b = getPartition(2);
+			Iterator<TAUnit> i = b.available.iterator();
+			while (i.hasNext()) {
+				TAUnit u = i.next();
+				if (u.getUnitHex().equals("000008A2")) device = new String(u.getUnitData());
+				if (u.getUnitHex().equals("00001324")) serial = new String(u.getUnitData());
+			}
+			if (device.length()>0) {
+				id = Devices.getDeviceFromVariant(device);
+				if (id!=null)
+					shlTARestore.setText("TA Restore - "+id.getName()+" ("+device+")");
+			}
 		}
 	}
 

@@ -5,37 +5,59 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import org.util.HexDump;
-
+import java.util.Iterator;
+import java.util.Vector;
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
-import com.igormaznitsa.jbbp.io.JBBPByteOrder;
+
+
+import gui.models.TABag;
 
 public class TARawParser {
 	JBBPBitInputStream ddStream = null;
 	FileInputStream fin = null;
 	BufferedInputStream bin = null;
 	File ddFile = null;
+	Vector<TABag> bags = new Vector<TABag>();
 
 	JBBPParser partblock = JBBPParser.prepare(
-	            "          <int pmagic;"
-	                    + "<int phash;"
-	            		+ "int punknown;"
+	            "          <int magic;"
+	                    + "<int hash;"
+	            		+ "byte unknown;"
+	            		+ "byte partnumber;"
+	            		+ "byte partition;"
+	            		+ "byte numblocks;"
+	            		+ "byte[131072-12] units;"
 	);
 
 	public TARawParser(File ddfile) throws FileNotFoundException, IOException {
 		ddFile = ddfile;
 		openStreams();
-		int unitnumber=0;
 		while (ddStream.hasAvailableData()) {
-			byte [] block = ddStream.readByteArray(0x20000);
-			TARawBlock rawblock = partblock.parse(block).mapTo(TARawBlock.class);
-			System.out.println(rawblock);
+			TARawBlock parsedblock = partblock.parse(ddStream).mapTo(TARawBlock.class);
+			if (parsedblock.magic==0x3BF8E9C1) {
+				parsedblock.parseUnits();
+				Iterator<TABag> ib = bags.iterator();
+				TABag b  = null;
+				boolean found = false;
+				while (ib.hasNext()) {
+					b = ib.next();
+					if (b.partition==parsedblock.partition) {
+						found=true;
+						break;
+					}
+				}
+				if (!found) b = new TABag(parsedblock.partition);
+				Iterator<TAUnit> iu = parsedblock.getUnits().iterator();
+				while (iu.hasNext()) {
+					b.addUnit(iu.next());
+				}
+				if (!found) bags.add(b);
+			}
 		}
 		closeStreams();
 	}
-
+ 
 	public void closeStreams() {
 		try {
 			ddStream.close();
@@ -52,6 +74,10 @@ public class TARawParser {
 		closeStreams();
 		fin=new FileInputStream(ddFile);
 		ddStream = new JBBPBitInputStream(fin);
+	}
+
+	public Vector<TABag> getBags() {
+		return bags;
 	}
 
 }
