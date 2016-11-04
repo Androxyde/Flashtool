@@ -51,6 +51,18 @@ public class AdbUtility  {
 			return false;
 		}
 	}
+
+	public static boolean existsRoot(String path) {
+		try {
+			ProcessBuilderWrapper command;
+			command = new ProcessBuilderWrapper(new String[] {adbpath,"shell", "su -c 'ls -l "+path+"'"},false);
+			return !command.getStdOut().toLowerCase().contains("no such file or directory") && !command.getStdOut().toLowerCase().contains("permission denied");
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+
 	public static String getShPath(boolean force) {
 		if (shpath==null || force) {
 			try {
@@ -480,7 +492,7 @@ public class AdbUtility  {
 		String result="";
 		long transferred=0L;
 		try {
-			result = AdbUtility.run("su -c 'dd if="+source+" of="+destination+" && sync && sync && sync && sync'");
+			result = AdbUtility.run("su -c 'dd if="+source+" of="+destination+" && sync && sync && sync && sync && chmod 444 "+destination+"'");
 		}
 		catch (Exception e) {
 		}
