@@ -259,7 +259,8 @@ public class USBLogviewer extends Dialog {
 		          // Set the text box to the new selection
 		        	if (!textLogFile.getText().equals(dir)) {
 		        		textLogFile.setText(dir);
-		        		textSinFolder.setText(new File(dir).getParentFile().getAbsolutePath()+File.separator+"decrypted");
+		        		String filename = new File(dir).getName();
+		        		textSinFolder.setText(new File(dir).getParentFile().getAbsolutePath()+File.separator+filename.substring(0, filename.indexOf("."))+"_decrypted");
 		        		lblSavedPath.setText("");
 		        		tableViewer.setInput(new Vector());
 		        		tableViewer.refresh();
