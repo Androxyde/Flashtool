@@ -57,6 +57,10 @@ public final class Bundle {
     private XMLBootDelivery xmlb;
     static final Logger logger = LogManager.getLogger(Bundle.class);
 
+    public String getJarName() {
+    	return _firmware.getName();
+    }
+    
     public Bundle() {
     	_meta = new BundleMetaData();
     }
