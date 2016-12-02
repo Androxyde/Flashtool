@@ -9,5 +9,4 @@ public class DataHeader {
 	@Bin public byte[] gptpMagic;
 	@Bin public int gptpLen;
 	@Bin public byte[] gptpuid;
-	public byte[] addrList;
 }

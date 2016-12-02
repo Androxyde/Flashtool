@@ -34,7 +34,7 @@ public class SinParser {
 	public byte[] hashBlocks;
 	public int certLen;
 	public byte[] cert;
-	public byte[] dheader;
+	//public byte[] dheader;
 	public HashBlocks blocks;
 	public DataHeader dataHeader;
 	public Vector<Object> dataBlocks;
@@ -93,24 +93,26 @@ public class SinParser {
 		        );
 
 		    // First hash block seems to be Data header (addr map)
-			dheader = sinStream.readByteArray(blocks.blocks[0].length);
-			JBBPBitInputStream dheaderStream = new JBBPBitInputStream(new ByteArrayInputStream(dheader));
-			if (new String(dheaderStream.readByteArray(4)).equals("MMCF")) {
-				dheaderStream.reset();
-				dataHeader = dataHeaderParser.parse(dheaderStream).mapTo(DataHeader.class);
-				dataHeader.addrList = dheaderStream.readByteArray(dataHeader.mmcfLen-dataHeader.gptpLen);
-				JBBPBitInputStream addrListStream = new JBBPBitInputStream(new ByteArrayInputStream(dataHeader.addrList));
+			//dheader = sinStream.readByteArray(blocks.blocks[0].length);
+			//JBBPBitInputStream dheaderStream = new JBBPBitInputStream(new ByteArrayInputStream(dheader));
+			dataHeader = dataHeaderParser.parse(sinStream).mapTo(DataHeader.class);
+			if (new String(dataHeader.mmcfMagic).equals("MMCF")) {
+				long addrLength = dataHeader.mmcfLen-dataHeader.gptpLen;
+				long read=0;
 				byte[] amagic = new byte[4];
 				dataBlocks = new Vector<Object>();
-				while (addrListStream.hasAvailableData()) {
-					addrListStream.read(amagic);
+				while (read<addrLength) {
+					sinStream.read(amagic);
+					read+=4;
 					if (new String(amagic).equals("ADDR")) {
-						AddrBlock addrBlock = addrBlocksParser.parse(addrListStream).mapTo(AddrBlock.class);
+						AddrBlock addrBlock = addrBlocksParser.parse(sinStream).mapTo(AddrBlock.class);
 						dataBlocks.add(addrBlock);
+						read+=(addrBlock.blockLen-4);
 					}
 					if (new String(amagic).equals("LZ4A")) {
-						LZ4ABlock lz4aBlock = LZ4ABlocksParser.parse(addrListStream).mapTo(LZ4ABlock.class);
+						LZ4ABlock lz4aBlock = LZ4ABlocksParser.parse(sinStream).mapTo(LZ4ABlock.class);
 						dataBlocks.add(lz4aBlock);
+						read+=(lz4aBlock.blockLen-4);
 					}
 				}
 			}
