@@ -95,7 +95,14 @@ public class SinParser {
 		    // First hash block seems to be Data header (addr map)
 			//dheader = sinStream.readByteArray(blocks.blocks[0].length);
 			//JBBPBitInputStream dheaderStream = new JBBPBitInputStream(new ByteArrayInputStream(dheader));
-			dataHeader = dataHeaderParser.parse(sinStream).mapTo(DataHeader.class);
+			try {
+				dataHeader = dataHeaderParser.parse(sinStream).mapTo(DataHeader.class);
+			} catch (Exception e) {
+				dataHeader = new DataHeader();
+				dataHeader.mmcfMagic=new String("NULL").getBytes();
+				dataHeader.gptpLen=0;
+				dataHeader.mmcfLen=0;				
+			}
 			if (new String(dataHeader.mmcfMagic).equals("MMCF")) {
 				long addrLength = dataHeader.mmcfLen-dataHeader.gptpLen;
 				long read=0;
