@@ -18,21 +18,28 @@ import org.util.HexDump;
 public class Session {
 
 	private Vector<S1Packet> packets = new Vector<S1Packet>();
-	private String model;
+	private String readUnit="";
+	private String model="";
 	private String version="";
 
 	public void addPacket(S1Packet p) {
-		if (packets.size()>0) {
-			S1Packet pp = packets.get(packets.size()-1);
-			if ((pp.getCommand()==0x0C) && pp.getDirection().equals("WRITE")) {
-				if (BytesUtil.getInt(pp.data)==0x000008A2)
+		if (p.getCommandName().equals("readTA")) {
+			if (p.getDirection().equals("WRITE"))
+				readUnit = Integer.toString(BytesUtil.getInt(p.data));
+			else {
+				if (readUnit.equals("2210")) {
 					model = new String(p.data);
-			}
+				}
+				if (readUnit.equals("2206")) {
+					version = new String(p.data).split("_")[1];
+				}
+				}
 		}
-		if (p.getSin().startsWith("elabel")) {
-			version = p.getSin().split("_")[2];
+		if (p.getCommandName().equals("closeTA") && packets.get(packets.size()-1).getCommandName().equals("openTA")) {
+			packets.remove(packets.size()-1);
 		}
-		packets.add(p);
+		else if (!p.getCommandName().equals("readTA") && !p.getCommandName().equals("Get Error"))
+			packets.add(p);
 	}
 
 	public String getModel() {
@@ -61,7 +68,7 @@ public class Session {
 			Iterator<TableLine> i = getScript().iterator();
 			while (i.hasNext()) {
 				TableLine tl = i.next();
-				tf.writeln(tl.getValueOf(0)+":"+tl.getValueOf(1));
+				tf.writeln(tl.getValueOf(0)+(tl.getValueOf(1).length()>0?":":"")+tl.getValueOf(1));
 			}
 			tf.close();
 			return filename;
