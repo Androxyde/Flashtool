@@ -21,7 +21,6 @@ import org.util.BytesUtil;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
-import com.sun.prism.Image;
 
 public class SinFile {
 
