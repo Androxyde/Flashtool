@@ -1,17 +1,33 @@
 package org.ta.parsers;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.system.OS;
+
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
 
-
+import flashsystem.BundleEntry;
+import flashsystem.Category;
+import gui.MainSWT;
 import gui.models.TABag;
+import gui.tools.XMLBootDelivery;
 
 public class TARawParser {
 	JBBPBitInputStream ddStream = null;
@@ -19,6 +35,7 @@ public class TARawParser {
 	BufferedInputStream bin = null;
 	File ddFile = null;
 	Vector<TABag> bags = new Vector<TABag>();
+	static final Logger logger = LogManager.getLogger(TARawParser.class);
 
 	JBBPParser partblock = JBBPParser.prepare(
 	            "          <int magic;"
@@ -31,7 +48,12 @@ public class TARawParser {
 	);
 
 	public TARawParser(File ddfile) throws FileNotFoundException, IOException {
-		ddFile = ddfile;
+		if (ddfile.getName().endsWith(".fta")) {
+			open(ddfile);
+			ddFile=new File(ddfile.getParentFile().getAbsolutePath()+File.separator+"prepared"+File.separator+"ta.dd");
+		}
+		else
+			ddFile = ddfile;
 		openStreams();
 		while (ddStream.hasAvailableData()) {
 			TARawBlock parsedblock = partblock.parse(ddStream).mapTo(TARawBlock.class);
@@ -79,5 +101,38 @@ public class TARawParser {
 	public Vector<TABag> getBags() {
 		return bags;
 	}
+
+	public boolean open(File bundle) {
+		try {
+			logger.info("Preparing files for flashing");
+			String prepared = bundle.getParentFile().getAbsolutePath()+File.separator+"prepared";
+			FileUtils.deleteDirectory(new File(prepared));
+			File f = new File(prepared);
+			f.mkdir();
+			logger.debug("Created the "+f.getName()+" folder");
+			JarFile jar=new JarFile(bundle);
+			Enumeration<JarEntry>  entries = jar.entries();
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				if (entry.getName().startsWith("ta")) {
+					InputStream in = jar.getInputStream(entry);
+					String outname=prepared+File.separator+entry.getName();
+					OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
+					byte[] buffer = new byte[10240];
+					int len;
+					while((len = in.read(buffer)) >= 0)
+						out.write(buffer, 0, len);
+					in.close();
+					out.close();
+				}
+			}
+			return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+			return false;
+		}
+    }
 
 }

@@ -733,7 +733,7 @@ public class MainSWT {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dlg = new FileDialog(shlSonyericsson);
-				dlg.setFilterExtensions(new String[]{"*.*"});
+				dlg.setFilterExtensions(new String[]{"*.fta", "*.dd","*.img"});
 				dlg.setText("TA File Chooser");
 				String dir = dlg.open();
 				if (dir!=null) {
