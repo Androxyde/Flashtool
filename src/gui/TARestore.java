@@ -1,10 +1,7 @@
 package gui;
 
 import gui.models.TABag;
-import gui.tools.WidgetTask;
-import swt_components.SwtHexEdit;
-
-import java.io.ByteArrayInputStream;
+import gui.models.TADevice;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,7 +10,6 @@ import java.util.Vector;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
@@ -34,40 +30,23 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
-import org.ta.parsers.TAFileParser;
-import org.ta.parsers.TARawParser;
 import org.ta.parsers.TAUnit;
 import org.util.HexDump;
-
-import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
-
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.system.DeviceEntry;
-import org.system.DeviceIdent;
 import org.system.Devices;
 import org.system.OS;
 import org.system.TextFile;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.custom.StyledText;
 
 public class TARestore extends Dialog {
 
@@ -78,13 +57,14 @@ public class TARestore extends Dialog {
 	private Label lblTAlist;
 	private Label lblTAFlash;
 	private Button btnCancel;
+	private Button btnFlash;
 	private ListViewer listViewerTAUnitsToFlash;
 	private Combo comboBackupset;
 	private Combo comboPartition;
 	private HashMap<String,Vector<TABag>> backupset = new HashMap<String, Vector<TABag>>();
 	private Vector<TAUnit> available;
 	private Vector<TAUnit> toflash;
-	private Vector<TABag> result;
+	private TADevice result;
 	CTabItemWithHexViewer hexviewer;
 	static final Logger logger = LogManager.getLogger(TARestore.class);
 	String device = "";
@@ -107,6 +87,7 @@ public class TARestore extends Dialog {
 	 */
 	public Object open(HashMap<String,Vector<TABag>> backupset) {
 		this.backupset = backupset;
+		result = new TADevice();
 		createContents();
 		
 		shlTARestore.open();
@@ -322,7 +303,7 @@ public class TARestore extends Dialog {
 		});
 		btnRtoL.setText("<-");
 		
-		Button btnFlash = new Button(shlTARestore, SWT.NONE);
+		btnFlash = new Button(shlTARestore, SWT.NONE);
 		
 		btnFlash.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -405,13 +386,8 @@ public class TARestore extends Dialog {
 			}
 			comboBackupset.select(0);
 			refreshPartitions();
-			TABag b = getPartition(2);
-			Iterator<TAUnit> i = b.available.iterator();
-			while (i.hasNext()) {
-				TAUnit u = i.next();
-				if (u.getUnitHex().equals("000008A2")) device = new String(u.getUnitData());
-				if (u.getUnitHex().equals("00001324")) serial = new String(u.getUnitData());
-			}
+			device = result.getModel();
+			serial = result.getSerial();
 			if (device.length()>0) {
 				id = Devices.getDeviceFromVariant(device);
 				if (id!=null)
@@ -421,11 +397,11 @@ public class TARestore extends Dialog {
 	}
 
 	public void refreshPartitions() {
-		result = backupset.get(comboBackupset.getText());
+		result.addBags(backupset.get(comboBackupset.getText()));
 		comboPartition.removeAll();
-		String [] comboarray = new String[result.size()];
-		for (int i = 0; i<result.size(); i++) {
-			comboarray[i]=String.valueOf(result.get(i).partition);
+		String [] comboarray = new String[result.getBags().size()];
+		for (int i = 0; i<result.getBags().size(); i++) {
+			comboarray[i]=String.valueOf(result.getBags().get(i).partition);
 		}
 		Arrays.sort(comboarray);
 		comboPartition.setItems(comboarray);
@@ -449,8 +425,8 @@ public class TARestore extends Dialog {
 	}
  
 	public TABag getPartition(int partition) {
-		for (int i=0;i<result.size();i++) {
-			if (result.get(i).partition==partition) return result.get(i);
+		for (int i=0;i<result.getBags().size();i++) {
+			if (result.getBags().get(i).partition==partition) return result.getBags().get(i);
 		}
 		return null;
 	}

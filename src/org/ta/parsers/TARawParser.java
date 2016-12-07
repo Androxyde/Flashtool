@@ -54,6 +54,7 @@ public class TARawParser {
 		}
 		else
 			ddFile = ddfile;
+		logger.info("Parsing image "+ddFile.getAbsolutePath());
 		openStreams();
 		while (ddStream.hasAvailableData()) {
 			TARawBlock parsedblock = partblock.parse(ddStream).mapTo(TARawBlock.class);
@@ -78,6 +79,7 @@ public class TARawParser {
 			}
 		}
 		closeStreams();
+		logger.info("Parsing finished");
 	}
  
 	public void closeStreams() {
