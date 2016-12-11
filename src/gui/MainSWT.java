@@ -192,7 +192,7 @@ public class MainSWT {
 		WidgetTask.setEnabled(mntmNoDevice,false);
 		WidgetTask.setEnabled(mntmRawRestore,false);
 		WidgetTask.setEnabled(mntmTARestore,false);
-		WidgetTask.setEnabled(mntmRawBackup,false);
+		WidgetTask.setEnabled(mntmRawBackup,true);
 		WidgetTask.setEnabled(tltmClean,false);
 		WidgetTask.setEnabled(tltmRecovery,false);
 	}
@@ -236,7 +236,7 @@ public class MainSWT {
 	    			if (Devices.HasOneAdbConnected()) {
 	    				boolean hasRoot = Devices.getCurrent().hasRoot();
 	    				WidgetTask.setEnabled(mntmRawRestore,hasRoot);
-	    				WidgetTask.setEnabled(mntmRawBackup,hasRoot);
+	    				WidgetTask.setEnabled(mntmRawBackup,true);
 	    				WidgetTask.setEnabled(mntmTARestore,true);
 	    			}
 	    			else {
@@ -1321,7 +1321,7 @@ public class MainSWT {
     			WidgetTask.setEnabled(mntmBackupSystemApps,false);
     			if (!Devices.isWaitingForReboot()) {
     				logger.info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
-    				logger.info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());
+    				logger.info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Platform : "+Devices.getCurrent().getArch()+"bits / Build number : " + Devices.getCurrent().getBuildId());
     			}
     			if (Devices.getCurrent().isRecovery()) {
     				logger.info("Phone in recovery mode");
@@ -1398,7 +1398,7 @@ public class MainSWT {
 		WidgetTask.setEnabled(tltmRecovery,hasRoot&&Devices.getCurrent().canRecovery());
 		if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
 			WidgetTask.setEnabled(mntmRawRestore,hasRoot);
-			WidgetTask.setEnabled(mntmRawBackup,hasRoot);
+			WidgetTask.setEnabled(mntmRawBackup,true);
 			WidgetTask.setEnabled(mntmTARestore,true);
 		}
 		WidgetTask.setEnabled(tltmAskRoot,!hasRoot);

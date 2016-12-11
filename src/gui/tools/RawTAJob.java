@@ -70,12 +70,12 @@ public class RawTAJob extends Job {
 		String serial = Devices.getCurrent().getSerial();
     	String folder = OS.getFolderRegisteredDevices()+File.separator+serial+File.separator+"rawta";
 		try {
+			if (Devices.getCurrent().hasRoot()) {
 			if (!Devices.getCurrent().isBusyboxInstalled(false))
 				Devices.getCurrent().doBusyboxHelper();
 			new File(folder).mkdirs();
 			String partition = AdbUtility.run("su -c 'export PATH=$PATH:/data/local/tmp;busybox find /dev/block/platform -name TA'");
 			if (!AdbUtility.existsRoot(partition)) {
-				System.out.println("not exist");
 				partition = AdbUtility.run("export PATH=$PATH:/data/local/tmp;busybox cat /proc/partitions|busybox grep -w 2048|busybox awk '{print $4}'");
 				if (partition.length()==0)
 					throw new Exception("Your phone is not compatible");
@@ -96,6 +96,39 @@ public class RawTAJob extends Job {
 				createFTA(partition, folder);
 			}
 			else throw new Exception("Backup is not OK");
+			}
+			else {
+				logger.info("Device not rooted. Trying to backup ta using dirtycow exploit");
+				AdbUtility.run("rm -f /data/local/tmp/*");
+				String platform = Devices.getCurrent().getArch();
+				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"backupTA.sh", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/backupTA.sh");
+				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"dirtycow"+platform, "/data/local/tmp/dirtycow");
+				AdbUtility.run("chmod 755 /data/local/tmp/dirtycow");
+				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"dumpta"+platform, "/sdcard/dumpta");
+				AdbUtility.run("chmod 755 /data/local/tmp/dumpta");
+				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"exploitta"+platform, "/data/local/tmp/exploitta");
+				AdbUtility.run("chmod 755 /data/local/tmp/exploitta");
+				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"run-as"+platform, "/data/local/tmp/run-as");
+				AdbUtility.run("chmod 755 /data/local/tmp/run-as");
+				AdbUtility.run("cd /data/local/tmp && ./backupTA.sh "+tafilename);
+				if (AdbUtility.exists("/data/local/tmp/"+tafilename))
+					AdbUtility.pull("/data/local/tmp/"+tafilename, folder);
+				AdbUtility.run("rm -f /data/local/tmp/*");
+				AdbUtility.run("rm -f /sdcard/dumpta");
+				File tafile=new File(folder+File.separator+tafilename);
+				if (tafile.exists()) {
+					if (tafile.length()==(2*1024*1024)) {
+						createFTA("", folder);
+					}
+					else {
+						logger.error("dirtycow expoit failed. No ta backup done");
+					}
+				}
+				else {
+					logger.error("dirtycow expoit failed. No ta backup done");
+				}	
+			}
 		} catch (Exception ex) {
 			new File(folder+tafilename).delete();
 			try {
