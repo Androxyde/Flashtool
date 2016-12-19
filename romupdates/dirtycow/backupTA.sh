@@ -27,9 +27,9 @@ if [ "$?" != "0" ]; then
 	fi
 fi
 
-run-as > /data/local/tmp/$TANAME
+run-as < /data/local/tmp/dumpta > /data/local/tmp/$TANAME
 if [ $? -lt 0 ]; then
-    run-as > /data/local/tmp/$TANAME
+    run-as < /data/local/tmp/dumpta > /data/local/tmp/$TANAME
 fi
 if [ ! $? -eq 0 ]; then
     echo "Error dumping TA, file $TANAME is broken"
