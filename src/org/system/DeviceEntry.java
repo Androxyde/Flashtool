@@ -341,6 +341,11 @@ public class DeviceEntry {
     	return models;
     }*/
     
+    public boolean isFlashScriptMandatory() {
+    	if (!_entry.getProperties().containsKey("fscmandatory")) return false;
+    	return _entry.getProperty("fscmandatory").equals("true");
+    }
+
     public boolean hasFlashScript(String model, String version) {
     	
     	boolean official = new File(getDeviceDir()   + File.separator+model+"_"+version+".fsc").exists();

@@ -713,8 +713,16 @@ public class X10flash {
 		    		runScript();
 		    }
 		    else {
-		    	logger.info("No flash script found. Using 0.9.18 flash engine");
-		    	oldFlashEngine();
+		    	DeviceEntry dev = Devices.getDeviceFromVariant(getCurrentDevice());
+		    	if (!dev.isFlashScriptMandatory()) {
+			    	logger.info("No flash script found. Using 0.9.18 flash engine");
+			    	oldFlashEngine();
+		    	}
+		    	else {
+		    		logger.info("No flash script found.");
+		    		logger.info("Flash script is mandatory. Closing session");
+		        	closeDevice(0x01);
+		    	}
 		    }
 			logger.info("Flashing finished.");
 			logger.info("Please unplug and start your phone");
