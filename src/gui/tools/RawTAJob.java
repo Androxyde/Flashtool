@@ -105,15 +105,17 @@ public class RawTAJob extends Job {
 				AdbUtility.run("chmod 755 /data/local/tmp/backupTA.sh");
 				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"dirtycow"+platform, "/data/local/tmp/dirtycow");
 				AdbUtility.run("chmod 755 /data/local/tmp/dirtycow");
-				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"dumpta"+platform, "/sdcard/dumpta");
+				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"dumpta"+platform, "/data/local/tmp/dumpta");
 				AdbUtility.run("chmod 755 /data/local/tmp/dumpta");
 				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"exploitta"+platform, "/data/local/tmp/exploitta");
 				AdbUtility.run("chmod 755 /data/local/tmp/exploitta");
 				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"run-as"+platform, "/data/local/tmp/run-as");
 				AdbUtility.run("chmod 755 /data/local/tmp/run-as");
 				AdbUtility.run("cd /data/local/tmp && ./backupTA.sh "+tafilename);
-				if (AdbUtility.exists("/data/local/tmp/"+tafilename))
+				if (AdbUtility.exists("/data/local/tmp/"+tafilename)) {
+					new File(folder).mkdirs();
 					AdbUtility.pull("/data/local/tmp/"+tafilename, folder);
+				}
 				AdbUtility.run("rm -f /data/local/tmp/*");
 				AdbUtility.run("rm -f /sdcard/dumpta");
 				File tafile=new File(folder+File.separator+tafilename);
