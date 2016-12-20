@@ -381,37 +381,37 @@ public class X10flash {
 	    }
 	    else
 	    	maxS1packetsize=0x080000;
-	    	if ((maxS1packetsize/1024)<1024)
-	    		logger.info("Max packet size set to "+maxS1packetsize/1024+"K");
-	    	else
-	    		logger.info("Max packet size set to "+maxS1packetsize/1024/1024+"M");
-	    	if (_bundle.getMaxBuffer()==0) {
-		    		USBFlash.setUSBBufferSize(maxS1packetsize);
-			    	if ((maxS1packetsize/1024)<1024)
-			    		logger.info("USB buffer size set to "+maxS1packetsize/1024+"K");
-			    	else
-			    		logger.info("USB buffer size set to "+maxS1packetsize/1024/1024+"M");
-	    	}
-	    	if (_bundle.getMaxBuffer()==1) {
-	    			USBFlash.setUSBBufferSize(512*1024);
-	    			logger.info("USB buffer size set to 512K");
-	    	}
-	    	if (_bundle.getMaxBuffer()==2) {
-	    			USBFlash.setUSBBufferSize(256*1024);
-	    			logger.info("USB buffer size set to 256K");
-	    	}
-	    	if (_bundle.getMaxBuffer()==3) {
-		    		USBFlash.setUSBBufferSize(128*1024);
-		    		logger.info("USB buffer size set to 128K");
-	    	}
-	    	if (_bundle.getMaxBuffer()==4) {
-		    		USBFlash.setUSBBufferSize(64*1024);
-		    		logger.info("USB buffer size set to 64K");
-	    	}
-	    	if (_bundle.getMaxBuffer()==5) {
-	    		USBFlash.setUSBBufferSize(32*1024);
-	    		logger.info("USB buffer size set to 32K");
-	    	}
+    	if ((maxS1packetsize/1024)<1024)
+    		logger.info("Max packet size set to "+maxS1packetsize/1024+"K");
+    	else
+    		logger.info("Max packet size set to "+maxS1packetsize/1024/1024+"M");
+    	if (_bundle.getMaxBuffer()==0) {
+    			USBFlash.setUSBBufferSize(maxS1packetsize);
+		    	if ((maxS1packetsize/1024)<1024)
+		    		logger.info("USB buffer size set to "+maxS1packetsize/1024+"K");
+		    	else
+		    		logger.info("USB buffer size set to "+maxS1packetsize/1024/1024+"M");
+    	}
+    	if (_bundle.getMaxBuffer()==1) {
+    		USBFlash.setUSBBufferSize(512*1024);
+    		logger.info("USB buffer size set to 512K");
+    	}
+    	if (_bundle.getMaxBuffer()==2) {
+    		USBFlash.setUSBBufferSize(256*1024);
+    		logger.info("USB buffer size set to 256K");
+    	}
+    	if (_bundle.getMaxBuffer()==3) {
+    		USBFlash.setUSBBufferSize(128*1024);
+	    	logger.info("USB buffer size set to 128K");
+    	}
+    	if (_bundle.getMaxBuffer()==4) {
+    		USBFlash.setUSBBufferSize(64*1024);
+	    	logger.info("USB buffer size set to 64K");
+    	}
+    	if (_bundle.getMaxBuffer()==5) {
+    		USBFlash.setUSBBufferSize(32*1024);
+    		logger.info("USB buffer size set to 32K");
+    	}
 	    LogProgress.initProgress(_bundle.getMaxProgress(maxS1packetsize));
     }
 

@@ -96,6 +96,10 @@ public class SinParser {
 			//dheader = sinStream.readByteArray(blocks.blocks[0].length);
 			//JBBPBitInputStream dheaderStream = new JBBPBitInputStream(new ByteArrayInputStream(dheader));
 			try {
+				byte[] mmcfmagic = new byte[4];
+				sinStream.read(mmcfmagic);
+				if (!new String(mmcfmagic).equals("MMCF")) throw new Exception("No MMCF");
+				sinStream.skip(-4);
 				dataHeader = dataHeaderParser.parse(sinStream).mapTo(DataHeader.class);
 			} catch (Exception e) {
 				dataHeader = new DataHeader();
