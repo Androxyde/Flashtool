@@ -171,7 +171,7 @@ public class FTFSelector extends Dialog {
 		
 		lblUSBBuffer = new Label(compositeSettings, SWT.NONE);
 		lblUSBBuffer.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblUSBBuffer.setText("Max USB buffer");
+		lblUSBBuffer.setText("USB buffer");
 		
 		comboUSBBuffer = new Combo(compositeSettings, SWT.READ_ONLY);
 		comboUSBBuffer.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
@@ -306,7 +306,9 @@ public class FTFSelector extends Dialog {
 		lblNewLabel_2.setText("Misc TA");
 		
 		ScrolledComposite scrolledCompositeExcludeTA = new ScrolledComposite(compositeExclude, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		scrolledCompositeExcludeTA.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
+		GridData gd_scrolledCompositeExcludeTA = new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1);
+		gd_scrolledCompositeExcludeTA.heightHint = 80;
+		scrolledCompositeExcludeTA.setLayoutData(gd_scrolledCompositeExcludeTA);
 		
 		compositeExcludeTA = new Composite(scrolledCompositeExcludeTA, SWT.NONE);
 		compositeExcludeTA.setLayout(new GridLayout(1, false));
