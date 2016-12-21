@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="libs/com.jcraft.jsch_0.1.53.v201508180515.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="libs/ini4j-0.5.2.jar"/>
-	<classpathentry kind="lib" path="libs/jbbp-1.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/jdom-1.1.1.jar"/>
 	<classpathentry kind="lib" path="libs/lz4-1.3.0.jar"/>
 	<classpathentry kind="lib" path="libs/nsisant-1.3.jar"/>
@@ -46,5 +45,6 @@
 	<classpathentry kind="lib" path="libs/org.eclipse.text_3.6.0.v20160503-1849.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.ui.forms_3.7.0.v20160518-1929.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.ui.workbench_3.108.1.v20160819-2118.jar"/>
+	<classpathentry kind="lib" path="libs/jbbp-1.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
