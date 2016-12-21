@@ -231,7 +231,6 @@ public class DeviceEntry {
 	private void setVersion () {
 		_entry.setProperty("android.release",DeviceProperties.getProperty("ro.build.version.release"));
 		_entry.setProperty("android.build",DeviceProperties.getProperty("ro.build.id"));
-		System.out.println(DeviceProperties.getProperty("ro.product.cpu.abi"));
 		_entry.setProperty("android.arch",DeviceProperties.getProperty("ro.product.cpu.abi").indexOf("arm64")==-1?"32":"64");
 	}
 	
