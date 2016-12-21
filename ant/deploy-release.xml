@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
 
-	<property name="version" value="0.9.22.3"/>
-	<property name="progtime" value="08-06-2016 22:30:00"/>
+	<property name="version" value="0.9.23.0"/>
+	<property name="progtime" value="21-12-2016 11:00:00"/>
 
 	<target name="all" depends="core release"/>
 	
