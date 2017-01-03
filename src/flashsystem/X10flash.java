@@ -615,7 +615,7 @@ public class X10flash {
     	} catch (Exception e) {
     	}
     	DeviceEntry dev = Devices.getDeviceFromVariant(getCurrentDevice());
-    	return dev.getFlashScript(getCurrentDevice(),_bundle.getVersion());
+    	return dev.getFlashScript(_bundle.getVersion());
     }
   
     public void runScript() {
