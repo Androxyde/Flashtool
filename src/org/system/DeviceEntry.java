@@ -4,6 +4,7 @@ package org.system;
 import gui.tools.WidgetTask;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -345,28 +346,52 @@ public class DeviceEntry {
     	return _entry.getProperty("fscmandatory").equals("true");
     }
 
-    public boolean hasFlashScript(String model, String version) {
+    public boolean hasFlashScript(String version) {
     	
-    	boolean official = new File(getDeviceDir()   + File.separator+model+"_"+version+".fsc").exists();
-    	boolean custom   = new File(getMyDeviceDir() + File.separator+model+"_"+version+".fsc").exists();
+    	return getFlashScript(version).length()>0;
     	
-    	boolean genericofficial = new File(getDeviceDir()   + File.separator+model+".fsc").exists();
-    	boolean genericcustom   = new File(getMyDeviceDir() + File.separator+model+".fsc").exists();
-    	
-    	boolean defaultofficial = new File(getDeviceDir()   + File.separator+"default.fsc").exists();
-    	boolean defaultcustom   = new File(getMyDeviceDir() + File.separator+"default.fsc").exists();
-    	
-    	return (official || custom || genericofficial || genericcustom || defaultofficial || defaultcustom);
     }
 
     public String getFlashScript(String version) {
 
-    	boolean official = new File(getDeviceDir()   + File.separator+version+".fsc").exists();
-    	boolean custom   = new File(getMyDeviceDir() + File.separator+version+".fsc").exists();
+    	FilenameFilter fscFilter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				String lowercaseName = name.toLowerCase();
+				if (lowercaseName.endsWith(".fsc")) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		};
 
-    	if (custom)   return getMyDeviceDir()+File.separator+version+".fsc";
-    	if (official) return getDeviceDir()+File.separator+version+".fsc";
-
+		File mydevices = new File(this.getMyDeviceDir());
+    	File devices = new File(this.getDeviceDir());
+    	
+    	File[] fsc = mydevices.listFiles(fscFilter);
+    	int exactindex=-1;
+    	int beginindex=-1;
+    	for (int i=0;i<fsc.length;i++) {
+    		String fname = fsc[i].getName();
+    		String fscVersion = fname.substring(0,fname.indexOf(".fsc"));
+    		if (fscVersion.equals(version)) exactindex=i;
+    		if (version.startsWith(fscVersion)) beginindex=i;
+    	}
+    	if (exactindex>-1) return fsc[exactindex].getAbsolutePath();
+    	if (beginindex>-1) return fsc[beginindex].getAbsolutePath();
+    	
+    	fsc = devices.listFiles(fscFilter);
+    	exactindex=-1;
+    	beginindex=-1;
+    	for (int i=0;i<fsc.length;i++) {
+    		String fname = fsc[i].getName();
+    		String fscVersion = fname.substring(0,fname.indexOf(".fsc"));
+    		if (fscVersion.equals(version)) exactindex=i;
+    		if (version.startsWith(fscVersion)) beginindex=i;
+    	}
+    	if (exactindex>-1) return fsc[exactindex].getAbsolutePath();
+    	if (beginindex>-1) return fsc[beginindex].getAbsolutePath();
+    	
     	return "";
     }
 
