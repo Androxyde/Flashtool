@@ -309,7 +309,7 @@ public class BundleCreator extends Dialog {
 				}
 				if (!b.hasFsc()) {
 					DeviceEntry dev = Devices.getDeviceFromVariant(_variant);
-			    	String fscpath = dev.getFlashScript(version.getText());
+			    	String fscpath = dev.getFlashScript(version.getText(), _variant);
 			    	File fsc = new File(fscpath);
 			    	if (fsc.exists()) {
 		    			String result = WidgetTask.openYESNOBox(shlBundler, "A FSC script is found : "+fsc.getName()+". Do you want to add it ?");

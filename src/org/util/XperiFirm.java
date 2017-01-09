@@ -173,7 +173,7 @@ public class XperiFirm {
 		if (!b.hasFsc()) {
 			DeviceEntry dev = Devices.getDeviceFromVariant(info.getModel());
 			if (dev!=null) {
-		    	String fscpath = dev.getFlashScript(info.getVersion());
+		    	String fscpath = dev.getFlashScript(info.getVersion(),info.getModel());
 		    	File fsc = new File(fscpath);
 		    	if (fsc.exists()) {
 	    			String result = WidgetTask.openYESNOBox(_parent, "A FSC script is found : "+fsc.getName()+". Do you want to add it ?");
