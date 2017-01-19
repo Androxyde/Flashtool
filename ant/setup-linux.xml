@@ -122,7 +122,9 @@
 			<arg value="flashtool-${Internal-Version}-linux.tar"/>
 			<arg value="FlashTool"/>
 		</exec>
-		<exec executable="p7zip" dir="../../Deploy">
+		<exec executable="7za" dir="../../Deploy">
+			<arg value="a"/>
+			<arg value="flashtool-${Internal-Version}-linux.tar.7z"/>
 			<arg value="flashtool-${Internal-Version}-linux.tar"/>
 		</exec>
 	</target>
