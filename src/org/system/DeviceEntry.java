@@ -366,8 +366,10 @@ public class DeviceEntry {
     	File[] fsc;
     	
     	filter = model+"_"+version+".fsc";
-    	fsc = mydevices.listFiles(fscFilter);
-    	if (fsc.length>0) return fsc[0].getAbsolutePath();
+    	if (mydevices.exists()) {
+    		fsc = mydevices.listFiles(fscFilter);
+    		if (fsc.length>0) return fsc[0].getAbsolutePath();
+    	}
     	fsc = devices.listFiles(fscFilter);
     	if (fsc.length>0) return fsc[0].getAbsolutePath();
     	
@@ -379,8 +381,10 @@ public class DeviceEntry {
     			filter=filter+(j>0?".":"")+vnumbers[j];
     		}
     		filter = filter + ".fsc";
-        	fsc = mydevices.listFiles(fscFilter);
-        	if (fsc.length>0) return fsc[0].getAbsolutePath();
+    		if (mydevices.exists()) {
+    			fsc = mydevices.listFiles(fscFilter);
+        		if (fsc.length>0) return fsc[0].getAbsolutePath();
+    		}
         	fsc = devices.listFiles(fscFilter);
         	if (fsc.length>0) return fsc[0].getAbsolutePath();
     	}
