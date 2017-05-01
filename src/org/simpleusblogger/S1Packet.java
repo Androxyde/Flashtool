@@ -117,15 +117,14 @@ public class S1Packet {
 
 	public TAUnit getTA() {
 		try {
-		JBBPBitInputStream taStream = new JBBPBitInputStream(new ByteArrayInputStream(data));
-		int unit=taStream.readInt(JBBPByteOrder.BIG_ENDIAN);
-		int talength = taStream.readInt(JBBPByteOrder.BIG_ENDIAN);
-		if (talength>0) {
+			JBBPBitInputStream taStream = new JBBPBitInputStream(new ByteArrayInputStream(data));
+			int unit=taStream.readInt(JBBPByteOrder.BIG_ENDIAN);
+			int talength = taStream.readInt(JBBPByteOrder.BIG_ENDIAN);
 			TAUnit u = new TAUnit(unit, taStream.readByteArray(talength));
+			taStream.close();
 			return u;
-		}
-	    taStream.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
