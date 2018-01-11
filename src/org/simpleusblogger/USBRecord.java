@@ -1,11 +1,17 @@
 package org.simpleusblogger;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
+
+import org.apache.commons.compress.utils.IOUtils;
+import org.util.BytesUtil;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
 import com.igormaznitsa.jbbp.mapper.Bin;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 public class USBRecord {
 	@Bin long irp;
@@ -66,6 +72,24 @@ public class USBRecord {
 	public byte[] getData() {
 		return data;
 	}
+	
+	public String getDirection() {
+		if (header.usb_TransferFlags==0) return "WRITE";
+		else return "READ REPLY";
+	}
+	
+	public String getDataString() {
+		byte[] buffer = new byte[200];
+		try {
+			ByteArrayInputStream in = new ByteArrayInputStream(data);
+			int nbread = in.read(buffer);
+			in.close();
+			return new String(BytesUtil.getReply(buffer, nbread));
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
 	public String toString() {
 		return "Record : "+recnum+" length : "+recordlength+"\n   "+header+"\n read : "+data.length;
 	}

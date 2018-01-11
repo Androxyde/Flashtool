@@ -1,8 +1,6 @@
 package gui.tools;
 
 import java.util.Properties;
-
-import flashsystem.X10flash;
 import gui.BLUWizard;
 import gui.BootModeSelector;
 import gui.BundleCreator;
@@ -15,7 +13,6 @@ import gui.TABackupSelector;
 import gui.VariantSelector;
 import gui.WaitDeviceForFastboot;
 import gui.WaitDeviceForFlashmode;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
@@ -24,6 +21,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 import org.system.Devices;
+
+import flashsystem.Flasher;
 
 public class WidgetTask {
 	
@@ -171,7 +170,7 @@ public class WidgetTask {
 		return (String)res.getResult();
 	}
 
-	public static String openBLWizard(final Shell parent, final String serial, final String imei, final String ulcode, final X10flash flash, final String mode) {
+	public static String openBLWizard(final Shell parent, final String serial, final String imei, final String ulcode, final Flasher flash, final String mode) {
 		final Result res = new Result();
 		Display.getDefault().syncExec(
 				new Runnable() {
@@ -248,13 +247,13 @@ public class WidgetTask {
 		return (String)res.getResult();
 	}
 
-	public static String openWaitDeviceForFlashmode(final Shell parent, final X10flash flash) {
+	public static String openWaitDeviceForFlashmode(final Shell parent) {
 		final Result res = new Result();
 		Display.getDefault().syncExec(
 				new Runnable() {
 					public void run() {
 			    		WaitDeviceForFlashmode dial = new WaitDeviceForFlashmode(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
-			    		Object obj = dial.open(flash);
+			    		Object obj = dial.open();
 						res.setResult(obj);
 						
 					}

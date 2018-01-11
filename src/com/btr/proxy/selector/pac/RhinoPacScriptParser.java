@@ -8,7 +8,6 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
-
 /*****************************************************************************
  * PAC parser using the Rhino JavaScript engine.<br/> 
  * Depends on js.jar of the <a href="http://www.mozilla.org/rhino/">Apache Rhino </a> project.

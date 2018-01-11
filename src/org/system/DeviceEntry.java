@@ -109,6 +109,11 @@ public class DeviceEntry {
 		                     
 	}
 	
+	public String getProtocol() {
+		if (_entry.getProperty("flashProtocol")==null) return "S1";
+		return _entry.getProperty("flashProtocol");
+	}
+	
 	public String getId() {
 		return _entry.getProperty("internalname");
 	}

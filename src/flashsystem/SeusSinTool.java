@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -56,9 +57,17 @@ public class SeusSinTool {
 		    			 logger.info("Extracting "+out.getName());
 		    			 String subfolder = folder + File.separator+entry.getName().substring(0,entry.getName().lastIndexOf("."));
 		    			 new File(subfolder).mkdirs();
+		    			 PrintWriter pw = null;
+		    			 if (out.getName().equals("partition.zip")) {
+		    				 pw = new PrintWriter(new File(subfolder+File.separator+"partition_delivery.xml"));
+		    				 pw.println("<PARTITION_DELIVERY FORMAT=\"1\">");
+		    			     pw.println(" <PARTITION_IMAGES>");
+		    			 }
 		    			 Enumeration<? extends ZipEntry> subentries = subzip.entries();
 		    			 while ( subentries.hasMoreElements() ) {
 		    				 ZipEntry subentry = subentries.nextElement();
+		    				 if (pw!=null)
+		    					 pw.println("   <FILE PATH=\""+subentry.getName()+"\"/>");
 		    	    		 File subout = getFile(new File(subfolder+File.separator+subentry.getName()));
 		    	    		 entryStream=subzip.getInputStream(subentry);
 		    	    		 streamOut = new FileOutputStream(subout);
@@ -66,6 +75,12 @@ public class SeusSinTool {
 		    	    		 entryStream.close();
 		    	    		 streamOut.close();
 		    			 }
+	    				 if (pw!=null) {
+	    					 pw.println(" </PARTITION_IMAGES>");
+	    					 pw.println("</PARTITION_DELIVERY>");
+	    					 pw.flush();
+	    					 pw.close();
+	    				 }
 		    			 subzip.close();
 		    			 out.delete();
 	    			 }

@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 import org.logger.MyLogger;
 import org.sinfile.parsers.SinFile;
-import org.system.AdbPhoneThread;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.DeviceProperties;
@@ -28,14 +27,12 @@ import org.system.StatusListener;
 
 public class FlasherConsole {
 	
-	private static AdbPhoneThread phoneWatchdog;
 	private static String fsep = OS.getFileSeparator();
 	static final Logger logger = LogManager.getLogger(FlasherConsole.class);
 	
 	public static void init(boolean withadb) {
 			logger.info("Flashtool "+About.getVersion());
 			MainSWT.guimode=false;
-			if (withadb) {
 			StatusListener phoneStatus = new StatusListener() {
 				public void statusChanged(StatusEvent e) {
 					if (!e.isDriverOk()) {
@@ -64,23 +61,11 @@ public class FlasherConsole {
 					}
 				}
 			};
-			phoneWatchdog = new AdbPhoneThread();
-			phoneWatchdog.start();
-			phoneWatchdog.addStatusListener(phoneStatus);
-			}
-			else DeviceChangedListener.starts();
+			DeviceChangedListener.starts(null);
 	}
 
 	public static void exit() {
 		DeviceChangedListener.stop();
-		if (phoneWatchdog!=null) {
-			phoneWatchdog.done();
-			try {
-				phoneWatchdog.join();
-			}
-			catch (Exception e) {
-			}
-		}
 		MyLogger.writeFile();
 		System.exit(0);
 	}
@@ -142,20 +127,20 @@ public class FlasherConsole {
 	}
 	
 	public static void doGetIMEI() throws Exception {
-		X10flash f=null;
+		Flasher f=null;
 		try {
 			Bundle b = new Bundle();
 			b.setSimulate(false);
-			f = new X10flash(b,null);
+			f = new S1Flasher(b,null);
 			logger.info("Please connect your phone in flash mode");
-			while (!f.deviceFound());
-			f.openDevice(false);
+			while (!f.flashmode());
+			f.open(false);
 			logger.info("IMEI : "+f.getPhoneProperty("IMEI"));
-			f.closeDevice();
+			f.close();
 			exit();
 		}
 		catch (Exception e) {
-			if (f!=null) f.closeDevice();
+			if (f!=null) f.close();
 			throw e;
 		}		
 	}
@@ -170,7 +155,7 @@ public class FlasherConsole {
 	}
 
 	public static void doFlash(String file,boolean wipedata,boolean wipecache,boolean excludebb,boolean excludekrnl, boolean excludesys) throws Exception {
-		X10flash f=null;
+		Flasher f=null;
 		try {
 			File bf = new File(file);
 			if (!bf.exists()) {
@@ -187,16 +172,16 @@ public class FlasherConsole {
 			b.getMeta().setCategEnabled("KERNEL", excludekrnl);
 			logger.info("Preparing files for flashing");
 			b.open();
-			f = new X10flash(b,null);
+			f = new S1Flasher(b,null);
 			logger.info("Please connect your phone in flash mode");
-			while (!f.deviceFound());
-			f.openDevice(false);
-			f.flashDevice();
+			while (!f.flashmode());
+			f.open(false);
+			f.flash();
 			b.close();
 			exit();
 		}
 		catch (Exception e) {
-			if (f!=null) f.closeDevice();
+			if (f!=null) f.close();
 			throw e;
 		}		
 	}

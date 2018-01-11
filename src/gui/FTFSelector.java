@@ -318,8 +318,8 @@ public class FTFSelector extends Dialog {
 
 	public void feedContent(String pathname, String ftfname) {
 		textSourceFolder.setText(pathname);
-		comboUSBBuffer.setItems(new String[] {"Device maxsize", "512K", "256K", "128K", "64K", "32K"});
-		comboUSBBuffer.select(1);
+		comboUSBBuffer.setItems(new String[] {"4096K", "2048K", "1024K", "512K", "256K", "128K", "64K", "32K"});
+		comboUSBBuffer.select(3);
 		maxbuffer=comboUSBBuffer.getSelectionIndex();
 	}
 	

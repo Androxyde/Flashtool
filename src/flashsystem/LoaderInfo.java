@@ -31,4 +31,5 @@ public class LoaderInfo extends Properties {
 			catch (Exception e) {}
 		}
 	}
+
 }

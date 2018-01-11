@@ -138,6 +138,15 @@ public class BundleCreator extends Dialog {
 				}
 			}
 		}		
+		srcdir = new File(sourceFolder.getText()+File.separator+"partition");
+		if (srcdir.exists()) {
+			chld = srcdir.listFiles();
+			for(int i = 0; i < chld.length; i++) {
+				if (chld[i].getName().toUpperCase().endsWith("XML")) {
+					files.add(new BundleEntry(chld[i]));
+				}
+			}
+		}
 		model.refresh(meta);
 		treeViewerCategories.setInput(model);
 		listViewerFiles.setInput(files);
@@ -451,6 +460,15 @@ public class BundleCreator extends Dialog {
 		    				}
 		    			}
 		    			srcdir = new File(sourceFolder.getText()+File.separator+"boot");
+		    			if (srcdir.exists()) {
+		    				chld = srcdir.listFiles();
+			    			for(int i = 0; i < chld.length; i++) {
+			    				if (chld[i].getName().toUpperCase().endsWith("XML")) {
+			    					files.add(new BundleEntry(chld[i]));
+			    				}
+			    			}
+		    			}
+		    			srcdir = new File(sourceFolder.getText()+File.separator+"partition");
 		    			if (srcdir.exists()) {
 		    				chld = srcdir.listFiles();
 			    			for(int i = 0; i < chld.length; i++) {

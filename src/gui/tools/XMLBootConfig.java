@@ -10,6 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sinfile.parsers.SinFile;
 
+import flashsystem.Category;
+
 
 public class XMLBootConfig {
 
@@ -33,7 +35,7 @@ public class XMLBootConfig {
 		Iterator<String> file = files.iterator();
 		while(file.hasNext()) {
 			String name = file.next();
-			if (SinFile.getShortName(name).equals(match))
+			if (SinFile.getShortName(name).equals(SinFile.getShortName(match)))
 				matched.add(name);
 		}
 		if (matched.size()==1)
@@ -42,7 +44,7 @@ public class XMLBootConfig {
 	}
 	
 	public void setFolder(String folder) {
-		_folder = folder+"/boot";
+		_folder = folder+File.separator+"boot";
 	}
 
 	public String getAppsBootFile() {
@@ -114,6 +116,13 @@ public class XMLBootConfig {
 		if (attributes.containsKey("PLF_ROOT_1"))
 			check_plfroot=plfroot.equals(getAttribute("PLF_ROOT_1"));
 		return (check_otp_lock_status && check_otp_data && check_idcode && check_plfroot); 
+	}
+
+	public boolean matches(String plf_root_hash) {
+		boolean check_plfroot=false;
+		if (attributes.containsKey("PLF_ROOT_HASH"))
+			check_plfroot=plf_root_hash.equals(getAttribute("PLF_ROOT_HASH"));
+		return check_plfroot;
 	}
 
 	public int compare(XMLBootConfig c) {

@@ -9,11 +9,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.logger.LogProgress;
 
-import flashsystem.X10flash;
+import flashsystem.Flasher;
+
 
 public class BackupTAJob extends Job {
 
-	X10flash flash = null;
+	Flasher flash = null;
 	boolean canceled = false;
 	static final Logger logger = LogManager.getLogger(BackupTAJob.class);
 
@@ -21,16 +22,16 @@ public class BackupTAJob extends Job {
 		super(name);
 	}
 	
-	public void setFlash(X10flash f) {
+	public void setFlash(Flasher f) {
 		flash=f;
 	}
 	
     protected IStatus run(IProgressMonitor monitor) {
     	try {
-			flash.openDevice();
+			flash.open();
 			flash.sendLoader();
-			flash.BackupTA();
-			flash.closeDevice();
+			flash.backupTA();
+			flash.close();
 			logger.info("Dumping TA finished.");
 			LogProgress.initProgress(0);
 			return Status.OK_STATUS;

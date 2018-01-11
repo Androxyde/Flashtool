@@ -13,7 +13,7 @@ import java.util.jar.JarFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.sinfile.parsers.SinFile;
 import org.system.OS;
 
 public class BundleEntry {
@@ -48,7 +48,7 @@ public class BundleEntry {
 		if (f.getName().toUpperCase().endsWith("FSC"))
 			_category = "FSC";
 		else
-			_category = BundleEntry.getShortName(fileentry.getName()).toUpperCase();
+			_category = SinFile.getShortName(fileentry.getName()).toUpperCase();
 		_internal = org.sinfile.parsers.SinFile.getShortName(fileentry.getName())+getExtension();
 	}
 
@@ -59,7 +59,7 @@ public class BundleEntry {
 			_category = "FSC";
 		}
 		else
-			_category = BundleEntry.getShortName(jarentry.getName()).toUpperCase();
+			_category = SinFile.getShortName(jarentry.getName()).toUpperCase();
 		_internal = org.sinfile.parsers.SinFile.getShortName(jarentry.getName())+getExtension();
 	}
 
@@ -107,31 +107,6 @@ public class BundleEntry {
 
 	public String getFolder() {
 		return new File(getAbsolutePath()).getParent();
-	}
-
-	public static String getShortName(String pname) {
-		String name = pname;
-		int extpos = name.lastIndexOf(".");
-		if (name.toUpperCase().endsWith(".TA")) {
-			if (extpos!=-1)
-				name = name.substring(0,extpos);
-			return name;
-		}
-		if (name.indexOf("_AID")!=-1)
-			name = name.substring(0, name.indexOf("_AID"));
-		if (name.indexOf("_PLATFORM")!=-1)
-			name = name.substring(0, name.indexOf("_PLATFORM"));
-		if (name.indexOf("_S1")!=-1)
-			name = name.substring(0, name.indexOf("_S1"));
-		if (name.startsWith("elabel"))
-			name = "elabel";
-		if (name.indexOf("-")!=-1)
-			name = name.substring(0, name.indexOf("-"));
-		extpos = name.lastIndexOf(".");
-		if (extpos!=-1) {
-			name = name.substring(0,extpos);
-		}
-		return name;
 	}
 
 	public void saveTo(String folder) {

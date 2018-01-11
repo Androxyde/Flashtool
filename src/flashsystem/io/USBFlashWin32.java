@@ -1,15 +1,17 @@
 package flashsystem.io;
 
+import flashsystem.CommandPacket;
 import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.util.BytesUtil;
 import org.util.HexDump;
 
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
@@ -25,6 +27,10 @@ public class USBFlashWin32 {
 
 	public static void setUSBBufferSize(int size) {
 		buffersize=size;
+	}
+
+	public static int getBufferSize() {
+		return buffersize;
 	}
 
 	public static void windowsOpen(String pid) throws IOException {
@@ -78,18 +84,44 @@ public class USBFlashWin32 {
     public static  void windowsReadS1Reply() throws X10FlashException, IOException
     {
     	logger.debug("Reading packet from phone");
-    	S1Packet p=new S1Packet(JKernel32.readBytes());
-    	while (p.hasMoreToRead()) {
-    		p.addData(JKernel32.readBytes());
-    	}
+    	S1Packet p=new S1Packet(JKernel32.readBytes(13));
+    	logger.debug("Read header");
+    	if (p.getDataLength()>0)
+    		p.addData(JKernel32.readBytes(p.getDataLength()));
+    	p.addData(JKernel32.readBytes(4));
 		p.validate();
 		logger.debug("IN : " + p);
 		lastreply = p.getDataArray();
 		lastflags = p.getFlags();
     }
 
-    public static void windowsReadReply() throws X10FlashException, IOException {
-    	lastreply = JKernel32.readBytes();
+    public static  CommandPacket windowsReadCommandReply() throws X10FlashException, IOException
+    {
+    	logger.debug("Reading packet from phone");
+    	byte[] reply = JKernel32.readBytes(0x1000);
+    	CommandPacket c = new CommandPacket();
+    	c.setStatus(new String(Arrays.copyOfRange(reply, 0, 4)));
+    	if (c.getStatus()==CommandPacket.DATA) {
+    		int length = Integer.parseInt(new String(Arrays.copyOfRange(reply, 4, 12)),16);
+    		if (length>0) {
+    			reply=JKernel32.readBytes(length);
+    			c.setMessage(new String(reply));
+    		}
+    		else c.setMessage("");
+    		reply=JKernel32.readBytes(4);
+    		c.setStatus(new String(reply));
+    	}
+    	else {
+    		c.setMessage(new String(Arrays.copyOfRange(reply, 4,reply.length)));
+    	}
+		logger.debug("IN : " + c.getMessage());
+		lastreply = c.getMessage().getBytes();
+		lastflags = c.getStatus();
+		return c;
+    }
+
+    public static void windowsReadReply() throws IOException {
+    	lastreply = JKernel32.readBytes(buffersize);
     }
 
     public static int windowsGetLastFlags() {

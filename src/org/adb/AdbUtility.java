@@ -430,6 +430,19 @@ public class AdbUtility  {
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"status-window"},false);
 	}
 
+	public static String getStatus() {
+		try {
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"get-state"},false);
+		if (command.getStdErr().contains("unauthorized")) return "adb_unauthorized";
+		if (command.getStdErr().contains("error")) return "normal";
+		if (command.getStdOut().contains("device")) return "adb";
+		return "none";
+		}
+		catch (Exception e) {
+			return "none";
+		}
+	}
+	
 	public static boolean isConnected() {
 		try {
 			logger.debug("Testing if device is connected");

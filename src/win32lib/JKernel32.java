@@ -52,10 +52,10 @@ public class JKernel32 {
 		return true;
 	}
 
-	public static byte[] readBytes() throws IOException {
+	public static byte[] readBytes(int length) throws IOException {
 		IntByReference nbread = new IntByReference();
-		byte[] b = new byte[0x1000];
-		boolean result = kernel32.ReadFile(HandleToDevice, b, 0x1000, nbread, null);
+		byte[] b = new byte[length];
+		boolean result = kernel32.ReadFile(HandleToDevice, b, length, nbread, null);
 		if (!result) throw new IOException("Read error :"+getLastError());
 		return BytesUtil.getReply(b,nbread.getValue());
 	}

@@ -18,9 +18,18 @@ import org.util.HexDump;
 public class Session {
 
 	private Vector<S1Packet> packets = new Vector<S1Packet>();
+	private Vector<FlashCommand> commands = new Vector<FlashCommand>();
 	private String readUnit="";
 	private String model="";
 	private String version="";
+
+	public void addCommand(FlashCommand c) {
+		commands.add(c);
+		if (c.getCommand().startsWith("Read-TA")) {
+			if (c.getUnit()==2210) model=new String(c.getReply());
+			if (c.getUnit()==2202) version = new String(c.getReply()).split("_")[1];
+		}
+	}
 
 	public void addPacket(S1Packet p) {
 		if (p.getCommandName().equals("readTA")) {
@@ -44,6 +53,10 @@ public class Session {
 
 	public String getModel() {
 		return model;
+	}
+
+	public String getVersion() {
+		return version;
 	}
 
 	public Iterator<S1Packet> getPackets() {
@@ -80,51 +93,64 @@ public class Session {
 
 	public Vector<TableLine> getScript() {
 		Vector<TableLine> v = new Vector<TableLine>();
-		Iterator<S1Packet> i = packets.iterator();
-		int count=0;
-		boolean start = false;
-		while (i.hasNext()) {
-			S1Packet p = i.next();
-				TableLine tl = new TableLine();
-/*				if (p.getDirection().equals("READ REPLY")) {
-					if (p.getCommand()==1) {
-						tl.add("readLoaderInfos");
-						tl.add("");
-						v.add(tl);
-					}
-				}*/
-				if (p.getDirection().equals("WRITE")) {
-					if (p.getCommand()==0x0D) {
-						if (p.getTA().getUnitNumber()==10100) {
-							tl.add("setFlashState");
-							tl.add(Integer.toString(BytesUtil.getInt(p.getTA().getUnitData())));
-						}
-						else if (p.getTA().getUnitNumber()==10021) {
-							tl.add("setFlashTimestamp");
+		if (!packets.isEmpty()) {
+			Iterator<S1Packet> i = packets.iterator();
+			int count=0;
+			boolean start = false;
+			while (i.hasNext()) {
+				S1Packet p = i.next();
+					TableLine tl = new TableLine();
+	/*				if (p.getDirection().equals("READ REPLY")) {
+						if (p.getCommand()==1) {
+							tl.add("readLoaderInfos");
 							tl.add("");
+							v.add(tl);
+						}
+					}*/
+					if (p.getDirection().equals("WRITE")) {
+						if (p.getCommand()==0x0D) {
+							if (p.getTA().getUnitNumber()==10100) {
+								tl.add("setFlashState");
+								tl.add(Integer.toString(BytesUtil.getInt(p.getTA().getUnitData())));
+							}
+							else if (p.getTA().getUnitNumber()==10021) {
+								tl.add("setFlashTimestamp");
+								tl.add("");
+							}
+							else {
+								tl.add("writeTA");
+								tl.add(Long.toString(p.getTA().getUnitNumber()));
+							}
+							v.add(tl);
 						}
 						else {
-							tl.add("writeTA");
-							tl.add(Long.toString(p.getTA().getUnitNumber()));
+							tl.add(p.getCommandName());
+							if (p.getCommand()==0x05) {
+								tl.add(SinFile.getShortName(p.sinname));
+							}
+							else if (p.getCommand()==0x09)
+								tl.add(Integer.toString(BytesUtil.getInt(p.getData())));
+							else if (p.getCommand()==0x0C)
+								tl.add(HexDump.toHex(p.getData()));
+							else if (p.getCommand()==0x19)
+								tl.add(HexDump.toHex(p.getData()));
+							else tl.add("");
+							v.add(tl);
 						}
-						v.add(tl);
 					}
-					else {
-						tl.add(p.getCommandName());
-						if (p.getCommand()==0x05) {
-							tl.add(SinFile.getShortName(p.sinname));
-						}
-						else if (p.getCommand()==0x09)
-							tl.add(Integer.toString(BytesUtil.getInt(p.getData())));
-						else if (p.getCommand()==0x0C)
-							tl.add(HexDump.toHex(p.getData()));
-						else if (p.getCommand()==0x19)
-							tl.add(HexDump.toHex(p.getData()));
-						else tl.add("");
-						v.add(tl);
-					}
-				}
-			count++;
+				count++;
+			}
+		}
+		if (!commands.isEmpty()) {
+			Iterator<FlashCommand> ic = commands.iterator();
+			while (ic.hasNext()) {
+				FlashCommand c = ic.next();
+				TableLine t1 = new TableLine();
+				t1.add(c.getFinalCommand());
+				t1.add(c.getParameters());
+				v.add(t1);
+			}
+			
 		}
 		return v;
 	}

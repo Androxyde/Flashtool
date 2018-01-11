@@ -2,7 +2,8 @@ package flashsystem.io;
 
 import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
-import flashsystem.X10flash;
+import flashsystem.CommandPacket;
+import flashsystem.Flasher;
 
 import java.io.IOException;
 
@@ -25,6 +26,15 @@ public class USBFlash {
 		}		
 	}
 
+	public static int getUSBBufferSize() {
+		if (OS.getName().equals("windows")) {
+			return USBFlashWin32.getBufferSize();
+		}
+		else {
+			return USBFlashLinux.getBufferSize();
+		}		
+	}
+	
 	public static void open(String pid) throws IOException, Exception {
 		DeviceChangedListener.pause(true);
 		if (OS.getName().equals("windows")) {
@@ -70,6 +80,15 @@ public class USBFlash {
 		else {
 			USBFlashLinux.linuxReadReply();
 		}
+	}
+
+	public static CommandPacket readCommandReply() throws IOException,X10FlashException {
+		if (OS.getName().equals("windows")) {
+			return USBFlashWin32.windowsReadCommandReply();
+		}
+		else {
+			return USBFlashLinux.linuxReadCommandReply();
+		}		
 	}
 
 	public static int getLastFlags() {

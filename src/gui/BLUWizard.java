@@ -1,6 +1,5 @@
 package gui;
 
-import flashsystem.X10flash;
 import gui.tools.BLUnlockJob;
 import gui.tools.WidgetTask;
 import gui.tools.WriteTAJob;
@@ -23,6 +22,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.system.ULCodeFile;
 import org.ta.parsers.TAUnit;
+
+import flashsystem.Flasher;
+
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
@@ -38,7 +40,7 @@ public class BLUWizard extends Dialog {
 	private Text textULCODE;
 	private Button btnGetUnlock;
 	private Button btnUnlock;
-	private X10flash _flash;
+	private Flasher _flash;
 	private String _action;
 	private String _serial;
 	static final Logger logger = LogManager.getLogger(BLUWizard.class);
@@ -64,7 +66,7 @@ public class BLUWizard extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	public Object open(String serial, String imei, String ulcode,X10flash flash, String action) {
+	public Object open(String serial, String imei, String ulcode,Flasher flash, String action) {
 		_action = action;
 		_flash = flash;
 		_serial = serial;

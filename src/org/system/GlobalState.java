@@ -7,7 +7,7 @@ public class GlobalState {
 	private static Properties serials = new Properties();
 	private static boolean isgui=false;
 	
-	public synchronized static String getState (String pserial, String pid) {
+	public synchronized static String getStates (String pserial, String pid) {
 		Properties p = (Properties) serials.get(pserial);
 		if (p!=null) {
 			String state = p.getProperty(pid);
@@ -17,7 +17,7 @@ public class GlobalState {
 		else return "";
 	}
 
-	public synchronized static void setState(String pserial, String pid, String status) {
+	public synchronized static void setStates(String pserial, String pid, String status) {
 		if (!serials.containsKey(pserial))
 			serials.put(pserial, new Properties());
 		((Properties)serials.get(pserial)).setProperty(pid, status);

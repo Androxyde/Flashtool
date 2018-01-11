@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sinfile.parsers.SinFile;
 import org.sinfile.parsers.SinFileException;
 
 public class Category implements Comparable {
@@ -14,6 +15,7 @@ public class Category implements Comparable {
 	private boolean issin = false;
 	private boolean ista = false;
 	private boolean isbootdelivery = false;
+	private boolean ispartitiondelivery = false;
 	private boolean ispartition = false;
 	private boolean issecro = false;
 	private boolean ispreload = false;
@@ -38,6 +40,7 @@ public class Category implements Comparable {
 			  if (f.getName().endsWith(".sin")) issin=true;
 			  if (f.getName().endsWith(".ta")) ista=true;
 			  if (f.getName().contains("boot_delivery")) isbootdelivery = true;
+			  if (f.getName().contains("partition_delivery")) ispartitiondelivery = true;
 			  if (issin) {
 				  if (f.getName().toUpperCase().contains("PARTITION")) {
 						ispartition = true;
@@ -98,6 +101,10 @@ public class Category implements Comparable {
 		  public boolean isBootDelivery() {
 			  return isbootdelivery;
 		  }
+
+		  public boolean isPartitionDelivery() {
+			  return ispartitiondelivery;
+		  }
 		  
 		  public boolean equals(Category c) {
 			  return c.getId().equals(id);
@@ -131,6 +138,6 @@ public class Category implements Comparable {
 		}
 		
 		public static String getCategoryFromName(String name) {
-			return BundleEntry.getShortName(name).toUpperCase();
+			return SinFile.getShortName(name).toUpperCase();
 		}
 }

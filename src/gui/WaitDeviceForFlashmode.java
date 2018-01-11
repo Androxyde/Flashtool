@@ -11,7 +11,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import flashsystem.X10flash;
+import flashsystem.Flasher;
 import gui.tools.SearchJob;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.layout.FormLayout;
@@ -39,7 +39,7 @@ public class WaitDeviceForFlashmode extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	public Object open(final X10flash flash) {
+	public Object open() {
 		createContents();
 		shlWaitForFlashmode.open();
 		shlWaitForFlashmode.layout();
@@ -51,7 +51,6 @@ public class WaitDeviceForFlashmode extends Dialog {
 		    });
 		Display display = getParent().getDisplay();
 		job = new SearchJob("Search Job");
-		job.setFlash(flash);
 		job.schedule();
 		while (!shlWaitForFlashmode.isDisposed()) {
 			if (!display.readAndDispatch()) {

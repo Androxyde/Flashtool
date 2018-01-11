@@ -7,12 +7,17 @@ import flashsystem.SeusSinTool;
 import gui.tools.WidgetTask;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -20,13 +25,15 @@ import org.apache.logging.log4j.Logger;
 import org.atteo.xmlcombiner.XmlCombiner;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-import org.jdom.JDOMException;
+import org.jdom2.JDOMException;
 import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
 import org.system.TextFile;
 import org.system.XMLFwInfo;
+
+import com.google.common.io.ByteStreams;
 
 public class XperiFirm {
 
@@ -161,6 +168,48 @@ public class XperiFirm {
 				}
 			}
 		}
+		
+		File srcpartzip = new File(srcdir.getAbsolutePath()+File.separator+"partition.zip");
+		
+		if (srcpartzip.exists()) {
+			ZipFile zip = new ZipFile(srcpartzip);
+    		logger.info("Extracting "+zip.getName());
+			String subfolder = srcdir.getAbsolutePath()+File.separator+"partition";
+			new File(subfolder).mkdirs();
+			File xmlpartition = new File(subfolder+File.separator+"partition_delivery.xml");
+			PrintWriter fw = new PrintWriter(xmlpartition);
+			fw.println("<PARTITION_DELIVERY FORMAT=\"1\">");
+			fw.println(" <PARTITION_IMAGES>");
+			 Enumeration<? extends ZipEntry> entries = zip.entries();
+			 while ( entries.hasMoreElements() ) {
+				 ZipEntry entry = entries.nextElement();
+				 fw.println("   <FILE PATH=\""+entry.getName()+"\"/>");
+	    		 File subout = new File(subfolder+File.separator+entry.getName());
+	    		 InputStream entryStream = zip.getInputStream(entry);
+	    		 File out = new File(subfolder+File.separator+entry.getName());
+	    		 FileOutputStream streamOut = new FileOutputStream(out);
+	    		 ByteStreams.copy(entryStream,streamOut);
+	    		 entryStream.close();
+	    		 streamOut.close();
+			 }
+			fw.println(" </PARTITION_IMAGES>");
+			fw.println("</PARTITION_DELIVERY>");
+			fw.flush();
+			fw.close();
+			 zip.close();
+			 srcpartzip.delete();
+		}
+		
+		File srcpartdir = new File(srcdir.getAbsolutePath()+File.separator+"partition");
+		if (srcpartdir.exists()) {
+			chld = srcpartdir.listFiles();
+			for(int i = 0; i < chld.length; i++) {
+				if (chld[i].getName().toUpperCase().endsWith("XML")) {
+					meta.process(new BundleEntry(chld[i]));
+				}
+			}
+		}
+
 		Bundle b = new Bundle();
 		b.setMeta(meta);
 		b.setNoErase(updatexml);

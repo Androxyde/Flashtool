@@ -126,7 +126,7 @@ public interface User32RW extends User32 {
 	int MsgWaitForMultipleObjects(int nCount, HANDLE[] pHandles,
 			boolean bWaitAll, int dwMilliseconds, int dwWakeMask);
 
-	void SendMessage(HWND hWnd, int message, WPARAM wParam, LPARAM lParam);
+//	void SendMessage(HWND hWnd, int message, WPARAM wParam, LPARAM lParam);
 
 	void PostMessage(HWND hWnd, int message, WPARAM wParam, LPARAM lParam);
 

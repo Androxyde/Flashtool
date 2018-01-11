@@ -1,5 +1,6 @@
 package flashsystem.io;
 
+import flashsystem.CommandPacket;
 import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
 
@@ -27,7 +28,11 @@ public class USBFlashLinux {
 	public static void setUSBBufferSize(int size) {
 		buffersize=size;
 	}
-	
+
+	public static int getBufferSize() {
+		return buffersize;
+	}
+
 	public static void linuxOpen(String pid) throws IOException, Exception  {
 			logger.info("Opening device for R/W");
 			JUsb.fillDevice(false);
@@ -81,6 +86,20 @@ public class USBFlashLinux {
 		logger.debug("IN : " + p);
 		lastreply = p.getDataArray();
 		lastflags = p.getFlags();
+    }
+
+    public static  CommandPacket linuxReadCommandReply() throws X10FlashException, IOException
+    {
+    	logger.debug("Reading packet from phone");
+    	CommandPacket p=new CommandPacket();
+    	//p.add(JUsb.readBytes());
+    	//while (p.getStatus()==-1) {
+      //  	p.add(JUsb.readBytes());
+    //	}
+		logger.debug("IN : " + p);
+		lastreply = p.getMessage().getBytes();
+		lastflags = p.getStatus();
+		return p;
     }
 
     public static void linuxReadReply()  throws X10FlashException, IOException {

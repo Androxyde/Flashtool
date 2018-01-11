@@ -9,11 +9,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 
-import flashsystem.X10flash;
+import flashsystem.Bundle;
+import flashsystem.Flasher;
+import flashsystem.FlasherFactory;
 
 public class FlashJob extends Job {
 
-	X10flash flash = null;
+	Flasher flash = null;
+	Bundle _bundle;
 	boolean canceled = false;
 	Shell _shell;
 	static final Logger logger = LogManager.getLogger(FlashJob.class);
@@ -22,30 +25,35 @@ public class FlashJob extends Job {
 		super(name);
 	}
 	
-	public void setFlash(X10flash f) {
-		flash=f;
+	public void setBundle(Bundle b) {
+		_bundle = b;
 	}
 	
 	public void setShell(Shell shell) {
 		_shell = shell;
 	}
 	
+	public Flasher getFlasher() {
+		return flash;
+	}
+
     protected IStatus run(IProgressMonitor monitor) {
     	try {
-    		if (flash.getBundle().open()) {
+    		if (_bundle.open()) {
     			logger.info("Please connect your device into flashmode.");
     			String result = "";
-    			if (!flash.getBundle().simulate()) {
-    				result = (String)WidgetTask.openWaitDeviceForFlashmode(_shell,flash);
+    			if (!_bundle.simulate()) {
+    				result = (String)WidgetTask.openWaitDeviceForFlashmode(_shell);
     			}
     			else result="OK";
     			if (result.equals("OK")) {
-    				flash.openDevice();
-    				flash.flashDevice();
-    				flash.getBundle().close();
+    				flash = FlasherFactory.getFlasher(_bundle, _shell);
+    				flash.open();
+    				flash.flash();
+    				_bundle.close();
     			}
     			else {
-    				flash.getBundle().close();
+    				_bundle.close();
     				logger.info("Flash canceled");
     			}
     		}

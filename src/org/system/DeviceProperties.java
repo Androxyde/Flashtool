@@ -20,7 +20,15 @@ public class DeviceProperties {
 			fis.close();
 			build.delete();
 		}
-		catch (Exception e) {}
+		catch (Exception e) {
+			try {
+				devprops.setProperty("ro.build.version.release", AdbUtility.run("getprop ro.build.version.release"));
+				devprops.setProperty("ro.build.id", AdbUtility.run("getprop ro.build.id"));
+				devprops.setProperty("ro.product.cpu.abi", AdbUtility.run("getprop ro.product.cpu.abi"));
+				devprops.setProperty("ro.product.device", AdbUtility.run("getprop ro.product.device"));
+				devprops.setProperty("ro.product.model", AdbUtility.run("getprop ro.product.model"));
+			} catch (Exception e1) {}
+		}
 	}
 
 	public static String getProperty(String key) {

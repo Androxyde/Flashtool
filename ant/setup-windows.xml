@@ -22,7 +22,6 @@
     	<delete dir="../../Deploy/FlashTool/x10flasher_lib/linjre32"/>
     	<delete dir="../../Deploy/FlashTool/x10flasher_lib/linjre64"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/macjre64"/>
-		<delete file="../../Deploy/FlashTool/FlashTool.exe"/>
 	    <delete file="../../Deploy/FlashTool/FlashTool64.exe"/>
 		<delete file="../../Deploy/FlashTool/FlashToolConsole"/>
 		<delete file="../../Deploy/FlashTool/FlashTool"/>
@@ -54,8 +53,6 @@
 
 	<target name="JRE">
 		<unzip src="../jre/winjre.zip" dest="../../Deploy/FlashTool/x10flasher_lib"/>
-		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/winjre32/lib/security"/>
-		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/winjre32/lib/security"/>		
 		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/winjre64/lib/security"/>
 		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/winjre64/lib/security"/>		
 	</target>
@@ -70,7 +67,6 @@
 	    </target>
 	 
 	<target name="binaries" depends="clean, main_lib, JRE">
-		<copy file="../ProgramExe/FlashTool.exe" todir="../../Deploy/FlashTool"/>
 		<copy file="../ProgramExe/FlashTool64.exe" todir="../../Deploy/FlashTool"/>
     	<copy todir="../../Deploy/FlashTool/x10flasher_lib">
     		<fileset dir="../win32"/>

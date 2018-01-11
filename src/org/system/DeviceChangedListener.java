@@ -4,8 +4,9 @@ public class DeviceChangedListener {
 
 	public static PhoneThread usbwatch;
 	
-	public static void starts() {
+	public static void starts(StatusListener listener) {
 		usbwatch = new PhoneThread();
+		usbwatch.addStatusListener(listener);
 		usbwatch.start();
 	}
 	
@@ -19,10 +20,6 @@ public class DeviceChangedListener {
 	
 	public static void pause(boolean paused) {
 		usbwatch.pause(paused);
-	}
-
-	public static void addStatusListener(StatusListener listener) {
-		usbwatch.addStatusListener(listener);
 	}
 	
 	public static void forceDetection() {

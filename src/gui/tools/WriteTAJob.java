@@ -6,11 +6,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.ta.parsers.TAUnit;
 
-import flashsystem.X10flash;
+import flashsystem.Flasher;
 
 public class WriteTAJob extends Job {
 
-	X10flash flash = null;
+	Flasher flash = null; 
 	TAUnit ta = null;
 	boolean canceled = false;
 	boolean success = false;
@@ -23,7 +23,7 @@ public class WriteTAJob extends Job {
 		super(name);
 	}
 	
-	public void setFlash(X10flash f) {
+	public void setFlash(Flasher f) {
 		flash=f;
 	}
 
@@ -33,9 +33,7 @@ public class WriteTAJob extends Job {
 	
     protected IStatus run(IProgressMonitor monitor) {
     	try {
-			flash.openTA(2);
-			flash.sendTAUnit(ta);
-			flash.closeTA();
+			flash.writeTA(2,ta);
 			success=true;
 			return Status.OK_STATUS;
     	}

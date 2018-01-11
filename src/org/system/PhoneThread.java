@@ -1,38 +1,41 @@
 package org.system;
 
+import org.adb.AdbUtility;
+
 public class PhoneThread extends Thread {
 
 	boolean done = false;
 	boolean paused = false;
 	boolean forced = false;
-	String status = "";
+	String status = "none";
+	String pid = "";
 	
 	StatusListener listener;
 
 	public void run() {
 		this.setName("Phonne-connect-watchdog");
 		int count = 0;
-		int nbnull = 0;
 		DeviceIdent id=null;
+		int nbstatustocount=0;
+		String statustocount="";
+		String lstatus="";
 		while (!done) {
 			if (!paused) {
 				id = Devices.getConnectedDevice();
-				if (id.getPid().equals("ADDE"))
-					GlobalState.setState(id.getSerial(), id.getPid(), "flash");
-				else if (id.getPid().equals("0DDE"))
-					GlobalState.setState(id.getSerial(), id.getPid(), "fastboot");
-				if (id.getStatus().length()==0) {
-					nbnull++;
-					if (nbnull==5) GlobalState.setState(id.getSerial(), id.getPid(), "normal");
+				if (!pid.equals(id.getPid())) {
+					nbstatustocount=0;
+					pid=id.getPid();
 				}
 				else {
-					nbnull=0;
-					String lstatus= id.getStatus();
-					if (!lstatus.equals(status)) {
-						if (!lstatus.equals("adb"))
-							fireStatusChanged(new StatusEvent(lstatus,id.isDriverOk()));
-						status = lstatus;
+					if (nbstatustocount<Integer.parseInt(GlobalConfig.getProperty("usbdetectthresold"))) nbstatustocount++;
+					else lstatus=id.getStatus();
+				}
+				if (!status.equals(lstatus) && (nbstatustocount==Integer.parseInt(GlobalConfig.getProperty("usbdetectthresold")))) {
+					status=lstatus;
+					if (status.equals("adb")) {
+						DeviceProperties.reload();
 					}
+					fireStatusChanged(new StatusEvent(lstatus,id.isDriverOk()));
 				}
 			}
 			try {
@@ -40,7 +43,7 @@ public class PhoneThread extends Thread {
 					sleep(10);
 					count++;
 				}
-				count = 0;					
+				count = 0;
 			} catch (Exception e) {}
 		}
 		Devices.clean();

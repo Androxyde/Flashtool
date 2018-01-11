@@ -63,10 +63,12 @@ public class DevicesGit {
 		try {
 			logger.info("Opening devices repository.");
 	        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+	        logger.debug("Local path : "+localPath);
 	        localRepo = builder.setGitDir(new File(localPath))
 	                .readEnvironment() // scan environment GIT_* variables
 	                .findGitDir() // scan up the file system tree
 	                .build();
+	        logger.debug("Getting new git object");
 	        git = new Git(localRepo);
 	        return true;
 		} catch (Exception e) {

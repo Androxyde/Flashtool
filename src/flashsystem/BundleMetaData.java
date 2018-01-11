@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import org.sinfile.parsers.SinFile;
 import org.util.MyTreeSet;
 
 public class BundleMetaData {
@@ -20,6 +21,7 @@ public class BundleMetaData {
 	public String getNoEraseAsString() {
 		return noerase.toString().replace("[", "").replace("]", "").replace(" ", "");
 	}
+	
 	public void setNoErase(String noerase) {
 		if (noerase!=null) {
 			if (noerase.toUpperCase().equals(noerase)) {
@@ -31,7 +33,7 @@ public class BundleMetaData {
 				String noerasecateg="";
 				String lnoerase[]=noerase.split(",");
 				for (int i=0;i<lnoerase.length;i++) {
-					this.noerase.addElement(BundleEntry.getShortName(lnoerase[i]).toUpperCase());
+					this.noerase.addElement(SinFile.getShortName(lnoerase[i]).toUpperCase());
 				}
 			}
 		}
@@ -142,7 +144,7 @@ public class BundleMetaData {
 			_categex.add(cat);
 		}
 	}
-	
+
 	public void setCategEnabled(String categ, boolean enabled) {
 		Category c = _categex.get(categ);
 		if (c==null) c = _categwipe.get(categ);
@@ -165,15 +167,16 @@ public class BundleMetaData {
 			_categwipe.remove(get(f.getCategory()));
 		} catch (Exception e) {}
 	}
-	
+
 	public Category get(String categ) {
 		Category c = _categex.get(categ);
 		if (c==null) c = _categwipe.get(categ);
 		return c;
 	}
-	
+
 	public void clear() {
 		_categex.clear();
 		_categwipe.clear();
 	}
+
 }

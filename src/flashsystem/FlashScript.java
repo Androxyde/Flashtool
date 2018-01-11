@@ -12,12 +12,14 @@ import org.ta.parsers.TAFileParser;
 import org.ta.parsers.TAUnit;
 
 import gui.tools.XMLBootConfig;
+import gui.tools.XMLPartitionDelivery;
 
 public class FlashScript {
 
 	Vector<String> categories = new Vector<String>();
 	Vector<Long> units = new Vector<Long>();
 	private XMLBootConfig bc=null;
+	private XMLPartitionDelivery pd=null;
 	
 	public FlashScript(String fsc) {
 		TextFile flashscript = new TextFile(fsc,"ISO8859-1");
@@ -26,17 +28,34 @@ public class FlashScript {
 			Iterator<Integer> keys = map.keySet().iterator();
     		while (keys.hasNext()) {
     			String line = map.get(keys.next());
-    			String param="";
+    			String param1="";
+    			String param2="";
     			String[] parsed = line.split(":");
     			String action = parsed[0];
-    			if (parsed.length>1) param=parsed[1];
-    			if (action.equals("uploadImage")) categories.add(param.toUpperCase());
-    			if (action.equals("writeTA")) units.add(Long.parseLong(param));
+    			if (parsed.length>1) param1=parsed[1];
+    			if (parsed.length>2) param2=parsed[2];
+    			if (action.equals("uploadImage")) categories.add(param1.toUpperCase());
+    			if (action.equals("writeTA")) units.add(Long.parseLong(param1));
+    			if (action.equals("flash")) categories.add(Category.getCategoryFromName(param2));
+    			if (action.equals("Repartition")) {
+    				categories.add(param2.toUpperCase());
+    			}
+    			if (action.equals("Write-TA")) units.add(Long.parseLong(param2));
     		}
 		} catch (Exception e) {}
 	}
 
 	public boolean hasCategory(Category category) {
+		if (category.isPartitionDelivery()) {
+			if (pd==null) return false;
+			Iterator ifiles = pd.getFiles().asIterator();
+			while (ifiles.hasNext()) {
+				String file = (String)ifiles.next();
+				if (!categories.contains(file.toUpperCase()))
+						return false;
+			}
+			return true;
+		}
 		if (category.isBootDelivery()) {
 			if (bc==null) return false;
 			Iterator ifiles = bc.getFiles().iterator();
@@ -66,18 +85,24 @@ public class FlashScript {
 			Iterator<TAUnit> taul = tf.entries().iterator();
 			while (taul.hasNext()) {
 				TAUnit u = taul.next();
-				if (!units.contains(u.getUnitNumber()))
+				if (!units.contains(u.getUnitNumber())) {
 					return false;
+				}
 			}
 			return true;
 		}
 		catch (Exception e) {
+			
 			return false;
 		}
 	}
 	
 	public void setBootConfig(XMLBootConfig bc) {
 		this.bc=bc;
+	}
+
+	public void setPartitionDelivery(XMLPartitionDelivery pd) {
+		this.pd=pd;
 	}
 
 }

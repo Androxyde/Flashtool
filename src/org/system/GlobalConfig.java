@@ -21,9 +21,11 @@ public class GlobalConfig {
 	}
 	
 	public static void reloadProperties() {
+		String folder = OS.getUserHome()+File.separator+".flashTool";
+		new File(folder).mkdirs();
 		Properties p = null;
 		try {
-			File pfile = new File("./config.properties");
+			File pfile = new File(folder+File.separator+"config.properties");
 			if (pfile.exists()) {
 				p = new Properties();
 				FileReader pread = new FileReader(pfile);
@@ -34,14 +36,8 @@ public class GlobalConfig {
 		} catch (Exception e) {
 			p = null;
 		}
-		String folder = OS.getUserHome()+File.separator+".flashTool";
-		new File(folder).mkdirs();
-		config = new PropertiesFile("gui/ressources/config.properties",folder+File.separator+"config.properties");
-		if (config.getProperty("devfeatures")==null)
-			config.setProperty("devfeatures", "no");
-		if (config.getProperty("bundle")!=null)
-			config.remove("bundle");
-		config.write("UTF-8");
+		config = new PropertiesFile("gui/ressources/config.properties","");
+		config.setFileName(folder+File.separator+"config.properties");
 		if (p!=null) {
 			Enumeration keys = p.keys();
 			while (keys.hasMoreElements()) {
@@ -49,6 +45,11 @@ public class GlobalConfig {
 				GlobalConfig.setProperty(key, p.getProperty(key));
 			}
 		}
+		if (config.getProperty("devfeatures")==null)
+			config.setProperty("devfeatures", "no");
+		if (config.getProperty("bundle")!=null)
+			config.remove("bundle");
+		config.write("UTF-8");
 		String userfolder = GlobalConfig.getProperty("user.flashtool");
 		if (userfolder ==null) GlobalConfig.setProperty("user.flashtool", folder);
 	}

@@ -2,6 +2,7 @@ package flashsystem;
 
 import gui.tools.FirmwareFileFilter;
 import gui.tools.XMLBootDelivery;
+import gui.tools.XMLPartitionDelivery;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -55,6 +56,7 @@ public final class Bundle {
     private BundleMetaData _meta;
     private boolean bootdeliveryflashed=false;
     private XMLBootDelivery xmlb;
+    private XMLPartitionDelivery xmlp;
     static final Logger logger = LogManager.getLogger(Bundle.class);
 
     public String getJarName() {
@@ -98,7 +100,7 @@ public final class Bundle {
 			Enumeration<JarEntry> e = _firmware.entries();
 			while (e.hasMoreElements()) {
 				BundleEntry entry = new BundleEntry(_firmware,e.nextElement());
-				if (!entry.getName().toUpperCase().startsWith("BOOT/")) {
+				if (!entry.getName().toUpperCase().startsWith("BOOT/") && !entry.getName().toUpperCase().startsWith("PARTITION/")) {
 				if (entry.getName().toUpperCase().endsWith("FSC") || entry.getName().toUpperCase().endsWith("SIN") || entry.getName().toUpperCase().endsWith("TA") || entry.getName().toUpperCase().endsWith("XML")) {
 					try {
 						_meta.process(entry);
@@ -229,9 +231,22 @@ public final class Bundle {
 		return false;
 	}
 
+	public boolean hasPartitionDelivery() {
+		Category bl = _meta.get("PARTITION_DELIVERY");
+		if (bl==null) return false;
+		if (bl.isEnabled()) return true;
+		return false;
+	}
+
 	public BundleEntry getBootDelivery()  throws IOException, FileNotFoundException {
 		if (hasBootDelivery())
 			return _meta.get("BOOT_DELIVERY").getEntries().iterator().next();
+		return null;
+	}
+
+	public BundleEntry getPartitionDelivery()  throws IOException, FileNotFoundException {
+		if (hasPartitionDelivery())
+			return _meta.get("PARTITION_DELIVERY").getEntries().iterator().next();
 		return null;
 	}
 
@@ -364,9 +379,30 @@ public final class Bundle {
 				while (files.hasMoreElements()) {
 					String bootname = (String)files.nextElement();
 					logger.info("Adding "+bootname+" to the bundle");
-				    jarAdd = new JarEntry("boot/"+bootname.replace(".sin", ".sinb").replace(".ta", ".tab"));
+				    jarAdd = new JarEntry("boot/"+bootname);
 			        out.putNextEntry(jarAdd);
 			        InputStream bin = new FileInputStream(new File(folder+File.separator+bootname));
+			        while (true) {
+			          int nRead = bin.read(buffer, 0, buffer.length);
+			          if (nRead <= 0)
+			            break;
+			          out.write(buffer, 0, nRead);
+			          LogProgress.updateProgress();
+			        }
+			        bin.close();
+				}
+
+	        }
+	        if (new File(entry.getAbsolutePath()).getParentFile().getName().toUpperCase().equals("PARTITION")) {
+	        	String folder = new File(entry.getAbsolutePath()).getParentFile().getAbsolutePath();
+				XMLPartitionDelivery xml = new XMLPartitionDelivery(new File(entry.getAbsolutePath()));
+				Enumeration files = xml.getFiles();
+				while (files.hasMoreElements()) {
+					String partitionname = (String)files.nextElement();
+					logger.info("Adding "+partitionname+" to the bundle");
+				    jarAdd = new JarEntry("partition/"+partitionname);
+			        out.putNextEntry(jarAdd);
+			        InputStream bin = new FileInputStream(new File(folder+File.separator+partitionname));
 			        while (true) {
 			          int nRead = bin.read(buffer, 0, buffer.length);
 			          if (nRead <= 0)
@@ -473,12 +509,15 @@ public final class Bundle {
 	public boolean open() {
 		try {
 			logger.info("Preparing files for flashing");
+			
 			FileUtils.deleteDirectory(new File(OS.getFolderFirmwaresPrepared()));
 			File f = new File(OS.getFolderFirmwaresPrepared());
 			f.mkdir();
 			logger.debug("Created the "+f.getName()+" folder");
+			LogProgress.initProgress(_meta.getAllEntries(true).size());
 			Iterator<Category>  entries = _meta.getAllEntries(true).iterator();
 			while (entries.hasNext()) {
+				LogProgress.updateProgress();
 				Category categ = entries.next();
 				Iterator<BundleEntry> icateg = categ.getEntries().iterator();
 				while (icateg.hasNext()) {
@@ -489,7 +528,23 @@ public final class Bundle {
 						Enumeration files = xmlb.getFiles();
 						while (files.hasMoreElements()) {
 							String file = (String)files.nextElement();
-							JarEntry j = _firmware.getJarEntry("boot/"+file.replace(".sin", ".sinb").replace(".ta", ".tab"));
+							try {
+								JarEntry j = _firmware.getJarEntry("boot/"+file);
+								BundleEntry bent = new BundleEntry(_firmware,j);
+								bent.saveTo(OS.getFolderFirmwaresPrepared());
+							} catch (NullPointerException npe) {
+								JarEntry j = _firmware.getJarEntry("boot/"+file+"b");
+								BundleEntry bent = new BundleEntry(_firmware,j);
+								bent.saveTo(OS.getFolderFirmwaresPrepared());
+							}
+						}
+					}
+					if (bf.getCategory().equals("PARTITION_DELIVERY")) {
+						xmlp = new XMLPartitionDelivery(new File(bf.getAbsolutePath()));
+						Enumeration files = xmlp.getFiles();
+						while (files.hasMoreElements()) {
+							String file = (String)files.nextElement();
+							JarEntry j = _firmware.getJarEntry("partition/"+file);
 							BundleEntry bent = new BundleEntry(_firmware,j);
 							bent.saveTo(OS.getFolderFirmwaresPrepared());
 						}
@@ -501,11 +556,13 @@ public final class Bundle {
 			if (hasFsc()) {
 				getFsc().saveTo(OS.getFolderFirmwaresPrepared());
 			}
+			LogProgress.initProgress(0);
 			return true;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
+			LogProgress.initProgress(0);
 			return false;
 		}
     }
@@ -555,6 +612,10 @@ public final class Bundle {
 	
 	public XMLBootDelivery getXMLBootDelivery() {
 		return xmlb;
+	}
+
+	public XMLPartitionDelivery getXMLPartitionDelivery() {
+		return xmlp;
 	}
 	
 	public void setMaxBuffer(int value) {

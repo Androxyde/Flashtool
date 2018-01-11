@@ -1,26 +1,26 @@
 package org.sinfile.parsers;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import org.sinfile.parsers.v3.AddrBlock;
-import org.sinfile.parsers.v3.HashBlock;
-import org.system.OS;
-import org.util.BytesUtil;
+import org.rauschig.jarchivelib.ArchiveFormat;
+import org.rauschig.jarchivelib.Archiver;
+import org.rauschig.jarchivelib.ArchiverFactory;
+import org.rauschig.jarchivelib.CompressionType;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
+
+import flashsystem.Category;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 public class SinFile {
 
@@ -34,10 +34,12 @@ public class SinFile {
 	private long filesize;
 	long totalread = 0;
 	int partcount=0;
+	File unpackFolder=null;
 
 	public org.sinfile.parsers.v1.SinParser sinv1 = null;
 	public org.sinfile.parsers.v2.SinParser sinv2 = null;
 	public org.sinfile.parsers.v3.SinParser sinv3 = null;
+	public org.sinfile.parsers.v4.SinParser sinv4 = null;
 	
 	static final Logger logger = LogManager.getLogger(SinFile.class);
 	
@@ -73,10 +75,15 @@ public class SinFile {
               + "int hashLen;"
         );
 
+		JBBPParser sinParserv4 = JBBPParser.prepare(
+			    "byte[2] magic;"
+        );
+
+		
 		try {
 			openStreams();
 			version = sinStream.readByte();
-			if (version!=1 && version!=2 && version!=3) throw new SinFileException("Not a sin file");
+			if (version!=1 && version!=2 && version!=3 && version!=0x1F) throw new SinFileException("Not a sin file");
 			if (version==1) {
 				sinv1 = sinParserV1.parse(sinStream).mapTo(org.sinfile.parsers.v1.SinParser.class);
 				sinv1.setLength(sinfile.length());
@@ -105,11 +112,23 @@ public class SinFile {
 				sinv3.parseDataHeader(sinStream);
 				closeStreams();
 			}
+			if (version==0x1F) {
+				version=sinStream.readByte();
+				if (version==0x8B) {
+					version=4;
+					sinv4 = new org.sinfile.parsers.v4.SinParser(sinfile);
+					sinv4.parse();
+				}
+			}
 		} catch (Exception ioe) {
 			closeStreams();
 			ioe.printStackTrace();
 			throw new SinFileException(ioe.getMessage());
 		}
+	}
+
+	public File getFile() {
+		return sinfile;
 	}
 
 	public byte[] getHeader() throws IOException {
@@ -122,8 +141,12 @@ public class SinFile {
 		if (sinv3!=null) {
 			return sinv3.getHeader();
 		}
+		if (sinv4!=null) {
+			return sinv4.getHeader();
+		}
 		return null;		
 	}
+	
 	
 	public byte getPartitionType() {
 		if (sinv1!=null) {
@@ -172,7 +195,7 @@ public class SinFile {
 		} catch (Exception e) {}
 	}
 	
-	public void openStreams() throws FileNotFoundException {
+	public void openStreams() throws FileNotFoundException, IOException {
 		closeStreams();
 		fin=new FileInputStream(sinfile);
 		sinStream = new JBBPBitInputStream(fin);
@@ -242,7 +265,7 @@ public class SinFile {
 		}
 		return 0;
 	}
-
+	
 	public boolean hasPartitionInfo() {
 		if (sinv1!=null) {
 			return sinv1.hasPartitionInfo();
@@ -337,6 +360,10 @@ public class SinFile {
 		return;		
 	}
 
+	public String getShortName() {
+		return SinFile.getShortName(this.getName());
+	}
+	
 	public static String getShortName(String pname) {
 		String name = pname;
 		int extpos = name.lastIndexOf(".");
@@ -351,6 +378,8 @@ public class SinFile {
 			name = name.substring(0, name.indexOf("_PLATFORM"));
 		if (name.indexOf("_S1")!=-1)
 			name = name.substring(0, name.indexOf("_S1"));
+		if (name.indexOf("_X-")!=-1)
+			name = name.substring(0, name.indexOf("_X-"));
 		if (name.startsWith("elabel"))
 			name = "elabel";
 		if (name.indexOf("-")!=-1)
@@ -407,6 +436,29 @@ public class SinFile {
 			totalread+=bufsize;
 			partcount++;
 			return buf;
+	}
+	
+	public void unpackContent() throws IOException {
+		if (getVersion()==4) {
+			Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.TAR, CompressionType.GZIP);
+			unpackFolder=new File(sinfile.getParent()+File.separator+Category.getCategoryFromName(sinfile.getName()));
+			unpackFolder.mkdirs();
+			logger.info("Extracting sin content to "+Category.getCategoryFromName(sinfile.getName()));
+			archiver.extract(sinfile.getAbsoluteFile(), unpackFolder);
+		}
+	}
+	
+	public String getPartitionName() {
+		if (getVersion()==4) {
+			Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.TAR, CompressionType.GZIP);
+			try {
+				String content = archiver.stream(sinfile).getNextEntry().getName();
+				return content.substring(0, content.lastIndexOf("."));
+			} catch (IOException ioe) {
+				return "";
+			}
+		}
+		return "";
 	}
 
 }

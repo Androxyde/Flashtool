@@ -13,11 +13,11 @@ import org.system.ULCodeFile;
 import org.ta.parsers.TAUnit;
 import org.util.HexDump;
 
-import flashsystem.X10flash;
+import flashsystem.Flasher;
 
 public class GetULCodeJob extends Job {
 
-	X10flash flash = null;
+	Flasher flash = null;
 	boolean canceled = false;
 	String blstatus = "";
 	String ulcode = "";
@@ -62,13 +62,13 @@ public class GetULCodeJob extends Job {
 		super(name);
 	}
 	
-	public void setFlash(X10flash f) {
+	public void setFlash(Flasher f) {
 		flash=f;
 	}
 	
     protected IStatus run(IProgressMonitor monitor) {
     	try {
-			flash.openDevice();
+			flash.open();
 			flash.sendLoader();
 			blstatus = flash.getPhoneProperty("ROOTING_STATUS");
 			imei = flash.getPhoneProperty("IMEI");
@@ -77,7 +77,7 @@ public class GetULCodeJob extends Job {
 				flash.getCurrentDevice().contains("E15") ||
 				flash.getCurrentDevice().contains("U20")) {
 				if (blstatus.equals("ROOTED")) {
-					flash.closeDevice();
+					flash.close();
 					LogProgress.initProgress(0);
 					DeviceChangedListener.pause(false);
 					logger.info("Phone already unlocked");
@@ -86,10 +86,8 @@ public class GetULCodeJob extends Job {
 				else {
 					LogProgress.initProgress(1);
 		    		platform = flash.getCurrentDevice();
-					flash.openTA(2);
-					TAUnit ta=flash.readTA(2129);
-					flash.closeTA();
-					flash.closeDevice();
+					TAUnit ta=flash.readTA(2,2129);
+					flash.close();
 					LogProgress.initProgress(0);
 					DeviceChangedListener.pause(false);
 					if (ta!=null)
@@ -99,9 +97,7 @@ public class GetULCodeJob extends Job {
 					phonecert = phonecert.substring(489,489+383);
 			}
 			else {
-				flash.openTA(2);
-				TAUnit ta=flash.readTA(2226);
-				flash.closeTA();
+				TAUnit ta=flash.readTA(2,2226);
 				serial = flash.getSerial();
 				if (ta==null) {
 					ULCodeFile uc = new ULCodeFile(serial);
@@ -113,7 +109,7 @@ public class GetULCodeJob extends Job {
 					else {
 						ulcode="";
 						alreadyunlocked=false;
-						flash.closeDevice();
+						flash.close();
 						LogProgress.initProgress(0);
 						DeviceChangedListener.pause(false);
 					}

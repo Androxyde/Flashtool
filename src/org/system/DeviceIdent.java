@@ -3,6 +3,8 @@ package org.system;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.adb.AdbUtility;
+
 public class DeviceIdent {
 
 	private String pid="";
@@ -84,7 +86,7 @@ public class DeviceIdent {
 	}
 	
 	public String getDeviceId() {
-		Enumeration e = devid.keys();
+		Enumeration<Object> e = devid.keys();
 		while (e.hasMoreElements()) {
 			String value = (String)e.nextElement();
 			if (!value.contains("MI")) return value;
@@ -93,9 +95,11 @@ public class DeviceIdent {
 	}
 
 	public String getStatus() {
-		if (getPid().length()==0) return "none";
+		if (!getVid().equals("0FCE")) return "none";
 		if (!isDriverOk()) return "notinstalled";
-		return GlobalState.getState(getSerial(), getPid());
+		if (getPid().equals("ADDE") || getPid().equals("B00B")) return "flash";
+		if (getPid().equals("0DDE")) return "fastboot";
+		return AdbUtility.getStatus();
 	}
 	
 	public Properties getIds() {
