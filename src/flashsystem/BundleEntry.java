@@ -11,6 +11,8 @@ import java.io.OutputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sinfile.parsers.SinFile;
@@ -109,26 +111,18 @@ public class BundleEntry {
 		return new File(getAbsolutePath()).getParent();
 	}
 
-	public void saveTo(String folder) {
-		try {
+	public void saveTo(String folder) throws FileNotFoundException, IOException {
 			if (isJarEntry()) {
 				logger.debug("Saving entry "+getName()+" to disk");
 				InputStream in = getInputStream();
 				String outname = folder+File.separator+getName();
 				if (outname.endsWith("tab") || outname.endsWith("sinb")) outname = outname.substring(0, outname.length()-1);
 				fileentry=new File(outname);
-				new File(outname).getParentFile().mkdirs();
+				fileentry.getParentFile().mkdirs();
 				logger.debug("Writing Entry to "+outname);
-				OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
-				byte[] buffer = new byte[10240];
-				int len;
-				while((len = in.read(buffer)) >= 0)
-					out.write(buffer, 0, len);
+				FileUtils.copyInputStreamToFile(in, fileentry);
 				in.close();
-				out.close();
 			}
-		}
-		catch (Exception e) {}
 	}
 
 }
