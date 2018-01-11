@@ -1,6 +1,14 @@
 package gui;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +34,7 @@ public class About extends Dialog {
 
 	protected Object result;
 	protected Shell shlAbout;
-	public static String build = About.class.getPackage().getImplementationVersion();
+	public static String build = About.getManifestInfo();
 	static final Logger logger = LogManager.getLogger(About.class);
 	private Label lblNewLabel;
 	private Label lblNewLabel_2;
@@ -140,5 +148,32 @@ public class About extends Dialog {
 	public static String getVersion() {
 		if (build == null) return " run from eclipse";
 		return build;
+	}
+	
+	public static String getManifestInfo() {
+	    Enumeration resEnum;
+	    try {
+	        resEnum = Thread.currentThread().getContextClassLoader().getResources(JarFile.MANIFEST_NAME);
+	        while (resEnum.hasMoreElements()) {
+	            try {
+	                URL url = (URL)resEnum.nextElement();
+	                InputStream is = url.openStream();
+	                if (is != null) {
+	                    Manifest manifest = new Manifest(is);
+	                    Attributes mainAttribs = manifest.getMainAttributes();
+	                    String version = mainAttribs.getValue("Implementation-Version");
+	                    if(version != null) {
+	                        return version;
+	                    }
+	                }
+	            }
+	            catch (Exception e) {
+	                // Silently ignore wrong manifests on classpath?
+	            }
+	        }
+	    } catch (IOException e1) {
+	        // Silently ignore wrong manifests on classpath?
+	    }
+	    return null; 
 	}
 }
