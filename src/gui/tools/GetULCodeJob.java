@@ -2,17 +2,14 @@ package gui.tools;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.logger.LogProgress;
-import org.system.DeviceChangedListener;
 import org.system.ULCodeFile;
 import org.ta.parsers.TAUnit;
 import org.util.HexDump;
-
 import flashsystem.Flasher;
 
 public class GetULCodeJob extends Job {
@@ -71,7 +68,7 @@ public class GetULCodeJob extends Job {
 			flash.open();
 			flash.sendLoader();
 			blstatus = flash.getPhoneProperty("ROOTING_STATUS");
-			imei = flash.getPhoneProperty("IMEI");
+			System.out.println(imei);
 			if (flash.getCurrentDevice().contains("X10") ||
 				flash.getCurrentDevice().contains("E10") ||
 				flash.getCurrentDevice().contains("E15") ||
@@ -79,7 +76,6 @@ public class GetULCodeJob extends Job {
 				if (blstatus.equals("ROOTED")) {
 					flash.close();
 					LogProgress.initProgress(0);
-					DeviceChangedListener.pause(false);
 					logger.info("Phone already unlocked");
 					logger.info("You can safely reboot in normal mode");
 				}
@@ -89,7 +85,6 @@ public class GetULCodeJob extends Job {
 					TAUnit ta=flash.readTA(2,2129);
 					flash.close();
 					LogProgress.initProgress(0);
-					DeviceChangedListener.pause(false);
 					if (ta!=null)
 						phonecert = HexDump.toHex(ta.getUnitData());
 				}
@@ -111,7 +106,6 @@ public class GetULCodeJob extends Job {
 						alreadyunlocked=false;
 						flash.close();
 						LogProgress.initProgress(0);
-						DeviceChangedListener.pause(false);
 					}
 				}
 				else {

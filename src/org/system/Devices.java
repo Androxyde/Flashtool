@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -11,8 +13,8 @@ import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
+import org.util.BytesUtil;
+import org.util.HexDump;
 
 //import org.eclipse.swt.SWT;
 //import org.eclipse.swt.widgets.Shell;
@@ -24,7 +26,10 @@ import com.sun.jna.platform.win32.WinBase;
 
 import win32lib.JsetupAPi;
 import win32lib.SetupApi.HDEVINFO;
+import win32lib.SetupApi.SP_DRVINFO_DATA;
 
+import com.google.common.primitives.Longs;
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
 
 public class Devices  {
@@ -34,6 +39,7 @@ public class Devices  {
 	public static Properties models = null;
 	private static boolean waitforreboot=false;
 	static final Logger logger = LogManager.getLogger(Devices.class);
+	private static final String DriversInfoData = null;
 	static DeviceIdent lastid = new DeviceIdent();
 	static String laststatus = "";
 
@@ -254,7 +260,20 @@ public class Devices  {
 		return id;
 	}
 	
-    public static DeviceIdent getConnectedDeviceWin32() {
+	public static byte[] longToBytes(long l) {
+        ArrayList<Byte> bytes = new ArrayList<Byte>();
+        while (l != 0) {
+            bytes.add((byte) (l % (0xff + 1)));
+            l = l >> 8;
+        }
+        byte[] bytesp = new byte[bytes.size()];
+        for (int i = bytes.size() - 1, j = 0; i >= 0; i--, j++) {
+            bytesp[j] = bytes.get(i);
+        }
+        return bytesp;
+    }
+    
+	public static DeviceIdent getConnectedDeviceWin32() {
     	DeviceIdent id = new DeviceIdent();
     	HDEVINFO hDevInfo = JsetupAPi.getHandleForConnectedInterfaces();
         if (hDevInfo.equals(WinBase.INVALID_HANDLE_VALUE)) {
@@ -284,16 +303,36 @@ public class Devices  {
         }
         else {
         	SP_DEVINFO_DATA DeviceInfoData;
+        	SP_DRVINFO_DATA DriversInfoData;
         	int index = 0;
 	        do {
 	        	DeviceInfoData = JsetupAPi.enumDevInfo(hDevInfo, index);
 	            String devid = JsetupAPi.getDevId(hDevInfo, DeviceInfoData);
 	            if (devid.contains("VID_0FCE")) {
 	            	id.addDevId(devid);
-	            	if (!JsetupAPi.isInstalled(hDevInfo, DeviceInfoData))
+					if (!JsetupAPi.isInstalled(hDevInfo, DeviceInfoData))
 	            		id.setDriverOk(devid,false);
-	            	else
+	            	else {
 	            		id.setDriverOk(devid,true);
+	            		DriversInfoData=null;
+	            		//DriversInfoData=JsetupAPi.getDriver(hDevInfo, DeviceInfoData);
+	            		if (JsetupAPi.buildDriverList(hDevInfo, DeviceInfoData)) {
+	            		DriversInfoData=null;
+						int driverindex = 0;
+						do {
+							DriversInfoData = JsetupAPi.enumDriverInfo(hDevInfo, DeviceInfoData, driverindex);
+							if (DriversInfoData!=null) {
+								String desc = new String(Native.toString(DriversInfoData.Description));
+								int major = BytesUtil.getInt(Arrays.copyOfRange(Longs.toByteArray(DriversInfoData.DriverVersion), 0, 2));
+								int minor = BytesUtil.getInt(Arrays.copyOfRange(Longs.toByteArray(DriversInfoData.DriverVersion), 2, 4));
+								int mili = BytesUtil.getInt(Arrays.copyOfRange(Longs.toByteArray(DriversInfoData.DriverVersion), 4, 6));
+								int micro = BytesUtil.getInt(Arrays.copyOfRange(Longs.toByteArray(DriversInfoData.DriverVersion), 6, 8));
+								id.setDriver(desc, major, minor, mili, micro);
+							}
+							driverindex++;
+						} while (DriversInfoData!=null);
+	            		}
+	            	}
 	            }
 	            index++;
 	        } while (DeviceInfoData!=null);

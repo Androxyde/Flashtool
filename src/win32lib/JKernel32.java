@@ -7,6 +7,7 @@ import org.util.BytesUtil;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
@@ -99,24 +100,7 @@ public class JKernel32 {
 	}
 	
 	public static String getLastError() {
-		int code = Kernel32.INSTANCE.GetLastError();
-	    Kernel32 lib = Kernel32.INSTANCE;
-	    PointerByReference pref = new PointerByReference();
-	    /*OVERLAPPED ov = new OVERLAPPED();
-	    ov.Offset=0;
-	    ov.OffsetHigh=0;
-	    kernel32.CreateEvent(null, arg1, arg2, arg3)*/
-	    lib.FormatMessage(
-	        WinBase.FORMAT_MESSAGE_ALLOCATE_BUFFER | WinBase.FORMAT_MESSAGE_FROM_SYSTEM | WinBase.FORMAT_MESSAGE_IGNORE_INSERTS, 
-	        null, 
-	        code, 
-	        0, 
-	        pref, 
-	        0, 
-	        null);
-	    String s = code + " : " +pref.getValue().getString(0, !Boolean.getBoolean("w32.ascii"));
-	    lib.LocalFree(pref.getValue());
-	    return s.replaceAll("[\n\r]+"," ");
+		return Kernel32Util.getLastErrorMessage();
 	}
 
 }

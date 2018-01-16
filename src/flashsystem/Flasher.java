@@ -33,5 +33,7 @@ public interface Flasher {
 	public String getCurrentDevice();
 	
 	public String getSerial();
+	
+	public void setFlashState(boolean ongoing) throws IOException,X10FlashException ;
 
 }

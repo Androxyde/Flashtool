@@ -84,11 +84,12 @@ public class USBFlashWin32 {
     public static  void windowsReadS1Reply() throws X10FlashException, IOException
     {
     	logger.debug("Reading packet from phone");
-    	S1Packet p=new S1Packet(JKernel32.readBytes(13));
-    	logger.debug("Read header");
-    	if (p.getDataLength()>0)
-    		p.addData(JKernel32.readBytes(p.getDataLength()));
-    	p.addData(JKernel32.readBytes(4));
+    	byte[] read = JKernel32.readBytes(0x1000);
+    	S1Packet p=new S1Packet(read);
+    	while (p.hasMoreToRead()) {
+    		read = JKernel32.readBytes(0x1000);
+    		p.addData(read);
+    	}    		
 		p.validate();
 		logger.debug("IN : " + p);
 		lastreply = p.getDataArray();

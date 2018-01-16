@@ -7,10 +7,10 @@ import org.system.Devices;
 public class FlasherFactory {
 
 	public static Flasher getFlasher(Bundle b, Shell sh) {
-		DeviceEntry ent = Devices.getDeviceFromVariant(b.getDevice());
-		if (ent.getProtocol().equals("S1")) return new S1Flasher(b, sh);
-		if (ent.getProtocol().equals("Command")) return new CommandFlasher(b, sh);
-		return null;
+		if (Devices.getConnectedDevice().getPid().equals("ADDE")) return new S1Flasher(b, sh);
+		if (Devices.getConnectedDevice().getPid().equals("B00B")) return new CommandFlasher(b, sh);
+		if (Devices.getDeviceFromVariant(b.getDevice()).getProtocol().equals("Command")) return new CommandFlasher(b, sh);
+		return new S1Flasher(b, sh);
 	}
 
 }

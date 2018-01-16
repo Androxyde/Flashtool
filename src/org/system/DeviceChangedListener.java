@@ -18,8 +18,12 @@ public class DeviceChangedListener {
 		catch (Exception e) {}
 	}
 	
-	public static void pause(boolean paused) {
-		usbwatch.pause(paused);
+	public static void enableDetection() {
+		usbwatch.pause(false);
+	}
+
+	public static void disableDetection() {
+		usbwatch.pause(true);
 	}
 	
 	public static void forceDetection() {

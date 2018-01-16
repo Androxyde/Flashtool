@@ -10,6 +10,7 @@ import win32lib.SetupApi.HDEVINFO;
 import com.sun.jna.platform.win32.SetupApi.SP_DEVICE_INTERFACE_DATA;
 
 import win32lib.SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA;
+import win32lib.SetupApi.SP_DRVINFO_DATA;
 
 import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
 import com.sun.jna.platform.win32.Guid.GUID;
@@ -22,6 +23,7 @@ public class JsetupAPi {
 	static SetupApi setupapi = (SetupApi) Native.loadLibrary("setupapi", SetupApi.class, W32APIOptions.UNICODE_OPTIONS);
     public static GUID USBGuid = new GUID();
     private static SP_DEVINFO_DATA DeviceInfoData = new SP_DEVINFO_DATA();
+    private static SP_DRVINFO_DATA DriverInfoData = new SP_DRVINFO_DATA();
     static final Logger logger = LogManager.getLogger(JsetupAPi.class);
     
     static {
@@ -38,6 +40,7 @@ public class JsetupAPi {
 	    USBGuid.Data4[6]=(byte)0x51;
 	    USBGuid.Data4[7]=(byte)0xED;
 	    DeviceInfoData.cbSize = DeviceInfoData.size();
+	    DriverInfoData.cbSize = DriverInfoData.size();
     }
 	
 	public static String getClassName(GUID guid) {
@@ -80,6 +83,32 @@ public class JsetupAPi {
 			return null;
 		}
 		return DeviceInfoData;
+	}
+
+	public static boolean buildDriverList(HDEVINFO hDevInfo, SP_DEVINFO_DATA DeviceInfoData) {
+		int buildresult = setupapi.SetupDiBuildDriverInfoList(hDevInfo, DeviceInfoData, SetupApi.SPDIT_COMPATDRIVER);
+		if (buildresult == 0) {
+			return false;
+		}
+		return true;
+	}
+
+	public static SP_DRVINFO_DATA enumDriverInfo(HDEVINFO hDevInfo, SP_DEVINFO_DATA DeviceInfoData, int index) {
+		int result = setupapi.SetupDiEnumDriverInfo(hDevInfo, DeviceInfoData, SetupApi.SPDIT_COMPATDRIVER, index, DriverInfoData);
+		if (result == 0) {
+			return null;
+		}
+		return DriverInfoData;
+	}
+
+	public static SP_DRVINFO_DATA getDriver(HDEVINFO hDevInfo, SP_DEVINFO_DATA DeviceInfoData) {
+	    SP_DRVINFO_DATA DriverInfoData = new SP_DRVINFO_DATA();
+	    DriverInfoData.cbSize=DriverInfoData.size();
+		int result = setupapi.SetupDiGetSelectedDriver(hDevInfo, DeviceInfoData, DriverInfoData);
+		if (result == 0) {
+			return null;
+		}
+		return DriverInfoData;
 	}
 	
 	public static HDEVINFO getHandleForConnectedInterfaces() {

@@ -31,6 +31,7 @@ import org.sinfile.parsers.SinFileException;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.Devices;
+import org.system.OS;
 import org.system.TextFile;
 import org.ta.parsers.TAFileParseException;
 import org.ta.parsers.TAFileParser;
@@ -40,6 +41,7 @@ import org.util.HexDump;
 
 import com.Ostermiller.util.CircularByteBuffer;
 import com.google.common.io.BaseEncoding;
+import com.google.common.io.ByteStreams;
 
 import flashsystem.io.USBFlash;
 import gui.tools.WidgetTask;
@@ -108,12 +110,14 @@ public class CommandFlasher implements Flasher {
     	} catch (Exception e) {}
     	try {
     		phoneprops.setProperty("Phone-id",getVar("Phone-id"));
+    		phoneprops.setProperty("IMEI", phoneprops.getProperty("Phone-id").split(":")[1]);
     	} catch (Exception e) {}
     	try {
     		phoneprops.setProperty("Device-id",getVar("Device-id"));
     	} catch (Exception e) {}
     	try {
     		phoneprops.setProperty("Rooting-status",getVar("Rooting-status"));
+    		phoneprops.setProperty("ROOTING_STATUS",phoneprops.getProperty("Rooting-status"));
     	} catch (Exception e) {}
     	try {
     		phoneprops.setProperty("Ufs-info",getVar("Ufs-info"));
@@ -233,7 +237,8 @@ public class CommandFlasher implements Flasher {
     		USBFlash.open("B00B");
     		try {
 				logger.info("Reading device information");
-				currentdevice=getVar("product");
+				loadProperties();
+				currentdevice=getPhoneProperty("product");
 				logger.info("Connected device : "+currentdevice);
     		}
     		catch (Exception e) {
@@ -322,7 +327,7 @@ public class CommandFlasher implements Flasher {
     		logger.info("Found a template session. Using it : "+tf.getFileName());
     		Map<Integer,String> map =  tf.getMap();
     		Iterator<Integer> keys = map.keySet().iterator();
-    		writeTA(2,new TAUnit(10100,new byte[] {0x01}));
+    		setFlashState(true);
     		while (keys.hasNext()) {
     			String param1="";
     			String param2="";
@@ -382,10 +387,7 @@ public class CommandFlasher implements Flasher {
     					}
     			}
     		}
-    	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    	  	TAUnit tau = new TAUnit(10021, BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
-    	  	writeTA(2,tau);
-    		writeTA(2,new TAUnit(10100,new byte[] {0x00}));
+    		setFlashState(false);
     	} catch (Exception e) {e.printStackTrace();}
     }
 
@@ -394,7 +396,6 @@ public class CommandFlasher implements Flasher {
 		try {
 		//WidgetTask.openOKBox(_curshell, "This device protocol is not yet supported");
 		logger.info("Start Flashing");
-		loadProperties();
 		bc = getBootConfig();
 		pd = _bundle.getXMLPartitionDelivery();
 		if (pd!=null)
@@ -413,9 +414,7 @@ public class CommandFlasher implements Flasher {
 	    }
 		} catch (Exception e) {}
 		LogProgress.initProgress(0);
-		sync();
-		powerDown();
-		DeviceChangedListener.pause(false);
+		close();
 	}
 
 	public XMLBootConfig getBootConfig() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TAFileParseException, BootDeliveryException  {
@@ -470,7 +469,11 @@ public class CommandFlasher implements Flasher {
     }
 
 	public void close() {
-		
+		try {
+			sync();
+			powerDown();
+		} catch (Exception e) {}
+		USBFlash.close();
 	}
 
 	public String getPhoneProperty(String property) {
@@ -482,14 +485,15 @@ public class CommandFlasher implements Flasher {
 	}
 
 	public TAUnit readTA(int partition, int unit) throws X10FlashException, IOException {
-		logger.info("Reading TA unit "+unit+" from partition "+partition);
 		if (!_bundle.simulate()) {
 			String command = "Read-TA:"+partition+":"+unit;
-			logger.info(command);
 			USBFlash.write(command.getBytes());
-			logger.info("get reply");
 			CommandPacket reply = USBFlash.readCommandReply();
-			logger.info("Reply : "+reply.getMessage());
+			if (reply.getStatus()==1) {
+				logger.info("Reading TA unit "+unit+" from partition "+partition);
+				TAUnit taunit = new TAUnit(unit,reply.getMessage().getBytes());
+				return taunit;
+			}
 		}
 		return null;
 	}
@@ -652,7 +656,43 @@ public class CommandFlasher implements Flasher {
 	}
 	
 	public void backupTA() {
-		
+    	logger.info("Making a TA backup");
+    	String timeStamp = OS.getTimeStamp();
+    	LogProgress.initProgress(16000);
+    	try {
+    		backupTA(1, timeStamp);
+    	} catch (Exception e) {}
+    	try {
+    		backupTA(2, timeStamp);
+    	} catch (Exception e) {}
+    	LogProgress.initProgress(0);
+	}
+	
+	private void backupTA(int partition, String timestamp) {
+		logger.info("Saving TA partition "+partition);
+    	String folder = OS.getFolderRegisteredDevices()+File.separator+getPhoneProperty("serialno")+File.separator+"s1ta"+File.separator+timestamp;
+    	new File(folder).mkdirs();
+    	TextFile tazone = new TextFile(folder+File.separator+partition+".ta","ISO8859-1");
+    	try {
+    		tazone.open(false);
+    	} catch (Exception e1) {
+    		logger.error("Unable to create backup file");
+    		return;
+    	}
+    	try {
+    		tazone.writeln(HexDump.toHex((byte)partition));
+    		for (int unit = 0 ; unit < 8000; unit++) {
+    			LogProgress.updateProgress();
+    			try {
+    				TAUnit taunit = this.readTA(partition, unit);
+    				if (taunit != null) 
+    					tazone.writeln(taunit.toString());
+    			} catch (Exception e3) {}
+    		}
+    		tazone.close();
+	        logger.info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
+    	} catch (Exception e) {
+    	}
 	}
 	
 	public String getCurrentDevice() {
@@ -702,5 +742,15 @@ public class CommandFlasher implements Flasher {
 			e.printStackTrace();
 		}
     }
-
+	public void setFlashState(boolean ongoing) throws IOException,X10FlashException {
+		if (ongoing) {
+    		writeTA(2,new TAUnit(10100,new byte[] {0x01}));
+		}
+		else {
+    	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    	  	TAUnit tau = new TAUnit(10021, BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
+    	  	writeTA(2,tau);
+    		writeTA(2,new TAUnit(10100,new byte[] {0x00}));
+		}
+	}
 }

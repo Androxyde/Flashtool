@@ -20,19 +20,19 @@ import com.sun.jna.platform.win32.SetupApi.SP_DEVICE_INTERFACE_DATA;
 public interface SetupApi extends Library {
 
 	public static class HDEVINFO extends WinNT.HANDLE {}
-    
-    public static class SP_DRVINFO_DATA extends Structure {
+
+	public static class SP_DRVINFO_DATA extends Structure {
     	public SP_DRVINFO_DATA() {
     		DriverDate = new WinBase.FILETIME();
     	}
         public int     cbSize;
         public int     DriverType;
-        public int     Reserved;
+        public Pointer Reserved;
         public char[]  Description = new char[255];
         public char[]  MfgName = new char[255];
         public char[]  ProviderName= new char[255];
         public WinBase.FILETIME  DriverDate;
-        public int DriverVersion;
+        public long DriverVersion;
         
         protected List getFieldOrder() {
         	return Arrays.asList("cbSize",
@@ -95,10 +95,16 @@ public interface SetupApi extends Library {
     public static int DIGCF_DEVICEINTERFACE = 0x00000010; 
     public static int SPDRP_DRIVER          = 0x00000009;
     public static int SPDRP_INSTALL_STATE   = 0x00000022;
+    public static int SPDIT_COMPATDRIVER    = 0x00000002;
+    
 
     HDEVINFO SetupDiGetClassDevs(GUID Guid, String Enumerator, WinDef.HWND Parent, int Flags);
 
+    int SetupDiBuildDriverInfoList(HDEVINFO DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, int DriverType);
+
     int SetupDiEnumDeviceInfo(HDEVINFO DeviceInfoSet, int MemberIndex, SP_DEVINFO_DATA DeviceInfoData);
+    
+    int SetupDiEnumDriverInfo(HDEVINFO DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, int DriverType, int MemberIndex, SP_DRVINFO_DATA DriverInfoData);
 
     int SetupDiEnumDeviceInterfaces(HDEVINFO DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, GUID Guid, int MemberIndex, SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
@@ -110,7 +116,7 @@ public interface SetupApi extends Library {
     
     boolean SetupDiClassNameFromGuid(GUID Guid, char[] ClassName, int ClassNameSize, IntByReference RequiredSize);
     
-    boolean SetupDiGetSelectedDriver(HDEVINFO DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, SP_DRVINFO_DATA DriverInfoData);
+    int SetupDiGetSelectedDriver(HDEVINFO DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, SP_DRVINFO_DATA DriverInfoData);
 
     boolean SetupDiClassGuidsFromName(String ClassName, GUID[] ClassGuidList, int ClassGuidListSize, IntByReference RequiredSize);
     

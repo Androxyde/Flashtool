@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
+import org.system.DeviceChangedListener;
 
 import flashsystem.Bundle;
 import flashsystem.Flasher;
@@ -60,10 +61,12 @@ public class FlashJob extends Job {
     		else {
     			logger.info("Cannot open bundle. Flash operation canceled");
     		}
+    		DeviceChangedListener.enableDetection();
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
-    		e.printStackTrace();
+    		logger.error(e.getMessage());
+    		DeviceChangedListener.enableDetection();
     		return Status.CANCEL_STATUS;
     	}
     }

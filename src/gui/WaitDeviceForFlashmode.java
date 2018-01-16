@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.system.DeviceChangedListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -51,6 +52,7 @@ public class WaitDeviceForFlashmode extends Dialog {
 		    });
 		Display display = getParent().getDisplay();
 		job = new SearchJob("Search Job");
+		DeviceChangedListener.disableDetection();
 		job.schedule();
 		while (!shlWaitForFlashmode.isDisposed()) {
 			if (!display.readAndDispatch()) {

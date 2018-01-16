@@ -164,6 +164,10 @@ public class MainSWT {
 						logger.info("Device connected in flash mode");
 						doDisableIdent();
 					}
+					if (e.getNew().equals("flash_obsolete")) {
+						logger.error("Device connected in flash mode but driver is too old");
+						doDisableIdent();
+					}
 					if (e.getNew().equals("fastboot")) {
 						logger.info("Device connected in fastboot mode");
 						doDisableIdent();
@@ -197,9 +201,9 @@ public class MainSWT {
 		WidgetTask.setEnabled(tltmApkInstall,false);
 		WidgetTask.setMenuName(mntmNoDevice, "No Device");
 		WidgetTask.setEnabled(mntmNoDevice,false);
+		WidgetTask.setEnabled(mntmRawBackup,false);
 		WidgetTask.setEnabled(mntmRawRestore,false);
 		WidgetTask.setEnabled(mntmTARestore,false);
-		WidgetTask.setEnabled(mntmRawBackup,true);
 		WidgetTask.setEnabled(tltmClean,false);
 		WidgetTask.setEnabled(tltmRecovery,false);
 	}
@@ -611,6 +615,7 @@ public class MainSWT {
 					else {
 						Bundle bundle = new Bundle();
 						bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+						bundle.setMaxBuffer(3);
 						logger.info("Please connect your device into flashmode.");
 						String connect = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson);
 						if (connect.equals("OK")) {
@@ -625,8 +630,13 @@ public class MainSWT {
 								logger.error(ex.getMessage());
 								if (flash.getBundle()!=null)
 									flash.getBundle().close();
+								logger.info("Flash canceled");
+								DeviceChangedListener.enableDetection();
 							}
-						} else logger.info("Flash canceled");
+						} else {
+							DeviceChangedListener.enableDetection();
+							logger.info("Flash canceled");
+						}
 					}
 				}
 			}
@@ -689,10 +699,14 @@ public class MainSWT {
 						catch (Exception ex){
 							logger.error(ex.getMessage());
 							logger.info("Flash canceled");
+							DeviceChangedListener.enableDetection();
 							if (flash.getBundle()!=null)
 								flash.getBundle().close();
 						}
-					} else logger.info("Flash canceled");
+					} else {
+						logger.info("Flash canceled");
+						DeviceChangedListener.enableDetection();
+					}
 
 				}
 			}
@@ -781,12 +795,15 @@ public class MainSWT {
 								catch (Exception ex){
 									logger.error(ex.getMessage());
 									logger.info("Flash canceled");
+									DeviceChangedListener.enableDetection();
 									if (flash.getBundle()!=null)
 										flash.getBundle().close();
 								}
 							}
-							else
+							else {
 								logger.info("Flash canceled");
+								DeviceChangedListener.enableDetection();
+							}
 						}
 					}
 					} catch (Exception exc) {}
@@ -1555,15 +1572,18 @@ public class MainSWT {
 									if (!blstatus.equals("ROOTABLE")) {
 										logger.info("Your phone bootloader cannot be officially unlocked");
 										logger.info("You can now unplug and restart your phone");
+										DeviceChangedListener.enableDetection();
 									}
 									else {
 										logger.info("Now unplug your device and restart it into fastbootmode");
 										String result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
 										if (result.equals("OK")) {
-											WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, null, "U");
+											result = WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, null, "U");
+											DeviceChangedListener.enableDetection();
 										}
 										else {
 											logger.info("Bootloader unlock canceled");
+											DeviceChangedListener.enableDetection();
 										}
 									}
 								}
@@ -1572,7 +1592,7 @@ public class MainSWT {
 									flash.close();
 									LogProgress.initProgress(0);
 									logger.info("You can now unplug and restart your device");
-									DeviceChangedListener.pause(false);								
+									DeviceChangedListener.enableDetection();
 								}
 							}
 						}
@@ -1581,18 +1601,19 @@ public class MainSWT {
 			}
 			catch (Exception e) {
 				flash.close();
-				DeviceChangedListener.pause(false);
 				logger.info("Bootloader unlock canceled");
 				LogProgress.initProgress(0);
+				DeviceChangedListener.enableDetection();
 			}
 		}
 		else {
 			logger.info("Bootloader unlock canceled");
+			DeviceChangedListener.enableDetection();
 		}
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage());
-			e.printStackTrace();
+			DeviceChangedListener.enableDetection();
 		}
 	}
 
@@ -1643,13 +1664,16 @@ public class MainSWT {
 			}
 			catch (Exception e) {
 				logger.error(e.getMessage());
-				logger.info("Flash canceled");
+				logger.info("S1 TA backup canceled");
+				DeviceChangedListener.enableDetection();
 				if (flash.getBundle()!=null)
 					flash.getBundle().close();
 			}
 		}
-		else
-			logger.info("Flash canceled");
+		else {
+			DeviceChangedListener.enableDetection();
+			logger.info("S1 TA backup canceled");
+		}
 	}
 
 	public void doRoot() {

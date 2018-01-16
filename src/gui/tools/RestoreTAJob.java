@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.logger.LogProgress;
+import org.system.DeviceChangedListener;
 
 import flashsystem.Flasher;
 import gui.models.TABag;
@@ -41,6 +42,7 @@ public class RestoreTAJob extends Job {
 			flash.open();
 			if (flash.getCurrentDevice().equals(tadev.getModel()) || tadev.getModel().length()==0) {
 				flash.sendLoader();
+				flash.setFlashState(true);
 				for (int i=0;i<tadev.getBags().size();i++) {
 					TABag b = tadev.getBags().get(i);
 					if (b.toflash.size()>0) {
@@ -49,6 +51,7 @@ public class RestoreTAJob extends Job {
 						}
 					}
 				}
+				flash.setFlashState(false);
 				flash.close();
 				logger.info("Restoring TA finished.");
 				LogProgress.initProgress(0);
@@ -59,11 +62,13 @@ public class RestoreTAJob extends Job {
 				logger.info("Restoring TA finished.");
 				LogProgress.initProgress(0);
 			}
+			DeviceChangedListener.enableDetection();
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
     		e.printStackTrace();
     		LogProgress.initProgress(0);
+    		DeviceChangedListener.enableDetection();
     		return Status.CANCEL_STATUS;
     	}
     }

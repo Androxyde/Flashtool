@@ -269,18 +269,6 @@ public class S1Flasher implements Flasher {
     	return  longval & 0xFFFFFFFF;
     }
     
-    public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
-    	try {
-    		TAFileParser ta = new TAFileParser(new File(tafile));
-        	openTA(ta.getPartition());
-        	sendTA(ta);
-    		closeTA();
-    	}catch (TAFileParseException tae) {
-    		closeTA();
-    		logger.error("Error parsing TA file. Skipping");
-    	}
-		LogProgress.initProgress(0);	    
-    }
     
     private void processHeader(SinFile sin) throws X10FlashException {
     	try {
@@ -930,7 +918,6 @@ public class S1Flasher implements Flasher {
     	}
     	catch (Exception e) {}
     	USBFlash.close();
-    	DeviceChangedListener.pause(false);
     }
 
     public void closeDevice(int par) {
@@ -939,7 +926,6 @@ public class S1Flasher implements Flasher {
     	}
     	catch (Exception e) {}
     	USBFlash.close();
-    	DeviceChangedListener.pause(false);
     }
 
     public void hookDevice(boolean printProps) throws X10FlashException,IOException {

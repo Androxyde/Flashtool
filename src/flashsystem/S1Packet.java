@@ -1,15 +1,12 @@
 package flashsystem;
 
-import java.io.ByteArrayInputStream;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import org.util.BytesUtil;
 import org.util.HexDump;
 
-import com.igormaznitsa.jbbp.JBBPParser;
-import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
-import com.igormaznitsa.jbbp.io.JBBPByteOrder;
 
 public class S1Packet {
 
@@ -23,10 +20,15 @@ public class S1Packet {
 	int flag=0;
 	int length=0;
 	byte hdrcksum=0;
+	
+	ByteArrayOutputStream bcommand = new ByteArrayOutputStream();
+	ByteArrayOutputStream bflag = new ByteArrayOutputStream();
+	ByteArrayOutputStream blength = new ByteArrayOutputStream();
+	ByteArrayOutputStream bdata = new ByteArrayOutputStream();
+	ByteArrayOutputStream bcrc32 = new ByteArrayOutputStream();
 
 	byte[] data=null;
 	byte[] crc32=null;
-	private byte[] tempbuffer=null;
 	
 
 	public S1Packet(byte[] pdata) throws IOException {
@@ -51,7 +53,7 @@ public class S1Packet {
 		data = new byte[] {pdata};
 		length=1;
 		hdrcksum = calculateHeaderCkSum();
-		crc32=calculatedCRC32();		
+		crc32=calculatedCRC32();
 	}
 
 	public boolean isValid() {
@@ -130,41 +132,41 @@ public class S1Packet {
 	}
 
 	public void addData(byte[] datachunk) throws IOException  {
-		JBBPBitInputStream chunkStream = new JBBPBitInputStream(new ByteArrayInputStream(datachunk));
-		while (chunkStream.hasAvailableData()) {
-			if (tempbuffer==null)
-				tempbuffer = chunkStream.readByteArray(1);
-			else
-				tempbuffer=BytesUtil.concatAll(tempbuffer, chunkStream.readByteArray(1));
-			if (!isHeaderValid()) {
-				if (tempbuffer.length==13) {
-					JBBPBitInputStream headerStream = new JBBPBitInputStream(new ByteArrayInputStream(tempbuffer));
-					command=headerStream.readInt(JBBPByteOrder.BIG_ENDIAN);
-					flag=headerStream.readInt(JBBPByteOrder.BIG_ENDIAN);
-					length=headerStream.readInt(JBBPByteOrder.BIG_ENDIAN);
-					hdrcksum=(byte)headerStream.readByte();
-					headerStream.close();
-					tempbuffer=null;
+		for (int i=0;i<datachunk.length;i++) {
+			if (bcommand.toByteArray().length<4) {
+				bcommand.write(datachunk[i]);
+				if (command==0 && bcommand.toByteArray().length==4) {
+					command=BytesUtil.getInt(bcommand.toByteArray());
 				}
 			}
-			else if (!isDataComplete()) {
-				if (tempbuffer.length==length) {
-					JBBPBitInputStream dataStream = new JBBPBitInputStream(new ByteArrayInputStream(tempbuffer));
-					data = dataStream.readByteArray(length);
-					dataStream.close();
-					tempbuffer=null;
+			else if (bflag.toByteArray().length<4) {
+				bflag.write(datachunk[i]);
+				if (flag==0 && bflag.toByteArray().length==4) {
+					flag=BytesUtil.getInt(bflag.toByteArray());
 				}
 			}
-			else if (!isCRCComplete()) {
-				if (tempbuffer.length==4) {
-					JBBPBitInputStream crcStream = new JBBPBitInputStream(new ByteArrayInputStream(tempbuffer));
-					crc32 = crcStream.readByteArray(4);
-					crcStream.close();
-					tempbuffer=null;
+			else if (blength.toByteArray().length<4) {
+				blength.write(datachunk[i]);
+				if (length==0 && blength.toByteArray().length==4) {
+					length=BytesUtil.getInt(blength.toByteArray());
+				}
+			}
+			else if (hdrcksum==0) {
+				hdrcksum=datachunk[i];
+			}
+			else if (bdata.toByteArray().length<length) {
+				bdata.write(datachunk[i]);
+				if (data==null && bdata.toByteArray().length==length) {
+					data=bdata.toByteArray();
+				}
+			}
+			else if (bcrc32.toByteArray().length<4) {
+				bcrc32.write(datachunk[i]);
+				if (crc32==null && bcrc32.toByteArray().length==4) {
+					crc32=bcrc32.toByteArray();
 				}
 			}
 		}
-		chunkStream.close();
 	}
 
 	public String toString() { 	

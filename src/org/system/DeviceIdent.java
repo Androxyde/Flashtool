@@ -13,6 +13,11 @@ public class DeviceIdent {
 	private Properties devid;
 	private int maxsize=0;
 	private String serial = "";
+	private String driverdesc = "";
+	private int drivermajor=0;
+	private int driverminor=0;
+	private int drivermili=0;
+	private int drivermicro=0;
 	
 	public DeviceIdent() {
 		pid="";
@@ -39,6 +44,34 @@ public class DeviceIdent {
 	
 	public String getDevPath() {
 		return devicepath;
+	}
+	
+	public void setDriver(String desc, int maj, int min,int mil, int mic) {
+		driverdesc = desc;
+		drivermajor=maj;
+		driverminor=min;
+		drivermili=mil;
+		drivermicro=mic;
+	}
+	
+	public String getDriverDescription() {
+		return driverdesc;
+	}
+	
+	public int getDriverMajor() {
+		return drivermajor;
+	}
+	
+	public int getDriverMinor() {
+		return driverminor;
+	}
+	
+	public int getDriverMili() {
+		return drivermili;
+	}
+
+	public int getDriverMicro() {
+		return drivermicro;
 	}
 	
 	public void addDevId(String device) {
@@ -97,7 +130,13 @@ public class DeviceIdent {
 	public String getStatus() {
 		if (!getVid().equals("0FCE")) return "none";
 		if (!isDriverOk()) return "notinstalled";
-		if (getPid().equals("ADDE") || getPid().equals("B00B")) return "flash";
+		if (getPid().equals("ADDE") || getPid().equals("B00B")) {
+			if (drivermajor==3 && driverminor >=1)
+				return "flash";
+			if (drivermajor>3)
+				return "flash";
+			return "flash_obsolete";
+		}
 		if (getPid().equals("0DDE")) return "fastboot";
 		return AdbUtility.getStatus();
 	}
