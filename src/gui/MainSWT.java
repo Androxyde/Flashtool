@@ -1568,32 +1568,35 @@ public class MainSWT {
 								String imei = j.getIMEI();
 								String blstatus = j.getBLStatus();
 								String serial = j.getSerial();
-								if (!j.alreadyUnlocked()) {
-									if (!blstatus.equals("ROOTABLE")) {
-										logger.info("Your phone bootloader cannot be officially unlocked");
-										logger.info("You can now unplug and restart your phone");
-										DeviceChangedListener.enableDetection();
+								if (j.isRooted()) {
+									if (j.isRelockable()) {
+										String result = WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, flash, "R");
+										flash.close();
 									}
 									else {
+										flash.close();
+										logger.warn("Your device cannot be relocked");
+									}
+								}
+								if (j.isRootable()) {
+									if (j.alreadyUnlocked()) {
+										String result = WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, flash, "U");
+										flash.close();
+									}
+									else {
+										flash.close();
 										logger.info("Now unplug your device and restart it into fastbootmode");
 										String result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
 										if (result.equals("OK")) {
 											result = WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, null, "U");
-											DeviceChangedListener.enableDetection();
 										}
 										else {
 											logger.info("Bootloader unlock canceled");
-											DeviceChangedListener.enableDetection();
 										}
 									}
 								}
-								else {
-									WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, flash, j.isRelocked()?"U":"R");
-									flash.close();
-									LogProgress.initProgress(0);
-									logger.info("You can now unplug and restart your device");
-									DeviceChangedListener.enableDetection();
-								}
+								LogProgress.initProgress(0);
+								DeviceChangedListener.enableDetection();
 							}
 						}
 				});

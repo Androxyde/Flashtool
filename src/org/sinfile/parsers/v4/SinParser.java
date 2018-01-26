@@ -61,5 +61,22 @@ public class SinParser {
 			return null;
 		}
 	}
+	
+	public void dumpImage() {
+		try {
+			TarArchiveEntry entry=null;
+			TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(sinfile)));
+			FileOutputStream fout = new FileOutputStream(new File("D:\\test.ext4"));
+			while ((entry = tarIn.getNextTarEntry()) != null) {
+				if (!entry.getName().endsWith("cms")) {
+					IOUtils.copy(tarIn, fout);
+				}
+			}
+			tarIn.close();
+			fout.flush();
+			fout.close();
+			logger.info("Extraction finished to "+"D:\\test.ext4");
+		} catch (Exception e) {}		
+	}
 
 }

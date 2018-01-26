@@ -344,6 +344,9 @@ public class SinFile {
 		if (sinv3!=null) {
 			sinv3.dumpImage();
 		}
+		if (sinv4!=null) {
+			logger.error("This sin version is not yet supported");
+		}
 		return;
 	}
 
@@ -357,7 +360,10 @@ public class SinFile {
 		if (sinv3!=null) {
 			sinv3.dumpHeader();
 		}
-		return;		
+		if (sinv4!=null) {
+			logger.error("This sin version is not yet supported");
+		}
+		return;
 	}
 
 	public String getShortName() {

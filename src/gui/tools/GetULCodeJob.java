@@ -23,7 +23,7 @@ public class GetULCodeJob extends Job {
 	String phonecert = "";
 	String platform = "";
 	boolean alreadyunlocked = false;
-	boolean relocked = false;
+	boolean relockable = false;
 	static final Logger logger = LogManager.getLogger(GetULCodeJob.class);
 
 
@@ -62,13 +62,13 @@ public class GetULCodeJob extends Job {
 	public void setFlash(Flasher f) {
 		flash=f;
 	}
-	
+	//907437D662121E6F
     protected IStatus run(IProgressMonitor monitor) {
     	try {
 			flash.open();
 			flash.sendLoader();
-			blstatus = flash.getPhoneProperty("ROOTING_STATUS");
-			System.out.println(imei);
+			blstatus = flash.getRootingStatus();
+			imei = flash.getIMEI();
 			if (flash.getCurrentDevice().contains("X10") ||
 				flash.getCurrentDevice().contains("E10") ||
 				flash.getCurrentDevice().contains("E15") ||
@@ -94,33 +94,22 @@ public class GetULCodeJob extends Job {
 			else {
 				TAUnit ta=flash.readTA(2,2226);
 				serial = flash.getSerial();
-				if (ta==null) {
-					ULCodeFile uc = new ULCodeFile(serial);
-					if (uc.getULCode().length()>0) {
-						ulcode = uc.getULCode();
-						alreadyunlocked=true;
-						relocked=true;
-					}
-					else {
-						ulcode="";
-						alreadyunlocked=false;
-						flash.close();
-						LogProgress.initProgress(0);
-					}
-				}
-				else {
-					alreadyunlocked=true;
-					if (ta.getDataLength()<=2) {
-						relocked = true;
-						ULCodeFile uc = new ULCodeFile(serial);
-						ulcode = uc.getULCode();
-					}
-					else {
+				ULCodeFile uc = new ULCodeFile(serial);
+				ulcode = uc.getULCode();
+				if (ta!=null) {
+					if (ta.getUnitData().length>2) {
 						ulcode = new String(ta.getUnitData());
-						ULCodeFile uc = new ULCodeFile(serial);
 						uc.setCode(ulcode);
 					}
 				}
+				
+				alreadyunlocked=(ta==null && ulcode.length()>0 && blstatus.equals("ROOTABLE"));
+				relockable=(blstatus.equals("ROOTED") && ta!=null);
+				
+				LogProgress.initProgress(0);
+				//System.out.println("Rootable : " + this.isRootable());
+				//System.out.println("Relockable : "+ this.isRelockable());
+				//System.out.println("Already Unlocked : "+ this.alreadyUnlocked());
 			}
 			return Status.OK_STATUS;
     	}
@@ -131,8 +120,19 @@ public class GetULCodeJob extends Job {
     	}
     }
     
-    public boolean isRelocked() {
-    	return relocked;
+    public boolean isRootable() {
+    	return (blstatus.equals("ROOTABLE"));
+    }
+
+    public boolean isRooted() {
+    	return (blstatus.equals("ROOTED"));
+    }
+    
+    public boolean isRelockable() {
+    	return relockable;
     } 
 
+    public boolean isRelocked() {
+    	return alreadyunlocked && blstatus.equals("ROOTABLE");
+    }
 }

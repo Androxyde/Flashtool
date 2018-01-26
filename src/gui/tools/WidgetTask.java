@@ -36,6 +36,16 @@ public class WidgetTask {
 		);
 	}
 
+	public static void setButtonText(final Button item, final String text) {
+		Display.getDefault().asyncExec(
+				new Runnable() {
+					public void run() {
+						item.setText(text);
+					}
+				}
+		);
+	}
+
 	public static void setMenuName(final MenuItem item, final String text) {
 		Display.getDefault().syncExec(
 				new Runnable() {

@@ -1,6 +1,5 @@
 package flashsystem;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,7 +12,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -23,12 +21,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom2.JDOMException;
 import org.logger.LogProgress;
-import org.rauschig.jarchivelib.Archiver;
-import org.rauschig.jarchivelib.ArchiverFactory;
 import org.rauschig.jarchivelib.IOUtils;
 import org.sinfile.parsers.SinFile;
 import org.sinfile.parsers.SinFileException;
-import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.OS;
@@ -38,11 +33,7 @@ import org.ta.parsers.TAFileParser;
 import org.ta.parsers.TAUnit;
 import org.util.BytesUtil;
 import org.util.HexDump;
-
 import com.Ostermiller.util.CircularByteBuffer;
-import com.google.common.io.BaseEncoding;
-import com.google.common.io.ByteStreams;
-
 import flashsystem.io.USBFlash;
 import gui.tools.WidgetTask;
 import gui.tools.XMLBootConfig;
@@ -80,122 +71,50 @@ public class CommandFlasher implements Flasher {
 
 
     public void loadProperties() {
+    	logger.info("Reading phone properties");
     	phoneprops = new Properties();
     	try {
-    		phoneprops.setProperty("max-download-size",getVar("max-download-size"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("version",getVar("version"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("version-bootloader",getVar("version-bootloader"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("version-baseband",getVar("version-baseband"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("product",getVar("product"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("serialno",getVar("serialno"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("secure",getVar("secure"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Sector-size",getVar("Sector-size"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Loader-version",getVar("Loader-version"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Phone-id",getVar("Phone-id"));
-    		phoneprops.setProperty("IMEI", phoneprops.getProperty("Phone-id").split(":")[1]);
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Device-id",getVar("Device-id"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Rooting-status",getVar("Rooting-status"));
-    		phoneprops.setProperty("ROOTING_STATUS",phoneprops.getProperty("Rooting-status"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Ufs-info",getVar("Ufs-info"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Emmc-info",getVar("Emmc-info"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Default-security",getVar("Default-security"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Platform-id",getVar("Platform-id"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Keystore-counter",getVar("Keystore-counter"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Security-state",getVar("Security-state"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("S1-root",getVar("S1-root"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Sake-root",getVar("Sake-root"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Version-sony",getVar("Version-sony"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("USB-version",getVar("USB-version"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Battery",getVar("Battery"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Frp-partition",getVar("Frp-partition"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Stored-security-state",getVar("Stored-security-state"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("Keystore-xcs",getVar("Keystore-xcs"));
-    	} catch (Exception e) {}
-    	try {
-    		phoneprops.setProperty("root-key-hash",HexDump.toHex(getRootKeyHash().getBytes()).replaceAll(" ", ""));
-    		logger.info("root-key-hash : "+phoneprops.getProperty("root-key-hash"));
-    	} catch (Exception e) {}   	
-    }
-
-    public String getRootKeyHash() throws IOException, X10FlashException {
-    	if (!_bundle.simulate()) {
-    		USBFlash.write("Get-root-key-hash".getBytes());
-    		CommandPacket reply = USBFlash.readCommandReply();
-    		return reply.getMessage();
-    		
-    	}
-    	return null;
-    }
-    
-    public void sync() throws IOException, X10FlashException {
-    	logger.info("Syncing device");
-    	if (!_bundle.simulate()) {
-    		USBFlash.write(("Sync").getBytes());
-    		CommandPacket reply = USBFlash.readCommandReply();
-    		if (reply.getStatus()!=CommandPacket.OKAY) throw new X10FlashException("Sync command not OK");
-    	}
-    }
-
-    public void powerDown() throws IOException, X10FlashException {
-    	logger.info("Powering down device");
-    	if (!_bundle.simulate()) {
-			USBFlash.write(("powerdown").getBytes());
-			CommandPacket reply = USBFlash.readCommandReply();
-			if (reply.getStatus()!=CommandPacket.OKAY) throw new X10FlashException("powerdown command not OK");
-    	}
+	    	getVar("max-download-size");
+	    	getVar("version");
+	    	getVar("version-bootloader");
+	    	getVar("version-baseband");
+	    	getVar("product");
+	    	getVar("serialno");
+	    	getVar("secure");
+	    	getVar("Sector-size");
+	    	getVar("Version-sony");
+	    	getVar("USB-version");
+	    	getVar("max-download-size");
+	    	getVar("Loader-version");
+	    	getVar("Phone-id");
+	    	getVar("Device-id");
+	    	getVar("Rooting-status");
+	    	getVar("Sector-size");
+	    	getVar("Ufs-info");
+	    	getVar("Emmc-info");
+	    	getVar("Default-security");
+	    	getVar("Platform-id");
+	    	getVar("Keystore-counter");
+	    	getVar("Security-state");
+	    	getVar("S1-root");
+	    	getVar("Sake-root");
+	    	getVar("Battery");
+	    	getVar("Frp-partition");
+	    	getVar("Stored-security-state");
+	    	getVar("Keystore-xcs");
+	    	getRootKeyHash();
+	    	phoneprops.setProperty("swrelease", new String(readTA(2, 2202).getUnitData()));
+	    	phoneprops.setProperty("customization", new String(readTA(2, 2205).getUnitData()));
+	    	phoneprops.setProperty("model",new String(readTA(2, 2210).getUnitData()));
+	    	phoneprops.setProperty("serial", new String(readTA(2, 4900).getUnitData()));
+	    	phoneprops.setProperty("lastflashdate",new String(readTA(2, 10021).getUnitData()));
+	    	getLog();
+    	} catch (Exception e) {
+    	}    	
     }
 
     public boolean open(boolean simulate) {
+    	USBFlash.setUSBBufferSize(512*1024);
     	if (_bundle.getMaxBuffer()==0) {
     		USBFlash.setUSBBufferSize(4096*1024);
     		logger.info("USB buffer size set to 4096K");
@@ -239,7 +158,8 @@ public class CommandFlasher implements Flasher {
 				logger.info("Reading device information");
 				loadProperties();
 				currentdevice=getPhoneProperty("product");
-				logger.info("Connected device : "+currentdevice);
+				logger.info("Connected device : "+currentdevice+" / SW release "+phoneprops.getProperty("swrelease")+" / Customization "+phoneprops.getProperty("customization"));
+				logger.info("Last flash date : "+phoneprops.getProperty("lastflashdate"));
     		}
     		catch (Exception e) {
     			logger.info(e.getMessage());
@@ -247,7 +167,16 @@ public class CommandFlasher implements Flasher {
     			logger.info("trying to continue anyway");
     		}
     	    logger.info("Phone ready for flashmode operations.");
-	    	found = true;
+			if (_bundle.getDevice()!=null) {
+				if (_bundle.getDevice().length()>0 && !currentdevice.equals(_bundle.getDevice())) {
+						logger.error("The bundle does not match the connected device");
+						close();
+						found = false;
+				}
+				else found=true;
+			}
+			else
+				found = true;
     	}
     	catch (Exception e){
     		e.printStackTrace();
@@ -394,25 +323,27 @@ public class CommandFlasher implements Flasher {
     
 	public void flash() throws X10FlashException, IOException {
 		try {
-		//WidgetTask.openOKBox(_curshell, "This device protocol is not yet supported");
-		logger.info("Start Flashing");
-		bc = getBootConfig();
-		pd = _bundle.getXMLPartitionDelivery();
-		if (pd!=null)
-			pd.setFolder(_bundle.getPartitionDelivery().getFolder());
-		else {
-			String result = WidgetTask.openYESNOBox(_curshell, "No partition delivery included.\nMaybe a bundle created with a previous release of Flashtool.\nDo you want to continue ?");
-			if (Integer.parseInt(result)!=SWT.YES) throw new X10FlashException("No partition delivery");
+			//WidgetTask.openOKBox(_curshell, "This device protocol is not yet supported");
+			logger.info("Start Flashing");
+			bc = getBootConfig();
+			pd = _bundle.getXMLPartitionDelivery();
+			if (pd!=null)
+				pd.setFolder(_bundle.getPartitionDelivery().getFolder());
+			else {
+				String result = WidgetTask.openYESNOBox(_curshell, "No partition delivery included.\nMaybe a bundle created with a previous release of Flashtool.\nDo you want to continue ?");
+				if (Integer.parseInt(result)!=SWT.YES) throw new X10FlashException("No partition delivery");
+			}
+			loadTAFiles();
+		    if (hasScript()) {
+		    	if (checkScript())
+		    		runScript();
+		    }
+		    else {
+		    	logger.error("No flash script found. Flash script is mandatory");
+		    }
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
-		loadTAFiles();
-	    if (hasScript()) {
-	    	if (checkScript())
-	    		runScript();
-	    }
-	    else {
-	    	logger.error("No flash script found. Flash script is mandatory");
-	    }
-		} catch (Exception e) {}
 		LogProgress.initProgress(0);
 		close();
 	}
@@ -430,7 +361,8 @@ public class CommandFlasher implements Flasher {
     		while (e.hasMoreElements()) {
     			// We get matching bootconfig from all configs
     			XMLBootConfig bc=e.nextElement();
-    			if (bc.matches(phoneprops.getProperty("root-key-hash"))) {
+    			bc.addMatcher("PLF_ROOT_HASH", phoneprops.getProperty("root-key-hash"));
+    			if (bc.matchAttributes()) {
     				found.add(bc);
     			}
     		}
@@ -447,7 +379,7 @@ public class CommandFlasher implements Flasher {
     		}
 		}
 		if (found.size()==0)
-			throw new BootDeliveryException ("Found no matching config. Skipping boot delivery");
+			throw new BootDeliveryException ("Found no matching boot config. Aborting");
 		// if found more thant 1 config
 		boolean same = true;
 		if (found.size()>1) {
@@ -472,7 +404,9 @@ public class CommandFlasher implements Flasher {
 		try {
 			sync();
 			powerDown();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		USBFlash.close();
 	}
 
@@ -484,34 +418,125 @@ public class CommandFlasher implements Flasher {
 		return _bundle;
 	}
 
+	public void setFlashState(boolean ongoing) throws IOException,X10FlashException {
+		if (ongoing) {
+    		writeTA(2,new TAUnit(10100,new byte[] {0x01}));
+		}
+		else {
+    	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    	  	TAUnit tau = new TAUnit(10021, BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
+    	  	writeTA(2,tau);
+    		writeTA(2,new TAUnit(10100,new byte[] {0x00}));
+		}
+	}
+
+	public String getLog() throws X10FlashException, IOException {
+		if (!_bundle.simulate()) {
+			String command = "Getlog";
+			USBFlash.write(command.getBytes());
+			CommandPacket reply = USBFlash.readCommandReply(true);
+			return reply.getMessage();
+		}
+		return "";
+	}
+
 	public TAUnit readTA(int partition, int unit) throws X10FlashException, IOException {
 		if (!_bundle.simulate()) {
 			String command = "Read-TA:"+partition+":"+unit;
 			USBFlash.write(command.getBytes());
-			CommandPacket reply = USBFlash.readCommandReply();
-			if (reply.getStatus()==1) {
-				logger.info("Reading TA unit "+unit+" from partition "+partition);
-				TAUnit taunit = new TAUnit(unit,reply.getMessage().getBytes());
+			CommandPacket reply = USBFlash.readCommandReply(true);
+			if (reply.getResponse().equals("OKAY")) {
+				logger.debug("Reading TA unit "+unit+" from partition "+partition);
+				TAUnit taunit = new TAUnit(unit,reply.getDataArray());
 				return taunit;
+			}
+			else {
+				logger.warn(reply.getMessage()+" ( Hex unit value "+HexDump.toHex(unit)+" )");
 			}
 		}
 		return null;
 	}
 
+	public void writeTA(int partition, TAUnit unit) throws X10FlashException, IOException {
+		try {
+			//wrotedata=true;
+			logger.info("Writing TA unit "+unit.getUnitNumber()+" to partition "+partition);
+			logger.info("Sending data with lenght of "+unit.getDataLength()+" ("+HexDump.toHex(unit.getDataLength())+")");
+			if (!_bundle.simulate()) {
+				String command = "download:"+HexDump.toHex(unit.getDataLength());
+				USBFlash.write(command.getBytes());
+				CommandPacket p = USBFlash.readCommandReply(false);
+				logger.info("Download reply : "+p.getResponse());
+				if (unit.getDataLength()>0) {
+					USBFlash.write(unit.getUnitData());
+				}
+				p = USBFlash.readCommandReply(true);
+				logger.info("Data reply : "+p.getResponse());
+				command = "Write-TA:"+partition+":"+unit.getUnitNumber();
+				USBFlash.write(command.getBytes());
+				p = USBFlash.readCommandReply(true);
+				logger.info("Write-TA reply : "+p.getResponse());
+			}
+		} 
+		catch (Exception e) {
+		}
+	}
+
+	public void getVar(String key) throws X10FlashException, IOException {
+		logger.debug("Reading variable value for "+ key);
+		if (!_bundle.simulate()) {
+			String command = "getvar:"+key;
+			USBFlash.write(command.getBytes());
+			CommandPacket reply = USBFlash.readCommandReply(true);
+			if (reply.getResponse().equals("FAIL")) {
+				logger.warn("Failed to read variable "+key+" : " + reply.getMessage());
+			}
+			logger.debug("Reply : "+reply.getMessage());
+			phoneprops.setProperty(key,reply.getMessage());
+		}
+	}
+
+	public void sync() throws IOException, X10FlashException {
+    	logger.info("Syncing device");
+    	if (!_bundle.simulate()) {
+    		USBFlash.write(("Sync").getBytes());
+    		CommandPacket p = USBFlash.readCommandReply(true);
+    		logger.info("Sync reply : "+p.getResponse());
+    	}
+    }
+
+    public void powerDown() throws IOException, X10FlashException {
+    	logger.info("Powering down device");
+    	if (!_bundle.simulate()) {
+			USBFlash.write(("powerdown").getBytes());
+			CommandPacket p = USBFlash.readCommandReply(true);
+			logger.info("Powerdown reply : "+p.getResponse());
+    	}
+    }
+
+    public void getRootKeyHash() throws IOException, X10FlashException {
+    	if (!_bundle.simulate()) {
+    		USBFlash.write("Get-root-key-hash".getBytes());
+    		CommandPacket p = USBFlash.readCommandReply(true);
+    		phoneprops.setProperty("root-key-hash", HexDump.toHex(p.getDataArray()).replaceAll(" ", ""));
+    	}
+    }
+
 	public void repartition(SinFile sin, int partnumber) throws IOException, X10FlashException {
+		//wrotedata=true;
 		String command="";
 		logger.info("processing "+sin.getName());
 		logger.info("   signature:"+HexDump.toHex(sin.getHeader().length));
 		if (!_bundle.simulate()) {
 			command = "signature:"+HexDump.toHex(sin.getHeader().length);
 			USBFlash.write(command.getBytes());
-			USBFlash.readReply();
-			logger.info("   signature reply : "+new String(USBFlash.getLastReply()));
+			CommandPacket p = USBFlash.readCommandReply(true);
+			logger.info("   signature reply : "+p.getResponse());
 		}
 		if (!_bundle.simulate()) {
 			USBFlash.write(sin.getHeader());
-			USBFlash.readReply();
-			logger.info("   signature status : "+new String(USBFlash.getLastReply()));
+			CommandPacket p = USBFlash.readCommandReply(true);
+			logger.info("   signature status : "+p.getResponse());
 		}
 		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(sin.getFile())));
 		TarArchiveEntry entry=null;
@@ -522,8 +547,8 @@ public class CommandFlasher implements Flasher {
 				if (!_bundle.simulate()) {
 					command = "download:"+HexDump.toHex((int)entry.getSize());
 					USBFlash.write(command.getBytes());
-					USBFlash.readReply();
-					logger.info("      Download reply : "+new String(USBFlash.getLastReply()));
+					CommandPacket p = USBFlash.readCommandReply(false);
+					logger.info("      Download reply : "+p.getResponse());
 				}
 				CircularByteBuffer cb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
 				IOUtils.copy(tarIn, cb.getOutputStream());
@@ -535,15 +560,15 @@ public class CommandFlasher implements Flasher {
 					}
 				}
 				if (!_bundle.simulate()) {
-					USBFlash.readReply();
-					logger.info("      Download status : "+new String(USBFlash.getLastReply()));
+					CommandPacket p = USBFlash.readCommandReply(true);
+					logger.info("      Download status : "+p.getResponse());
 				}
 				logger.info("   Repartition:"+partnumber);
 				if (!_bundle.simulate()) {
 					command="Repartition:"+partnumber;
 					USBFlash.write(command.getBytes());
-					USBFlash.readReply();
-					logger.info("   Repartition status : "+new String(USBFlash.getLastReply()));
+					CommandPacket p = USBFlash.readCommandReply(true);
+					logger.info("   Repartition status : "+p.getResponse());
 				}
 			}
 		}
@@ -552,24 +577,25 @@ public class CommandFlasher implements Flasher {
     }
 
 	public void flashImage(SinFile sin,String partitionname) throws X10FlashException, IOException {
+		//wrotedata=true;
 		String command="";
 		logger.info("processing "+sin.getName());
 		logger.info("   signature:"+HexDump.toHex(sin.getHeader().length));
 		if (!_bundle.simulate()) {
 			command = "signature:"+HexDump.toHex(sin.getHeader().length);
 			USBFlash.write(command.getBytes());
-			USBFlash.readReply();
-			logger.info("   signature reply : "+new String(USBFlash.getLastReply()));
+			CommandPacket p = USBFlash.readCommandReply(false);
+			logger.info("   signature reply : "+p.getResponse());
 			USBFlash.write(sin.getHeader());
-			USBFlash.readReply();
-			logger.info("   signature status : "+new String(USBFlash.getLastReply()));	
+			p = USBFlash.readCommandReply(true);
+			logger.info("   signature status : "+p.getResponse());	
 		}
 		logger.info("   erase:"+partitionname);
 		if (!_bundle.simulate()) {
 			command="erase:"+partitionname;
 			USBFlash.write(command.getBytes());
-			USBFlash.readReply();
-			logger.info("   erase status : "+new String(USBFlash.getLastReply()));
+			CommandPacket p = USBFlash.readCommandReply(true);
+			logger.info("   erase status : "+p.getStatus());
 		}
 		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(sin.getFile())));
 		TarArchiveEntry entry=null;
@@ -580,8 +606,8 @@ public class CommandFlasher implements Flasher {
 				if (!_bundle.simulate()) {
 					command = "download:"+HexDump.toHex((int)entry.getSize());
 					USBFlash.write(command.getBytes());
-					USBFlash.readReply();
-					logger.info("      Download reply : "+new String(USBFlash.getLastReply()));
+					CommandPacket p = USBFlash.readCommandReply(false);
+					logger.info("      Download reply : "+p.getResponse());
 				}
 				CircularByteBuffer cb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
 				IOUtils.copy(tarIn, cb.getOutputStream());
@@ -599,15 +625,15 @@ public class CommandFlasher implements Flasher {
 					}
 				}
 				if (!_bundle.simulate()) {
-					USBFlash.readReply();
-					logger.info("      Download status : "+new String(USBFlash.getLastReply()));
+					CommandPacket p = USBFlash.readCommandReply(true);
+					logger.info("      Download status : "+p.getResponse());
 				}
 				logger.info("      flash:"+partitionname);
 				if (!_bundle.simulate()) {
 					command="flash:"+partitionname;
 					USBFlash.write(command.getBytes());
-					USBFlash.readReply();
-					logger.info("      flash status : "+new String(USBFlash.getLastReply()));
+					CommandPacket p = USBFlash.readCommandReply(true);
+					logger.info("      flash status : "+p.getResponse());
 				}
 				LogProgress.initProgress(0);
 			}
@@ -615,42 +641,15 @@ public class CommandFlasher implements Flasher {
 		tarIn.close();
 	}
 
-	public String getVar(String key) throws X10FlashException, IOException {
-		logger.info("Reading variable value for "+ key);
-		if (!_bundle.simulate()) {
-			String command = "getvar:"+key;
-			USBFlash.write(command.getBytes());
-			CommandPacket reply = USBFlash.readCommandReply();
-			logger.info("Reply : "+reply.getMessage());
-			return reply.getMessage();
-		}
-		return "";
+	
+	public String getIMEI() {
+		return phoneprops.getProperty("Phone-id").split(":")[1];
 	}
 	
-	public void writeTA(int partition, TAUnit unit) throws X10FlashException, IOException {
-		try {
-			logger.info("Writing TA unit "+unit.getUnitNumber()+" to partition "+partition);
-			logger.info("Sending data with lenght of "+unit.getDataLength()+" ("+HexDump.toHex(unit.getDataLength())+")");
-			if (!_bundle.simulate()) {
-				String command = "download:"+HexDump.toHex(unit.getDataLength());
-				USBFlash.write(command.getBytes());
-				USBFlash.readReply();
-				logger.info("Download reply : "+new String(USBFlash.getLastReply()));
-				if (unit.getDataLength()>0) {
-					USBFlash.write(unit.getUnitData());
-				}
-				USBFlash.readReply();
-				logger.info("Data reply : "+new String(USBFlash.getLastReply()));
-				command = "Write-TA:"+partition+":"+unit.getUnitNumber();
-				USBFlash.write(command.getBytes());
-				USBFlash.readReply();
-				logger.info("Write-TA reply : "+new String(USBFlash.getLastReply()));
-			}
-		} 
-		catch (Exception e) {
-		}
+	public String getRootingStatus() {
+		return phoneprops.getProperty("Rooting-status");
 	}
-	
+
 	public void sendLoader() throws FileNotFoundException, IOException, X10FlashException, SinFileException {
 		
 	}
@@ -698,7 +697,7 @@ public class CommandFlasher implements Flasher {
 	public String getCurrentDevice() {
 		return currentdevice;
 	}
-	
+
 	public String getSerial() {
 		return serial;
 	}
@@ -742,15 +741,4 @@ public class CommandFlasher implements Flasher {
 			e.printStackTrace();
 		}
     }
-	public void setFlashState(boolean ongoing) throws IOException,X10FlashException {
-		if (ongoing) {
-    		writeTA(2,new TAUnit(10100,new byte[] {0x01}));
-		}
-		else {
-    	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    	  	TAUnit tau = new TAUnit(10021, BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
-    	  	writeTA(2,tau);
-    		writeTA(2,new TAUnit(10100,new byte[] {0x00}));
-		}
-	}
 }

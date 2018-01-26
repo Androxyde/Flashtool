@@ -109,7 +109,7 @@ public class S1Command {
     			}
 	    		S1Packet p = new S1Packet(command,data,ongoing);
 	    		try {
-		    		USBFlash.writeS1(p, true);
+		    		USBFlash.writeS1(p);
 	    		}
 	    		catch (X10FlashException xe) {
 	    			p.release();

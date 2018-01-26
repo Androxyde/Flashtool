@@ -152,6 +152,7 @@ public class BLUWizard extends Dialog {
 						public void done(IJobChangeEvent event) {
 							BLUnlockJob res = (BLUnlockJob) event.getJob();
 							WidgetTask.setEnabled(btnUnlock,!res.unlockSuccess());
+							WidgetTask.setEnabled(btnUnlock, !res.unlockSuccess());
 							if (res.unlockSuccess()) {
 								try {
 									ULCodeFile uc = new ULCodeFile(_serial);
@@ -160,6 +161,10 @@ public class BLUWizard extends Dialog {
 								catch (Exception e) {
 									e.printStackTrace();
 								}
+								WidgetTask.setButtonText(btnCancel, "Close");
+							}
+							else {
+								logger.warn("Maybe the OEM is not enabled");
 							}
 						}
 
@@ -181,7 +186,10 @@ public class BLUWizard extends Dialog {
 							public void done(IJobChangeEvent event) {
 								logger.info("Relock finished");
 								WriteTAJob res = (WriteTAJob) event.getJob();
-								WidgetTask.setEnabled(btnUnlock,!res.writeSuccess());
+								WidgetTask.setEnabled(btnUnlock, !res.writeSuccess());
+								if (res.writeSuccess()) {
+									WidgetTask.setButtonText(btnCancel, "Close");
+								}
 							}
 						});
 						tj.setFlash(_flash);
@@ -201,7 +209,10 @@ public class BLUWizard extends Dialog {
 							public void done(IJobChangeEvent event) {
 								logger.info("Unlock finished");
 								WriteTAJob res = (WriteTAJob) event.getJob();
-								WidgetTask.setEnabled(btnUnlock,!res.writeSuccess());
+								WidgetTask.setEnabled(btnUnlock, !res.writeSuccess());
+								if (res.writeSuccess()) {
+									WidgetTask.setButtonText(btnCancel, "Close");
+								}
 							}
 						});
 						tj.setFlash(_flash);

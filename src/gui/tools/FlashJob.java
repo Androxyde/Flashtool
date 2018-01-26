@@ -49,8 +49,8 @@ public class FlashJob extends Job {
     			else result="OK";
     			if (result.equals("OK")) {
     				flash = FlasherFactory.getFlasher(_bundle, _shell);
-    				flash.open();
-    				flash.flash();
+    				if (flash.open())
+    					flash.flash();
     				_bundle.close();
     			}
     			else {

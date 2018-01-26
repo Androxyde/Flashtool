@@ -35,9 +35,9 @@ public class ExtractSinDataJob extends Job {
     			logger.info("Starting data extraction");
     			sin.dumpImage();
     		}
-    		//else
-    			//if (mode.equals("raw"))
-    				//sin.dumpRaw();
+    		else
+    			if (mode.equals("raw"))
+    				logger.error("this feature is not implemented");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {

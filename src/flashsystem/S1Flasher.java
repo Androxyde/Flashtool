@@ -984,7 +984,16 @@ public class S1Flasher implements Flasher {
     	    hookDevice(false);
     	    logger.info("Phone ready for flashmode operations.");
 		    getDevInfo();
-	    	found = true;
+			if (_bundle.getDevice()!=null) {
+				if (_bundle.getDevice().length()>0 && !currentdevice.equals(_bundle.getDevice())) {
+						logger.error("The bundle does not match the connected device");
+						close();
+						found = false;
+				}
+				else found=true;
+			}
+			else
+				found = true;
     	}
     	catch (Exception e){
     		e.printStackTrace();
@@ -996,4 +1005,13 @@ public class S1Flasher implements Flasher {
     public String getSerial() {
     	return serial;
     }
+
+    public String getIMEI() {
+		return phoneprops.getProperty("IMEI");
+	}
+	
+	public String getRootingStatus() {
+		return phoneprops.getProperty("ROOTING_STATUS");
+	}
+
 }

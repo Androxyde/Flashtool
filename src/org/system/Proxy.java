@@ -2,10 +2,10 @@ package org.system;
 
 import java.net.ProxySelector;
 
-import com.btr.proxy.search.ProxySearch;
-import com.btr.proxy.search.ProxySearch.Strategy;
-import com.btr.proxy.util.PlatformUtil;
-import com.btr.proxy.util.PlatformUtil.Platform;
+import com.github.markusbernhardt.proxy.ProxySearch;
+import com.github.markusbernhardt.proxy.ProxySearch.Strategy;
+import com.github.markusbernhardt.proxy.util.PlatformUtil;
+import com.github.markusbernhardt.proxy.util.PlatformUtil.Platform;
 
 public class Proxy {
 

@@ -1,6 +1,7 @@
 package gui.tools;
 
 import java.io.File;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -21,6 +22,7 @@ public class XMLBootConfig {
 	private Properties attributes = new Properties();
 	private String _folder="";
 	static final Logger logger = LogManager.getLogger(XMLBootConfig.class);
+	private Properties matcher = new Properties();
 
 	public XMLBootConfig(String name) {
 		_configname = name;
@@ -102,6 +104,10 @@ public class XMLBootConfig {
 		return attributes.getProperty(att, " ");
 	}
 	
+	public void addMatcher(String attr, String value) {
+		matcher.setProperty(attr, value);
+	}
+	
 	public boolean matches(String otp_lock_status, String otp_data, String idcode, String plfroot) {
 		boolean check_otp_lock_status=true;
 		boolean check_otp_data=true;
@@ -116,6 +122,18 @@ public class XMLBootConfig {
 		if (attributes.containsKey("PLF_ROOT_1"))
 			check_plfroot=plfroot.equals(getAttribute("PLF_ROOT_1"));
 		return (check_otp_lock_status && check_otp_data && check_idcode && check_plfroot); 
+	}
+
+	public boolean matchAttributes() {
+		boolean match = true;
+		Enumeration<Object> keys = matcher.keys();
+		while (keys.hasMoreElements()) {
+			String key=(String)keys.nextElement();
+			match = attributes.containsKey(key);
+			if (attributes.containsKey(key) && match)
+				match=matcher.getProperty(key).equals(getAttribute(key));
+		}
+		return match;
 	}
 
 	public boolean matches(String plf_root_hash) {
