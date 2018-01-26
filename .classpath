@@ -12,7 +12,6 @@
 	<classpathentry kind="lib" path="libs/commons-io-2.6.jar"/>
 	<classpathentry kind="lib" path="libs/jaxb-2_0-final-api.jar"/>
 	<classpathentry kind="lib" path="libs/jbbp-1.3.0.jar"/>
-	<classpathentry kind="lib" path="libs/lz4-java-1.4.0.jar"/>
 	<classpathentry kind="lib" path="libs/xstream-1.4.10.jar"/>
 	<classpathentry kind="lib" path="libs/commons-compress-1.15.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.core.commands_3.9.0.v20170530-1048.jar"/>
@@ -47,6 +46,8 @@
 	<classpathentry kind="lib" path="libs/groovy-all-3.0.0-alpha-1.jar"/>
 	<classpathentry kind="lib" path="libs/jopt-simple-6.0-alpha-2.jar"/>
 	<classpathentry kind="lib" path="libs/jarchivelib-0.7.1.jar"/>
+	<classpathentry kind="lib" path="libs/lz4-java-1.4.1.jar"/>
+	<classpathentry kind="lib" path="libs/proxy-vole-1.0.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
