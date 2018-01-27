@@ -62,6 +62,7 @@ public class USBFlash {
 		}
 		write(p.getCRC32());
 		logger.debug("OUT : " + p);
+		readS1Reply();
 		return true;
 	}
 
