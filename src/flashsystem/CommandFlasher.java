@@ -431,27 +431,34 @@ public class CommandFlasher implements Flasher {
 	}
 
 	public String getLog() throws X10FlashException, IOException {
+		logger.info("Sending Getlog");
 		if (!_bundle.simulate()) {
 			String command = "Getlog";
 			USBFlash.write(command.getBytes());
 			CommandPacket reply = USBFlash.readCommandReply(true);
+			logger.info("   Getlog status : "+reply.getResponse());
 			return reply.getMessage();
 		}
 		return "";
 	}
 
 	public TAUnit readTA(int partition, int unit) throws X10FlashException, IOException {
+		return readTA(partition, unit, true);
+	}
+
+	public TAUnit readTA(int partition, int unit, boolean withlog) throws X10FlashException, IOException {
 		if (!_bundle.simulate()) {
 			String command = "Read-TA:"+partition+":"+unit;
+			logger.info("Sending "+command);
 			USBFlash.write(command.getBytes());
 			CommandPacket reply = USBFlash.readCommandReply(true);
+			logger.info("   Read-TA status : "+reply.getResponse());
 			if (reply.getResponse().equals("OKAY")) {
-				logger.debug("Reading TA unit "+unit+" from partition "+partition);
 				TAUnit taunit = new TAUnit(unit,reply.getDataArray());
 				return taunit;
 			}
 			else {
-				logger.warn(reply.getMessage()+" ( Hex unit value "+HexDump.toHex(unit)+" )");
+				logger.warn("   "+reply.getMessage()+" ( Hex unit value "+HexDump.toHex(unit)+" )");
 			}
 		}
 		return null;
@@ -460,22 +467,22 @@ public class CommandFlasher implements Flasher {
 	public void writeTA(int partition, TAUnit unit) throws X10FlashException, IOException {
 		try {
 			//wrotedata=true;
-			logger.info("Writing TA unit "+unit.getUnitNumber()+" to partition "+partition);
-			logger.info("Sending data with lenght of "+unit.getDataLength()+" ("+HexDump.toHex(unit.getDataLength())+")");
+			logger.info("Writing TA unit "+HexDump.toHex(unit.getUnitNumber())+" to partition "+partition);
 			if (!_bundle.simulate()) {
+				logger.info("   download:"+HexDump.toHex(unit.getDataLength()));
 				String command = "download:"+HexDump.toHex(unit.getDataLength());
 				USBFlash.write(command.getBytes());
 				CommandPacket p = USBFlash.readCommandReply(false);
-				logger.info("Download reply : "+p.getResponse());
 				if (unit.getDataLength()>0) {
 					USBFlash.write(unit.getUnitData());
 				}
 				p = USBFlash.readCommandReply(true);
-				logger.info("Data reply : "+p.getResponse());
+				logger.info("   download status : "+p.getResponse());
+				logger.info("   Write-TA:"+partition+":"+unit.getUnitNumber());
 				command = "Write-TA:"+partition+":"+unit.getUnitNumber();
 				USBFlash.write(command.getBytes());
 				p = USBFlash.readCommandReply(true);
-				logger.info("Write-TA reply : "+p.getResponse());
+				logger.info("   Write-TA status : "+p.getResponse());
 			}
 		} 
 		catch (Exception e) {
@@ -483,41 +490,43 @@ public class CommandFlasher implements Flasher {
 	}
 
 	public void getVar(String key) throws X10FlashException, IOException {
-		logger.debug("Reading variable value for "+ key);
 		if (!_bundle.simulate()) {
 			String command = "getvar:"+key;
+			logger.info("Sending "+command);
 			USBFlash.write(command.getBytes());
 			CommandPacket reply = USBFlash.readCommandReply(true);
+			logger.info("   getvar status : "+reply.getResponse());
 			if (reply.getResponse().equals("FAIL")) {
-				logger.warn("Failed to read variable "+key+" : " + reply.getMessage());
+				logger.warn("   "+reply.getMessage());
 			}
-			logger.debug("Reply : "+reply.getMessage());
 			phoneprops.setProperty(key,reply.getMessage());
 		}
 	}
 
 	public void sync() throws IOException, X10FlashException {
-    	logger.info("Syncing device");
+    	logger.info("Sending Sync");
     	if (!_bundle.simulate()) {
     		USBFlash.write(("Sync").getBytes());
     		CommandPacket p = USBFlash.readCommandReply(true);
-    		logger.info("Sync reply : "+p.getResponse());
+    		logger.info("   Sync status : "+p.getResponse());
     	}
     }
 
     public void powerDown() throws IOException, X10FlashException {
-    	logger.info("Powering down device");
+    	logger.info("Sending powerdown");
     	if (!_bundle.simulate()) {
 			USBFlash.write(("powerdown").getBytes());
 			CommandPacket p = USBFlash.readCommandReply(true);
-			logger.info("Powerdown reply : "+p.getResponse());
+			logger.info("   powerdown status : "+p.getResponse());
     	}
     }
 
     public void getRootKeyHash() throws IOException, X10FlashException {
+    	logger.info("Sending Get-root-key-hash");
     	if (!_bundle.simulate()) {
     		USBFlash.write("Get-root-key-hash".getBytes());
     		CommandPacket p = USBFlash.readCommandReply(true);
+    		logger.info("   Get-root-key-hash status : "+p.getResponse());
     		phoneprops.setProperty("root-key-hash", HexDump.toHex(p.getDataArray()).replaceAll(" ", ""));
     	}
     }
@@ -526,16 +535,14 @@ public class CommandFlasher implements Flasher {
 		//wrotedata=true;
 		String command="";
 		logger.info("processing "+sin.getName());
-		logger.info("   signature:"+HexDump.toHex(sin.getHeader().length));
 		if (!_bundle.simulate()) {
 			command = "signature:"+HexDump.toHex(sin.getHeader().length);
+			logger.info("   "+command);
 			USBFlash.write(command.getBytes());
-			CommandPacket p = USBFlash.readCommandReply(true);
-			logger.info("   signature reply : "+p.getResponse());
-		}
-		if (!_bundle.simulate()) {
+			CommandPacket p = USBFlash.readCommandReply(false);
+			//logger.info("   signature reply : "+p.getResponse());
 			USBFlash.write(sin.getHeader());
-			CommandPacket p = USBFlash.readCommandReply(true);
+			p = USBFlash.readCommandReply(true);
 			logger.info("   signature status : "+p.getResponse());
 		}
 		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(sin.getFile())));
@@ -543,12 +550,12 @@ public class CommandFlasher implements Flasher {
 		while ((entry = tarIn.getNextTarEntry()) != null) {
 			if (!entry.getName().endsWith("cms")) {
 				logger.info("   sending "+entry.getName());
-				logger.info("      download:"+HexDump.toHex((int)entry.getSize()));
 				if (!_bundle.simulate()) {
 					command = "download:"+HexDump.toHex((int)entry.getSize());
+					logger.info("      "+command);
 					USBFlash.write(command.getBytes());
 					CommandPacket p = USBFlash.readCommandReply(false);
-					logger.info("      Download reply : "+p.getResponse());
+					//logger.info("      Download reply : "+p.getResponse());
 				}
 				CircularByteBuffer cb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
 				IOUtils.copy(tarIn, cb.getOutputStream());
@@ -561,13 +568,11 @@ public class CommandFlasher implements Flasher {
 				}
 				if (!_bundle.simulate()) {
 					CommandPacket p = USBFlash.readCommandReply(true);
-					logger.info("      Download status : "+p.getResponse());
-				}
-				logger.info("   Repartition:"+partnumber);
-				if (!_bundle.simulate()) {
+					logger.info("      download status : "+p.getResponse());
 					command="Repartition:"+partnumber;
+					logger.info("   "+command);
 					USBFlash.write(command.getBytes());
-					CommandPacket p = USBFlash.readCommandReply(true);
+					p = USBFlash.readCommandReply(true);
 					logger.info("   Repartition status : "+p.getResponse());
 				}
 			}
@@ -580,21 +585,19 @@ public class CommandFlasher implements Flasher {
 		//wrotedata=true;
 		String command="";
 		logger.info("processing "+sin.getName());
-		logger.info("   signature:"+HexDump.toHex(sin.getHeader().length));
 		if (!_bundle.simulate()) {
 			command = "signature:"+HexDump.toHex(sin.getHeader().length);
+			logger.info("   "+command);
 			USBFlash.write(command.getBytes());
 			CommandPacket p = USBFlash.readCommandReply(false);
-			logger.info("   signature reply : "+p.getResponse());
+			//logger.info("   signature reply : "+p.getResponse());
 			USBFlash.write(sin.getHeader());
 			p = USBFlash.readCommandReply(true);
 			logger.info("   signature status : "+p.getResponse());	
-		}
-		logger.info("   erase:"+partitionname);
-		if (!_bundle.simulate()) {
 			command="erase:"+partitionname;
+			logger.info("   "+command);
 			USBFlash.write(command.getBytes());
-			CommandPacket p = USBFlash.readCommandReply(true);
+			p = USBFlash.readCommandReply(true);
 			logger.info("   erase status : "+p.getStatus());
 		}
 		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(sin.getFile())));
@@ -602,12 +605,12 @@ public class CommandFlasher implements Flasher {
 		while ((entry = tarIn.getNextTarEntry()) != null) {
 			if (!entry.getName().endsWith("cms")) {
 				logger.info("   sending "+entry.getName());
-				logger.info("      download:"+HexDump.toHex((int)entry.getSize()));
 				if (!_bundle.simulate()) {
 					command = "download:"+HexDump.toHex((int)entry.getSize());
+					logger.info("      "+command);
 					USBFlash.write(command.getBytes());
 					CommandPacket p = USBFlash.readCommandReply(false);
-					logger.info("      Download reply : "+p.getResponse());
+					//logger.info("      Download reply : "+p.getResponse());
 				}
 				CircularByteBuffer cb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
 				IOUtils.copy(tarIn, cb.getOutputStream());
@@ -626,11 +629,11 @@ public class CommandFlasher implements Flasher {
 				}
 				if (!_bundle.simulate()) {
 					CommandPacket p = USBFlash.readCommandReply(true);
-					logger.info("      Download status : "+p.getResponse());
+					logger.info("      download status : "+p.getResponse());
 				}
-				logger.info("      flash:"+partitionname);
 				if (!_bundle.simulate()) {
 					command="flash:"+partitionname;
+					logger.info("      "+command);
 					USBFlash.write(command.getBytes());
 					CommandPacket p = USBFlash.readCommandReply(true);
 					logger.info("      flash status : "+p.getResponse());
@@ -657,7 +660,7 @@ public class CommandFlasher implements Flasher {
 	public void backupTA() {
     	logger.info("Making a TA backup");
     	String timeStamp = OS.getTimeStamp();
-    	LogProgress.initProgress(16000);
+    	LogProgress.initProgress(24000);
     	try {
     		backupTA(1, timeStamp);
     	} catch (Exception e) {}
@@ -680,10 +683,10 @@ public class CommandFlasher implements Flasher {
     	}
     	try {
     		tazone.writeln(HexDump.toHex((byte)partition));
-    		for (int unit = 0 ; unit < 8000; unit++) {
+    		for (int unit = 0 ; unit < 12000; unit++) {
     			LogProgress.updateProgress();
     			try {
-    				TAUnit taunit = this.readTA(partition, unit);
+    				TAUnit taunit = this.readTA(partition, unit, false);
     				if (taunit != null) 
     					tazone.writeln(taunit.toString());
     			} catch (Exception e3) {}

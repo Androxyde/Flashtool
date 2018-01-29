@@ -11,7 +11,6 @@ public class USBFlashWin32 {
 	
 	static final Logger logger = LogManager.getLogger(USBFlashWin32.class);
 
-
 	public static void windowsOpen(String pid) throws IOException {
     		logger.info("Opening device for R/W");
 			JKernel32.openDevice();
@@ -21,14 +20,6 @@ public class USBFlashWin32 {
 	public static void windowsClose() {
 		JKernel32.closeDevice();
 	}
-	
-	private static void windowsSleep(int len) {
-		try {
-			Thread.sleep(len);
-		}
-		catch (Exception e) {}
-	}
-
 
 	public static boolean windowsWrite(byte[] array) throws IOException,X10FlashException {
 		JKernel32.writeBytes(array);

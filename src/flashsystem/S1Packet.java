@@ -7,6 +7,10 @@ import java.io.IOException;
 import org.util.BytesUtil;
 import org.util.HexDump;
 
+import com.google.common.primitives.Bytes;
+
+import flashsystem.io.USBFlash;
+
 
 public class S1Packet {
 
@@ -56,6 +60,14 @@ public class S1Packet {
 		crc32=calculatedCRC32();
 	}
 
+	public void mergeWith(S1Packet p) throws IOException {
+		data=BytesUtil.concatAll(data, p.getDataArray());
+		length=data.length;
+		bdata.write(p.getDataArray());
+		flag=p.getFlags();
+		crc32=getCRC32();
+	}
+	
 	public boolean isValid() {
 		if (BytesUtil.getLong(calculatedCRC32())!=BytesUtil.getLong(crc32))
 			return false;
@@ -108,11 +120,27 @@ public class S1Packet {
 		String result = "";
 		int flag1 = getFlags()&1;
 		int flag2 = getFlags()&2;
-		int flag3 = getFlags()&4;
+		int multipacket = getFlags()&4;
 		if (flag1==0) result = "true"; else result="false";
 		if (flag2==0) result += ",false"; else result+=",true";
-		if (flag3==0) result += ",false"; else result+=",true";
+		if (multipacket==0) result += ",false"; else result+=",true";
 		return result;
+	}
+
+	public boolean isMultiPacket() {
+		int multipacket = getFlags()&4;
+		if (multipacket==0) 
+			return false; 
+		else 
+			return true;
+	}
+	
+	public boolean hasErrors() {
+		int flag1 = getFlags()&1;
+		if (flag1==0) 
+			return true; 
+		else 
+			return false;
 	}
 
 	public int getCommand() {
@@ -128,7 +156,9 @@ public class S1Packet {
 	}
 
 	public String getDataString() {
-		return new String(data);
+		try {
+			return new String(data);
+		} catch (Exception e) { return "";}
 	}
 
 	public void addData(byte[] datachunk) throws IOException  {

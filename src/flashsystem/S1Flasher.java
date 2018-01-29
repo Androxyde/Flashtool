@@ -19,7 +19,6 @@ import org.jdom2.JDOMException;
 import org.logger.LogProgress;
 import org.sinfile.parsers.SinFile;
 import org.sinfile.parsers.SinFileException;
-import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.OS;
@@ -166,22 +165,16 @@ public class S1Flasher implements Flasher {
 
     public TAUnit readTA(int unit) throws IOException, X10FlashException
     {
-    		String sunit = HexDump.toHex(BytesUtil.getBytesWord(unit, 4));
-    		logger.info("Start Reading unit "+sunit);
-	        logger.debug((new StringBuilder("%%% read TA property id=")).append(unit).toString());
-	        try {
-	        	cmd.send(S1Command.CMD12, BytesUtil.getBytesWord(unit, 4),false);
-	        	logger.info("Reading TA finished.");
-	        }
-	        catch (X10FlashException e) {
-	        	logger.info("Reading TA finished.");
-	        	return null;
-	        }
-	        if (cmd.getLastReplyLength()>0) {
-        		TAUnit ta = new TAUnit(unit, cmd.getLastReply());
-        		return ta;
-    		}
-			return null;
+    	String sunit = HexDump.toHex(BytesUtil.getBytesWord(unit, 4));
+    	logger.info("Start Reading unit "+sunit);
+	    logger.debug((new StringBuilder("%%% read TA property id=")).append(unit).toString());
+	    cmd.send(S1Command.CMD12, BytesUtil.getBytesWord(unit, 4),false);
+	    logger.info("Reading TA finished.");
+	    if (cmd.getLastReply().getDataLength()>0) {
+	    	TAUnit ta = new TAUnit(unit, cmd.getLastReply().getDataArray());
+        	return ta;
+    	}
+		return null;
     }
 
     public void backupTA() {
@@ -189,7 +182,8 @@ public class S1Flasher implements Flasher {
     	String timeStamp = OS.getTimeStamp();
     	try {
     		BackupTA(1, timeStamp);
-    	} catch (Exception e) {}
+    	} catch (Exception e) {
+    	}
     	try {
     		BackupTA(2, timeStamp);
     	} catch (Exception e) {
@@ -208,8 +202,9 @@ public class S1Flasher implements Flasher {
 		    try {
 		    	logger.info("Start Dumping TA partition "+partition);
 		    	cmd.send(S1Command.CMD18, S1Command.VALNULL, false);
+		    	if (cmd.getLastReply().getDataLength()>0) {
 		    	logger.info("Finished Dumping TA partition "+partition);
-		    	ByteArrayInputStream inputStream = new ByteArrayInputStream(cmd.getLastReply());
+		    	ByteArrayInputStream inputStream = new ByteArrayInputStream(cmd.getLastReply().getDataArray());
 		    	TreeMap<Integer, byte[]> treeMap = new  TreeMap<Integer, byte[]>();
 		    	int i = 0;
 		    	while(i == 0) {
@@ -244,12 +239,16 @@ public class S1Flasher implements Flasher {
 		    			tazone.write(tau.toString());
 		    	    if (treeMap.lastEntry().getKey()!=entry.getKey()) tazone.write("\n");
 		    	}
-		    }catch (X10FlashException e) {
+		        tazone.close();
+		        logger.info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
+		    	} else {
+			    	logger.warn("This partition is not readable");
+			    }
+		        closeTA();
+		    } catch (X10FlashException e) {
+		    	closeTA();
 		    	throw e;
 		    }
-	        tazone.close();
-	        logger.info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
-	        closeTA();
 	    }
     	catch (Exception ioe) {
 	        tazone.close();
@@ -275,19 +274,13 @@ public class S1Flasher implements Flasher {
     		logger.info("    Checking header");
 				if (!_bundle.simulate()) {
 					cmd.send(S1Command.CMD05, sin.getHeader(), false);
-					if (USBFlash.getLastFlags() == 0)
-						getLastError();
 				}
 	    }
     	catch (IOException ioe) {
     		throw new X10FlashException("Error in processHeader : "+ioe.getMessage());
     	}
     }
- 
-    public void getLastError() throws IOException, X10FlashException {
-            cmd.send(S1Command.CMD07,S1Command.VALNULL,false);    	
-    }
-    
+     
     private void uploadImage(SinFile sin) throws X10FlashException {
     	try {
     		logger.info("Processing "+sin.getName());
@@ -301,8 +294,6 @@ public class S1Flasher implements Flasher {
 				byte[] part = sin.getNextChunk();
 				if (!_bundle.simulate()) {
 					cmd.send(S1Command.CMD06, part, sin.hasData());
-					if (USBFlash.getLastFlags() == 0)
-						getLastError();
 				}
 				nbparts++;
 			}
@@ -556,22 +547,22 @@ public class S1Flasher implements Flasher {
     public void getDevInfo() throws IOException, X10FlashException {
     	openTA(2);
     	cmd.send(S1Command.CMD12, S1Command.TA_MODEL, false);
-    	currentdevice = cmd.getLastReplyString();
+    	currentdevice = cmd.getLastReply().getDataString();
     	String info = "Current device : "+getCurrentDevice();
     	cmd.send(S1Command.CMD12, S1Command.TA_SERIAL, false);
-    	serial = cmd.getLastReplyString();
+    	serial = cmd.getLastReply().getDataString();
     	info = info + " - "+serial;
     	cmd.send(S1Command.CMD12, S1Command.TA_DEVID3, false);
-    	info = info + " - "+cmd.getLastReplyString();
+    	info = info + " - "+cmd.getLastReply().getDataString();
     	cmd.send(S1Command.CMD12, S1Command.TA_DEVID4, false);
-    	info = info + " - "+cmd.getLastReplyString();
+    	info = info + " - "+cmd.getLastReply().getDataString();
     	cmd.send(S1Command.CMD12, S1Command.TA_DEVID5, false);
-    	info = info + " - "+cmd.getLastReplyString();
+    	info = info + " - "+cmd.getLastReply().getDataString();
     	logger.info(info);
     	closeTA();
     }
     
-    
+
     public boolean checkScript() {
     	try {
     		Vector<String> ignored = new Vector<String>();
@@ -931,7 +922,7 @@ public class S1Flasher implements Flasher {
     public void hookDevice(boolean printProps) throws X10FlashException,IOException {
     	if (printProps && _bundle.hasLoader()) {
 			cmd.send(S1Command.CMD01, S1Command.VALNULL, false);
-			cmd01string = cmd.getLastReplyString();
+			cmd01string = cmd.getLastReply().getDataString();
 			logger.debug(cmd01string);
 			phoneprops.update(cmd01string);
 			if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
@@ -947,8 +938,15 @@ public class S1Flasher implements Flasher {
     }
 
     public TAUnit readTA(int partition, int unit) throws X10FlashException, IOException {
+    	TAUnit u = null;
     	this.openTA(partition);
-    	TAUnit u = this.readTA(unit);
+    	try {
+    		u = this.readTA(unit);
+    	}
+    	catch (X10FlashException x10e) {
+    		logger.warn(x10e.getMessage());
+    		u=null;
+    	}
     	this.closeTA();
     	return u;
     }
@@ -967,8 +965,8 @@ public class S1Flasher implements Flasher {
     		USBFlash.open("ADDE");
     		try {
 				logger.info("Reading device information");
-				USBFlash.readS1Reply();
-				firstRead = new String (USBFlash.getLastReply());
+				;
+				firstRead = new String (USBFlash.readS1Reply().getDataArray());
 				phoneprops = new LoaderInfo(firstRead);
 				phoneprops.setProperty("BOOTVER", phoneprops.getProperty("VER"));
 				if (phoneprops.getProperty("VER").startsWith("r"))

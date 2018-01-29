@@ -1,23 +1,15 @@
 package flashsystem;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.stream.Stream;
-
 import org.apache.logging.log4j.Level;
 import org.logger.LogProgress;
 import org.logger.MyLogger;
-import org.util.HexDump;
-
-import com.google.common.collect.ObjectArrays;
-import com.google.common.primitives.Bytes;
-
 import flashsystem.io.USBFlash;
 
 public class S1Command {
 
     private boolean _simulate;
-    private byte[] reply;
+    private S1Packet reply;
 
     public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	 = {
     	0x00, 0x00, 0x27, 0x74, 0x00, 0x00, 0x00, 0x01, 0x01};
@@ -65,42 +57,12 @@ public class S1Command {
 		_simulate = simulate;
 	}
 	
-    public String getLastReplyString() {
-    	try {
-    		return new String(reply);
-    	}
-    	catch (Exception e) {
-    		return "";
-    	}
-    }
-
-    public String getLastReplyHex() {
-    	try {
-    		return HexDump.toHex(reply);
-    	}
-    	catch (Exception e) {
-    		return "";
-    	}
-    }
-
-    public short getLastReplyLength() {
-    	try {
-    		return (short)reply.length;
-    	}
-    	catch (Exception e) {
-    		return 0;
-    	}
-    }
-    
-    public byte[] getLastReply() {
+    public S1Packet getLastReply() {
     	return reply;
-    }
-    
-    public boolean isMultiPacketMessage() {
-    	return (USBFlash.getLastFlags() & 4) > 0;
-    }
+    }    
 
-    private void writeCommand(int command, byte data[], boolean ongoing) throws X10FlashException, IOException {
+    private S1Packet writeCommand(int command, byte data[], boolean ongoing) throws X10FlashException, IOException {
+    	S1Packet reply=null;
     	if (!_simulate) {
     			if (MyLogger.getLevel()==Level.DEBUG) {
     				try {
@@ -109,35 +71,38 @@ public class S1Command {
     			}
 	    		S1Packet p = new S1Packet(command,data,ongoing);
 	    		try {
-		    		USBFlash.writeS1(p);
+		    		reply =  USBFlash.writeS1(p);
 	    		}
 	    		catch (X10FlashException xe) {
+	    			xe.printStackTrace();
 	    			p.release();
 	    			throw new X10FlashException(xe.getMessage());
 	    		}
 	    		catch (IOException ioe) {
+	    			ioe.printStackTrace();
 	    			p.release();
 	    			throw new IOException(ioe.getMessage());
 	    		}
 	    }
+    	return reply;
     }
 
     public void send(int cmd, byte data[], boolean ongoing) throws X10FlashException, IOException
     {
-    	writeCommand(cmd, data, ongoing);
-    	reply = USBFlash.getLastReply();
-    	if (USBFlash.getLastFlags()==0) {
-    		writeCommand(S1Command.CMD07, S1Command.VALNULL, false);
-    		throw new X10FlashException(getLastReplyString());
+    	reply = writeCommand(cmd, data, ongoing);
+    	if (reply.hasErrors()) {
+    		reply = writeCommand(S1Command.CMD07, S1Command.VALNULL, false);
+    		throw new X10FlashException(reply.getDataString());
     	}
-    	while(isMultiPacketMessage()) {
-    		writeCommand(cmd, data, ongoing);
-	    	reply = Bytes.concat(reply,USBFlash.getLastReply());
-	    	if (USBFlash.getLastFlags()==0) {
+    	while(reply.isMultiPacket()) {
+    		S1Packet subreply = writeCommand(cmd, data, ongoing);
+	    	if (subreply.hasErrors()) {
 	    		writeCommand(S1Command.CMD07, S1Command.VALNULL, false);
-	    		throw new X10FlashException(getLastReplyString());
+	    		throw new X10FlashException(reply.getDataString());
 	    	}
+	    	reply.mergeWith(subreply);
+	    	
     	}
-    	LogProgress.updateProgress();		
+    	LogProgress.updateProgress();
     }
 }
