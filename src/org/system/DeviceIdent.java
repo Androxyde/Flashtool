@@ -131,11 +131,14 @@ public class DeviceIdent {
 		if (!getVid().equals("0FCE")) return "none";
 		if (!isDriverOk()) return "notinstalled";
 		if (getPid().equals("ADDE") || getPid().equals("B00B")) {
-			if (drivermajor==3 && driverminor >=1)
-				return "flash";
-			if (drivermajor>3)
-				return "flash";
-			return "flash_obsolete";
+			if (OS.getName().equals("windows")) {
+				if (drivermajor==3 && driverminor >=1)
+					return "flash";
+				if (drivermajor>3)
+					return "flash";
+				return "flash_obsolete";
+			}
+			else return "flash";
 		}
 		if (getPid().equals("0DDE")) return "fastboot";
 		return AdbUtility.getStatus();
