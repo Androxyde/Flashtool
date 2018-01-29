@@ -55,11 +55,8 @@
 			<arg value="../../../Flashtool/jre/linjre.tar"/>
 		</exec>
 		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/linjre64/bin" perm="755" includes="**/*"/>
-		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/linjre32/bin" perm="755" includes="**/*"/>
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linjre32/lib/jexec" perm="755"/>
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib/jexec" perm="755"/>
 		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib" perm="755" includes="**/*.so"/>
-		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/linjre32/lib" perm="755" includes="**/*.so"/>
 		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre32/lib/security"/>
 		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre32/lib/security"/>		
 		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib/security"/>
