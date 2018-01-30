@@ -449,16 +449,19 @@ public class CommandFlasher implements Flasher {
 	public TAUnit readTA(int partition, int unit, boolean withlog) throws X10FlashException, IOException {
 		if (!_bundle.simulate()) {
 			String command = "Read-TA:"+partition+":"+unit;
-			logger.info("Sending "+command);
+			if (withlog)
+				logger.info("Sending "+command);
 			USBFlash.write(command.getBytes());
 			CommandPacket reply = USBFlash.readCommandReply(true);
-			logger.info("   Read-TA status : "+reply.getResponse());
+			if (withlog)
+				logger.info("   Read-TA status : "+reply.getResponse());
 			if (reply.getResponse().equals("OKAY")) {
 				TAUnit taunit = new TAUnit(unit,reply.getDataArray());
 				return taunit;
 			}
 			else {
-				logger.warn("   "+reply.getMessage()+" ( Hex unit value "+HexDump.toHex(unit)+" )");
+				if (withlog)
+					logger.warn("   "+reply.getMessage()+" ( Hex unit value "+HexDump.toHex(unit)+" )");
 			}
 		}
 		return null;
@@ -467,7 +470,7 @@ public class CommandFlasher implements Flasher {
 	public void writeTA(int partition, TAUnit unit) throws X10FlashException, IOException {
 		try {
 			//wrotedata=true;
-			logger.info("Writing TA unit "+HexDump.toHex(unit.getUnitNumber())+" to partition "+partition);
+			logger.info("Writing TA unit "+HexDump.toHex((int)unit.getUnitNumber())+" to partition "+partition);
 			if (!_bundle.simulate()) {
 				logger.info("   download:"+HexDump.toHex(unit.getDataLength()));
 				String command = "download:"+HexDump.toHex(unit.getDataLength());
@@ -598,7 +601,7 @@ public class CommandFlasher implements Flasher {
 			logger.info("   "+command);
 			USBFlash.write(command.getBytes());
 			p = USBFlash.readCommandReply(true);
-			logger.info("   erase status : "+p.getStatus());
+			logger.info("   erase status : "+p.getResponse());
 		}
 		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(sin.getFile())));
 		TarArchiveEntry entry=null;
@@ -689,11 +692,14 @@ public class CommandFlasher implements Flasher {
     				TAUnit taunit = this.readTA(partition, unit, false);
     				if (taunit != null) 
     					tazone.writeln(taunit.toString());
-    			} catch (Exception e3) {}
+    			} catch (Exception e3) {
+    				e3.printStackTrace();
+    			}
     		}
     		tazone.close();
 	        logger.info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
     	} catch (Exception e) {
+    		e.printStackTrace();
     	}
 	}
 	

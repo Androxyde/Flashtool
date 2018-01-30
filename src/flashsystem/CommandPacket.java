@@ -2,6 +2,7 @@ package flashsystem;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.util.BytesUtil;
 
@@ -43,29 +44,17 @@ public class CommandPacket {
 							length=BytesUtil.getInt(blength.toByteArray());
 						}
 					} else {
-						if (( (char)datachunk[i]=='O' || (char)datachunk[i]=='F') && tmpdata.toByteArray().length==0) {
-							tmpdata.write(datachunk[i]);
-						} else if (( (char)datachunk[i]=='K' || (char)datachunk[i]=='A') && tmpdata.toByteArray().length==1) {
-							tmpdata.write(datachunk[i]);
+						tmpdata.write(datachunk[i]);
+						try {
+						if (new String(tmpdata.toByteArray()).endsWith("FAIL")) {
+							response="FAIL";
+							bdata.write(Arrays.copyOf(tmpdata.toByteArray(), tmpdata.toByteArray().length-4));
 						}
-					    else if (( (char)datachunk[i]=='A' || (char)datachunk[i]=='I') && tmpdata.toByteArray().length==2) {
-					    	tmpdata.write(datachunk[i]);
-					    }
-					    else if (( (char)datachunk[i]=='Y' || (char)datachunk[i]=='L') && tmpdata.toByteArray().length==3) {
-					    	tmpdata.write(datachunk[i]);
-					    	response=new String(tmpdata.toByteArray());
-					    }
-					    else {
-					    	if (tmpdata.toByteArray().length>0) {
-					    		byte[] result=BytesUtil.concatAll(bdata.toByteArray(), tmpdata.toByteArray());
-					    		tmpdata = new ByteArrayOutputStream();
-					    		bdata = new ByteArrayOutputStream();
-					    		try {
-					    			bdata.write(result);
-					    		} catch (IOException ioe) {}
-					    	}
-					    	bdata.write(datachunk[i]);
-					    }
+						if (new String(tmpdata.toByteArray()).endsWith("OKAY")) {
+							response="OKAY";
+							bdata.write(Arrays.copyOf(tmpdata.toByteArray(), tmpdata.toByteArray().length-4));
+						}
+						} catch (Exception e) {}
 					}
 				}
 			}
