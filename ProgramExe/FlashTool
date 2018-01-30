@@ -72,7 +72,7 @@ then
     fi
 
     $JAVA_HOME/bin/java -classpath ./x10flasher.jar:${CP}:${SWT} \
-                        -Xms128m -Xmx512m -Duser.country=US -Duser.language=en \
+                        -Xms256m -Xmx1024m -Duser.country=US -Duser.language=en \
                         -Djsse.enableSNIExtension=false gui.Main
 
 else
@@ -99,7 +99,7 @@ else
     fi
 
     $JAVA_HOME/bin/java -XstartOnFirstThread -classpath ./x10flasher.jar:${CP}:${SWT} \
-                        -Xms128m -Xmx512m -Duser.country=US -Duser.language=en \
+                        -Xms256m -Xmx1024m -Duser.country=US -Duser.language=en \
                         -Djsse.enableSNIExtension=false gui.Main
 
 fi
