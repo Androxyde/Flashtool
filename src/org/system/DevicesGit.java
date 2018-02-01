@@ -40,7 +40,6 @@ public class DevicesGit {
     		pullRepository();
     	}
     	else cloneRepository();
-    	closeRepository();
     }
 
     public static void cloneRepository() {
@@ -72,7 +71,6 @@ public class DevicesGit {
 	        git = new Git(localRepo);
 	        return true;
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.info("Error opening devices repository.");
 			closeRepository();
 			return false;

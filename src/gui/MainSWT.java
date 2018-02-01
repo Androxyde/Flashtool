@@ -58,7 +58,6 @@ import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.ta.parsers.TARawParser;
 import flashsystem.Bundle;
-import flashsystem.CommandFlasher;
 import flashsystem.Flasher;
 import flashsystem.FlasherFactory;
 import gui.models.TABag;

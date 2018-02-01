@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -48,9 +49,9 @@ public class XperiFirm {
 			try {
 				File f = new File(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.exe.config");
 				if (f.exists()) f.delete();
-				version = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/version"));
+				version = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/version"),Charset.forName("UTF-8"));
 				version = version.substring(0,version.indexOf("|"));
-				downloadurl = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/download"));
+				downloadurl = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/download"),Charset.forName("UTF-8"));
 				tf = new TextFile(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.version","ISO8859-15");
 				tf.readLines();
 				if (!version.equals(tf.getLines().iterator().next())) {

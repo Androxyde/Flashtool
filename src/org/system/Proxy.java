@@ -2,6 +2,8 @@ package org.system;
 
 import java.net.ProxySelector;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.github.markusbernhardt.proxy.ProxySearch;
 import com.github.markusbernhardt.proxy.ProxySearch.Strategy;
 import com.github.markusbernhardt.proxy.util.PlatformUtil;
@@ -10,9 +12,11 @@ import com.github.markusbernhardt.proxy.util.PlatformUtil.Platform;
 public class Proxy {
 
 	private static ProxySelector dps = null;
+	static final Logger logger = LogManager.getLogger(Proxy.class);
 	
 	public static void setProxy() {
 		if (dps==null) dps=ProxySelector.getDefault();
+		logger.info("Searching for a web proxy");
 		ProxySearch proxySearch = new ProxySearch();
         
 		if (PlatformUtil.getCurrentPlattform() == Platform.WIN) {
@@ -28,8 +32,13 @@ public class Proxy {
 		  proxySearch.addStrategy(Strategy.OS_DEFAULT);
 		}
 		ProxySelector ps = proxySearch.getProxySelector();
-		if (ps!=null)
+		if (ps!=null) {
+			logger.info("A proxy has been found. Using it as default");
 			ProxySelector.setDefault(ps);
+		}
+		else {
+			logger.info("No proxy found, using direct connection");
+		}
 	}
 	
 	public static boolean canResolve(String uri) {

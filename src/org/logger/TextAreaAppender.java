@@ -1,7 +1,6 @@
 package org.logger;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Filter;  
 import org.apache.logging.log4j.core.Layout;  
 import org.apache.logging.log4j.core.LogEvent;  
@@ -30,6 +29,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public final class TextAreaAppender extends AbstractAppender {
 
   static private StyledText styledText = null;
+  static private Color cblack = null;
+  static private Color cred = null;
+  static private Color cblue = null;
 
   private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
   private final Lock readLock = rwLock.readLock();
@@ -52,36 +54,37 @@ public final class TextAreaAppender extends AbstractAppender {
     String message = new String(getLayout().toByteArray(event));
     Level l = event.getLevel();
 	if (styledText!=null) {
-		Display.getDefault().syncExec(new Runnable() {
+		StyleRange styleRange = new StyleRange();
+		if (l==Level.ERROR) {
+			styleRange.length = message.length();
+			styleRange.fontStyle = SWT.NORMAL;
+			styleRange.foreground = cred;
+			
+		}
+		else if (l==Level.WARN) {
+			styleRange.length = message.length();
+			styleRange.fontStyle = SWT.NORMAL;
+			styleRange.foreground = cblue;
+		}
+		else {
+			
+			styleRange.length = message.length();
+			styleRange.fontStyle = SWT.NORMAL;
+			styleRange.foreground = cblack;
+		}
+		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				// Append formatted message to textarea.
-				if (l==Level.ERROR) {
-					append(styledText.getDisplay().getSystemColor(SWT.COLOR_RED),message);
-				}
-				else if (l==Level.WARN) {
-					append(styledText.getDisplay().getSystemColor(SWT.COLOR_BLUE),message);
-				}
-				else {
-					append(styledText.getDisplay().getSystemColor(SWT.COLOR_BLACK),message);
-				}
+				styleRange.start = styledText.getCharCount();
+				styledText.append(message);
+				styledText.setStyleRange(styleRange);
+				styledText.setSelection(styledText.getCharCount());
 			}
 		});
 	}
 	readLock.unlock();
   }
 
-	public static void append(final Color color, final String message) {
-		if (styledText != null) {
-					styledText.append(message);
-					StyleRange styleRange = new StyleRange();
-					styleRange.start = styledText.getCharCount()-message.length();
-					styleRange.length = message.length();
-					styleRange.fontStyle = SWT.NORMAL;
-					styleRange.foreground = color;
-					styledText.setStyleRange(styleRange);
-					styledText.setSelection(styledText.getCharCount());
-		}
-    }
 
   /**
    * Factory method. Log4j will parse the configuration and call this factory 
@@ -116,5 +119,8 @@ public final class TextAreaAppender extends AbstractAppender {
    */
   public static void setTextArea(StyledText styledText) {
     TextAreaAppender.styledText = styledText;
+    cred = styledText.getDisplay().getSystemColor(SWT.COLOR_RED);
+    cblack = styledText.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+    cblue = styledText.getDisplay().getSystemColor(SWT.COLOR_BLUE);
   }
 }
