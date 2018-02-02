@@ -17,9 +17,7 @@
 	</target>
 
 	<target name="clean">
-		<delete dir="../../Deploy/FlashTool/x10flasher_lib/winjre32"/>
         <delete dir="../../Deploy/FlashTool/x10flasher_lib/winjre64"/>
-    	<delete dir="../../Deploy/FlashTool/x10flasher_lib/linjre32"/>
     	<delete dir="../../Deploy/FlashTool/x10flasher_lib/linjre64"/>
 		<delete dir="../../Deploy/FlashTool/x10flasher_lib/macjre64"/>
 	    <delete file="../../Deploy/FlashTool/FlashTool64.exe"/>
