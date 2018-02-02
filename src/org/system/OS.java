@@ -77,7 +77,7 @@ public class OS {
 			File f = new File(folder);
 			if (!f.exists()) f.mkdirs();
 			else if (f.isFile()) throw new IOException("destination must be a folder");
-			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {getWorkDir()+File.separator+"x10flasher_lib"+File.separator+"unyaffs."+getName()+"."+OS.getPlatform(),yaffsfile,folder},false);
+			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {getWorkDir()+File.separator+"x10flasher_lib"+File.separator+"unyaffs",yaffsfile,folder},false);
 		}
 		catch (Exception e) {
 			logger.warn("Failed : "+e.getMessage());
@@ -88,7 +88,7 @@ public class OS {
 		if (OS.getName().equals("windows"))
 			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"adb.exe").getAbsolutePath();
 		else
-			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"adb."+OS.getName()+"."+OS.getPlatform()).getAbsolutePath();
+			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"adb").getAbsolutePath();
 	}
 	
 	public static String getPathBin2Sin() {
@@ -116,7 +116,7 @@ public class OS {
 	   if (OS.getName().equals("windows"))
 		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot.exe").getAbsolutePath();
 	   else
-		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot."+OS.getName()+"."+OS.getPlatform()).getAbsolutePath();
+		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot").getAbsolutePath();
 	}
 	
 	public static String getPathXperiFirm() {

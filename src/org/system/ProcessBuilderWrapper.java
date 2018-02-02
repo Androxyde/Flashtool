@@ -25,8 +25,8 @@ public class ProcessBuilderWrapper {
     	run(directory, command);
     }
 
-    public void run(File directory, List<String> command) throws Exception {    	
-        infos = new StringWriter();
+    public void run(File directory, List<String> command) throws Exception {
+    	infos = new StringWriter();
         errors = new StringWriter();
         ProcessBuilder pb = new ProcessBuilder(command);     
         if(directory != null)

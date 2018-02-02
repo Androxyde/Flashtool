@@ -57,8 +57,6 @@
 		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/linjre64/bin" perm="755" includes="**/*"/>
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib/jexec" perm="755"/>
 		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib" perm="755" includes="**/*.so"/>
-		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre32/lib/security"/>
-		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre32/lib/security"/>		
 		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib/security"/>
 		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/linjre64/lib/security"/>		
 	</target>
@@ -74,28 +72,13 @@
 		<chmod file="../../Deploy/FlashTool/FlashTool" perm="755" />
     	<chmod file="../../Deploy/FlashTool/FlashToolConsole" perm="755"/>
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/xperifirm" perm="755"/>
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb.linux.64" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb.linux.32" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot.linux.64" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot.linux.32" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.linux.64" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.linux.32" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/bin2elf" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/bin2sin" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linux/lib64/udev/libusbx-1.0.so.0.1.0" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linux/lib64/udev1/libusbx-1.0.so.0.1.0" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev/libusbx-1.0.so.0.1.0" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev1/libusbx-1.0.so.0.1.0" perm="755" />
-		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev">
-		    <arg value="-sf"/>
-			<arg value="libusbx-1.0.so.0.1.0"/>
-			<arg value="libusbx-1.0.so"/>
-		</exec>
-		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/linux/lib32/udev1">
-		    <arg value="-sf"/>
-			<arg value="libusbx-1.0.so.0.1.0"/>
-			<arg value="libusbx-1.0.so"/>
-		</exec>
 		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/linux/lib64/udev">
 		    <arg value="-sf"/>
 			<arg value="libusbx-1.0.so.0.1.0"/>

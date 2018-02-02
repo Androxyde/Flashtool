@@ -27,7 +27,9 @@ public class FastbootUtility {
 			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {fastbootpath, "devices"},false);
 			Scanner sc = new Scanner(command.getStdOut());
 			while (sc.hasNextLine()) {
-				v.add(sc.nextLine().split("\t")[0]);
+				String line = sc.nextLine();
+				if (!line.contains("????"))
+					v.add(line.split("\t")[0]);
 			}
 		}
 		catch (Exception e) {
