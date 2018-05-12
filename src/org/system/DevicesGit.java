@@ -2,10 +2,8 @@ package org.system;
 
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
@@ -46,7 +44,7 @@ public class DevicesGit {
 		try {
 			logger.info("Cloning devices repository to "+OS.getFolderDevices());
 	        File lPath = new File(OS.getFolderDevices());
-	        FileUtils.deleteDirectory(lPath);
+	        OS.deleteDirectory(lPath);
 	        lPath.mkdir();
 	        Git result = Git.cloneRepository()
 	                .setURI(remotePath)

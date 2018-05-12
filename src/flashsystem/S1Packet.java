@@ -7,10 +7,6 @@ import java.io.IOException;
 import org.util.BytesUtil;
 import org.util.HexDump;
 
-import com.google.common.primitives.Bytes;
-
-import flashsystem.io.USBFlash;
-
 
 public class S1Packet {
 

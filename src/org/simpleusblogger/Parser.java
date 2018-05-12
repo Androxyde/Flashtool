@@ -67,7 +67,7 @@ public class Parser {
 				if (rec.header==null) continue;
 				if (rec.header.usb_UsbDeviceHandle==0) continue;
 //				if (rec.getDataString().length()<=40 && rec.getDirection().equals("WRITE"))
-//					System.out.println(rec.getDirection()+" : "+rec.getDataString());
+//					System.out.println(rec.getDirection()+" : "+rec.getDataString().substring(0, rec.getDataString().length()>30?30:rec.getDataString().length()));
 				if (rec.getDataString().contains("getvar") && s1parser==true) s1parser=false;
 				if (s1parser==false) {
 					if (rec.getDirection().equals("WRITE")) {
@@ -78,6 +78,9 @@ public class Parser {
 								rec.getDataString().startsWith("powerdown") ||
 								rec.getDataString().startsWith("Sync") ||
 								rec.getDataString().startsWith("Getlog") ||
+								rec.getDataString().startsWith("set_active") ||
+								rec.getDataString().startsWith("Get-ufs-info") ||
+								rec.getDataString().startsWith("Get-gpt-info") ||
 								rec.getDataString().startsWith("Get-root-key-hash")) {
 							
 							if (ccurrent!=null) {

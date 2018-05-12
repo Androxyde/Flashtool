@@ -1,6 +1,5 @@
 package flashsystem;
 
-import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,9 +18,9 @@ import java.util.zip.ZipFile;
 import javax.crypto.NoSuchPaddingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.sinfile.parsers.SinFileException;
 import org.system.AESInputStream;
+import org.system.OS;
 import org.system.RC4InputStream;
 import org.system.RC4OutputStream;
 import org.ta.parsers.TAFileParseException;
@@ -47,10 +46,8 @@ public class SeusSinTool {
 	    		 ZipEntry entry = entries.nextElement();
 	    		 InputStream entryStream = file.getInputStream(entry);
 	    		 File out = getFile(new File(folder+File.separator+entry.getName()));
-	    		 FileOutputStream streamOut = new FileOutputStream(out);
-	    		 ByteStreams.copy(entryStream,streamOut);
+	    		 OS.writeToFile(entryStream, out);
 	    		 entryStream.close();
-	    		 streamOut.close();
 	    		 try {
 	    			 if (!out.getName().toUpperCase().endsWith("SIN")) {
 		    			 ZipFile subzip = new ZipFile(out);
@@ -70,10 +67,8 @@ public class SeusSinTool {
 		    					 pw.println("   <FILE PATH=\""+subentry.getName()+"\"/>");
 		    	    		 File subout = getFile(new File(subfolder+File.separator+subentry.getName()));
 		    	    		 entryStream=subzip.getInputStream(subentry);
-		    	    		 streamOut = new FileOutputStream(subout);
-		    	    		 ByteStreams.copy(entryStream,streamOut);
+		    	    		 OS.writeToFile(entryStream, subout);
 		    	    		 entryStream.close();
-		    	    		 streamOut.close();
 		    			 }
 	    				 if (pw!=null) {
 	    					 pw.println(" </PARTITION_IMAGES>");
@@ -122,18 +117,14 @@ public class SeusSinTool {
 	}
 
 	public static boolean decryptAsIs(File enc, File dec) {
-		FileOutputStream localFileOutputStream=null;
 		FileInputStream localFileInputStream=null;
 		try {
 			localFileInputStream = new FileInputStream(enc);
-		    localFileOutputStream = new FileOutputStream(dec);
-			ByteStreams.copy(localFileInputStream, localFileOutputStream);
-		    localFileOutputStream.close();
+			OS.writeToFile(localFileInputStream, dec);
 		    localFileInputStream.close();
 		    return true;
 		} catch (Exception e) {
 			try {
-			    localFileOutputStream.close();
 			    localFileInputStream.close();
 			    dec.delete();
 			} catch (Exception e1) {}
@@ -142,18 +133,14 @@ public class SeusSinTool {
 	}
 	
 	public static boolean decryptGzipped(File enc, File dec) {
-		FileOutputStream localFileOutputStream=null;
 		GZIPInputStream localGZIPInputStream=null;
 		try {
 			localGZIPInputStream = new GZIPInputStream(new FileInputStream(enc));
-		    localFileOutputStream = new FileOutputStream(dec);
-			ByteStreams.copy(localGZIPInputStream, localFileOutputStream);
-		    localFileOutputStream.close();
+			OS.writeToFile(localGZIPInputStream, dec);
 		    localGZIPInputStream.close();
 		    return true;
 		} catch (Exception e) {
 			try {
-			    localFileOutputStream.close();
 			    localGZIPInputStream.close();
 			    dec.delete();
 			} catch (Exception e1) {}
@@ -162,18 +149,14 @@ public class SeusSinTool {
 	}
 
 	public static boolean decryptAES(File enc, File dec) {
-		FileOutputStream localFileOutputStream=null;
 		GZIPInputStream localEncodedStream = null;
 		try {
-		    localFileOutputStream = new FileOutputStream(dec);
 		    localEncodedStream = new GZIPInputStream(new AESInputStream(new FileInputStream(enc)));
-		    ByteStreams.copy(localEncodedStream, localFileOutputStream);
-		    localFileOutputStream.close();
+		    OS.writeToFile(localEncodedStream, dec);
 		    localEncodedStream.close();				
 		    return true;
 		} catch (Exception e) {
 			try {
-				localFileOutputStream.close();
 				localEncodedStream.close();
 				dec.delete();
 			} catch (Exception e1) {}
@@ -182,18 +165,14 @@ public class SeusSinTool {
 	}
 
 	public static boolean decryptRC4(File enc, File dec) {
-		FileOutputStream localFileOutputStream=null;
 		GZIPInputStream localEncodedStream = null;
 		try {
-		    localFileOutputStream = new FileOutputStream(dec);
 		    localEncodedStream = new GZIPInputStream(new RC4InputStream(new FileInputStream(enc)));
-		    ByteStreams.copy(localEncodedStream, localFileOutputStream);
-		    localFileOutputStream.close();
+		    OS.writeToFile(localEncodedStream, dec);
 		    localEncodedStream.close();				
 		    return true;
 		} catch (Exception e) {
 			try {
-				localFileOutputStream.close();
 				localEncodedStream.close();
 				dec.delete();
 			} catch (Exception e1) {}

@@ -1,7 +1,6 @@
 package flashsystem;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -14,7 +13,6 @@ import java.util.Properties;
 import java.util.Vector;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
@@ -209,7 +207,11 @@ public class CommandFlasher implements Flasher {
     		Iterator<Category> icategs = _bundle.getMeta().getAllEntries(true).iterator();
     		while (icategs.hasNext()) {
     			Category cat = icategs.next();
-    			if (!flashscript.hasCategory(cat)) ignored.add(cat.getId());
+    			if (!flashscript.hasCategory(cat)) {
+    				if (!cat.getId().equals("FSCONFIG") ) {
+    					ignored.add(cat.getId());
+    				}
+    			}
     		}
     		if (ignored.size()>0) {
     			Enumeration eignored = ignored.elements();
@@ -301,10 +303,15 @@ public class CommandFlasher implements Flasher {
     					}
 					}
 					else {
-						logger.warn(param2 + " is excluded from bundle");
-					}   				
+						BundleEntry b = _bundle.searchEntry(param2);
+	    				if (b!=null) {
+	    					SinFile sin =new SinFile(new File(b.getAbsolutePath()));
+	    					repartition(sin,Integer.parseInt(param1));
+	    				}
+	    				else
+	    					logger.warn(param2 + " is excluded from bundle");
+					}
     			}
- 
     			else if (action.equals("Write-TA")) {
     				if (Integer.parseInt(param1) == 2)
     					if (TaPartition2.get(Long.parseLong(param2))!=null) {
@@ -314,6 +321,15 @@ public class CommandFlasher implements Flasher {
     						if (!param2.equals("10100") && !param2.equals("10021"))
     							logger.warn("TA Unit "+param2 + " is excluded from bundle");
     					}
+    			}
+    			else if (action.equals("set_active")) {
+    				setActive(param1);
+    			}
+    			else if (action.equals("Get-ufs-info")) {
+    				getUfsInfo();
+    			}
+    			else if (action.equals("Get-gpt-info")) {
+    				GetGptInfo(Integer.parseInt(param1));
     			}
     		}
     		setFlashState(false);
@@ -418,6 +434,36 @@ public class CommandFlasher implements Flasher {
 		return _bundle;
 	}
 
+	public void getUfsInfo()  throws IOException,X10FlashException {
+    	logger.info("Sending Get-ufs-info");
+    	if (!_bundle.simulate()) {
+    		String command = "Get-ufs-info";
+    		USBFlash.write(command.getBytes());
+    		CommandPacket reply = USBFlash.readCommandReply(true);
+    		logger.info("   Get-ufs-info status : "+reply.getResponse());
+    	}		
+	}
+
+	public void GetGptInfo(int partnumber)  throws IOException,X10FlashException {
+    	logger.info("Sending Get-gpt-info:"+partnumber);
+    	if (!_bundle.simulate()) {
+    		String command = "Get-gpt-info:"+partnumber;
+    		USBFlash.write(command.getBytes());
+    		CommandPacket reply = USBFlash.readCommandReply(true);
+    		logger.info("   Get-gpt-info status : "+reply.getResponse());
+    	}
+	}
+
+	public void setActive(String name)  throws IOException,X10FlashException {
+    	logger.info("Sending set_active:"+name);
+    	if (!_bundle.simulate()) {
+    		String command = "set_active:"+name;
+    		USBFlash.write(command.getBytes());
+    		CommandPacket reply = USBFlash.readCommandReply(true);
+    		logger.info("   set_active status : "+reply.getResponse());
+    	}
+	}
+	
 	public void setFlashState(boolean ongoing) throws IOException,X10FlashException {
 		if (ongoing) {
     		writeTA(2,new TAUnit(10100,new byte[] {0x01}));
@@ -538,17 +584,16 @@ public class CommandFlasher implements Flasher {
 		//wrotedata=true;
 		String command="";
 		logger.info("processing "+sin.getName());
-		if (!_bundle.simulate()) {
 			command = "signature:"+HexDump.toHex(sin.getHeader().length);
 			logger.info("   "+command);
-			USBFlash.write(command.getBytes());
-			CommandPacket p = USBFlash.readCommandReply(false);
-			//logger.info("   signature reply : "+p.getResponse());
-			USBFlash.write(sin.getHeader());
-			p = USBFlash.readCommandReply(true);
-			logger.info("   signature status : "+p.getResponse());
-		}
-		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(sin.getFile())));
+			if (!_bundle.simulate()) {
+				USBFlash.write(command.getBytes());
+				CommandPacket p = USBFlash.readCommandReply(false);
+				USBFlash.write(sin.getHeader());
+				p = USBFlash.readCommandReply(true);
+				logger.info("   signature status : "+p.getResponse());
+			}
+		TarArchiveInputStream tarIn = sin.getTarInputStream();
 		TarArchiveEntry entry=null;
 		while ((entry = tarIn.getNextTarEntry()) != null) {
 			if (!entry.getName().endsWith("cms")) {
@@ -569,11 +614,14 @@ public class CommandFlasher implements Flasher {
 						USBFlash.write(buffer);
 					}
 				}
+				CommandPacket p=null;
 				if (!_bundle.simulate()) {
-					CommandPacket p = USBFlash.readCommandReply(true);
+					p = USBFlash.readCommandReply(true);
 					logger.info("      download status : "+p.getResponse());
-					command="Repartition:"+partnumber;
-					logger.info("   "+command);
+				}
+				command="Repartition:"+partnumber;
+				logger.info("   "+command);
+				if (!_bundle.simulate()) {
 					USBFlash.write(command.getBytes());
 					p = USBFlash.readCommandReply(true);
 					logger.info("   Repartition status : "+p.getResponse());
@@ -588,22 +636,25 @@ public class CommandFlasher implements Flasher {
 		//wrotedata=true;
 		String command="";
 		logger.info("processing "+sin.getName());
+		command = "signature:"+HexDump.toHex(sin.getHeader().length);
+		logger.info("   "+command);
+		CommandPacket p=null;
 		if (!_bundle.simulate()) {
-			command = "signature:"+HexDump.toHex(sin.getHeader().length);
-			logger.info("   "+command);
 			USBFlash.write(command.getBytes());
-			CommandPacket p = USBFlash.readCommandReply(false);
+			p = USBFlash.readCommandReply(false);
 			//logger.info("   signature reply : "+p.getResponse());
 			USBFlash.write(sin.getHeader());
 			p = USBFlash.readCommandReply(true);
-			logger.info("   signature status : "+p.getResponse());	
-			command="erase:"+partitionname;
-			logger.info("   "+command);
+			logger.info("   signature status : "+p.getResponse());
+		}
+		command="erase:"+partitionname;
+		logger.info("   "+command);
+		if (!_bundle.simulate()) {
 			USBFlash.write(command.getBytes());
 			p = USBFlash.readCommandReply(true);
 			logger.info("   erase status : "+p.getResponse());
 		}
-		TarArchiveInputStream tarIn = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(sin.getFile())));
+		TarArchiveInputStream tarIn = sin.getTarInputStream();
 		TarArchiveEntry entry=null;
 		while ((entry = tarIn.getNextTarEntry()) != null) {
 			if (!entry.getName().endsWith("cms")) {
@@ -612,7 +663,7 @@ public class CommandFlasher implements Flasher {
 					command = "download:"+HexDump.toHex((int)entry.getSize());
 					logger.info("      "+command);
 					USBFlash.write(command.getBytes());
-					CommandPacket p = USBFlash.readCommandReply(false);
+					p = USBFlash.readCommandReply(false);
 					//logger.info("      Download reply : "+p.getResponse());
 				}
 				CircularByteBuffer cb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
@@ -631,19 +682,20 @@ public class CommandFlasher implements Flasher {
 					}
 				}
 				if (!_bundle.simulate()) {
-					CommandPacket p = USBFlash.readCommandReply(true);
+					p = USBFlash.readCommandReply(true);
 					logger.info("      download status : "+p.getResponse());
 				}
+				command="flash:"+partitionname;
+				logger.info("      "+command);
 				if (!_bundle.simulate()) {
-					command="flash:"+partitionname;
-					logger.info("      "+command);
 					USBFlash.write(command.getBytes());
-					CommandPacket p = USBFlash.readCommandReply(true);
+					p = USBFlash.readCommandReply(true);
 					logger.info("      flash status : "+p.getResponse());
 				}
 				LogProgress.initProgress(0);
 			}
 		}
+		
 		tarIn.close();
 	}
 

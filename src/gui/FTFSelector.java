@@ -123,7 +123,7 @@ public class FTFSelector extends Dialog {
 		
 		// Creation du Shell
 		shlFirmwareSelector = new Shell(getParent(), getStyle());
-		shlFirmwareSelector.setSize(714, 497);
+		shlFirmwareSelector.setSize(714, 510);
 		shlFirmwareSelector.setText("Firmware Selector");
 		shlFirmwareSelector.setLayout(new FormLayout());
 		

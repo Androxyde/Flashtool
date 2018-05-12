@@ -1,8 +1,6 @@
 package org.system;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,14 +25,12 @@ import java.util.TimeZone;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import javax.crypto.NoSuchPaddingException;
-
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.logger.LogProgress;
 import org.util.HexDump;
-import com.google.common.io.BaseEncoding;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.Adler32;
 
@@ -50,6 +46,14 @@ public class OS {
 		return System.getProperty("sun.arch.data.model");
 	}
 
+	public static void writeToFile(InputStream is, File f) throws IOException {
+		FileUtils.copyInputStreamToFile(is, f);
+	}
+	
+	public static void deleteDirectory(File directory) throws IOException {
+		FileUtils.deleteDirectory(directory);
+	}
+	
 	public static String getName() {
 		  String os = "";
 		  if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {

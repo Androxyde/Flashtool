@@ -16,12 +16,9 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.Deflater;
-
 import org.adb.AdbUtility;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -167,7 +164,7 @@ public class RawTAJob extends Job {
 			String partition = attr.getValue("partition");			
 			File prepared = new File(folderprepared);
 			if (prepared.exists()) {
-				FileUtils.deleteDirectory(prepared);
+				OS.deleteDirectory(prepared);
 				if (prepared.exists()) {
 					jf.close();
 					throw new Exception("Cannot delete previous folder : "+prepared.getAbsolutePath());

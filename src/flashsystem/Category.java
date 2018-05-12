@@ -1,13 +1,11 @@
 package flashsystem;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.sinfile.parsers.SinFile;
 import org.sinfile.parsers.SinFileException;
 
-public class Category implements Comparable {
+public class Category implements Comparable<Category> {
 		  
 	private String id;
 	private List<BundleEntry> entries = new ArrayList<BundleEntry>();
@@ -129,8 +127,8 @@ public class Category implements Comparable {
 		  }
 
 		@Override
-		public int compareTo(Object o) {
-			return this.id.compareTo(((Category)o).getId());
+		public int compareTo(Category o) {
+			return this.id.compareTo(o.getId());
 		}
 		
 		public void setEnabled(boolean enabled) {

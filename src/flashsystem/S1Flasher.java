@@ -631,6 +631,9 @@ public class S1Flasher implements Flasher {
     			}
     			else if (action.equals("uploadImage")) {
     				BundleEntry b = _bundle.searchEntry(param);
+    				if (b==null && param.toUpperCase().equals("PARTITION")) {
+    					b = _bundle.searchEntry("partition-image");
+    				}
     				if (b!=null) {
     					SinFile sin =new SinFile(new File(b.getAbsolutePath()));
     					sin.setChunkSize(maxS1packetsize);

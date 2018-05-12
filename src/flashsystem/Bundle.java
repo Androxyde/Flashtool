@@ -25,8 +25,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.Deflater;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -510,7 +508,7 @@ public final class Bundle {
 		try {
 			logger.info("Preparing files for flashing");
 			
-			FileUtils.deleteDirectory(new File(OS.getFolderFirmwaresPrepared()));
+			OS.deleteDirectory(new File(OS.getFolderFirmwaresPrepared()));
 			File f = new File(OS.getFolderFirmwaresPrepared());
 			f.mkdir();
 			logger.debug("Created the "+f.getName()+" folder");

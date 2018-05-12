@@ -34,8 +34,6 @@ import org.system.ProcessBuilderWrapper;
 import org.system.TextFile;
 import org.system.XMLFwInfo;
 
-import com.google.common.io.ByteStreams;
-
 public class XperiFirm {
 
 	static final Logger logger = LogManager.getLogger(XperiFirm.class);
@@ -185,13 +183,10 @@ public class XperiFirm {
 			 while ( entries.hasMoreElements() ) {
 				 ZipEntry entry = entries.nextElement();
 				 fw.println("   <FILE PATH=\""+entry.getName()+"\"/>");
-	    		 File subout = new File(subfolder+File.separator+entry.getName());
 	    		 InputStream entryStream = zip.getInputStream(entry);
 	    		 File out = new File(subfolder+File.separator+entry.getName());
-	    		 FileOutputStream streamOut = new FileOutputStream(out);
-	    		 ByteStreams.copy(entryStream,streamOut);
+	    		 OS.writeToFile(entryStream, out);
 	    		 entryStream.close();
-	    		 streamOut.close();
 			 }
 			fw.println(" </PARTITION_IMAGES>");
 			fw.println("</PARTITION_DELIVERY>");

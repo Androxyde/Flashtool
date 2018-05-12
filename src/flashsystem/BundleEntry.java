@@ -10,9 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
 import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sinfile.parsers.SinFile;
@@ -120,7 +118,7 @@ public class BundleEntry {
 				fileentry=new File(outname);
 				fileentry.getParentFile().mkdirs();
 				logger.debug("Writing Entry to "+outname);
-				FileUtils.copyInputStreamToFile(in, fileentry);
+				OS.writeToFile(in, fileentry);
 				in.close();
 			}
 	}

@@ -21,7 +21,7 @@ public class XMLUpdate  {
 		Iterator i = document.getRootElement().getChildren().iterator();
 		while (i.hasNext()) {
 			Element element = (Element)i.next();
-			if (element.getName().equals("NOERASE"))
+			if (element.getName().equals("NOERASE") || element.getName().equals("FACTORY_ONLY"))
 				noerase = noerase + element.getValue() + ",";
 		}
 	}

@@ -376,7 +376,8 @@ public class DeviceEntry {
     		if (fsc.length>0) return fsc[0].getAbsolutePath();
     	}
     	fsc = devices.listFiles(fscFilter);
-    	if (fsc.length>0) return fsc[0].getAbsolutePath();
+    	if (fsc != null)
+    		if (fsc.length>0) return fsc[0].getAbsolutePath();
     	
     	String[] vnumbers = version.split("\\.");
     	for (int i=vnumbers.length;i>0;i--) {
@@ -388,10 +389,12 @@ public class DeviceEntry {
     		filter = filter + ".fsc";
     		if (mydevices.exists()) {
     			fsc = mydevices.listFiles(fscFilter);
-        		if (fsc.length>0) return fsc[0].getAbsolutePath();
+    			if (fsc != null)
+    				if (fsc.length>0) return fsc[0].getAbsolutePath();
     		}
         	fsc = devices.listFiles(fscFilter);
-        	if (fsc.length>0) return fsc[0].getAbsolutePath();
+        	if (fsc != null)
+        		if (fsc.length>0) return fsc[0].getAbsolutePath();
     	}
     	
     	return "";

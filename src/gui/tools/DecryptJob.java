@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Vector;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.atteo.xmlcombiner.XmlCombiner;
@@ -34,7 +32,7 @@ public class DecryptJob extends Job {
 	
     protected IStatus run(IProgressMonitor monitor) {
     	try {
-    		FileUtils.deleteDirectory(new File(((File)files.get(0)).getParent()+File.separator+"decrypted"));
+    		OS.deleteDirectory(new File(((File)files.get(0)).getParent()+File.separator+"decrypted"));
     		String decryptfolder="";
 			for (int i=0;i<files.size();i++) {
 				File f = (File)files.get(i);

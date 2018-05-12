@@ -14,9 +14,10 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.system.OS;
+
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
 import gui.models.TABag;
@@ -100,7 +101,7 @@ public class TARawParser {
 		try {
 			logger.info("Preparing files for flashing");
 			String prepared = bundle.getParentFile().getAbsolutePath()+File.separator+"prepared";
-			FileUtils.deleteDirectory(new File(prepared));
+			OS.deleteDirectory(new File(prepared));
 			File f = new File(prepared);
 			f.mkdir();
 			logger.debug("Created the "+f.getName()+" folder");

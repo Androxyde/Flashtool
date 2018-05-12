@@ -5,22 +5,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.rauschig.jarchivelib.ArchiveFormat;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
 import org.rauschig.jarchivelib.CompressionType;
-
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
-
 import flashsystem.Category;
-
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 public class SinFile {
 
@@ -83,7 +79,6 @@ public class SinFile {
 		try {
 			openStreams();
 			version = sinStream.readByte();
-			if (version!=1 && version!=2 && version!=3 && version!=0x1F) throw new SinFileException("Not a sin file");
 			if (version==1) {
 				sinv1 = sinParserV1.parse(sinStream).mapTo(org.sinfile.parsers.v1.SinParser.class);
 				sinv1.setLength(sinfile.length());
@@ -111,18 +106,13 @@ public class SinFile {
 				sinStream.skip(sinv3.headerLen);
 				sinv3.parseDataHeader(sinStream);
 				closeStreams();
-			}
-			if (version==0x1F) {
-				version=sinStream.readByte();
-				if (version==0x8B) {
-					version=4;
-					sinv4 = new org.sinfile.parsers.v4.SinParser(sinfile);
-					sinv4.parse();
-				}
+			} else {
+				closeStreams();
+				version=4;
+				sinv4 = new org.sinfile.parsers.v4.SinParser(sinfile);
 			}
 		} catch (Exception ioe) {
 			closeStreams();
-			ioe.printStackTrace();
 			throw new SinFileException(ioe.getMessage());
 		}
 	}
@@ -386,10 +376,14 @@ public class SinFile {
 			name = name.substring(0, name.indexOf("_S1"));
 		if (name.indexOf("_X-")!=-1)
 			name = name.substring(0, name.indexOf("_X-"));
+		if (name.indexOf("_X_BOOT")!=-1)
+			name = name.substring(0, name.indexOf("_X_BOOT"));
+		if (name.indexOf("_X_Boot")!=-1)
+			name = name.substring(0, name.indexOf("_X_Boot"));
 		if (name.startsWith("elabel"))
 			name = "elabel";
-		if (name.indexOf("-")!=-1)
-			name = name.substring(0, name.indexOf("-"));
+		//if (name.indexOf("-")!=-1)
+			//name = name.substring(0, name.indexOf("-"));
 		extpos = name.lastIndexOf(".");
 		if (extpos!=-1) {
 			name = name.substring(0,extpos);
@@ -465,6 +459,14 @@ public class SinFile {
 			}
 		}
 		return "";
+	}
+	
+	public TarArchiveInputStream getTarInputStream() throws FileNotFoundException, IOException {
+		if (sinv4.isGZipped())
+			return new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(sinfile)));
+		else
+			return new TarArchiveInputStream(new FileInputStream(sinfile));
+
 	}
 
 }
