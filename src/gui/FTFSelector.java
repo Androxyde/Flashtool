@@ -123,7 +123,7 @@ public class FTFSelector extends Dialog {
 		
 		// Creation du Shell
 		shlFirmwareSelector = new Shell(getParent(), getStyle());
-		shlFirmwareSelector.setSize(714, 510);
+		shlFirmwareSelector.setSize(714, 520);
 		shlFirmwareSelector.setText("Firmware Selector");
 		shlFirmwareSelector.setLayout(new FormLayout());
 		
@@ -133,7 +133,7 @@ public class FTFSelector extends Dialog {
 		fd_compositeSearch.left = new FormAttachment(0, 10);
 		fd_compositeSearch.right = new FormAttachment(100, -10);
 		fd_compositeSearch.top = new FormAttachment(0, 10);
-		fd_compositeSearch.bottom = new FormAttachment(0, 45);
+		fd_compositeSearch.bottom = new FormAttachment(0, 50);
 		compositeSearch.setLayoutData(fd_compositeSearch);
 		compositeSearch.setLayout(new GridLayout(3, false));
 		
@@ -155,8 +155,9 @@ public class FTFSelector extends Dialog {
 		compositeSettings = new Composite(shlFirmwareSelector, SWT.NONE);
 		FormData fd_compositeSettings = new FormData();
 		fd_compositeSettings.right = new FormAttachment(100, -197);
-		fd_compositeSettings.top = new FormAttachment(0, 422);
+		fd_compositeSettings.top = new FormAttachment(0, 440);
 		fd_compositeSettings.left = new FormAttachment(0, 10);
+		fd_compositeSettings.bottom = new FormAttachment(100, -4);
 		compositeSettings.setLayoutData(fd_compositeSettings);
 		compositeSettings.setLayout(new GridLayout(6, false));
 		
