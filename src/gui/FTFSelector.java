@@ -155,9 +155,9 @@ public class FTFSelector extends Dialog {
 		compositeSettings = new Composite(shlFirmwareSelector, SWT.NONE);
 		FormData fd_compositeSettings = new FormData();
 		fd_compositeSettings.right = new FormAttachment(100, -197);
-		fd_compositeSettings.top = new FormAttachment(0, 440);
+		fd_compositeSettings.top = new FormAttachment(0, 430);
 		fd_compositeSettings.left = new FormAttachment(0, 10);
-		fd_compositeSettings.bottom = new FormAttachment(100, -4);
+		fd_compositeSettings.bottom = new FormAttachment(100, -10);
 		compositeSettings.setLayoutData(fd_compositeSettings);
 		compositeSettings.setLayout(new GridLayout(6, false));
 		
