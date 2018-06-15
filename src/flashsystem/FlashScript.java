@@ -52,9 +52,9 @@ public class FlashScript {
 		
 		if (category.isPartitionDelivery()) {
 			if (pd==null) return false;
-			Iterator ifiles = pd.getFiles().asIterator();
-			while (ifiles.hasNext()) {
-				String file = (String)ifiles.next();
+			Enumeration<String> efiles = pd.getFiles();
+			while (efiles.hasMoreElements()) {
+				String file = efiles.nextElement();
 				if (!categories.contains(Category.getCategoryFromName(file)))
 						return false;
 			}

@@ -11,7 +11,6 @@ import org.util.BytesUtil;
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
 import com.igormaznitsa.jbbp.mapper.Bin;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 public class USBRecord {
 	@Bin long irp;
