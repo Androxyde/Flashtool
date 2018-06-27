@@ -40,8 +40,6 @@
 	<classpathentry kind="lib" path="libs/org.eclipse.equinox.registry_3.8.0.v20180426-1327.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.jface_3.14.0.v20180423-0714.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.jface.text_3.13.0.v20180527-1819.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jgit_5.0.0.201806050710-rc3.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jgit.archive_5.0.0.201806050710-rc3.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.osgi_3.13.0.v20180409-1500.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.swt_3.107.0.v20180611-0422.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.text_3.6.300.v20180430-1330.jar"/>
@@ -50,6 +48,8 @@
 	<classpathentry kind="lib" path="libs/commons-compress-1.17.jar"/>
 	<classpathentry kind="lib" path="libs/guava-25.1-jre.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.107.0.v20180611-0422.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.jgit_5.0.0.201806131550-r.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.jgit.archive_5.0.0.201806131550-r.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
