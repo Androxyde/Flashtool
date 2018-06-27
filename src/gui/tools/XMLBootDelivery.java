@@ -32,7 +32,9 @@ public class XMLBootDelivery {
 		while (i.hasNext()) {
 			Element e = i.next();
 			XMLBootConfig c = new XMLBootConfig(e.getAttributeValue("NAME"));
-			c.setTA(e.getChild("BOOT_CONFIG").getChild("FILE").getAttributeValue("PATH"));
+			if (e.getChild("BOOT_CONFIG").getChild("FILE") != null) {
+				c.setTA(e.getChild("BOOT_CONFIG").getChild("FILE").getAttributeValue("PATH"));
+			}
 			Iterator<Element> files = e.getChild("BOOT_IMAGES").getChildren().iterator();
 			while (files.hasNext()) {
 				c.addFile(files.next().getAttributeValue("PATH"));
@@ -64,7 +66,8 @@ public class XMLBootDelivery {
 		Enumeration<XMLBootConfig> e = bootconfigs.elements();
 		while (e.hasMoreElements()) {
 			XMLBootConfig bc = e.nextElement();
-			flist.setProperty(bc.getTA(), bc.getTA());
+			if (bc.getTA().length()>0)
+				flist.setProperty(bc.getTA(), bc.getTA());
 			Iterator<String>fl = bc.getFiles().iterator();
 			while (fl.hasNext()) {
 				String f = fl.next();

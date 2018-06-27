@@ -185,4 +185,11 @@ public class XMLBootConfig {
 		}
 		return true;
 	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Name : "+_configname+" / TA : "+_configta+" / Attributes : "+attributes+" / Files : "+files);
+		return sb.toString();
+	}
+
 }
