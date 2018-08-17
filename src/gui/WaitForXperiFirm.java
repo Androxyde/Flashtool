@@ -38,7 +38,7 @@ public class WaitForXperiFirm extends Dialog {
 		createContents();
 		
 		Label lblNewLabel = new Label(shlWaiForXperiFirm, SWT.NONE);
-		lblNewLabel.setBounds(10, 32, 323, 15);
+		lblNewLabel.setBounds(10, 32, 323, 16);
 		lblNewLabel.setText("Please wait until the end of process");
 		shlWaiForXperiFirm.open();
 		shlWaiForXperiFirm.layout();
