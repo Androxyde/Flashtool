@@ -10,38 +10,14 @@
 	<classpathentry kind="lib" path="libs/xstream-1.4.10.jar"/>
 	<classpathentry kind="lib" path="libs/ini4j-0.5.4.jar"/>
 	<classpathentry kind="lib" path="libs/jdom-2.0.6.jar"/>
-	<classpathentry kind="lib" path="libs/jopt-simple-6.0-alpha-2.jar"/>
-	<classpathentry kind="lib" path="libs/lz4-java-1.4.1.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.6.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.commands_3.9.100.v20180404-1234.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.contenttype_3.7.0.v20180426-1644.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.jobs_3.10.0.v20180427-1454.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.runtime_3.14.0.v20180417-0825.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.app_1.3.500.v20171221-2204.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.common_3.10.0.v20180412-1130.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.preferences_3.7.100.v20180510-1129.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.registry_3.8.0.v20180426-1327.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jface_3.14.0.v20180423-0714.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jface.text_3.13.0.v20180527-1819.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.osgi_3.13.0.v20180409-1500.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.swt_3.107.0.v20180611-0422.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.text_3.6.300.v20180430-1330.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.ui.forms_3.7.200.v20180512-1133.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.ui.workbench_3.111.0.v20180524-1156.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.107.0.v20180611-0422.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jgit_5.0.0.201806131550-r.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jgit.archive_5.0.0.201806131550-r.jar"/>
-	<classpathentry kind="lib" path="libs/jna-4.5.2.jar"/>
-	<classpathentry kind="lib" path="libs/jna-platform-4.5.2.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-api-2.11.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.11.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j-impl-2.11.1.jar"/>
 	<classpathentry kind="lib" path="libs/guava-26.0-jre.jar"/>
-	<classpathentry kind="lib" path="libs/jbbp-1.4.0.jar"/>
 	<classpathentry kind="lib" path="libs/commons-compress-1.18.jar"/>
 	<classpathentry kind="lib" path="libs/disruptor-3.4.2.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-3.0.0-alpha-3-indy.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-alpha-3-indy.jar"/>
 	<classpathentry kind="lib" path="libs/icu4j-62.1.jar"/>
 	<classpathentry kind="lib" path="libs/jarchivelib-0.8.0.jar"/>
 	<classpathentry kind="lib" path="libs/jaxb-api-2.3.jar"/>
@@ -49,6 +25,31 @@
 	<classpathentry kind="lib" path="libs/proxy-vole-1.0.5.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-ext-1.7.25.jar"/>
+	<classpathentry kind="lib" path="libs/jbbp-1.4.1.jar"/>
+	<classpathentry kind="lib" path="libs/swtlin/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.108.0.v20180904-1901.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.core.commands_3.9.200.v20180827-1727.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.core.contenttype_3.7.100.v20180817-1401.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.core.jobs_3.10.100.v20180817-1215.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.core.runtime_3.15.0.v20180817-1401.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.equinox.app_1.3.600.v20180827-1235.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.equinox.common_3.10.100.v20180827-1235.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.equinox.preferences_3.7.200.v20180827-1235.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.equinox.registry_3.8.100.v20180827-1235.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.jface_3.14.100.v20180828-0836.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.jface.text_3.14.0.v20180824-1140.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.jgit_5.1.0.201809111528-r.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.jgit.archive_5.1.0.201809111528-r.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.osgi_3.13.100.v20180827-1536.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.swt_3.108.0.v20180904-1901.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.text_3.7.0.v20180822-1511.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.ui.forms_3.7.300.v20180828-1350.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.ui.workbench_3.112.0.v20180906-1121.jar"/>
+	<classpathentry kind="lib" path="libs/jna-5.0.0.jar"/>
+	<classpathentry kind="lib" path="libs/jna-platform-5.0.0.jar"/>
+	<classpathentry kind="lib" path="libs/jopt-simple-6.0-alpha-3.jar"/>
+	<classpathentry kind="lib" path="libs/lz4-java-1.5.0.jar"/>
+	<classpathentry kind="lib" path="libs/groovy-3.0.0-SNAPSHOT-indy.jar"/>
+	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-SNAPSHOT-indy.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
