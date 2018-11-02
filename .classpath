@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="libs/javax.annotation_1.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/javax.inject_1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.54.jar"/>
-	<classpathentry kind="lib" path="libs/xstream-1.4.10.jar"/>
 	<classpathentry kind="lib" path="libs/ini4j-0.5.4.jar"/>
 	<classpathentry kind="lib" path="libs/jdom-2.0.6.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.6.jar"/>
@@ -15,7 +14,6 @@
 	<classpathentry kind="lib" path="libs/log4j-api-2.11.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.11.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j-impl-2.11.1.jar"/>
-	<classpathentry kind="lib" path="libs/guava-26.0-jre.jar"/>
 	<classpathentry kind="lib" path="libs/commons-compress-1.18.jar"/>
 	<classpathentry kind="lib" path="libs/disruptor-3.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/icu4j-62.1.jar"/>
@@ -50,6 +48,8 @@
 	<classpathentry kind="lib" path="libs/lz4-java-1.5.0.jar"/>
 	<classpathentry kind="lib" path="libs/groovy-3.0.0-SNAPSHOT-indy.jar"/>
 	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-SNAPSHOT-indy.jar"/>
+	<classpathentry kind="lib" path="libs/guava-27.0-jre.jar"/>
+	<classpathentry kind="lib" path="libs/xstream-1.4.11.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
