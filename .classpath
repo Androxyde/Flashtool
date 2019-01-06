@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="libs/ini4j-0.5.4.jar"/>
 	<classpathentry kind="lib" path="libs/jdom-2.0.6.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.6.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.107.0.v20180611-0422.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-api-2.11.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.11.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j-impl-2.11.1.jar"/>
@@ -19,7 +18,6 @@
 	<classpathentry kind="lib" path="libs/jarchivelib-0.8.0.jar"/>
 	<classpathentry kind="lib" path="libs/jaxb-api-2.3.jar"/>
 	<classpathentry kind="lib" path="libs/jsr305-3.0.2.jar"/>
-	<classpathentry kind="lib" path="libs/proxy-vole-1.0.5.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-ext-1.7.25.jar"/>
 	<classpathentry kind="lib" path="libs/jbbp-1.4.1.jar"/>
@@ -49,7 +47,9 @@
 	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-alpha-4-indy.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.2.0.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-11-openjdk-11.0.1.13-10.fc29.x86_64">
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.109.0.v20181204-1801.jar"/>
+	<classpathentry kind="lib" path="libs/proxy-vole-1.0.6-SNAPSHOT.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

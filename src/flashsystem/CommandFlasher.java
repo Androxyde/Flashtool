@@ -637,13 +637,16 @@ public class CommandFlasher implements Flasher {
 		String command="";
 		logger.info("processing "+sin.getName());
 		command = "signature:"+HexDump.toHex(sin.getHeader().length);
-		logger.info("   "+command);
+		logger.info("   signature:"+HexDump.toHex(sin.getHeader().length));
 		CommandPacket p=null;
 		if (!_bundle.simulate()) {
 			USBFlash.write(command.getBytes());
 			p = USBFlash.readCommandReply(false);
 			//logger.info("   signature reply : "+p.getResponse());
 			USBFlash.write(sin.getHeader());
+			p = USBFlash.readCommandReply(true);
+			command="signature";
+			USBFlash.write(command.getBytes());
 			p = USBFlash.readCommandReply(true);
 			logger.info("   signature status : "+p.getResponse());
 		}

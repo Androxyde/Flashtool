@@ -23,7 +23,7 @@ public class DeviceEntry {
 		setVersion();
 		setKernelVersion();
 		try {
-			isRecoveryMode=!AdbUtility.isMounted("/system");
+			isRecoveryMode=!AdbUtility.isMounted("/data");
 		}
 		catch (Exception e) {
 		}

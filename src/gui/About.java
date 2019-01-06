@@ -127,7 +127,7 @@ public class About extends Dialog {
 	 */
 	private void createContents() {
 		shlAbout = new Shell(getParent(), getStyle());
-		shlAbout.setSize(426, 252);
+		shlAbout.setSize(430, 260);
 		shlAbout.setText("About");
 		shlAbout.setLayout(new FormLayout());
 		

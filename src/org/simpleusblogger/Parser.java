@@ -52,6 +52,7 @@ public class Parser {
 		  	Session session = new Session();
 		  	S1Packet current=null;
 		  	FlashCommand ccurrent=null;
+		  	byte[] downloadContent = null;
 			USBHeader head=null;
 			FileInputStream fin=new FileInputStream(usblog);
 			boolean s1parser=true;
@@ -66,8 +67,6 @@ public class Parser {
 				rec.recnum=recnum++;				
 				if (rec.header==null) continue;
 				if (rec.header.usb_UsbDeviceHandle==0) continue;
-//				if (rec.getDataString().length()<=40 && rec.getDirection().equals("WRITE"))
-//					System.out.println(rec.getDirection()+" : "+rec.getDataString().substring(0, rec.getDataString().length()>30?30:rec.getDataString().length()));
 				if (rec.getDataString().contains("getvar") && s1parser==true) s1parser=false;
 				if (s1parser==false) {
 					if (rec.getDirection().equals("WRITE")) {
@@ -81,15 +80,36 @@ public class Parser {
 								rec.getDataString().startsWith("set_active") ||
 								rec.getDataString().startsWith("Get-ufs-info") ||
 								rec.getDataString().startsWith("Get-gpt-info") ||
+								rec.getDataString().startsWith("flash") ||
+								rec.getDataString().startsWith("erase") ||
+								rec.getDataString().startsWith("download") ||
+								rec.getDataString().startsWith("Repartition") ||
+								rec.getDataString().startsWith("Get-root-key-hash")) {
+						   //System.out.println(rec.getDirection()+" : "+rec.getDataString());
+						}
+						else {
+							downloadContent = rec.getData();
+						}
+						if (rec.getDataString().startsWith("signature") ||
+								rec.getDataString().startsWith("Write-TA") ||
+								rec.getDataString().startsWith("Read-TA") ||
+								rec.getDataString().startsWith("getvar") ||
+								rec.getDataString().startsWith("powerdown") ||
+								rec.getDataString().startsWith("Sync") ||
+								rec.getDataString().startsWith("Getlog") ||
+								rec.getDataString().startsWith("set_active") ||
+								rec.getDataString().startsWith("Get-ufs-info") ||
+								rec.getDataString().startsWith("Get-gpt-info") ||
 								rec.getDataString().startsWith("Get-root-key-hash")) {
 							
 							if (ccurrent!=null) {
-								if (ccurrent.getCommand().startsWith("signature"))
-									ccurrent.setFile(getSin(extractedsin,ccurrent.signdata));
 								session.addCommand(ccurrent);
-							}
-							
+							}							
 							ccurrent = new FlashCommand(rec.getDataString());
+							if (rec.getDataString().startsWith("signature")) {
+								ccurrent.addSignData(downloadContent);
+								ccurrent.setFile(getSin(extractedsin, ccurrent.signdata));
+							}
 						}
 						else {
 							if (ccurrent.getCommand().startsWith("signature")) {
@@ -98,8 +118,7 @@ public class Parser {
 										ccurrent.setSubCommand(rec.getDataString());
 									}
 									else
-										if (!rec.getDataString().startsWith("download"))
-											ccurrent.addSignData(rec.getData());
+										ccurrent.addSignData(rec.getData());
 								}
 								else {
 									if (rec.getDataString().startsWith("erase") || rec.getDataString().startsWith("flash") || rec.getDataString().startsWith("Repartition")) {
@@ -158,8 +177,9 @@ public class Parser {
 				}
 			}
 			if (ccurrent!=null) {
-				if (ccurrent.getCommand().startsWith("signature"))
+				if (ccurrent.getCommand().startsWith("signature")) {
 					ccurrent.setFile(getSin(extractedsin,ccurrent.signdata));
+				}
 				session.addCommand(ccurrent);
 			}
 			usbStream.close();

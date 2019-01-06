@@ -1,5 +1,7 @@
 package org.simpleusblogger;
 
+import java.util.Arrays;
+
 public class FlashCommand {
 
 	String command = "";
@@ -71,7 +73,7 @@ public class FlashCommand {
 	}
 	
 	public void addSignData (byte[] content) {
-		signdata = content;
+		signdata = Arrays.copyOf(content, content.length);
 	}
 
 	public void addReply (byte[] d) {
