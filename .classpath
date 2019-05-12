@@ -19,10 +19,6 @@
 	<classpathentry kind="lib" path="libs/jopt-simple-6.0-alpha-3.jar"/>
 	<classpathentry kind="lib" path="libs/xstream-1.4.11.1.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.55.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-3.0.0-alpha-4-indy.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-alpha-4-indy.jar"/>
-	<classpathentry kind="lib" path="libs/jna-5.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/jna-platform-5.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/proxy-vole-1.0.6-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.8.0-beta4.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-ext-1.8.0-beta4.jar"/>
@@ -49,6 +45,10 @@
 	<classpathentry kind="lib" path="libs/org.eclipse.ui.forms_3.7.500.v20190216-1545.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.ui.workbench_3.113.0.v20190219-1432.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.110.0.v20190305-0602.jar"/>
+	<classpathentry kind="lib" path="libs/jna-5.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/jna-platform-5.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/groovy-3.0.0-beta-1-indy.jar"/>
+	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-beta-1-indy.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
