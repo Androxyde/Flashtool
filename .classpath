@@ -21,18 +21,7 @@
 	<classpathentry kind="lib" path="libs/proxy-vole-1.0.6-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.8.0-beta4.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-ext-1.8.0-beta4.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.commands_3.9.300.v20190215-1957.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.core.contenttype_3.7.300.v20190215-2048.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.jobs_3.10.300.v20190215-2048.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.runtime_3.15.200.v20190301-1641.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.app_1.4.100.v20190215-2139.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.common_3.10.300.v20190218-2100.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.preferences_3.7.300.v20190218-2100.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.registry_3.8.300.v20190218-2100.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.osgi_3.13.300.v20190218-1622.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.text_3.8.100.v20190306-1823.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.ui.forms_3.7.500.v20190216-1545.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.ui.workbench_3.113.0.v20190219-1432.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.3.1.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.3.1.jar"/>
 	<classpathentry kind="lib" path="libs/groovy-3.0.0-beta-1-indy.jar"/>
@@ -57,6 +46,17 @@
 	<classpathentry kind="lib" path="libs/bcprov-ext-jdk15on-162.jar"/>
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-162.jar"/>
 	<classpathentry kind="lib" path="libs/bctls-jdk15on-162.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.core.commands_3.9.400.v20190516-1358.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.core.jobs_3.10.400.v20190506-1457.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.core.runtime_3.15.300.v20190508-0543.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.equinox.app_1.4.200.v20190516-1504.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.equinox.common_3.10.400.v20190516-1504.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.equinox.preferences_3.7.400.v20190516-1504.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.equinox.registry_3.8.400.v20190516-1504.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.osgi_3.14.0.v20190517-1309.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.text_3.8.200.v20190519-2344.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.ui.forms_3.8.0.v20190519-1034.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.ui.workbench_3.115.0.v20190521-1602.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
