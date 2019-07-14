@@ -69,7 +69,7 @@ public class Decrypt extends Dialog {
 	 */
 	private void createContents() {
 		shlDecruptWizard = new Shell(getParent(), getStyle());
-		shlDecruptWizard.setSize(539, 302);
+		shlDecruptWizard.setSize(539, 323);
 		shlDecruptWizard.setText("Decrypt Wizard");
 		shlDecruptWizard.setLayout(new FormLayout());
 		
@@ -252,7 +252,7 @@ public class Decrypt extends Dialog {
 		Composite composite_1 = new Composite(shlDecruptWizard, SWT.NONE);
 		composite_1.setLayout(new GridLayout(1, false));
 		FormData fd_composite_1 = new FormData();
-		fd_composite_1.bottom = new FormAttachment(100, -78);
+		fd_composite_1.bottom = new FormAttachment(100, -69);
 		fd_composite_1.top = new FormAttachment(composite, 61);
 		fd_composite_1.left = new FormAttachment(list, 5);
 		fd_composite_1.right = new FormAttachment(list_1, -6);

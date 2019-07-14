@@ -34,6 +34,7 @@ public class Category implements Comparable<Category> {
 		  }
 		  
 		  public void addEntry(BundleEntry f) throws SinFileException {
+			  //System.out.println(f.getInternal()+" + "+f.getName());
 			  entries.add(f);
 			  if (f.getName().endsWith(".sin")) issin=true;
 			  if (f.getName().endsWith(".ta")) ista=true;

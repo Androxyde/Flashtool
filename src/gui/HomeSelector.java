@@ -70,7 +70,7 @@ public class HomeSelector extends Dialog {
 	 */
 	private void createContents() {
 		shlHomeSelector = new Shell(getParent(), getStyle());
-		shlHomeSelector.setSize(538, 128);
+		shlHomeSelector.setSize(545, 142);
 		shlHomeSelector.setText("User Home Selector");
 		shlHomeSelector.setLayout(new FormLayout());
 		shlHomeSelector.addListener(SWT.Close, new Listener() {
