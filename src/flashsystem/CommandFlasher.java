@@ -1,5 +1,6 @@
 package flashsystem;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,13 +33,49 @@ import org.ta.parsers.TAUnit;
 import org.util.BytesUtil;
 import org.util.HexDump;
 import com.Ostermiller.util.CircularByteBuffer;
+import com.igormaznitsa.jbbp.JBBPParser;
+import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
+import com.igormaznitsa.jbbp.io.JBBPByteOrder;
+import com.igormaznitsa.jbbp.mapper.Bin;
+
 import flashsystem.io.USBFlash;
+import gui.TestParse.Lun;
+import gui.TestParse.UfsInfos;
 import gui.tools.WidgetTask;
 import gui.tools.XMLBootConfig;
 import gui.tools.XMLBootDelivery;
 import gui.tools.XMLPartitionDelivery;
 
 public class CommandFlasher implements Flasher {
+
+	public class Lun {
+		
+        @Bin public byte lunlength;
+        @Bin public byte reserved1;
+        @Bin public byte lunid;
+        @Bin public byte[] reserved2;
+        @Bin public int length;
+        @Bin public byte [] lundata;
+	
+	}
+
+	public class UfsInfos {
+
+		@Bin public byte headerlen;
+		@Bin public byte[] ufs_header;
+		@Bin public Lun [] luns;
+	
+		long sectorSize=0;
+		
+		public void setSectorSize(long sectorsize) {
+			sectorSize=sectorsize;
+		}
+	
+		public long getLunSize(int lun) {
+			return (long)luns[lun].length*sectorSize/1024L;
+		}
+	
+	}
 
 	private Bundle _bundle;
     private String currentdevice = "";
@@ -49,7 +86,8 @@ public class CommandFlasher implements Flasher {
     private XMLBootConfig bc=null;
     private XMLPartitionDelivery pd=null;
     private Properties  phoneprops = null;
-
+    private UfsInfos ufs_infos = null;
+    
     public CommandFlasher(Bundle bundle, Shell shell) {
     	_bundle=bundle;
     	_curshell = shell;
@@ -107,6 +145,7 @@ public class CommandFlasher implements Flasher {
 	    	phoneprops.setProperty("serial", new String(readTA(2, 4900).getUnitData()));
 	    	phoneprops.setProperty("lastflashdate",new String(readTA(2, 10021).getUnitData()));
 	    	getLog();
+	    	getUfsInfo();
     	} catch (Exception e) {
     	}    	
     }
@@ -293,7 +332,7 @@ public class CommandFlasher implements Flasher {
     			}
     			else if (action.equals("Repartition")) {
    					if (pd!=null) {
-						String file = pd.getMatchingFile(param2);
+						String file = pd.getMatchingFile(SinFile.getShortName(param2));
 						if (file!=null) {
 	    					SinFile sin =new SinFile(new File(file));
 	    					repartition(sin,Integer.parseInt(param1));
@@ -343,8 +382,10 @@ public class CommandFlasher implements Flasher {
 			logger.info("Start Flashing");
 			bc = getBootConfig();
 			pd = _bundle.getXMLPartitionDelivery();
-			if (pd!=null)
+			if (pd!=null) {
 				pd.setFolder(_bundle.getPartitionDelivery().getFolder());
+				pd.setUfsInfos(ufs_infos);
+			}
 			else {
 				String result = WidgetTask.openYESNOBox(_curshell, "No partition delivery included.\nMaybe a bundle created with a previous release of Flashtool.\nDo you want to continue ?");
 				if (Integer.parseInt(result)!=SWT.YES) throw new X10FlashException("No partition delivery");
@@ -441,6 +482,34 @@ public class CommandFlasher implements Flasher {
     		USBFlash.write(command.getBytes());
     		CommandPacket reply = USBFlash.readCommandReply(true);
     		logger.info("   Get-ufs-info status : "+reply.getResponse());
+
+    		JBBPParser ufs_parser = JBBPParser.prepare(
+    			    "byte headerlen;"
+                  + "byte[headerlen-1] ufs_header;"
+                  + "luns [_] { "
+                  + "   byte lunlength; "
+                  + "   byte reserved1; "
+                  + "   byte lunid; "
+                  + "   byte[12] reserved2; "
+                  + "   int length; "
+                  + "   byte[lunlength-19] lundata; "
+                  + "}"
+             );		
+
+    		try {
+    			System.out.println("UFS_INFO Size : "+reply.getDataArray().length);
+    			JBBPBitInputStream stream = new JBBPBitInputStream(new ByteArrayInputStream(reply.getDataArray()));
+    			ufs_infos = ufs_parser.parse(stream).mapTo(UfsInfos.class);
+    			ufs_infos.setSectorSize(Integer.parseInt(getPhoneProperty("Sector-size")));
+    			try {
+    			   stream.close();
+    			} catch (Exception streamclose ) {}
+    		}
+    		catch (Exception e) {
+    			System.out.println(e.getMessage());
+    			ufs_infos=null;
+    		}
+
     	}		
 	}
 

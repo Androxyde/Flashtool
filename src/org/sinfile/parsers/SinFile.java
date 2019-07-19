@@ -380,6 +380,8 @@ public class SinFile {
 			name = name.substring(0, name.indexOf("_X_BOOT"));
 		if (name.indexOf("_X_Boot")!=-1)
 			name = name.substring(0, name.indexOf("_X_Boot"));
+		if (name.indexOf("-LUN")!=-1)
+			name = name.substring(0, name.indexOf("-LUN")+5);
 		if (name.startsWith("elabel"))
 			name = "elabel";
 		//if (name.indexOf("-")!=-1)
