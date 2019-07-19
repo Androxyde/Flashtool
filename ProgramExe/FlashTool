@@ -55,18 +55,18 @@ then
         UDEV=$(ldd x10flasher_lib/linux/lib64/udev/libusbx-1.0.so.0.1.0 |grep found|wc -l)
         if test $UDEV -gt 0
         then
-            export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64/udev1
+            export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64/udev1:$LD_LIBRARY_PATH
         else
-            export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64/udev
+            export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64/udev:$LD_LIBRARY_PATH
         fi
         SWT=$(ls ./x10flasher_lib/swtlin/x86_64/*jar|xargs|tr ' ' ':')
     else
         UDEV=$(ldd x10flasher_lib/linux/lib32/udev/libusbx-1.0.so.0.1.0 |grep found|wc -l)
         if test $UDEV -gt 0
         then
-            export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32/udev1
+            export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32/udev1:$LD_LIBRARY_PATH
         else
-            export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32/udev
+            export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32/udev:$LD_LIBRARY_PATH
         fi
         SWT=$(ls ./x10flasher_lib/swtlin/x86/*jar|xargs|tr ' ' ':')
     fi
