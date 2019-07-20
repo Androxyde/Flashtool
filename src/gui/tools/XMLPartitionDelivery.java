@@ -48,7 +48,6 @@ public class XMLPartitionDelivery {
 				if ( file.contains("LUN0") ) {
                   if (!file.contains(String.valueOf(ufs_infos.getLunSize(0)))) {
             		partitions.remove(file);
-                    System.out.println("Removing "+file);
                   }	
                }
                if ( file.contains("LUN1") ) {
