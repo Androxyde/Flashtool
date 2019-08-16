@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="libs/commons-io-2.6.jar"/>
 	<classpathentry kind="lib" path="libs/commons-compress-1.18.jar"/>
 	<classpathentry kind="lib" path="libs/disruptor-3.4.2.jar"/>
-	<classpathentry kind="lib" path="libs/icu4j-62.1.jar"/>
 	<classpathentry kind="lib" path="libs/jarchivelib-0.8.0.jar"/>
 	<classpathentry kind="lib" path="libs/jaxb-api-2.3.jar"/>
 	<classpathentry kind="lib" path="libs/jsr305-3.0.2.jar"/>
@@ -19,17 +18,8 @@
 	<classpathentry kind="lib" path="libs/xstream-1.4.11.1.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.55.jar"/>
 	<classpathentry kind="lib" path="libs/proxy-vole-1.0.6-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="libs/slf4j-api-1.8.0-beta4.jar"/>
-	<classpathentry kind="lib" path="libs/slf4j-ext-1.8.0-beta4.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.core.contenttype_3.7.300.v20190215-2048.jar"/>
-	<classpathentry kind="lib" path="libs/jna-5.3.1.jar"/>
-	<classpathentry kind="lib" path="libs/jna-platform-5.3.1.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-3.0.0-beta-1-indy.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-beta-1-indy.jar"/>
 	<classpathentry kind="lib" path="libs/guava-28.0-jre.jar"/>
-	<classpathentry kind="lib" path="libs/log4j-api-2.12.0.jar"/>
-	<classpathentry kind="lib" path="libs/log4j-core-2.12.0.jar"/>
-	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.12.0.jar"/>
 	<classpathentry kind="lib" path="libs/lz4-java-1.6.0.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.111.0.v20190605-1801.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.swt_3.111.0.v20190605-1801.jar"/>
@@ -57,6 +47,16 @@
 	<classpathentry kind="lib" path="libs/org.eclipse.text_3.8.200.v20190519-2344.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.ui.forms_3.8.0.v20190519-1034.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.ui.workbench_3.115.0.v20190521-1602.jar"/>
+	<classpathentry kind="lib" path="libs/jna-5.4.0.jar"/>
+	<classpathentry kind="lib" path="libs/jna-platform-5.4.0.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-2.0.0-alpha0.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-ext-2.0.0-alpha0.jar"/>
+	<classpathentry kind="lib" path="libs/icu4j-64.2.jar"/>
+	<classpathentry kind="lib" path="libs/groovy-3.0.0-beta-3-indy.jar"/>
+	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-beta-3-indy.jar"/>
+	<classpathentry kind="lib" path="libs/log4j-api-2.12.1.jar"/>
+	<classpathentry kind="lib" path="libs/log4j-core-2.12.1.jar"/>
+	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.12.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
