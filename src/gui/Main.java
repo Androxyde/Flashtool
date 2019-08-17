@@ -5,6 +5,9 @@ import joptsimple.OptionSet;
 import libusb.LibUsbException;
 import linuxlib.JUsb;
 import java.io.IOException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.logger.MyLogger;
@@ -27,6 +30,7 @@ public class Main {
 		//System.setProperty("log4j.configurationFile", MyLogger.class.getClassLoader().getResource("org/logger/config/log4j2.xml").getPath());
 		MyLogger.setMode(MyLogger.CONSOLE_MODE);
 		MyLogger.setLevel(GlobalConfig.getProperty("loglevel"));
+		LogManager.getLogger(Main.class).info("JAVA_HOME : "+System.getProperty("java.home"));
 		OS.getFolderFirmwaresDownloaded();
 		OS.getFolderFirmwaresPrepared();
 		OS.getFolderFirmwaresSinExtracted();
