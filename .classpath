@@ -57,6 +57,7 @@
 	<classpathentry kind="lib" path="libs/log4j-api-2.12.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.12.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.12.1.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.equinox.bidi_1.2.0.v20190514-1046.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
