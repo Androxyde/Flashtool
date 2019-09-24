@@ -173,7 +173,7 @@ then
         else
             export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64/udev
         fi
-        SWT=./x10flasher_lib/swtlin/swt64.jar
+   	SWT=$(ls ./x10flasher_lib/swtlin/x86_64/*jar|xargs|tr ' ' ':')
     else
         UDEV=$(ldd x10flasher_lib/linux/lib32/udev/libusbx-1.0.so.0.1.0 |grep found|wc -l)
         if test $UDEV -gt 0
@@ -182,7 +182,7 @@ then
         else
             export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32/udev
         fi
-        SWT=./x10flasher_lib/swtlin/swt32.jar
+        SWT=$(ls ./x10flasher_lib/swtlin/x86/*jar|xargs|tr ' ' ':')
     fi
 
     case $p_action in
