@@ -90,37 +90,37 @@ public class OS {
 	
 	public static String getPathAdb() {
 		if (OS.getName().equals("windows"))
-			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"adb.exe").getAbsolutePath();
+			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_native"+File.separator+"adb.exe").getAbsolutePath();
 		else
-			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"adb").getAbsolutePath();
+			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_native"+File.separator+"adb").getAbsolutePath();
 	}
 	
 	public static String getPathBin2Sin() {
 		if (OS.getName().equals("windows"))
-			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"bin2sin.exe").getAbsolutePath();
+			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_native"+File.separator+"bin2sin.exe").getAbsolutePath();
 		else
-			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_lib"+File.separator+"bin2sin").getAbsolutePath();
+			return new File(System.getProperty("user.dir")+File.separator+"x10flasher_native"+File.separator+"bin2sin").getAbsolutePath();
 	}
 
 	public static String getPathBin2Elf() {
 		String fsep = OS.getFileSeparator();
 		if (OS.getName().equals("windows"))
-			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2elf.exe").getAbsolutePath();
+			return new File(System.getProperty("user.dir")+fsep+"x10flasher_native"+fsep+"bin2elf.exe").getAbsolutePath();
 		else
-			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2elf").getAbsolutePath();
+			return new File(System.getProperty("user.dir")+fsep+"x10flasher_native"+fsep+"bin2elf").getAbsolutePath();
 	}
 
 	public static String getPathXperiFirmWrapper() {
 		String fsep = OS.getFileSeparator();
-		return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"xperifirm").getAbsolutePath();
+		return new File(System.getProperty("user.dir")+fsep+"x10flasher_native"+fsep+"xperifirm").getAbsolutePath();
 	}
 
 	public static String getPathFastBoot() {
 		String fsep = OS.getFileSeparator();
 	   if (OS.getName().equals("windows"))
-		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot.exe").getAbsolutePath();
+		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_native"+fsep+"fastboot.exe").getAbsolutePath();
 	   else
-		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot").getAbsolutePath();
+		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_native"+fsep+"fastboot").getAbsolutePath();
 	}
 	
 	public static String getPathXperiFirm() {

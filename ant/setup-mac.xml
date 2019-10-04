@@ -16,39 +16,6 @@
         </jar>
 	</target>
 
-	<target name="clean">
-		<delete dir="../../Deploy/FlashTool/x10flasher_lib/winjre32"/>
-        <delete dir="../../Deploy/FlashTool/x10flasher_lib/winjre64"/>
-    	<delete dir="../../Deploy/FlashTool/x10flasher_lib/linjre32"/>
-    	<delete dir="../../Deploy/FlashTool/x10flasher_lib/linjre64"/>
-		<delete dir="../../Deploy/FlashTool/x10flasher_lib/macjre64"/>
-		<delete file="../../Deploy/FlashTool/FlashTool.exe"/>
-	    <delete file="../../Deploy/FlashTool/FlashTool64.exe"/>
-		<delete file="../../Deploy/FlashTool/FlashToolConsole"/>
-		<delete file="../../Deploy/FlashTool/FlashTool"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/7z.exe"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/adb.exe"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/bin2elf.exe"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/bin2sin.exe"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/fastboot.exe"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.windows.exe"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/7z.dll"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/AdbWinApi.dll"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/AdbWinUsbApi.dll"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/cygwin1.dll"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/adb.linux"/>
-        <delete file="../../Deploy/FlashTool/x10flasher_lib/fastboot.linux"/>
-	    <delete file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.linux"/>
-		<delete file="../../Deploy/FlashTool/x10flasher_lib/bin2elf"/>
-	    <delete file="../../Deploy/FlashTool/x10flasher_lib/bin2sin"/>
-		<delete dir="../../Deploy/FlashTool/x10flasher_lib/linux"/>
-		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtlin"/>
-		<delete dir="../../Deploy/FlashTool/x10flasher_lib/swtwin"/>
-		<delete dir="../../Deploy/FlashTool/x10flasher_lib/mac"/>
-        <delete file="../../Deploy/FlashTool/config.properties"/>
-		<delete dir="../../Deploy/FlashTool/drivers"/>
-	</target>
-
 	<target name="JRE">
 		<exec executable="tar" dir="../../Deploy/FlashTool/x10flasher_lib">
 		    <arg value="xf"/>
@@ -61,21 +28,25 @@
 		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/macjre64/lib/security"/>		
 	</target>
 
-	<target name="binaries" depends="clean, main_lib, JRE">
-	    <copy file="../ProgramExe/FlashTool" todir="../../Deploy/FlashTool"/>
-	    <copy file="../ProgramExe/FlashToolConsole" todir="../../Deploy/FlashTool"/>
-		<copy file="../ProgramExe/xperifirm" todir="../../Deploy/FlashTool/x10flasher_lib"/>
-		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
-            <fileset dir="../mac"
+	<target name="binaries" depends="main_lib, JRE">
+	    <copy file="../launchers/FlashTool" todir="../../Deploy/FlashTool"/>
+	    <copy file="../launchers/FlashToolConsole" todir="../../Deploy/FlashTool"/>
+		<copy file="../launchers/xperifirm" todir="../../Deploy/FlashTool/x10flasher_lib"/>
+		<copy todir="../../Deploy/FlashTool/x10flasher_native">
+            <fileset dir="../native/macos"
                 excludes="**/.svn"/>
         </copy>
+		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+	    	<fileset dir="../libs/macos/x86_64/" includes="*.jar" excludes="**/.svn"/>
+	    </copy>
 		<chmod file="../../Deploy/FlashTool/FlashTool" perm="755" />
     	<chmod file="../../Deploy/FlashTool/FlashToolConsole" perm="755"/>
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/mac/lib64/libusb-1.0.0.dylib" perm="755" />
-		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_lib/mac/lib64">
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/xperifirm" perm="755"/>
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/adb" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/fastboot" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/unyaffs" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/udev/libusbx-1.0.0.dylib" perm="755" />
+		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_native/udev">
 		    <arg value="-sf"/>
 			<arg value="libusbx-1.0.0.dylib"/>
 			<arg value="libusbx-1.0.dylib"/>

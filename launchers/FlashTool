@@ -1,0 +1,84 @@
+#!/bin/sh
+
+# Function to check if udev rules are set to permit non root users to write to usb device
+rootandudevcheck() {
+
+    if [ "$(whoami)" != "root" ]
+    then
+        export HASRULES="false"
+        if test -d /etc/udev/rules.d
+        then
+            if grep -rl "0fce" /etc/udev/rules.d >/dev/null
+            then
+                export HASRULES="true"
+            fi
+        fi
+        if test "$HASRULES" = "true"
+        then
+    		echo "Not running as root but Sony/SonyEriccson Vendor ID found on your udev rules"
+       		echo "if Flashing didn't work well, run flashtool as root"
+       	else
+       		echo "Not running as root and there is no Sony/SonyEriccson Vendor ID on your udev rules"   
+       		echo "The user must be granted access to adb/flashmode/fastboot"
+       		echo "If you are unsure what to do, run flashtool as root"
+       		exit 1
+       	fi
+    else
+        echo "Running as root."
+    fi
+
+}
+
+# Function to compute the Flashtool installation absolute path
+setworkingdir() {
+
+   DZERO=$0
+   while true; do
+      CPATH=$( cd -P -- "$(dirname -- "$(command -v -- "$DZERO")")" && pwd -P )
+      if [ -z "$DZERO" ] ; then
+         break
+      fi
+      CFILE=$CPATH/$(basename $DZERO)
+      if [ $(ls -dl $CFILE | grep -c "^l" 2>/dev/null) -eq 0 ];then
+         break
+      fi
+      LNKTO=$(ls -ld $CFILE | cut -d ">" -f2 | tr -d " " 2>/dev/null)
+      DZERO=$(cd $CPATH ; command -v $LNKTO)
+   done
+
+   if [ -d $CPATH/x10flasher_lib ] ; then
+      working_dir=$CPATH
+   else
+      working_dir=$(cd $CPATH/..;pwd)
+   fi
+
+   export working_dir
+
+}
+
+export os_platform=$(uname -m)
+export os_name=$(uname -s)
+
+setworkingdir
+
+CLASSPATH=$(find $working_dir -name '*.jar'|xargs|tr ' ' ':')
+
+export JAVA_HOME=$working_dir/x10flasher_native/jre
+
+if [ "$os_name" = "Linux" ] ; then
+
+    rootandudevcheck;
+
+    export JNI_PATH=$working_dir/x10flasher_native/udev1:$working_dir/x10flasher_native/udev
+
+else
+
+     export JNI_PATH=$working_dir/x10flasher_native/udev
+
+fi
+
+$JAVA_HOME/bin/java -classpath $CLASSPATH \
+                    -Xms256m -Xmx1024m -Duser.country=US -Duser.language=en \
+                    -Djava.library.path=$JNI_PATH \
+                    -Djna.library.path=$JNI_PATH \
+                    -Djsse.enableSNIExtension=false gui.Main

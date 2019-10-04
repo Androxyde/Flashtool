@@ -36,8 +36,8 @@
     	<mkdir dir ="../../Deploy/FlashTool/custom/features"/>
 		<mkdir dir ="../../Deploy/FlashTool/custom/sin"/>
         <mkdir dir="../../Deploy/FlashTool/x10flasher_lib"/>
-        <mkdir dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
-        <mkdir dir="../../Deploy/FlashTool/drivers"/>
+        <mkdir dir="../../Deploy/FlashTool/x10flasher_native"/>
+		<mkdir dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
 		<copy todir="../../Deploy/FlashTool/custom/shells">
     		<fileset dir="../shells"
 				excludes="**/.svn"/>
@@ -50,11 +50,11 @@
 	       <fileset dir="../romupdates" excludes="**/.svn"/>
 	    </copy>
 		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
-	    	<fileset dir="../libs" excludes="**/.svn"/>
+	    	<fileset dir="../libs" includes="*.jar" excludes="**/.svn"/>
 	    </copy>
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot.mac" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb.mac" perm="755" />
-        <chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.mac" perm="755" />
+		<copy todir="../../Deploy/FlashTool/x10flasher_lib/">
+	    	<fileset dir="../libs/eclipse/" includes="*.jar" excludes="**/.svn"/>
+	    </copy>
     </target>
 
 	<target name="Shells only">

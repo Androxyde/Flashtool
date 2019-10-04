@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="libs/AXMLPrinter2.jar"/>
-	<classpathentry kind="lib" path="libs/nsisant-1.3.jar"/>
 	<classpathentry kind="lib" path="libs/javax.annotation_1.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/javax.inject_1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/ini4j-0.5.4.jar"/>
 	<classpathentry kind="lib" path="libs/jdom-2.0.6.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.6.jar"/>
 	<classpathentry kind="lib" path="libs/disruptor-3.4.2.jar"/>
-	<classpathentry kind="lib" path="libs/jarchivelib-0.8.0.jar"/>
-	<classpathentry kind="lib" path="libs/jaxb-api-2.3.jar"/>
 	<classpathentry kind="lib" path="libs/jsr305-3.0.2.jar"/>
 	<classpathentry kind="lib" path="libs/jbbp-1.4.1.jar"/>
 	<classpathentry kind="lib" path="libs/jopt-simple-6.0-alpha-3.jar"/>
@@ -18,46 +14,78 @@
 	<classpathentry kind="lib" path="libs/jsch-0.1.55.jar"/>
 	<classpathentry kind="lib" path="libs/proxy-vole-1.0.6-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/lz4-java-1.6.0.jar"/>
-	<classpathentry kind="lib" path="libs/org.apache.sshd.osgi_2.2.0.v20190425-2127.jar"/>
-	<classpathentry kind="lib" path="libs/org.apache.sshd.sftp_2.2.0.v20190425-2127.jar"/>
-	<classpathentry kind="lib" path="libs/bcmail-jdk15on-162.jar"/>
 	<classpathentry kind="lib" path="libs/bcpg-jdk15on-162.jar"/>
 	<classpathentry kind="lib" path="libs/bcpkix-jdk15on-162.jar"/>
-	<classpathentry kind="lib" path="libs/bcprov-ext-jdk15on-162.jar"/>
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-162.jar"/>
-	<classpathentry kind="lib" path="libs/bctls-jdk15on-162.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.4.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.4.0.jar"/>
-	<classpathentry kind="lib" path="libs/slf4j-api-2.0.0-alpha0.jar"/>
-	<classpathentry kind="lib" path="libs/slf4j-ext-2.0.0-alpha0.jar"/>
 	<classpathentry kind="lib" path="libs/icu4j-64.2.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-3.0.0-beta-3-indy.jar"/>
 	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-beta-3-indy.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-api-2.12.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.12.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.12.1.jar"/>
 	<classpathentry kind="lib" path="libs/guava-28.1-jre.jar"/>
 	<classpathentry kind="lib" path="libs/commons-compress-1.19.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.commands_3.9.500.v20190805-1157.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.contenttype_3.7.400.v20190624-1144.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.jobs_3.10.500.v20190620-1426.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.core.runtime_3.16.0.v20190823-1314.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.app_1.4.300.v20190815-1535.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.bidi_1.2.100.v20190815-1535.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.common_3.10.500.v20190815-1535.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.preferences_3.7.500.v20190815-1535.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.equinox.registry_3.8.500.v20190714-1850.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jface_3.17.0.v20190820-1444.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jface.text_3.15.300.v20190819-0725.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jgit_5.5.0.201909110433-r.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jgit.archive_5.5.0.201909110433-r.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.jgit.ssh.apache_5.5.0.201909110433-r.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.osgi_3.15.0.v20190830-1434.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.swt_3.112.0.v20190904-0609.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.text_3.9.0.v20190826-1019.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.ui.forms_3.8.100.v20190625-1825.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.ui.workbench_3.116.0.v20190826-1428.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/x86_64/org.eclipse.swt.win32.win32.x86_64_3.112.0.v20190904-0609.jar"/>
+	<classpathentry kind="lib" path="libs/jarchivelib-1.0.0.jar"/>
+	<classpathentry kind="lib" path="libs/apk-parser-2.6.9.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.osgi_2.2.0.v20190425-2127.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.sftp_2.2.0.v20190425-2127.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.commands_3.9.500.v20190805-1157.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.contenttype_3.7.400.v20190624-1144.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.databinding_1.7.500.v20190624-2109.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.databinding.observable_1.8.0.v20190805-1157.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.databinding.property_1.7.100.v20190805-1157.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.expressions_3.6.500.v20190617-1926.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.filesystem_1.7.500.v20190620-1312.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.jobs_3.10.500.v20190620-1426.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.resources_3.13.500.v20190819-0800.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.runtime_3.16.0.v20190823-1314.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.core.commands_0.12.700.v20190621-1412.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.core.contexts_1.8.200.v20190620-0649.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.core.di_1.7.400.v20190903-1311.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.core.di.annotations_1.6.400.v20190518-1217.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.core.di.extensions_0.15.300.v20190213-1308.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.core.services_2.2.0.v20190630-2019.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.emf.xpath_0.2.400.v20190621-1946.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.bindings_0.12.600.v20190625-0735.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.css.core_0.12.800.v20190805-1157.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.css.swt_0.13.600.v20190805-1157.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.css.swt.theme_0.12.400.v20190812-0413.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.di_1.2.600.v20190510-1100.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.dialogs_1.1.600.v20190814-0636.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.model.workbench_2.1.500.v20190824-1021.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.services_1.3.600.v20190716-1245.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.widgets_1.2.500.v20190624-0808.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.workbench_1.10.100.v20190810-0814.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.workbench.addons.swt_1.3.600.v20190716-1245.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.workbench.renderers.swt_0.14.800.v20190716-1245.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.e4.ui.workbench.swt_0.14.700.v20190807-1716.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.emf.common_2.16.0.v20190625-1131.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.emf.ecore_2.19.0.v20190822-1451.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.emf.ecore.xmi_2.16.0.v20190528-0725.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.app_1.4.300.v20190815-1535.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.bidi_1.2.100.v20190815-1535.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.common_3.10.500.v20190815-1535.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.preferences_3.7.500.v20190815-1535.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.registry_3.8.500.v20190714-1850.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.help_3.8.500.v20190624-2105.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jface_3.17.0.v20190820-1444.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jface.databinding_1.9.100.v20190805-1255.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jface.text_3.15.300.v20190819-0725.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit_5.5.0.201909110433-r.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.archive_5.5.0.201909110433-r.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.ssh.apache_5.5.0.201909110433-r.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.osgi_3.15.0.v20190830-1434.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.osgi.services_3.8.0.v20190206-2147.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.osgi.util_3.5.300.v20190708-1141.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.swt_3.112.0.v20190904-0609.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.text_3.9.0.v20190826-1019.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.forms_3.8.100.v20190625-1825.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.workbench_3.116.0.v20190826-1428.jar"/>
+	<classpathentry kind="lib" path="libs/linux/x86_64/zstd-jni-1.4.3-1-linux_amd64.jar"/>
+	<classpathentry kind="lib" path="libs/groovy-3.0.0-beta-3-indy.jar"/>
+	<classpathentry kind="lib" path="libs/win/x86_64/org.eclipse.swt.win32.win32.x86_64_3.112.0.v20190904-0609.jar"/>
+	<classpathentry kind="lib" path="libs/win/x86_64/zstd-jni-1.4.3-1-win_amd64.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
