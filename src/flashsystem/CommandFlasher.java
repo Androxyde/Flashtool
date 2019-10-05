@@ -493,7 +493,6 @@ public class CommandFlasher implements Flasher {
              );		
 
     		try {
-    			System.out.println("UFS_INFO Size : "+reply.getDataArray().length);
     			JBBPBitInputStream stream = new JBBPBitInputStream(new ByteArrayInputStream(reply.getDataArray()));
     			ufs_infos = ufs_parser.parse(stream).mapTo(UfsInfos.class);
     			ufs_infos.setSectorSize(Integer.parseInt(getPhoneProperty("Sector-size")));

@@ -34,7 +34,7 @@ public class About extends Dialog {
 
 	protected Object result;
 	protected Shell shlAbout;
-	public static String build = About.getManifestInfo();
+	public static String build = About.class.getPackage().getImplementationVersion();
 	static final Logger logger = LogManager.getLogger(About.class);
 	private Label lblNewLabel;
 	private Label lblNewLabel_2;

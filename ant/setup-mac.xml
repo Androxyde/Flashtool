@@ -17,15 +17,12 @@
 	</target>
 
 	<target name="JRE">
-		<exec executable="tar" dir="../../Deploy/FlashTool/x10flasher_lib">
+		<exec executable="tar" dir="../../Deploy/FlashTool/x10flasher_native">
 		    <arg value="xf"/>
 			<arg value="../../../Flashtool/jre/macjre.tar"/>
 		</exec>
-		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/macjre64/bin" perm="755" includes="**/*"/>
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/macjre64/lib/jexec" perm="755"/>
-		<chmod dir="../../Deploy/FlashTool/x10flasher_lib/macjre64/lib" perm="755" includes="**/*.so"/>
-		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/macjre64/lib/security"/>
-		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/macjre64/lib/security"/>		
+		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>
+		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>		
 	</target>
 
 	<target name="binaries" depends="main_lib, JRE">
@@ -33,7 +30,7 @@
 	    <copy file="../launchers/FlashToolConsole" todir="../../Deploy/FlashTool"/>
 		<copy file="../launchers/xperifirm" todir="../../Deploy/FlashTool/x10flasher_lib"/>
 		<copy todir="../../Deploy/FlashTool/x10flasher_native">
-            <fileset dir="../native/macos"
+            <fileset dir="../native/mac"
                 excludes="**/.svn"/>
         </copy>
 		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
@@ -61,7 +58,7 @@
 	<target name="dobundle" depends="loadprops">
 		<delete dir="../../Deploy/FlashTool.app"/>
 		<copy todir="../../Deploy/FlashTool.app">
-            <fileset dir="../ProgramExe/FlashTool.app"
+            <fileset dir="../launchers/FlashTool.app"
                 excludes="**/.svn"/>
         </copy>
 		<mkdir dir="../../Deploy/FlashTool.app/Contents/MacOS"/>

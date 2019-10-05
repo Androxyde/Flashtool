@@ -25,7 +25,7 @@ public class SinParser {
 	private File sinfile;
 	
 	static final Logger logger = LogManager.getLogger(SinParser.class);
-	Map databuffer = new HashMap<String, CircularByteBuffer>();
+	Map<String, CircularByteBuffer> databuffer = new HashMap<String, CircularByteBuffer>();
 	
 	public SinParser(File f) throws Exception {
 		this.sinfile=f;
@@ -49,7 +49,7 @@ public class SinParser {
 			return false;
 		}
 	}
-	
+
 	public boolean isGZipped() {
 		try {
 		InputStream in = new FileInputStream(sinfile);
@@ -72,7 +72,7 @@ public class SinParser {
 			return false;
 		}
 	}
-	
+
 	public byte[] getHeader() {
 		try {
 			TarArchiveEntry entry=null;
@@ -94,7 +94,7 @@ public class SinParser {
 			return null;
 		}
 	}
-	
+
 	public void dumpImage() {
 		try {
 			TarArchiveEntry entry=null;
