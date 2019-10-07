@@ -1,6 +1,5 @@
 package org.system;
 
-import org.adb.AdbUtility;
 
 public class PhoneThread extends Thread {
 
@@ -17,7 +16,6 @@ public class PhoneThread extends Thread {
 		int count = 0;
 		DeviceIdent id=null;
 		int nbstatustocount=0;
-		String statustocount="";
 		String lstatus="";
 		while (!done) {
 			if (!paused) {

@@ -20,7 +20,6 @@
 	<classpathentry kind="lib" path="libs/jna-5.4.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.4.0.jar"/>
 	<classpathentry kind="lib" path="libs/icu4j-64.2.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-jsr223-3.0.0-beta-3-indy.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-api-2.12.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.12.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.12.1.jar"/>
@@ -49,8 +48,10 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.text_3.9.0.v20190826-1019.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.forms_3.8.100.v20190625-1825.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.workbench_3.116.0.v20190826-1428.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-3.0.0-beta-3-indy.jar"/>
-	<classpathentry kind="lib" path="libs/win/x86_64/org.eclipse.swt.win32.win32.x86_64_3.112.0.v20190904-0609.jar"/>
+	<classpathentry kind="lib" path="libs/bsh-3.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.112.0.v20190904-0609.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-2.0.0-alpha1.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-ext-2.0.0-alpha1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
