@@ -18,8 +18,8 @@
 
 	<target name="JRE">
 		<unzip src="../jre/winjre.zip" dest="../../Deploy/FlashTool/x10flasher_native"/>
-		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/winjre64/lib/security"/>
-		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_lib/winjre64/lib/security"/>		
+		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/winjre/lib/security"/>
+		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>		
 	</target>
 
 	<target name="loadprops">
