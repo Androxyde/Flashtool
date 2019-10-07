@@ -71,13 +71,17 @@ if [ "$os_name" = "Linux" ] ; then
 
     export JNI_PATH=$working_dir/x10flasher_native/udev1:$working_dir/x10flasher_native/udev
 
+    unset COCOA
+
 else
 
      export JNI_PATH=$working_dir/x10flasher_native/udev
 
+     COCOA="-XstartOnFirstThread"
+
 fi
 
-$JAVA_HOME/bin/java -classpath $CLASSPATH \
+$JAVA_HOME/bin/java -classpath $CLASSPATH $COCOA \
                     -Xms256m -Xmx1024m -Duser.country=US -Duser.language=en \
                     -Djava.library.path=$JNI_PATH \
                     -Djna.library.path=$JNI_PATH \
