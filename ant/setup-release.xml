@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project default="all" name="Create Windows Package">
+	
+	<condition property="isMac">
+	   <os family="mac" />
+	</condition>
+	 
+	<condition property="isLinux">
+	   <and>   
+	      <os family="unix" />
+	         <not>
+	            <os family="mac" />    
+	         </not>
+	   </and>
+	</condition>
+	 
+	<condition property="isWindows">
+	    <os family="windows" />
+	</condition>
+	
+	<target name="all" depends="Linuxsetup, Windowssetup"/>
+
+	<target name="JREwin" if="isWindows">
+		<unzip src="../jre/winjre.zip" dest="../../Deploy/FlashTool/x10flasher_native"/>
+		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/winjre/lib/security"/>
+		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>		
+	</target>
+
+    <target name="GenerateJRE">
+		<exec executable="${java.home}/bin/jlink" dir="../../Deploy/FlashTool/x10flasher_native">
+		    <arg value="--output"/>
+		    <arg value="jre"/>
+		    <arg value="--no-header-files"/>
+		    <arg value="--no-man-pages"/>
+		    <arg value="--compress=2"/>
+		    <arg value="--strip-debug"/>
+		    <arg value="--add-modules"/>
+			<arg value="java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.naming,java.prefs,java.rmi,java.scripting,java.security.jgss,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.attach,jdk.jdi,jdk.unsupported,jdk.xml.dom,jdk.security.auth,jdk.security.jgss,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.management,jdk.scripting.nashorn"/>
+		</exec>        
+		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>
+		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>		
+    </target>
+    
+	<target name="JREmac" if="isMac">
+		<exec executable="tar" dir="../../Deploy/FlashTool/x10flasher_native">
+		    <arg value="xf"/>
+			<arg value="../../../Flashtool/jre/macjre.tar"/>
+		</exec>
+		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>
+		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>		
+	</target>
+	
+	<target name="JRElin" if="isLinux">
+		<exec executable="tar" dir="../../Deploy/FlashTool/x10flasher_native">
+		    <arg value="xf"/>
+			<arg value="../../../Flashtool/jre/linjre.tar"/>
+		</exec>
+		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>
+		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>		
+	</target>
+
+	
+	<target name="Windowsdrivers" if="isWindows">
+            <mkdir dir ="../../Deploy/FlashTool/drivers/"/>
+	   	    <property environment="env"/>
+	        <nsis script="../drivers.nsi" path="${env.ProgramFiles}\NSIS"/>
+	</target>
+
+	<target name="Windowssetup" if="isWindows" depends="loadprops, Windowsdrivers, JREwin">
+		<property environment="env"/>
+		<delete file="../../Deploy/FlashTool/config.properties"/>
+		<delete file="../setup_new.nsi"/>
+		<copy file="../setup.nsi" tofile="../setup_new.nsi"/>
+		<replace file="../setup_new.nsi" token="FLASHTOOLVERSION" value="${Internal-Version}"/>
+		<nsis script="../setup_new.nsi" path="${env.ProgramFiles}\NSIS"/>
+		<delete file="../setup_new.nsi"/>
+	</target>
+
+	<target name="Linuxsetup" if="isLinux" depends="loadprops,JRElin">
+		<exec executable="tar" dir="../../Deploy">
+		    <arg value="cf"/>
+			<arg value="flashtool-${Internal-Version}-linux.tar"/>
+			<arg value="FlashTool"/>
+		</exec>
+		<exec executable="7za" dir="../../Deploy">
+			<arg value="a"/>
+			<arg value="flashtool-${Internal-Version}-linux.tar.7z"/>
+			<arg value="flashtool-${Internal-Version}-linux.tar"/>
+		</exec>
+		<delete file="../../Deploy/flashtool-${Internal-Version}-linux.tar"/>
+	</target>
+	
+	<target name="Macsetup" if="isMac" depends="loadprops, JREmac">
+		<delete dir="../../Deploy/FlashTool.app"/>
+		<copy todir="../../Deploy/FlashTool.app">
+            <fileset dir="../launchers/FlashTool.app"
+                excludes="**/.svn"/>
+        </copy>
+		<mkdir dir="../../Deploy/FlashTool.app/Contents/MacOS"/>
+		<exec executable="tar" dir="../../Deploy/FlashTool">
+		    <arg value="cf"/>
+			<arg value="../FlashTool.app/Contents/MacOS/flashtool-${Internal-Version}.tar"/>
+			<arg value="."/>
+		</exec>
+		<exec executable="tar" dir="../../Deploy/FlashTool.app/Contents/MacOS">
+		    <arg value="xf"/>
+			<arg value="flashtool-${Internal-Version}.tar"/>
+		</exec>
+		<delete file="../../Deploy/FlashTool.app/Contents/MacOS/flashtool-${Internal-Version}.tar"/>
+	    <exec executable="hdiutil" dir="../../Deploy">
+	       <arg value="create"/>
+		   <arg value="flashtool-${Internal-Version}-mac.dmg"/>
+		   <arg value="-srcFolder"/>
+		   <arg value="FlashTool.app"/>
+	    </exec>
+	</target>
+
+	<target name="loadprops">
+		<loadmf jar="../../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar" prefix=""/>
+	</target>
+
+	<!--
+	    Loads entries from a manifest file.
+	    @jar     The jar from where to read
+	    @prefix  A prefix to prepend
+	-->
+	    <macrodef name="loadmf">
+	        <attribute name="jar"/>
+	        <attribute name="prefix" default=""/>
+	        <sequential>
+	            <loadproperties>
+	                <!-- Load the manifest entries -->
+	                <zipentry zipfile="@{jar}" name="META-INF/MANIFEST.MF"/>
+	                <!-- Add the prefix -->
+	                <filterchain>
+	                    <prefixlines prefix="@{prefix}"/>
+	                </filterchain>
+	            </loadproperties>
+	        </sequential>
+	    </macrodef>
+    
+	<taskdef name="nsis" classname="com.danielreese.nsisant.Task">
+       <classpath location="../libs/nsis/nsisant-1.3.jar"/>
+     </taskdef>
+
+</project>

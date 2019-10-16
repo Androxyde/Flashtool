@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
 
+	<condition property="isMac">
+	   <os family="mac" />
+	</condition>
+	 
+	<condition property="isLinux">
+	   <and>   
+	      <os family="unix" />
+	         <not>
+	            <os family="mac" />    
+	         </not>
+	   </and>
+	</condition>
+	 
+	<condition property="isWindows">
+	    <os family="windows" />
+	</condition>
+
 	<property name="version" value="0.9.26.0"/>
 	<property name="progtime" value="20-07-2019 17:30:00"/>
 
@@ -28,7 +45,7 @@
         </jar>
     </target>
 
-	<target name="core release" depends="clean,ressources">
+	<target name="core release" depends="clean, main_lib, ressources, Windowsbinaries, Linuxbinaries, Macbinaries">
         <mkdir dir ="../../Deploy/FlashTool"/>
         <mkdir dir ="../../Deploy/FlashTool/custom/"/>
         <mkdir dir ="../../Deploy/FlashTool/custom/root"/>
@@ -56,6 +73,89 @@
 	    	<fileset dir="../libs/eclipse/" includes="*.jar" excludes="**/.svn"/>
 	    </copy>
     </target>
+
+	<target name="main_lib">
+        <jar destfile="../../Deploy/FlashTool/x10flasher.jar">
+            <manifest>
+                <attribute name="Main-Class" value="gui.Main"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+              	<attribute name="Implementation-Date" value="${progtime}"/>
+               	<attribute name="Internal-Version" value="${version}"/>
+               	<attribute name="Internal-Date" value="${progtime}"/>
+               	<attribute name="Internal-Channel" value="release"/>
+            </manifest>
+        	<fileset dir="../bin" excludes="/gui/ressources/icons/**"/>
+        </jar>
+	</target>
+
+	<target name="Macbinaries" if="isMac">
+	    <copy file="../launchers/FlashTool" todir="../../Deploy/FlashTool"/>
+	    <copy file="../launchers/FlashToolConsole" todir="../../Deploy/FlashTool"/>
+		<copy file="../launchers/xperifirm" todir="../../Deploy/FlashTool/x10flasher_lib"/>
+		<copy todir="../../Deploy/FlashTool/x10flasher_native">
+            <fileset dir="../native/mac"
+                excludes="**/.svn"/>
+        </copy>
+		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+	    	<fileset dir="../libs/macos/x86_64/" includes="*.jar" excludes="**/.svn"/>
+	    </copy>
+		<chmod file="../../Deploy/FlashTool/FlashTool" perm="755" />
+    	<chmod file="../../Deploy/FlashTool/FlashToolConsole" perm="755"/>
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/xperifirm" perm="755"/>
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/adb" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/fastboot" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/unyaffs" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/udev/libusbx-1.0.0.dylib" perm="755" />
+		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_native/udev">
+		    <arg value="-sf"/>
+			<arg value="libusbx-1.0.0.dylib"/>
+			<arg value="libusbx-1.0.dylib"/>
+		</exec>
+	</target>
+
+	<target name="Linuxbinaries" if="isLinux">
+	    <copy file="../launchers/FlashTool" todir="../../Deploy/FlashTool"/>
+	    <copy file="../launchers/FlashToolConsole" todir="../../Deploy/FlashTool"/>
+		<copy file="../launchers/xperifirm" todir="../../Deploy/FlashTool/x10flasher_native"/>
+		<copy todir="../../Deploy/FlashTool/x10flasher_native">
+            <fileset dir="../native/linux"
+                excludes="**/.svn"/>
+        </copy>
+		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+	    	<fileset dir="../libs/linux/x86_64/" includes="*.jar" excludes="**/.svn"/>
+	    </copy>
+		<chmod file="../../Deploy/FlashTool/FlashTool" perm="755" />
+    	<chmod file="../../Deploy/FlashTool/FlashToolConsole" perm="755"/>
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/xperifirm" perm="755"/>
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/adb" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/fastboot" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/unyaffs" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/bin2elf" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/bin2sin" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/udev/libusbx-1.0.so.0.1.0" perm="755" />
+		<chmod file="../../Deploy/FlashTool/x10flasher_native/udev1/libusbx-1.0.so.0.1.0" perm="755" />
+		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_native/udev">
+		    <arg value="-sf"/>
+			<arg value="libusbx-1.0.so.0.1.0"/>
+			<arg value="libusbx-1.0.so"/>
+		</exec>
+		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_native/udev1">
+		    <arg value="-sf"/>
+			<arg value="libusbx-1.0.so.0.1.0"/>
+			<arg value="libusbx-1.0.so"/>
+		</exec>
+
+	</target>
+
+	<target name="Windowsbinaries" if="isWindows" depends="main_lib">
+		<copy file="../launchers/FlashTool64.exe" todir="../../Deploy/FlashTool"/>
+    	<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+    		<fileset dir="../libs/win/x86_64/"/>
+    	</copy>
+    	<copy todir="../../Deploy/FlashTool/x10flasher_native">
+    		<fileset dir="../native/win32/"/>
+    	</copy>
+	</target>
 
 	<target name="Shells only">
         <delete dir="../../Deploy/FlashTool/custom/shells"/>
