@@ -107,13 +107,13 @@
                 excludes="**/.svn"/>
         </copy>
 		<mkdir dir="../../Deploy/FlashTool.app/Contents/MacOS"/>
-        <echo message="Generating tar file flashtool-${Internal-Version}-linux.tar"/>
+        <echo message="Generating tar file flashtool-${Internal-Version}.tar"/>
 		<exec executable="tar" dir="../../Deploy/FlashTool">
 		    <arg value="cf"/>
 			<arg value="../FlashTool.app/Contents/MacOS/flashtool-${Internal-Version}.tar"/>
 			<arg value="."/>
 		</exec>
-        <echo message="Extracting tar file flashtool-${Internal-Version}-linux.tar to prepare for dmg creation"/>
+        <echo message="Extracting tar file flashtool-${Internal-Version}.tar to prepare for dmg creation"/>
 		<exec executable="tar" dir="../../Deploy/FlashTool.app/Contents/MacOS">
 		    <arg value="xf"/>
 			<arg value="flashtool-${Internal-Version}.tar"/>
