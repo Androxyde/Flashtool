@@ -18,8 +18,8 @@
 	    <os family="windows" />
 	</condition>
 
-	<property name="version" value="0.9.26.0"/>
-	<property name="progtime" value="20-07-2019 17:30:00"/>
+	<property name="version" value="0.9.27.0"/>
+	<property name="progtime" value="02-11-2019 17:30:00"/>
 
 	<target name="all" depends="core release"/>
 	
