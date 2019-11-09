@@ -4,7 +4,6 @@
 	<classpathentry kind="lib" path="libs/javax.annotation_1.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/javax.inject_1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/ini4j-0.5.4.jar"/>
-	<classpathentry kind="lib" path="libs/jdom-2.0.6.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.6.jar"/>
 	<classpathentry kind="lib" path="libs/disruptor-3.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/jsr305-3.0.2.jar"/>
@@ -54,6 +53,7 @@
 	<classpathentry kind="lib" path="libs/dec-0.1.2.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.5.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.5.0.jar"/>
+	<classpathentry kind="lib" path="libs/jdom2-2.0.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
