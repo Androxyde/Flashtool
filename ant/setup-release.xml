@@ -64,8 +64,7 @@
 				<include name="x10flasher_native/bin2elf"/>
 				<include name="x10flasher_native/bin2sin"/>
 				<include name="x10flasher_native/fastboot"/>
-				<include name="x10flasher_native/udev/libusbx-1.0.so.0.1.0"/>
-				<include name="x10flasher_native/udev1/libusbx-1.0.so.0.1.0"/>
+				<include name="x10flasher_native/udev/libusbx-1.0.so.0.2.0"/>
 				<include name="x10flasher_native/unyaffs"/>
 				<include name="x10flasher_native/jre/lib/jexec"/>
 				<include name="x10flasher_native/jre/lib/jspawnhelper"/>
@@ -85,8 +84,7 @@
 				<exclude name="x10flasher_native/bin2elf"/>
 				<exclude name="x10flasher_native/bin2sin"/>
 				<exclude name="x10flasher_native/fastboot"/>
-				<exclude name="x10flasher_native/udev/libusbx-1.0.so.0.1.0"/>
-				<exclude name="x10flasher_native/udev1/libusbx-1.0.so.0.1.0"/>
+				<exclude name="x10flasher_native/udev/libusbx-1.0.so.0.2.0"/>
 				<exclude name="x10flasher_native/unyaffs"/>
 				<exclude name="x10flasher_native/jre/lib/jexec"/>
 				<exclude name="x10flasher_native/jre/lib/jspawnhelper"/>

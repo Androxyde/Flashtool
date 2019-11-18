@@ -65,21 +65,19 @@ CLASSPATH=$(find $working_dir -name '*.jar'|xargs|tr ' ' ':')
 
 export JAVA_HOME=$working_dir/x10flasher_native/jre
 
+unset COCOA
+
 if [ "$os_name" = "Linux" ] ; then
 
     rootandudevcheck;
 
-    export JNI_PATH=$working_dir/x10flasher_native/udev1:$working_dir/x10flasher_native/udev
-
-    unset COCOA
-
 else
-
-     export JNI_PATH=$working_dir/x10flasher_native/udev
 
      COCOA="-XstartOnFirstThread"
 
 fi
+
+export JNI_PATH=$working_dir/x10flasher_native/udev
 
 $JAVA_HOME/bin/java -classpath $CLASSPATH $COCOA \
                     -Xms256m -Xmx1024m -Duser.country=US -Duser.language=en \

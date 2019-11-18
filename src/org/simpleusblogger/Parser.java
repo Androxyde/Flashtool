@@ -12,6 +12,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sinfile.parsers.SinFile;
+import org.util.HexDump;
+
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
 
@@ -74,8 +76,8 @@ public class Parser {
 								rec.getDataString().startsWith("Write-TA") ||
 								rec.getDataString().startsWith("Read-TA") ||
 								rec.getDataString().startsWith("getvar") ||
-								rec.getDataString().startsWith("powerdown") ||
-								rec.getDataString().startsWith("Sync") ||
+								rec.getDataString().equals("powerdown") ||
+								rec.getDataString().equals("Sync") ||
 								rec.getDataString().startsWith("Getlog") ||
 								rec.getDataString().startsWith("set_active") ||
 								rec.getDataString().startsWith("Get-ufs-info") ||
@@ -85,7 +87,8 @@ public class Parser {
 								rec.getDataString().startsWith("download") ||
 								rec.getDataString().startsWith("Repartition") ||
 								rec.getDataString().startsWith("Get-root-key-hash")) {
-						   //System.out.println(rec.getDirection()+" : "+rec.getDataString());
+							//System.out.println(rec.getDirection()+" : "+rec.getDataString());
+							// 
 						}
 						else {
 							downloadContent = rec.getData();
@@ -94,8 +97,8 @@ public class Parser {
 								rec.getDataString().startsWith("Write-TA") ||
 								rec.getDataString().startsWith("Read-TA") ||
 								rec.getDataString().startsWith("getvar") ||
-								rec.getDataString().startsWith("powerdown") ||
-								rec.getDataString().startsWith("Sync") ||
+								rec.getDataString().equals("powerdown") ||
+								rec.getDataString().equals("Sync") ||
 								rec.getDataString().startsWith("Getlog") ||
 								rec.getDataString().startsWith("set_active") ||
 								rec.getDataString().startsWith("Get-ufs-info") ||
