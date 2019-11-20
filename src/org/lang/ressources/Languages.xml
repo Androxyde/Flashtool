@@ -36,6 +36,16 @@
 		<rdbtnmntmar name="Arabic"/>
 		<rdbtnmntmgr name="Grego"/>
 	</pt>
+	<sv trigger="sv">
+        <rdbtnmntmfr name="Franska"/>
+        <rdbtnmntmen name="Engelska"/>
+        <rdbtnmntmger name="Tyska"/>
+	<rdbtnmntmpt name="Portugisiska"/>
+	<rdbtnmntmda name="Danska"/>
+	<rdbtnmntmar name="Arabiska"/>
+	<rdbtnmntmgr name="Grekiska"/>
+	<rdbtnmntmsv name="Svenska"/>
+	</sv>
     <da trigger="da">
         <rdbtnmntmfr name="Fransk"/>
         <rdbtnmntmen name="Engelsk"/>
