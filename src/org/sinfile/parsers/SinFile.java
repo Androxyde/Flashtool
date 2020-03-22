@@ -80,7 +80,7 @@ public class SinFile {
 			openStreams();
 			version = sinStream.readByte();
 			if (version==1) {
-				sinv1 = sinParserV1.parse(sinStream).mapTo(org.sinfile.parsers.v1.SinParser.class);
+				sinv1 = sinParserV1.parse(sinStream).mapTo(new org.sinfile.parsers.v1.SinParser());
 				sinv1.setLength(sinfile.length());
 				sinv1.setFile(sinfile);
 				if (sinv1.hashLen>sinv1.headerLen) throw new SinFileException("Error parsing sin file");
@@ -88,7 +88,7 @@ public class SinFile {
 				closeStreams();
 			}
 			if (version==2) {
-				sinv2 = sinParserV2.parse(sinStream).mapTo(org.sinfile.parsers.v2.SinParser.class);
+				sinv2 = sinParserV2.parse(sinStream).mapTo(new org.sinfile.parsers.v2.SinParser());
 				sinv2.setLength(sinfile.length());
 				sinv2.setFile(sinfile);
 				if (sinv2.hashLen>sinv2.headerLen) throw new SinFileException("Error parsing sin file");
@@ -96,7 +96,7 @@ public class SinFile {
 				closeStreams();
 			}
 			if (version==3) {
-				sinv3 = sinParserV3.parse(sinStream).mapTo(org.sinfile.parsers.v3.SinParser.class);
+				sinv3 = sinParserV3.parse(sinStream).mapTo(new org.sinfile.parsers.v3.SinParser());
 				sinv3.setLength(sinfile.length());
 				sinv3.setFile(sinfile);
 				if (!new String(sinv3.magic).equals("SIN")) throw new SinFileException("Error parsing sin file");

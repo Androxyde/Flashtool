@@ -60,7 +60,7 @@ public class SinParser {
 		  );
 		  if (hashLen>0) {
 			  byte[] hashBlocks = sinStream.readByteArray(hashLen);
-			  blocks = hashBlocksV2.parse(hashBlocks).mapTo(org.sinfile.parsers.v2.HashBlocks.class);
+			  blocks = hashBlocksV2.parse(hashBlocks).mapTo(new org.sinfile.parsers.v2.HashBlocks());
 			  certLen = sinStream.readInt(JBBPByteOrder.BIG_ENDIAN);
 			  cert = sinStream.readByteArray(certLen);
 			  if (blocks.block.length==1 && blocks.block[0].offset!=0) blocks.block[0].offset=0; 
@@ -72,7 +72,7 @@ public class SinParser {
 				          + "<int offset;"
 				          + "<int blockcount;"
 				  );
-				  parti = partInfo.parse(partinfo).mapTo(org.sinfile.parsers.v1.PartitionInfo.class);
+				  parti = partInfo.parse(partinfo).mapTo(new org.sinfile.parsers.v1.PartitionInfo());
 			  }
 		  }
 		  dataType=getDataTypePriv();

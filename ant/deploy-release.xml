@@ -133,18 +133,11 @@
 		<chmod file="../../Deploy/FlashTool/x10flasher_native/bin2elf" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_native/bin2sin" perm="755" />
 		<chmod file="../../Deploy/FlashTool/x10flasher_native/udev/libusbx-1.0.so.0.1.0" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/udev1/libusbx-1.0.so.0.1.0" perm="755" />
 		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_native/udev">
 		    <arg value="-sf"/>
 			<arg value="libusbx-1.0.so.0.1.0"/>
 			<arg value="libusbx-1.0.so"/>
 		</exec>
-		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_native/udev1">
-		    <arg value="-sf"/>
-			<arg value="libusbx-1.0.so.0.1.0"/>
-			<arg value="libusbx-1.0.so"/>
-		</exec>
-
 	</target>
 
 	<target name="Windowsbinaries" if="isWindows" depends="main_lib">

@@ -36,7 +36,7 @@ public class TARawBlock {
 		  JBBPBitInputStream unitsStream = new JBBPBitInputStream(new ByteArrayInputStream(units));
 		  try {
 		  while (unitsStream.hasAvailableData()) {
-			  TARawUnit rawunit = unitblock.parse(unitsStream).mapTo(TARawUnit.class);
+			  TARawUnit rawunit = unitblock.parse(unitsStream).mapTo(new TARawUnit());
 			  rawunit.fetchContent(unitsStream);
 			  if (rawunit.isValid()) unitList.add(rawunit.getUnit());
 		  }

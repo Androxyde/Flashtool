@@ -22,7 +22,7 @@ import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
 public class Parser {
 	
 	static final Logger logger = LogManager.getLogger(Parser.class);
-	
+
 	static JBBPParser USBRecord = JBBPParser.prepare(
 			"<long irp;" +
 			"byte[8] reserved1;" +  
@@ -148,7 +148,7 @@ public class Parser {
 					}
 					else {
 						JBBPBitInputStream dataStream = new JBBPBitInputStream(new ByteArrayInputStream(rec.data));
-						S1Packet p = S1Packet.parse(dataStream).mapTo(S1Packet.class);
+						S1Packet p = S1Packet.parse(dataStream).mapTo(new S1Packet());
 						if (p.isHeaderOK()) {
 							if (rec.header.usb_TransferBufferLength > 13) {
 								p.addData(dataStream.readByteArray(rec.data.length-13));
@@ -195,7 +195,7 @@ public class Parser {
 	  
 	  
 	  private static USBRecord readRecord(JBBPBitInputStream usbStream) throws Exception {
-		  USBRecord rec = USBRecord.parse(usbStream).mapTo(USBRecord.class);
+		  USBRecord rec = USBRecord.parse(usbStream).mapTo(new USBRecord());
 		  rec.parse(usbStream);
 		  return rec;
 		  

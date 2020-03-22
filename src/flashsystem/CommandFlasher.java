@@ -70,6 +70,10 @@ public class CommandFlasher implements Flasher {
 		public long getLunSize(int lun) {
 			return (long)luns[lun].length*sectorSize/1024L;
 		}
+		
+	    public Object newInstance(Class<?> klazz){
+	       return klazz == Lun.class ? new Lun() : null;
+	    }
 	
 	}
 
@@ -494,7 +498,7 @@ public class CommandFlasher implements Flasher {
 
     		try {
     			JBBPBitInputStream stream = new JBBPBitInputStream(new ByteArrayInputStream(reply.getDataArray()));
-    			ufs_infos = ufs_parser.parse(stream).mapTo(UfsInfos.class);
+    			ufs_infos = ufs_parser.parse(stream).mapTo(new UfsInfos());
     			ufs_infos.setSectorSize(Integer.parseInt(getPhoneProperty("Sector-size")));
     			try {
     			   stream.close();

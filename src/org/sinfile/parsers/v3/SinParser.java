@@ -59,7 +59,7 @@ public class SinParser {
 		            "blocks[_] {int length;"
 	              + "byte["+hashv3len[hashType]+"] crc;}"
 	      );
-		  blocks = hashBlocksV3.parse(hashBlocks).mapTo(org.sinfile.parsers.v3.HashBlocks.class);
+		  blocks = hashBlocksV3.parse(hashBlocks).mapTo(new org.sinfile.parsers.v3.HashBlocks());
 
 	  }
 	  
@@ -100,7 +100,7 @@ public class SinParser {
 				sinStream.read(mmcfmagic);
 				if (!new String(mmcfmagic).equals("MMCF")) throw new Exception("No MMCF");
 				sinStream.skip(-4);
-				dataHeader = dataHeaderParser.parse(sinStream).mapTo(DataHeader.class);
+				dataHeader = dataHeaderParser.parse(sinStream).mapTo(new DataHeader());
 			} catch (Exception e) {
 				dataHeader = new DataHeader();
 				dataHeader.mmcfMagic=new String("NULL").getBytes();
@@ -116,12 +116,12 @@ public class SinParser {
 					sinStream.read(amagic);
 					read+=4;
 					if (new String(amagic).equals("ADDR")) {
-						AddrBlock addrBlock = addrBlocksParser.parse(sinStream).mapTo(AddrBlock.class);
+						AddrBlock addrBlock = addrBlocksParser.parse(sinStream).mapTo(new AddrBlock());
 						dataBlocks.add(addrBlock);
 						read+=(addrBlock.blockLen-4);
 					}
 					if (new String(amagic).equals("LZ4A")) {
-						LZ4ABlock lz4aBlock = LZ4ABlocksParser.parse(sinStream).mapTo(LZ4ABlock.class);
+						LZ4ABlock lz4aBlock = LZ4ABlocksParser.parse(sinStream).mapTo(new LZ4ABlock());
 						dataBlocks.add(lz4aBlock);
 						read+=(lz4aBlock.blockLen-4);
 					}

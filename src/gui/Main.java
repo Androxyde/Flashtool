@@ -1,13 +1,9 @@
 package gui;
 
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
 import libusb.LibUsbException;
 import linuxlib.JUsb;
 import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.logger.MyLogger;
@@ -15,10 +11,48 @@ import org.system.AWTKillerThread;
 import org.system.GlobalConfig;
 import org.system.OS;
 import flashsystem.FlasherConsole;
+import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
 public class Main {
+    
 
+    @Option(names = {"-console" }, paramLabel = "CONSOLE", description = "Console mode invocation")
+    private boolean console;
+
+    @Option(names = { "--action" }, paramLabel = "ACTION", description = "Console mode action type")
+    String action;
+
+    @Option(names = { "--file" }, paramLabel = "FILE", description = "Console mode action type")
+    String file;
+
+    @Option(names = { "--wipedata" }, paramLabel = "FILE", description = "Console mode action type")
+    String wipedata;
+
+    @Option(names = { "--wipecache" }, paramLabel = "WIPECACHE", description = "Console mode action type")
+    String wipecache;
+
+    @Option(names = { "--baseband" }, paramLabel = "BASEBAND", description = "Console mode action type")
+    String baseband;
+
+    @Option(names = { "--kernel" }, paramLabel = "KERNEL", description = "Console mode action type")
+    String kernel;
+
+    @Option(names = { "--system" }, paramLabel = "SYSTEM", description = "Console mode action type")
+    String system;
+    
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "display a help message")
+    private boolean helpRequested;
+    
 	public static void main(String[] args) {
+
+		Main main = new Main();
+		new CommandLine(main).parseArgs(args);
+		main.run();
+	
+	}
+
+	public void run () {
 		try {
 			ConfigurationSource cs = new ConfigurationSource(Main.class.getClassLoader().getResourceAsStream("org/logger/config/log4j2.xml"));
 			Configurator.initialize(null, cs);
@@ -39,10 +73,9 @@ public class Main {
 		AWTKillerThread k = new AWTKillerThread();
 		k.start();
 		try {
-			OptionSet options = parseCmdLine(args);
 			Main.initLinuxUsb();
-			if (options.has("console")) {
-				processConsole(options);
+			if (console) {
+				processConsole();
 			}
 			else {
 				MyLogger.setMode(MyLogger.GUI_MODE);
@@ -50,19 +83,18 @@ public class Main {
 				window.open();
 			}
 		}
-
+	
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		k.done();
 	}
 
-	
 	public static void initLinuxUsb() throws LibUsbException {
 			if (OS.getName()!="windows") JUsb.init();
 	}
 
-	private static OptionSet parseCmdLine(String[] args) {
+/*	private static OptionSet parseCmdLine(String[] args) {
 		OptionParser parser = new OptionParser();
 		OptionSet options;
 		parser.accepts( "console" );
@@ -81,14 +113,17 @@ public class Main {
 			options = parser.parse(args);        	
 		}
 		return options;
-	}
+	}*/
 
-	public static void processConsole(OptionSet options) throws Exception {
-		String action=(String)options.valueOf("action");
+	public void processConsole() throws Exception {
 		
+		if (action == null) {
+			System.out.println("An action is mandatory in console mode");
+			FlasherConsole.exit();
+		}
 		if (action.toLowerCase().equals("flash")) {
 			FlasherConsole.init(false);
-			FlasherConsole.doFlash((String)options.valueOf("file"), options.valueOf("wipedata").equals("yes"), options.valueOf("wipecache").equals("yes"), options.valueOf("baseband").equals("no"), options.valueOf("kernel").equals("no"), options.valueOf("system").equals("no"));
+			FlasherConsole.doFlash(file, wipedata.equals("yes"), wipecache.equals("yes"), baseband.equals("no"), kernel.equals("no"), system.equals("no"));
 		}
 		if (action.toLowerCase().equals("imei")) {
 			FlasherConsole.init(false);
@@ -100,12 +135,12 @@ public class Main {
 		}
 		if (action.toLowerCase().equals("extract")) {
 			FlasherConsole.init(true);
-			FlasherConsole.doExtract((String)options.valueOf("file"));
+			FlasherConsole.doExtract(file);
 		}
-		/*		if (action.toLowerCase().equals("blunlock")) {
-			FlasherConsole.init(true);
-			FlasherConsole.doBLUnlock();        		
-		}*/
+		//if (action.toLowerCase().equals("blunlock")) {
+		//	FlasherConsole.init(true);
+		//	FlasherConsole.doBLUnlock();        		
+		//}
 		FlasherConsole.exit();		
 	}
 
