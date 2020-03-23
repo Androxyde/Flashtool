@@ -138,7 +138,6 @@
 			<arg value="libusbx-1.0.so.0.1.0"/>
 			<arg value="libusbx-1.0.so"/>
 		</exec>
-
 	</target>
 
 	<target name="Windowsbinaries" if="isWindows" depends="main_lib">

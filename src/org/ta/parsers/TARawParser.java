@@ -50,7 +50,7 @@ public class TARawParser {
 		logger.info("Parsing image "+ddFile.getAbsolutePath());
 		openStreams();
 		while (ddStream.hasAvailableData()) {
-			TARawBlock parsedblock = partblock.parse(ddStream).mapTo(TARawBlock.class);
+			TARawBlock parsedblock = partblock.parse(ddStream).mapTo(new TARawBlock());
 			if (parsedblock.magic==0x3BF8E9C1) {
 				parsedblock.parseUnits();
 				Iterator<TABag> ib = bags.iterator();

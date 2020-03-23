@@ -10,55 +10,55 @@
         <pathelement location="libs/javax.inject_1.0.0.jar"/>
         <pathelement location="libs/ini4j-0.5.4.jar"/>
         <pathelement location="libs/commons-io-2.6.jar"/>
-        <pathelement location="libs/disruptor-3.4.2.jar"/>
         <pathelement location="libs/jsr305-3.0.2.jar"/>
-        <pathelement location="libs/jbbp-1.4.1.jar"/>
-        <pathelement location="libs/jopt-simple-6.0-alpha-3.jar"/>
         <pathelement location="libs/xstream-1.4.11.1.jar"/>
         <pathelement location="libs/jsch-0.1.55.jar"/>
         <pathelement location="libs/proxy-vole-1.0.6-SNAPSHOT.jar"/>
-        <pathelement location="libs/lz4-java-1.6.0.jar"/>
-        <pathelement location="libs/bcpg-jdk15on-162.jar"/>
-        <pathelement location="libs/bcpkix-jdk15on-162.jar"/>
-        <pathelement location="libs/bcprov-jdk15on-162.jar"/>
         <pathelement location="libs/icu4j-64.2.jar"/>
-        <pathelement location="libs/log4j-api-2.12.1.jar"/>
-        <pathelement location="libs/log4j-core-2.12.1.jar"/>
-        <pathelement location="libs/log4j-slf4j18-impl-2.12.1.jar"/>
-        <pathelement location="libs/guava-28.1-jre.jar"/>
-        <pathelement location="libs/commons-compress-1.19.jar"/>
         <pathelement location="libs/jarchivelib-1.0.0.jar"/>
-        <pathelement location="libs/apk-parser-2.6.9.jar"/>
         <pathelement location="libs/eclipse/org.apache.sshd.osgi_2.2.0.v20190425-2127.jar"/>
         <pathelement location="libs/eclipse/org.apache.sshd.sftp_2.2.0.v20190425-2127.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.core.commands_3.9.500.v20190805-1157.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.core.contenttype_3.7.400.v20190624-1144.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.core.jobs_3.10.500.v20190620-1426.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.core.runtime_3.16.0.v20190823-1314.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.app_1.4.300.v20190815-1535.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.bidi_1.2.100.v20190815-1535.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.common_3.10.500.v20190815-1535.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.preferences_3.7.500.v20190815-1535.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.registry_3.8.500.v20190714-1850.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jface_3.17.0.v20190820-1444.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jface.text_3.15.300.v20190819-0725.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jgit_5.5.0.201909110433-r.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jgit.archive_5.5.0.201909110433-r.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jgit.ssh.apache_5.5.0.201909110433-r.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.osgi_3.15.0.v20190830-1434.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.swt_3.112.0.v20190904-0609.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.text_3.9.0.v20190826-1019.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.ui.forms_3.8.100.v20190625-1825.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.ui.workbench_3.116.0.v20190826-1428.jar"/>
         <pathelement location="libs/bsh-3.0.0-SNAPSHOT.jar"/>
-        <pathelement location="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.112.0.v20190904-0609.jar"/>
         <pathelement location="libs/slf4j-api-2.0.0-alpha1.jar"/>
         <pathelement location="libs/slf4j-ext-2.0.0-alpha1.jar"/>
-        <pathelement location="libs/xz-1.8.jar"/>
-        <pathelement location="libs/dec-0.1.2.jar"/>
         <pathelement location="libs/jna-5.5.0.jar"/>
         <pathelement location="libs/jna-platform-5.5.0.jar"/>
         <pathelement location="libs/jdom2-2.0.6.jar"/>
+        <pathelement location="libs/guava-28.2-jre.jar"/>
+        <pathelement location="libs/lz4-java-1.7.1.jar"/>
+        <pathelement location="libs/apk-parser-2.6.10.jar"/>
+        <pathelement location="libs/bcpg-jdk15on-1.64.jar"/>
+        <pathelement location="libs/bcpkix-jdk15on-1.64.jar"/>
+        <pathelement location="libs/bcprov-jdk15on-1.64.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.core.jobs_3.10.700.v20200106-1020.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.core.commands_3.9.700.v20191217-1850.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.equinox.app_1.4.400.v20191212-0743.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.equinox.preferences_3.7.700.v20191213-1901.jar"/>
+        <pathelement location="libs/jbbp-2.0.1.jar"/>
+        <pathelement location="libs/commons-compress-1.20.jar"/>
+        <pathelement location="libs/javax.activation-1.2.1-20181010.205421-2_modular.jar"/>
+        <pathelement location="libs/jaxb-api-2.4.0-b180830.0359.jar"/>
+        <pathelement location="libs/delight-nashorn-sandbox-0.1.28.jar"/>
+        <pathelement location="libs/js-beautify-1.9.0.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.core.contenttype_3.7.600.v20200124-1609.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.core.runtime_3.17.100.v20200203-0917.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.equinox.common_3.11.0.v20200206-0817.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.equinox.registry_3.8.700.v20200121-1457.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.jface_3.19.0.v20200218-1607.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.jface.text_3.16.200.v20200218-0828.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.osgi_3.15.200.v20200214-1600.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.text_3.10.100.v20200217-1239.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.ui.forms_3.9.0.v20200213-1442.jar"/>
+        <pathelement location="libs/log4j-api-2.13.1.jar"/>
+        <pathelement location="libs/log4j-core-2.13.1.jar"/>
+        <pathelement location="libs/log4j-slf4j18-impl-2.13.1.jar"/>
+        <pathelement location="libs/win/x86_64/org.eclipse.swt.win32.win32.x86_64_3.114.0.v20200304-0601.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.jgit_5.7.0.202003110725-r.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.jgit.archive_5.7.0.202003110725-r.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.jgit.http.apache_5.7.0.202003110725-r.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.jgit.ssh.apache_5.7.0.202003110725-r.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.swt_3.114.0.v20200304-0601.jar"/>
+        <pathelement location="libs/eclipse/org.eclipse.ui.workbench_3.118.0.v20200222-0719.jar"/>
     </path>
     <path id="run.Main.classpath">
         <path refid="Flashtool.classpath"/>
@@ -66,52 +66,17 @@
         <pathelement location="libs/javax.inject_1.0.0.jar"/>
         <pathelement location="libs/ini4j-0.5.4.jar"/>
         <pathelement location="libs/commons-io-2.6.jar"/>
-        <pathelement location="libs/disruptor-3.4.2.jar"/>
         <pathelement location="libs/jsr305-3.0.2.jar"/>
-        <pathelement location="libs/jbbp-1.4.1.jar"/>
-        <pathelement location="libs/jopt-simple-6.0-alpha-3.jar"/>
         <pathelement location="libs/xstream-1.4.11.1.jar"/>
         <pathelement location="libs/jsch-0.1.55.jar"/>
         <pathelement location="libs/proxy-vole-1.0.6-SNAPSHOT.jar"/>
-        <pathelement location="libs/lz4-java-1.6.0.jar"/>
-        <pathelement location="libs/bcpg-jdk15on-162.jar"/>
-        <pathelement location="libs/bcpkix-jdk15on-162.jar"/>
-        <pathelement location="libs/bcprov-jdk15on-162.jar"/>
         <pathelement location="libs/icu4j-64.2.jar"/>
-        <pathelement location="libs/log4j-api-2.12.1.jar"/>
-        <pathelement location="libs/log4j-core-2.12.1.jar"/>
-        <pathelement location="libs/log4j-slf4j18-impl-2.12.1.jar"/>
-        <pathelement location="libs/guava-28.1-jre.jar"/>
-        <pathelement location="libs/commons-compress-1.19.jar"/>
         <pathelement location="libs/jarchivelib-1.0.0.jar"/>
-        <pathelement location="libs/apk-parser-2.6.9.jar"/>
         <pathelement location="libs/eclipse/org.apache.sshd.osgi_2.2.0.v20190425-2127.jar"/>
         <pathelement location="libs/eclipse/org.apache.sshd.sftp_2.2.0.v20190425-2127.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.core.commands_3.9.500.v20190805-1157.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.core.contenttype_3.7.400.v20190624-1144.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.core.jobs_3.10.500.v20190620-1426.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.core.runtime_3.16.0.v20190823-1314.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.app_1.4.300.v20190815-1535.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.bidi_1.2.100.v20190815-1535.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.common_3.10.500.v20190815-1535.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.preferences_3.7.500.v20190815-1535.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.equinox.registry_3.8.500.v20190714-1850.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jface_3.17.0.v20190820-1444.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jface.text_3.15.300.v20190819-0725.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jgit_5.5.0.201909110433-r.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jgit.archive_5.5.0.201909110433-r.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.jgit.ssh.apache_5.5.0.201909110433-r.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.osgi_3.15.0.v20190830-1434.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.swt_3.112.0.v20190904-0609.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.text_3.9.0.v20190826-1019.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.ui.forms_3.8.100.v20190625-1825.jar"/>
-        <pathelement location="libs/eclipse/org.eclipse.ui.workbench_3.116.0.v20190826-1428.jar"/>
         <pathelement location="libs/bsh-3.0.0-SNAPSHOT.jar"/>
-        <pathelement location="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.112.0.v20190904-0609.jar"/>
         <pathelement location="libs/slf4j-api-2.0.0-alpha1.jar"/>
         <pathelement location="libs/slf4j-ext-2.0.0-alpha1.jar"/>
-        <pathelement location="libs/xz-1.8.jar"/>
-        <pathelement location="libs/dec-0.1.2.jar"/>
         <pathelement location="libs/jna-5.5.0.jar"/>
         <pathelement location="libs/jna-platform-5.5.0.jar"/>
         <pathelement location="libs/jdom2-2.0.6.jar"/>
@@ -120,7 +85,6 @@
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -137,6 +101,20 @@
             <src path="src"/>
             <classpath refid="Flashtool.classpath"/>
         </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
     </target>
     <target name="Main">
         <java classname="gui.Main" failonerror="true" fork="yes">

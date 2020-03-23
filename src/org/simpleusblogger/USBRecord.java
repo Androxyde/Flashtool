@@ -56,7 +56,7 @@ public class USBRecord {
 				);
 		
 		if (recordlength>=128) {
-			header = USBHeaderParser.parse(usbStream).mapTo(USBHeader.class);
+			header = USBHeaderParser.parse(usbStream).mapTo(new USBHeader());
 		}
 		else usbStream.skip(recordlength);
 		try {
