@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <project default="all" name="Create Package">
-	  
+
 	<condition property="isMac">
 	   <os family="mac" />
 	</condition>
-	 
+
 	<condition property="isLinux">
-	   <and>   
+	   <and>
 	      <os family="unix" />
 	         <not>
-	            <os family="mac" />    
+	            <os family="mac" />
 	         </not>
 	   </and>
 	</condition>
-	 
+
 	<condition property="isWindows">
 	    <os family="windows" />
 	</condition>
-	
+
 	<target name="all" depends="Linuxsetup, Windowssetup, Macsetup"/>
 
     <target name="GenerateJRE">
-        <delete dir="../../Deploy/FlashTool/x10flasher_native/jre"/>
-        <echo>Running jlink to generate custom runtime</echo> 
-		<exec executable="${java.home}/bin/jlink" dir="../../Deploy/FlashTool/x10flasher_native">
+        <delete dir="../Deploy/FlashTool/x10flasher_native/jre"/>
+        <echo>Running jlink to generate custom runtime</echo>
+		<exec executable="${java.home}/bin/jlink" dir="../Deploy/FlashTool/x10flasher_native">
 		    <arg value="--output"/>
 		    <arg value="jre"/>
 		    <arg value="--no-header-files"/>
@@ -33,20 +33,20 @@
 		    <arg value="--strip-debug"/>
 		    <arg value="--add-modules"/>
 			<arg value="java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.naming,java.prefs,java.rmi,java.scripting,java.security.jgss,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.attach,jdk.jdi,jdk.unsupported,jdk.xml.dom,jdk.security.auth,jdk.security.jgss,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.management,jdk.scripting.nashorn"/>
-		</exec>        
-		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>
-		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>		
+		</exec>
+		<copy file="../jre/jce/local_policy.jar" todir="../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>
+		<copy file="../jre/jce/US_export_policy.jar" todir="../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>
     </target>
-	
+
 	<target name="Windowsdrivers" if="isWindows">
-            <mkdir dir ="../../Deploy/FlashTool/drivers/"/>
+            <mkdir dir ="../Deploy/FlashTool/drivers/"/>
 	   	    <property environment="env"/>
 	        <nsis script="../drivers.nsi" path="${env.ProgramFiles}\NSIS"/>
 	</target>
 
 	<target name="Windowssetup" if="isWindows" depends="loadprops, Windowsdrivers, GenerateJRE">
 		<property environment="env"/>
-		<delete file="../../Deploy/FlashTool/config.properties"/>
+		<delete file="../Deploy/FlashTool/config.properties"/>
 		<delete file="../setup_new.nsi"/>
 		<copy file="../setup.nsi" tofile="../setup_new.nsi"/>
 		<replace file="../setup_new.nsi" token="FLASHTOOLVERSION" value="${Internal-Version}"/>
@@ -55,10 +55,10 @@
 	</target>
 
 	<target name="Linuxsetup" if="isLinux" depends="loadprops, GenerateJRE">
-	    <tar destfile="../../Deploy/flashtool-${Internal-Version}-linux.tar.xz" longfile="gnu" compression="xz">
-	       <tarfileset dir="../../Deploy/FlashTool" filemode="755" prefix="FlashTool">
+	    <tar destfile="../Deploy/flashtool-${Internal-Version}-linux.tar.gz" longfile="gnu" compression="gzip">
+	       <tarfileset dir="../Deploy/FlashTool" filemode="755" prefix="FlashTool">
 				<include name="FlashTool"/>
-				<include name="FlashToolConsole"/>	
+				<include name="FlashToolConsole"/>
 				<include name="x10flasher_native/xperifirm"/>
 				<include name="x10flasher_native/adb"/>
 				<include name="x10flasher_native/bin2elf"/>
@@ -75,10 +75,10 @@
 				<include name="x10flasher_native/jre/bin/rmid"/>
 				<include name="x10flasher_native/jre/bin/jrunscript"/>
            </tarfileset>
-	       <tarfileset dir="../../Deploy/FlashTool" prefix="FlashTool">
+	       <tarfileset dir="../Deploy/FlashTool" prefix="FlashTool">
 	            <include name="**/*"/>
 				<exclude name="FlashTool"/>
-				<exclude name="FlashToolConsole"/>	
+				<exclude name="FlashToolConsole"/>
 				<exclude name="x10flasher_native/xperifirm"/>
 				<exclude name="x10flasher_native/adb"/>
 				<exclude name="x10flasher_native/bin2elf"/>
@@ -92,34 +92,34 @@
 				<exclude name="x10flasher_native/jre/bin/keytool"/>
 				<exclude name="x10flasher_native/jre/bin/java"/>
 				<exclude name="x10flasher_native/jre/bin/rmiregistry"/>
-				<exclude name="x10flasher_native/jre/bin/rmid"/>
+				<exclude name="x10flasisther_native/jre/bin/rmid"/>
 				<exclude name="x10flasher_native/jre/bin/jrunscript"/>
            </tarfileset>
 	    </tar>
 	</target>
-	
+
 	<target name="Macsetup" if="isMac" depends="loadprops, GenerateJRE">
-		<delete dir="../../Deploy/FlashTool.app"/>
-		<copy todir="../../Deploy/FlashTool.app">
+		<delete dir="../Deploy/FlashTool.app"/>
+		<copy todir="../Deploy/FlashTool.app">
             <fileset dir="../launchers/FlashTool.app"
                 excludes="**/.svn"/>
         </copy>
-		<mkdir dir="../../Deploy/FlashTool.app/Contents/MacOS"/>
+		<mkdir dir="../Deploy/FlashTool.app/Contents/MacOS"/>
         <echo message="Generating tar file flashtool-${Internal-Version}.tar"/>
-		<exec executable="tar" dir="../../Deploy/FlashTool">
+		<exec executable="tar" dir="../Deploy/FlashTool">
 		    <arg value="cf"/>
 			<arg value="../FlashTool.app/Contents/MacOS/flashtool-${Internal-Version}.tar"/>
 			<arg value="."/>
 		</exec>
         <echo message="Extracting tar file flashtool-${Internal-Version}.tar to prepare for dmg creation"/>
-		<exec executable="tar" dir="../../Deploy/FlashTool.app/Contents/MacOS">
+		<exec executable="tar" dir="../Deploy/FlashTool.app/Contents/MacOS">
 		    <arg value="xf"/>
 			<arg value="flashtool-${Internal-Version}.tar"/>
 		</exec>
-		<delete file="../../Deploy/FlashTool.app/Contents/MacOS/flashtool-${Internal-Version}.tar"/>
-		<delete file="../../Deploy/flashtool-${Internal-Version}-mac.dmg"/>
+		<delete file="../Deploy/FlashTool.app/Contents/MacOS/flashtool-${Internal-Version}.tar"/>
+		<delete file="../Deploy/flashtool-${Internal-Version}-mac.dmg"/>
         <echo message="Generating dmg file flashtool-${Internal-Version}-mac.dmg"/>
-		<exec executable="hdiutil" dir="../../Deploy">
+		<exec executable="hdiutil" dir="../Deploy">
 	       <arg value="create"/>
 		   <arg value="flashtool-${Internal-Version}-mac.dmg"/>
 		   <arg value="-srcFolder"/>
@@ -128,7 +128,7 @@
 	</target>
 
 	<target name="loadprops">
-		<loadmf jar="../../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar" prefix=""/>
+		<loadmf jar="../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar" prefix=""/>
 	</target>
 
 	<!--
@@ -150,7 +150,8 @@
 	         </loadproperties>
 	     </sequential>
 	</macrodef>
-    
-	<taskdef name="nsis" classname="com.danielreese.nsisant.Task"/>
 
+	<taskdef name="nsis" classname="com.danielreese.nsisant.Task">
+		<classpath location="../libs/nsis/nsisant-1.3.jar"/>
+	</taskdef>
 </project>
