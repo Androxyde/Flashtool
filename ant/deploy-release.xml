@@ -4,16 +4,16 @@
 	<condition property="isMac">
 	   <os family="mac" />
 	</condition>
-	 
+
 	<condition property="isLinux">
-	   <and>   
+	   <and>
 	      <os family="unix" />
 	         <not>
-	            <os family="mac" />    
+	            <os family="mac" />
 	         </not>
 	   </and>
 	</condition>
-	 
+
 	<condition property="isWindows">
 	    <os family="windows" />
 	</condition>
@@ -22,18 +22,18 @@
 	<property name="progtime" value="18-11-2019 21:30:00"/>
 
 	<target name="all" depends="core release"/>
-	
+
 	<target name="clean">
-    	<mkdir dir="../../Deploy"/>
-    	<delete dir="../../Deploy/FlashTool"/>
+    	<mkdir dir="../Deploy"/>
+    	<delete dir="../Deploy/FlashTool"/>
 	</target>
 
 	<target name="clone">
-		<git-clone uri="https://github.com/Androxyde/devices.git" dest="../../Deploy/FlashTool/devices" />
-	</target>	
+		<git-clone uri="https://github.com/Androxyde/devices.git" dest="../Deploy/FlashTool/devices" />
+	</target>
 
 	<target name="ressources">
-        <jar destfile="../../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar">
+        <jar destfile="../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar">
             <manifest>
                 <attribute name="Implementation-Version" value="${version}"/>
             	<attribute name="Implementation-Date" value="${progtime}"/>
@@ -46,36 +46,36 @@
     </target>
 
 	<target name="core release" depends="clean, main_lib, ressources, Windowsbinaries, Linuxbinaries, Macbinaries">
-        <mkdir dir ="../../Deploy/FlashTool"/>
-        <mkdir dir ="../../Deploy/FlashTool/custom/"/>
-        <mkdir dir ="../../Deploy/FlashTool/custom/root"/>
-        <mkdir dir ="../../Deploy/FlashTool/custom/shells"/>
-    	<mkdir dir ="../../Deploy/FlashTool/custom/features"/>
-		<mkdir dir ="../../Deploy/FlashTool/custom/sin"/>
-        <mkdir dir="../../Deploy/FlashTool/x10flasher_lib"/>
-        <mkdir dir="../../Deploy/FlashTool/x10flasher_native"/>
-		<mkdir dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
-		<copy todir="../../Deploy/FlashTool/custom/shells">
+        <mkdir dir ="../Deploy/FlashTool"/>
+        <mkdir dir ="../Deploy/FlashTool/custom/"/>
+        <mkdir dir ="../Deploy/FlashTool/custom/root"/>
+        <mkdir dir ="../Deploy/FlashTool/custom/shells"/>
+    	<mkdir dir ="../Deploy/FlashTool/custom/features"/>
+		<mkdir dir ="../Deploy/FlashTool/custom/sin"/>
+        <mkdir dir="../Deploy/FlashTool/x10flasher_lib"/>
+        <mkdir dir="../Deploy/FlashTool/x10flasher_native"/>
+		<mkdir dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
+		<copy todir="../Deploy/FlashTool/custom/shells">
     		<fileset dir="../shells"
 				excludes="**/.svn"/>
     	</copy>
-    	<copy todir="../../Deploy/FlashTool/x10flasher_lib/langs">
+    	<copy todir="../Deploy/FlashTool/x10flasher_lib/langs">
     		<fileset dir="../src/org/lang/ressources"
 				excludes="**/.svn"/>
     	</copy>
-	    <copy todir="../../Deploy/FlashTool/custom/root">
+	    <copy todir="../Deploy/FlashTool/custom/root">
 	       <fileset dir="../romupdates" excludes="**/.svn"/>
 	    </copy>
-		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+		<copy todir="../Deploy/FlashTool/x10flasher_lib">
 	    	<fileset dir="../libs" includes="*.jar" excludes="**/.svn"/>
 	    </copy>
-		<copy todir="../../Deploy/FlashTool/x10flasher_lib/">
+		<copy todir="../Deploy/FlashTool/x10flasher_lib/">
 	    	<fileset dir="../libs/eclipse/" includes="*.jar" excludes="**/.svn"/>
 	    </copy>
     </target>
 
 	<target name="main_lib">
-        <jar destfile="../../Deploy/FlashTool/x10flasher.jar">
+        <jar destfile="../Deploy/FlashTool/x10flasher.jar">
             <manifest>
                 <attribute name="Main-Class" value="gui.Main"/>
                 <attribute name="Implementation-Version" value="${version}"/>
@@ -89,24 +89,24 @@
 	</target>
 
 	<target name="Macbinaries" if="isMac">
-	    <copy file="../launchers/FlashTool" todir="../../Deploy/FlashTool"/>
-	    <copy file="../launchers/FlashToolConsole" todir="../../Deploy/FlashTool"/>
-		<copy file="../launchers/xperifirm" todir="../../Deploy/FlashTool/x10flasher_lib"/>
-		<copy todir="../../Deploy/FlashTool/x10flasher_native">
+	    <copy file="../launchers/FlashTool" todir="../Deploy/FlashTool"/>
+	    <copy file="../launchers/FlashToolConsole" todir="../Deploy/FlashTool"/>
+		<copy file="../launchers/xperifirm" todir="../Deploy/FlashTool/x10flasher_lib"/>
+		<copy todir="../Deploy/FlashTool/x10flasher_native">
             <fileset dir="../native/mac"
                 excludes="**/.svn"/>
         </copy>
-		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+		<copy todir="../Deploy/FlashTool/x10flasher_lib">
 	    	<fileset dir="../libs/macos/x86_64/" includes="*.jar" excludes="**/.svn"/>
 	    </copy>
-		<chmod file="../../Deploy/FlashTool/FlashTool" perm="755" />
-    	<chmod file="../../Deploy/FlashTool/FlashToolConsole" perm="755"/>
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/xperifirm" perm="755"/>
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/adb" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/fastboot" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/unyaffs" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/udev/libusbx-1.0.0.dylib" perm="755" />
-		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_native/udev">
+		<chmod file="../Deploy/FlashTool/FlashTool" perm="755" />
+    	<chmod file="../Deploy/FlashTool/FlashToolConsole" perm="755"/>
+		<chmod file="../Deploy/FlashTool/x10flasher_native/xperifirm" perm="755"/>
+		<chmod file="../Deploy/FlashTool/x10flasher_native/adb" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_native/fastboot" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_native/unyaffs" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_native/udev/libusbx-1.0.0.dylib" perm="755" />
+		<exec executable="ln" dir="../Deploy/FlashTool/x10flasher_native/udev">
 		    <arg value="-sf"/>
 			<arg value="libusbx-1.0.0.dylib"/>
 			<arg value="libusbx-1.0.dylib"/>
@@ -114,26 +114,26 @@
 	</target>
 
 	<target name="Linuxbinaries" if="isLinux">
-	    <copy file="../launchers/FlashTool" todir="../../Deploy/FlashTool"/>
-	    <copy file="../launchers/FlashToolConsole" todir="../../Deploy/FlashTool"/>
-		<copy file="../launchers/xperifirm" todir="../../Deploy/FlashTool/x10flasher_native"/>
-		<copy todir="../../Deploy/FlashTool/x10flasher_native">
+	    <copy file="../launchers/FlashTool" todir="../Deploy/FlashTool"/>
+	    <copy file="../launchers/FlashToolConsole" todir="../Deploy/FlashTool"/>
+		<copy file="../launchers/xperifirm" todir="../Deploy/FlashTool/x10flasher_native"/>
+		<copy todir="../Deploy/FlashTool/x10flasher_native">
             <fileset dir="../native/linux"
                 excludes="**/.svn"/>
         </copy>
-		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+		<copy todir="../Deploy/FlashTool/x10flasher_lib">
 	    	<fileset dir="../libs/linux/x86_64/" includes="*.jar" excludes="**/.svn"/>
 	    </copy>
-		<chmod file="../../Deploy/FlashTool/FlashTool" perm="755" />
-    	<chmod file="../../Deploy/FlashTool/FlashToolConsole" perm="755"/>
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/xperifirm" perm="755"/>
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/adb" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/fastboot" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/unyaffs" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/bin2elf" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/bin2sin" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_native/udev/libusbx-1.0.so.0.1.0" perm="755" />
-		<exec executable="ln" dir="../../Deploy/FlashTool/x10flasher_native/udev">
+		<chmod file="../Deploy/FlashTool/FlashTool" perm="755" />
+    	<chmod file="../Deploy/FlashTool/FlashToolConsole" perm="755"/>
+		<chmod file="../Deploy/FlashTool/x10flasher_native/xperifirm" perm="755"/>
+		<chmod file="../Deploy/FlashTool/x10flasher_native/adb" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_native/fastboot" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_native/unyaffs" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_native/bin2elf" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_native/bin2sin" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_native/udev/libusbx-1.0.so.0.1.0" perm="755" />
+		<exec executable="ln" dir="../Deploy/FlashTool/x10flasher_native/udev">
 		    <arg value="-sf"/>
 			<arg value="libusbx-1.0.so.0.1.0"/>
 			<arg value="libusbx-1.0.so"/>
@@ -141,28 +141,28 @@
 	</target>
 
 	<target name="Windowsbinaries" if="isWindows" depends="main_lib">
-		<copy file="../launchers/FlashTool64.exe" todir="../../Deploy/FlashTool"/>
-    	<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+		<copy file="../launchers/FlashTool64.exe" todir="../Deploy/FlashTool"/>
+    	<copy todir="../Deploy/FlashTool/x10flasher_lib">
     		<fileset dir="../libs/win/x86_64/"/>
     	</copy>
-    	<copy todir="../../Deploy/FlashTool/x10flasher_native">
+    	<copy todir="../Deploy/FlashTool/x10flasher_native">
     		<fileset dir="../native/win32/"/>
     	</copy>
 	</target>
 
 	<target name="Shells only">
-        <delete dir="../../Deploy/FlashTool/custom/shells"/>
-    	<mkdir dir="../../Deploy/FlashTool/custom/shells"/>
-		<copy todir="../../Deploy/FlashTool/custom/shells">
+        <delete dir="../Deploy/FlashTool/custom/shells"/>
+    	<mkdir dir="../Deploy/FlashTool/custom/shells"/>
+		<copy todir="../Deploy/FlashTool/custom/shells">
 			  <fileset dir="../shells"
 			           excludes="**/.svn"/>
 		</copy>
     </target>
 
 	<target name="Langs only">
-        <delete dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
-    	<mkdir dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
-		<copy todir="../../Deploy/FlashTool/x10flasher_lib/langs">
+        <delete dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
+    	<mkdir dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
+		<copy todir="../Deploy/FlashTool/x10flasher_lib/langs">
 			<fileset dir="../src/org/lang/ressources"
 				excludes="**/.svn"/>
 		</copy>

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool Beta">
-	
+
 	<property name="version" value="0.9.18.1"/>
 	<property name="progtime" value="08-25-2014 23:00:00"/>
-	
+
 	<target name="all" depends="core release"/>
 
 
 	<target name="clean">
-    	<mkdir dir="../../Deploy"/>
-    	<delete dir="../../Deploy/FlashTool"/>
+    	<mkdir dir="../Deploy"/>
+    	<delete dir="../Deploy/FlashTool"/>
 	</target>
 
 	<target name="clone">
-		<git-clone uri="https://github.com/Androxyde/devices.git" dest="../../Deploy/FlashTool/devices" />
-	</target>	
-	
+		<git-clone uri="https://github.com/Androxyde/devices.git" dest="../Deploy/FlashTool/devices" />
+	</target>
+
 	<target name="ressources">
-        <jar destfile="../../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar">
+        <jar destfile="../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar">
             <manifest>
                 <attribute name="Implementation-Version" value="${version}"/>
             	<attribute name="Implementation-Date" value="${progtime}"/>
@@ -30,58 +30,58 @@
     </target>
 
 	<target name="core release" depends="clean,ressources">
-        <mkdir dir ="../../Deploy/FlashTool"/>
-        <mkdir dir ="../../Deploy/FlashTool/custom/"/>
-        <mkdir dir ="../../Deploy/FlashTool/custom/root"/>
-        <mkdir dir ="../../Deploy/FlashTool/custom/shells"/>
-    	<mkdir dir ="../../Deploy/FlashTool/custom/features"/>
-		<mkdir dir ="../../Deploy/FlashTool/custom/sin"/>
-		<mkdir dir ="../../Deploy/FlashTool/custom/mydevices"/>
-		<mkdir dir ="../../Deploy/FlashTool/firmwares"/>
-        <mkdir dir="../../Deploy/FlashTool/x10flasher_lib"/>
-        <mkdir dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
-        <mkdir dir="../../Deploy/FlashTool/drivers"/>
-		<copy todir="../../Deploy/FlashTool/custom/shells">
+        <mkdir dir ="../Deploy/FlashTool"/>
+        <mkdir dir ="../Deploy/FlashTool/custom/"/>
+        <mkdir dir ="../Deploy/FlashTool/custom/root"/>
+        <mkdir dir ="../Deploy/FlashTool/custom/shells"/>
+    	<mkdir dir ="../Deploy/FlashTool/custom/features"/>
+		<mkdir dir ="../Deploy/FlashTool/custom/sin"/>
+		<mkdir dir ="../Deploy/FlashTool/custom/mydevices"/>
+		<mkdir dir ="../Deploy/FlashTool/firmwares"/>
+        <mkdir dir="../Deploy/FlashTool/x10flasher_lib"/>
+        <mkdir dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
+        <mkdir dir="../Deploy/FlashTool/drivers"/>
+		<copy todir="../Deploy/FlashTool/custom/shells">
     		<fileset dir="../shells"
 				excludes="**/.svn"/>
     	</copy>
-    	<copy todir="../../Deploy/FlashTool/x10flasher_lib/langs">
+    	<copy todir="../Deploy/FlashTool/x10flasher_lib/langs">
     		<fileset dir="../src/org/lang/ressources"
 				excludes="**/.svn"/>
     	</copy>
-        <copy todir="../../Deploy/FlashTool/firmwares">
+        <copy todir="../Deploy/FlashTool/firmwares">
             <fileset dir="../firmwares"
                 excludes="**/.svn"/>
         </copy>
-	    <copy todir="../../Deploy/FlashTool/custom/root">
+	    <copy todir="../Deploy/FlashTool/custom/root">
 	       <fileset dir="../romupdates" excludes="**/.svn"/>
 	    </copy>
-		<copy todir="../../Deploy/FlashTool/x10flasher_lib">
+		<copy todir="../Deploy/FlashTool/x10flasher_lib">
 	    	<fileset dir="../libs" excludes="**/.svn"/>
 	    </copy>
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/fastboot.mac" perm="755" />
-		<chmod file="../../Deploy/FlashTool/x10flasher_lib/adb.mac" perm="755" />
-        <chmod file="../../Deploy/FlashTool/x10flasher_lib/unyaffs.mac" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/fastboot.mac" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/adb.mac" perm="755" />
+        <chmod file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac" perm="755" />
     </target>
 
 	<target name="Shells only">
-        <delete dir="../../Deploy/FlashTool/custom/shells"/>
-    	<mkdir dir="../../Deploy/FlashTool/custom/shells"/>
-		<copy todir="../../Deploy/FlashTool/custom/shells">
+        <delete dir="../Deploy/FlashTool/custom/shells"/>
+    	<mkdir dir="../Deploy/FlashTool/custom/shells"/>
+		<copy todir="../Deploy/FlashTool/custom/shells">
 			  <fileset dir="../shells"
 			           excludes="**/.svn"/>
 		</copy>
     </target>
 
 	<target name="Langs only">
-        <delete dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
-    	<mkdir dir="../../Deploy/FlashTool/x10flasher_lib/langs"/>
-		<copy todir="../../Deploy/FlashTool/x10flasher_lib/langs">
+        <delete dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
+    	<mkdir dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
+		<copy todir="../Deploy/FlashTool/x10flasher_lib/langs">
 			<fileset dir="../src/org/lang/ressources"
 				excludes="**/.svn"/>
 		</copy>
     </target>
-	
+
 	<taskdef resource="org/eclipse/jgit/ant/ant-tasks.properties">
 	       <classpath>
 	         <pathelement location="../libs/jgit.jar"/>
