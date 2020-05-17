@@ -19,7 +19,6 @@
 	<classpathentry kind="lib" path="libs/jna-5.5.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.5.0.jar"/>
 	<classpathentry kind="lib" path="libs/jdom2-2.0.6.jar"/>
-	<classpathentry kind="lib" path="libs/guava-28.2-jre.jar"/>
 	<classpathentry kind="lib" path="libs/lz4-java-1.7.1.jar"/>
 	<classpathentry kind="lib" path="libs/apk-parser-2.6.10.jar"/>
 	<classpathentry kind="lib" path="libs/bcpg-jdk15on-1.64.jar"/>
@@ -44,9 +43,6 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.osgi_3.15.200.v20200214-1600.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.text_3.10.100.v20200217-1239.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.forms_3.9.0.v20200213-1442.jar"/>
-	<classpathentry kind="lib" path="libs/log4j-api-2.13.1.jar"/>
-	<classpathentry kind="lib" path="libs/log4j-core-2.13.1.jar"/>
-	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.13.1.jar"/>
 	<classpathentry kind="lib" path="libs/win/x86_64/org.eclipse.swt.win32.win32.x86_64_3.114.0.v20200304-0601.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit_5.7.0.202003110725-r.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.archive_5.7.0.202003110725-r.jar"/>
@@ -54,10 +50,10 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.ssh.apache_5.7.0.202003110725-r.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.swt_3.114.0.v20200304-0601.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.workbench_3.118.0.v20200222-0719.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="libs/guava-29.0-jre.jar"/>
+	<classpathentry kind="lib" path="libs/log4j-api-2.13.3.jar"/>
+	<classpathentry kind="lib" path="libs/log4j-core-2.13.3.jar"/>
+	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.13.3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

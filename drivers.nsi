@@ -47,7 +47,7 @@ Section /o "Flashmode Drivers" SEC01
 SectionEnd
 
 Section /o "Fastboot Drivers" SEC02
-  SetOutPath "$TEMP\Flashtool\Fastboot"
+  SetOutPath "$TEMP\Flashtool\ADB\Fastboot"
   File /r "Drivers\FASTBOOT\*"
 SectionEnd
 
@@ -361,18 +361,45 @@ Section /o "Xperia Z5 Premium Device Driver" SEC64
   File /r "Drivers\ADB\Xperia_Z5_Premium\*"
 SectionEnd
 
+Section /o "Xperia 1 Driver" SEC65
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_1"
+  File /r "Drivers\ADB\Xperia_1\*"
+SectionEnd
+
+Section /o "Xperia 5 Driver" SEC66
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_5"
+  File /r "Drivers\ADB\Xperia_5\*"
+SectionEnd
+
+Section /o "Xperia Ace Driver" SEC67
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Ace"
+  File /r "Drivers\ADB\Xperia_Ace\*"
+SectionEnd
+
+Section /o "Xperia 8 Driver" SEC68
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_8"
+  File /r "Drivers\ADB\Xperia_8\*"
+SectionEnd
+
 Section -Post
+
   SetOutPath "$TEMP\Flashtool"
   File "Drivers\dpinst.xml"
   File "Drivers\DPInst32.exe"
   File "Drivers\DPInst64.exe"
   
-${If} ${RunningX64}
-     ExecWait '"$TEMP\Flashtool\dpinst64.exe"'
+  IfFileExists "$TEMP\Flashtool\GordonGate\Sony_Mobile_Software_Update_Drivers_x64_Setup.msi" 0 file_not_found
+  ExecWait 'msiexec /i "$TEMP\Flashtool\GordonGate\Sony_Mobile_Software_Update_Drivers_x64_Setup.msi"'
+file_not_found:
+  IfFileExists "$TEMP\Flashtool\ADB\*.*" 0 dir_not_found
+  ${If} ${RunningX64}
+        ExecWait '"$TEMP\Flashtool\dpinst64.exe"'
   ${Else}
      ExecWait '"$TEMP\Flashtool\dpinst32.exe"'
   ${EndIf}
+dir_not_found:
   RmDir /r  "$TEMP\Flashtool"
+
 SectionEnd
 
 ; Section descriptions
@@ -441,6 +468,10 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC62} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC63} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC64} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC65} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC66} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC67} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC68} ""
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function .onInit

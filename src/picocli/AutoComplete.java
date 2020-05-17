@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import picocli.CommandLine.*;
@@ -92,16 +94,23 @@ public class AutoComplete {
     /**
      * CLI command class for generating completion script.
      */
-    @Command(name = "picocli.AutoComplete", mixinStandardHelpOptions = true,
+    @Command(name = "picocli.AutoComplete", mixinStandardHelpOptions = true, showAtFileInUsageHelp = true,
             version = "picocli.AutoComplete " + CommandLine.VERSION, sortOptions = false,
             description = "Generates a bash completion script for the specified command class.",
             footerHeading = "%n@|bold System Properties:|@%n",
             footer = {"Set the following system properties to control the exit code of this program:",
-                    " \"@|yellow picocli.autocomplete.systemExitOnSuccess|@\" - call `System.exit(0)` when",
-                    "                                              execution completes normally",
-                    " \"@|yellow picocli.autocomplete.systemExitOnError|@\"   - call `System.exit(ERROR_CODE)`",
-                    "                                              when an error occurs",
-                    "If these system properties are not defined or have value \"false\", this program completes without terminating the JVM."
+                    "",
+                    "* `\"@|yellow picocli.autocomplete.systemExitOnSuccess|@\"`",
+                    "   call `System.exit(0)` when execution completes normally.",
+                    "* `\"@|yellow picocli.autocomplete.systemExitOnError|@\"`",
+                    "   call `System.exit(ERROR_CODE)` when an error occurs.",
+                    "",
+                    "If these system properties are not defined or have value \"false\", this program completes without terminating the JVM.",
+                    "",
+                    "Example",
+                    "-------",
+                    "  java -cp \"myapp.jar;picocli-4.2.1-SNAPSHOT.jar\" \\",
+                    "              picocli.AutoComplete my.pkg.MyClass"
             },
             exitCodeListHeading = "%nExit Codes:%n",
             exitCodeList = {
@@ -109,8 +118,8 @@ public class AutoComplete {
                     "1:Usage error: user input for the command was incorrect, " +
                             "e.g., the wrong number of arguments, a bad flag, " +
                             "a bad syntax in a parameter, etc.",
-                    "2:The specified command script exists (Specify --force to overwrite).",
-                    "3:The specified completion script exists (Specify --force to overwrite).",
+                    "2:The specified command script exists (Specify `--force` to overwrite).",
+                    "3:The specified completion script exists (Specify `--force` to overwrite).",
                     "4:An exception occurred while generating the completion script."
             },
             exitCodeOnInvalidInput = EXIT_CODE_INVALID_INPUT,
@@ -118,7 +127,7 @@ public class AutoComplete {
     private static class App implements Callable<Integer> {
 
         @Parameters(arity = "1", description = "Fully qualified class name of the annotated " +
-                "@Command class to generate a completion script for.")
+                "`@Command` class to generate a completion script for.")
         String commandLineFQCN;
 
         @Option(names = {"-c", "--factory"}, description = "Optionally specify the fully qualified class name of the custom factory to use to instantiate the command class. " +
@@ -126,8 +135,8 @@ public class AutoComplete {
         String factoryClass;
 
         @Option(names = {"-n", "--name"}, description = "Optionally specify the name of the command to create a completion script for. " +
-                "When omitted, the annotated class @Command 'name' attribute is used. " +
-                "If no @Command 'name' attribute exists, '<CLASS-SIMPLE-NAME>' (in lower-case) is used.")
+                "When omitted, the annotated class `@Command(name = \"...\")` attribute is used. " +
+                "If no `@Command(name = ...)` attribute exists, '<CLASS-SIMPLE-NAME>' (in lower-case) is used.")
         String commandName;
 
         @Option(names = {"-o", "--completionScript"},
@@ -203,10 +212,10 @@ public class AutoComplete {
     @Command(name = "generate-completion", version = "generate-completion " + CommandLine.VERSION,
             mixinStandardHelpOptions = true,
             description = {
-                "Generate bash/zsh completion script for ${PARENT-COMMAND-NAME}.",
-                "Run the following command to give `${PARENT-COMMAND-NAME}` TAB completion in the current shell:",
+                "Generate bash/zsh completion script for ${PARENT-COMMAND-NAME:-the parent command of this command}.",
+                "Run the following command to give `${PARENT-COMMAND-NAME:-$PARENTCOMMAND}` TAB completion in the current shell:",
                 "",
-                "source <(${PARENT-COMMAND-NAME} ${COMMAND-NAME})",
+                "  source <(${PARENT-COMMAND-NAME:-$PARENTCOMMAND} ${COMMAND-NAME})",
                 ""},
             optionListHeading = "Options:%n",
             helpCommand = true
@@ -595,7 +604,18 @@ public class AutoComplete {
         String flagOptionNames = optionNames(filter(commandSpec.options(), new BooleanArgFilter()));
         List<OptionSpec> argOptionFields = filter(commandSpec.options(), negate(new BooleanArgFilter()));
         String argOptionNames = optionNames(argOptionFields);
-        String commands = concat(" ", new ArrayList<String>(commandLine.getSubcommands().keySet())).trim();
+
+        Set<String> subCommands = commandLine.getSubcommands().keySet();
+        // If the command is a HelpCommand, append parent subcommands to the autocompletion list.
+        if (commandLine.getParent() != null && commandLine.getCommand() instanceof HelpCommand) {
+            subCommands = new LinkedHashSet<String>(subCommands);
+            for (CommandLine subCommandLine : commandLine.getParent().getSubcommands().values()) {
+                if (commandLine == subCommandLine) { continue; }  // Skip the HelpCommand itself
+                if (subCommandLine.getCommandSpec().usageMessage().hidden()) { continue; } // #887 skip hidden subcommands
+                subCommands.add(subCommandLine.getCommandName());
+            }
+        }
+        String commands = concat(" ", new ArrayList<String>(subCommands)).trim();
 
         // Generate the header: the function declaration, CURR_WORD, PREV_WORD and COMMANDS, FLAG_OPTS and ARG_OPTS.
         StringBuilder buff = new StringBuilder(1024);
