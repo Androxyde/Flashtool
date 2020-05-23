@@ -21,6 +21,12 @@
 	<property name="version" value="0.9.28.0"/>
 	<property name="progtime" value="18-11-2019 21:30:00"/>
 
+        <property name="lib.dir"     value="../libs"/>
+
+        <path id="classpath">
+            <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        </path>
+
 	<target name="all" depends="core release"/>
 	
 	<target name="clean">
@@ -41,11 +47,11 @@
             	<attribute name="Internal-Date" value="${progtime}"/>
             	<attribute name="Internal-Channel" value="release"/>
             </manifest>
-        	<fileset dir="../bin" includes="/gui/ressources/icons/**"/>
+            <fileset dir="../bin" includes="gui/ressources/icons/**/*,gui/ressources/*gif" />
         </jar>
     </target>
 
-	<target name="core release" depends="clean, main_lib, ressources, Windowsbinaries, Linuxbinaries, Macbinaries">
+	<target name="core release" depends="clean, compile, main_lib, ressources, Windowsbinaries, Linuxbinaries, Macbinaries">
         <mkdir dir ="../../Deploy/FlashTool"/>
         <mkdir dir ="../../Deploy/FlashTool/custom/"/>
         <mkdir dir ="../../Deploy/FlashTool/custom/root"/>
@@ -74,6 +80,15 @@
 	    </copy>
     </target>
 
+   <target name="compile">
+    	<delete dir="../bin"/>
+        <mkdir dir="../bin"/>
+	<copy todir="../bin/">
+	    	<fileset dir="../src" includes="**" excludes="**/*java"/>
+	</copy>
+        <javac srcdir="../src" destdir="../bin" classpathref="classpath"/>
+    </target>
+
 	<target name="main_lib">
         <jar destfile="../../Deploy/FlashTool/x10flasher.jar">
             <manifest>
@@ -84,7 +99,7 @@
                	<attribute name="Internal-Date" value="${progtime}"/>
                	<attribute name="Internal-Channel" value="release"/>
             </manifest>
-        	<fileset dir="../bin" excludes="/gui/ressources/icons/**"/>
+        	<fileset dir="../bin" excludes="gui/ressources/icons/**,gui/ressources/*gif"/>
         </jar>
 	</target>
 

@@ -54,6 +54,10 @@
 	<classpathentry kind="lib" path="libs/log4j-api-2.13.3.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.13.3.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.13.3.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-14-openjdk-14.0.1.7-2.rolling.fc32.x86_64">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
