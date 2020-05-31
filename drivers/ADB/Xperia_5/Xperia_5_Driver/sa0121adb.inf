@@ -1,0 +1,128 @@
+;**************************************************************************
+;
+; sa0121adb.inf   -- Sony sa0121 ADB Interface Driver
+;
+;**************************************************************************
+
+[Version]
+Signature           = "$Windows NT$"
+Class               = sa0121AdbDeviceClass
+ClassGuid           = {C935B159-2A52-469f-81F9-426C52536915}
+Provider            = %ProviderName%
+DriverVer           = 01/21/2019,2.0.0010.30042
+CatalogFile.NTx86   = sa0121adb86.cat
+CatalogFile.NTamd64 = sa0121adba64.cat
+
+;
+; This section seems to be required for WinUsb driver installation.
+; If this section is removed the installer will report an error
+; "Required section not found in INF file".
+;
+[ClassInstall32]
+Addreg = sa0121UsbClassReg
+
+[sa0121UsbClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-1
+
+[Manufacturer]
+%ProviderName% = AdbDevice, NTx86, NTamd64
+
+[AdbDevice.NTx86]
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_3205
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5205&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8205&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_D205&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_3206
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5206&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8206&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_D206&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_3208
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5208&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8208&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_D208&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_320A
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_520A&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_820A&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_D20A&MI_02
+
+
+[AdbDevice.NTamd64]
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_3205
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5205&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8205&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_D205&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_3206
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5206&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8206&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_D206&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_3208
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_5208&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_8208&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_D208&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_320A
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_520A&MI_01
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_820A&MI_02
+%CompositeAdbInterface%     = USB_Install, USB\VID_0FCE&PID_D20A&MI_02
+
+
+
+[USB_Install]
+Include = winusb.inf
+Needs   = WINUSB.NT
+
+[USB_Install.Services]
+Include     = winusb.inf
+AddService  = WinUSB,0x00000002,WinUSB_ServiceInstall
+
+[WinUSB_ServiceInstall]
+DisplayName     = %WinUSB_SvcDesc%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WinUSB.sys
+
+[USB_Install.Wdf]
+KmdfService = WINUSB, WinUSB_Install
+
+[WinUSB_Install]
+KmdfLibraryVersion  = 1.9
+
+[USB_Install.HW]
+AddReg  = Dev_AddReg
+
+[Dev_AddReg]
+HKR,,DeviceInterfaceGUIDs,0x10000,"{F72FE0D4-CBCB-407d-8814-9ED673D0DD6B}"
+
+[USB_Install.CoInstallers]
+AddReg    = CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WdfCoInstaller01009.dll,WdfCoInstaller","WinUSBCoInstaller2.dll"
+
+[CoInstallers_CopyFiles]
+WinUSBCoInstaller2.dll
+WdfCoInstaller01009.dll
+
+[DestinationDirs]
+CoInstallers_CopyFiles=11
+
+[SourceDisksNames]
+1 = %DISK_NAME%,,,\i386
+2 = %DISK_NAME%,,,\amd64
+
+[SourceDisksFiles.x86]
+WinUSBCoInstaller2.dll  = 1
+WdfCoInstaller01009.dll = 1
+
+[SourceDisksFiles.amd64]
+WinUSBCoInstaller2.dll  = 2
+WdfCoInstaller01009.dll = 2
+
+[Strings]
+ProviderName                = "Sony"
+CompositeAdbInterface       = "Sony sa0121 ADB Interface Driver"
+WinUSB_SvcDesc              = "Sony sa0121 ADB Interface"
+DISK_NAME                   = "Sony sa0121 ADB Interface Installation disk"
+ClassName                   = "Sony sa0121"
