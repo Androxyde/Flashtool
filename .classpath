@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="libs/jsr305-3.0.2.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.55.jar"/>
 	<classpathentry kind="lib" path="libs/proxy-vole-1.0.6-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="libs/icu4j-64.2.jar"/>
 	<classpathentry kind="lib" path="libs/jarchivelib-1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.osgi_2.2.0.v20190425-2127.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.sftp_2.2.0.v20190425-2127.jar"/>
@@ -19,9 +18,6 @@
 	<classpathentry kind="lib" path="libs/jdom2-2.0.6.jar"/>
 	<classpathentry kind="lib" path="libs/lz4-java-1.7.1.jar"/>
 	<classpathentry kind="lib" path="libs/apk-parser-2.6.10.jar"/>
-	<classpathentry kind="lib" path="libs/bcpg-jdk15on-1.64.jar"/>
-	<classpathentry kind="lib" path="libs/bcpkix-jdk15on-1.64.jar"/>
-	<classpathentry kind="lib" path="libs/bcprov-jdk15on-1.64.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.jobs_3.10.700.v20200106-1020.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.commands_3.9.700.v20191217-1850.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.app_1.4.400.v20191212-0743.jar"/>
@@ -54,6 +50,11 @@
 	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.13.3.jar"/>
 	<classpathentry kind="lib" path="libs/xstream-1.4.12.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.7.jar"/>
+	<classpathentry kind="lib" path="libs/bcpg-jdk15on-165.jar"/>
+	<classpathentry kind="lib" path="libs/bcpkix-jdk15on-165.jar"/>
+	<classpathentry kind="lib" path="libs/bcprov-jdk15on-165.jar"/>
+	<classpathentry kind="lib" path="libs/icu4j-67.1.jar"/>
+	<classpathentry kind="lib" path="libs/bigdoc-0.3.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>

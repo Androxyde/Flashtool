@@ -110,42 +110,13 @@ public class CommandFlasher implements Flasher {
     	logger.info("Reading phone properties");
     	phoneprops = new Properties();
     	try {
-	    	getVar("max-download-size");
-	    	getVar("version");
-	    	getVar("version-bootloader");
-	    	getVar("version-baseband");
-	    	getVar("product");
-	    	getVar("serialno");
-	    	getVar("secure");
-	    	getVar("Sector-size");
-	    	getVar("Version-sony");
-	    	getVar("USB-version");
-	    	getVar("max-download-size");
-	    	getVar("Loader-version");
-	    	getVar("Phone-id");
-	    	getVar("Device-id");
-	    	getVar("Rooting-status");
-	    	getVar("Sector-size");
-	    	getVar("Ufs-info");
-	    	getVar("Emmc-info");
-	    	getVar("Default-security");
-	    	getVar("Platform-id");
-	    	getVar("Keystore-counter");
-	    	getVar("Security-state");
-	    	getVar("S1-root");
-	    	getVar("Sake-root");
-	    	getVar("Battery");
-	    	getVar("Frp-partition");
-	    	getVar("Stored-security-state");
-	    	getVar("Keystore-xcs");
-	    	getRootKeyHash();
+    		getVar("product");
 	    	phoneprops.setProperty("swrelease", new String(readTA(2, 2202).getUnitData()));
 	    	phoneprops.setProperty("customization", new String(readTA(2, 2205).getUnitData()));
 	    	phoneprops.setProperty("model",new String(readTA(2, 2210).getUnitData()));
 	    	phoneprops.setProperty("serial", new String(readTA(2, 4900).getUnitData()));
 	    	phoneprops.setProperty("lastflashdate",new String(readTA(2, 10021).getUnitData()));
-	    	getLog();
-	    	getUfsInfo();
+	    	getRootKeyHash();
     	} catch (Exception e) {
     	}    	
     }
@@ -183,10 +154,6 @@ public class CommandFlasher implements Flasher {
     	if (_bundle.getMaxBuffer()==7) {
     		USBFlash.setUSBBufferSize(32*1024);
     		logger.info("USB buffer size set to 32K");
-    	}
-    	if (simulate) {
-    		currentdevice=_bundle.getDevice();
-    		return true;
     	}
     	boolean found=false;
     	try {
@@ -367,8 +334,14 @@ public class CommandFlasher implements Flasher {
     			else if (action.equals("Get-ufs-info")) {
     				getUfsInfo();
     			}
+    			else if (action.equals("Get-emmc-info")) {
+    				getEmmcInfo();
+    			}
     			else if (action.equals("Get-gpt-info")) {
     				GetGptInfo(Integer.parseInt(param1));
+    			}
+    			else if (action.equals("getvar")) {
+    				getVar(param1);
     			}
     		}
     		setFlashState(false);
@@ -413,7 +386,6 @@ public class CommandFlasher implements Flasher {
 		logger.info("Parsing boot delivery");
 		XMLBootDelivery xml = _bundle.getXMLBootDelivery();
 		Vector<XMLBootConfig> found = new Vector<XMLBootConfig>();
-		if (!_bundle.simulate()) {    			
     		Enumeration<XMLBootConfig> e = xml.getBootConfigs();
     		while (e.hasMoreElements()) {
     			// We get matching bootconfig from all configs
@@ -423,18 +395,6 @@ public class CommandFlasher implements Flasher {
     				found.add(bc);
     			}
     		}
-		}
-		else {
-			Enumeration<XMLBootConfig> e = xml.getBootConfigs();
-    		while (e.hasMoreElements()) {
-    			// We get matching bootconfig from all configs
-    			XMLBootConfig bc=e.nextElement();
-    			if (bc.getName().startsWith("COMMERCIAL")) {
-    				found.add(bc);
-    				break;
-    			}
-    		}
-		}
 		if (found.size()==0)
 			throw new BootDeliveryException ("Found no matching boot config. Aborting");
 		// if found more thant 1 config
@@ -477,7 +437,6 @@ public class CommandFlasher implements Flasher {
 
 	public void getUfsInfo()  throws IOException,X10FlashException {
     	logger.info("Sending Get-ufs-info");
-    	if (!_bundle.simulate()) {
     		String command = "Get-ufs-info";
     		USBFlash.write(command.getBytes());
     		CommandPacket reply = USBFlash.readCommandReply(true);
@@ -497,6 +456,7 @@ public class CommandFlasher implements Flasher {
              );		
 
     		try {
+    			System.out.println(HexDump.toHex(reply.getDataArray()));
     			JBBPBitInputStream stream = new JBBPBitInputStream(new ByteArrayInputStream(reply.getDataArray()));
     			ufs_infos = ufs_parser.parse(stream).mapTo(new UfsInfos());
     			ufs_infos.setSectorSize(Integer.parseInt(getPhoneProperty("Sector-size")));
@@ -509,17 +469,24 @@ public class CommandFlasher implements Flasher {
     			ufs_infos=null;
     		}
 
-    	}		
+	}
+
+	public void getEmmcInfo()  throws IOException,X10FlashException {
+    	logger.info("Sending Get-emmc-info");
+    		String command = "Get-emmc-info";
+    		USBFlash.write(command.getBytes());
+    		CommandPacket reply = USBFlash.readCommandReply(true);
+    		logger.info("   Get-emmc-info status : "+reply.getResponse());
+    		System.out.println(HexDump.toHex(reply.getDataArray()));  
 	}
 
 	public void GetGptInfo(int partnumber)  throws IOException,X10FlashException {
     	logger.info("Sending Get-gpt-info:"+partnumber);
-    	if (!_bundle.simulate()) {
-    		String command = "Get-gpt-info:"+partnumber;
-    		USBFlash.write(command.getBytes());
-    		CommandPacket reply = USBFlash.readCommandReply(true);
-    		logger.info("   Get-gpt-info status : "+reply.getResponse());
-    	}
+    	String command = "Get-gpt-info:"+partnumber;
+    	USBFlash.write(command.getBytes());
+    	CommandPacket reply = USBFlash.readCommandReply(true);
+    	logger.info("   Get-gpt-info status : "+reply.getResponse());
+    	System.out.println(HexDump.toHex(reply.getDataArray()));
 	}
 
 	public void setActive(String name)  throws IOException,X10FlashException {
@@ -533,27 +500,26 @@ public class CommandFlasher implements Flasher {
 	}
 	
 	public void setFlashState(boolean ongoing) throws IOException,X10FlashException {
-		if (ongoing) {
-    		writeTA(2,new TAUnit(10100,new byte[] {0x01}));
-		}
-		else {
-    	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    	  	TAUnit tau = new TAUnit(10021, BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
-    	  	writeTA(2,tau);
-    		writeTA(2,new TAUnit(10100,new byte[] {0x00}));
+		if (!_bundle.simulate()) {
+			if (ongoing) {
+	    		writeTA(2,new TAUnit(10100,new byte[] {0x01}));
+			}
+			else {
+	    	  	String result = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	    	  	TAUnit tau = new TAUnit(10021, BytesUtil.concatAll(result.getBytes(), new byte[] {0x00}));
+	    	  	writeTA(2,tau);
+	    		writeTA(2,new TAUnit(10100,new byte[] {0x00}));
+			}
 		}
 	}
 
 	public String getLog() throws X10FlashException, IOException {
 		logger.info("Sending Getlog");
-		if (!_bundle.simulate()) {
-			String command = "Getlog";
-			USBFlash.write(command.getBytes());
-			CommandPacket reply = USBFlash.readCommandReply(true);
-			logger.info("   Getlog status : "+reply.getResponse());
-			return reply.getMessage();
-		}
-		return "";
+		String command = "Getlog";
+		USBFlash.write(command.getBytes());
+		CommandPacket reply = USBFlash.readCommandReply(true);
+		logger.info("   Getlog status : "+reply.getResponse());
+		return reply.getMessage();
 	}
 
 	public TAUnit readTA(int partition, int unit) throws X10FlashException, IOException {
@@ -561,7 +527,6 @@ public class CommandFlasher implements Flasher {
 	}
 
 	public TAUnit readTA(int partition, int unit, boolean withlog) throws X10FlashException, IOException {
-		if (!_bundle.simulate()) {
 			String command = "Read-TA:"+partition+":"+unit;
 			if (withlog)
 				logger.info("Sending "+command);
@@ -576,9 +541,8 @@ public class CommandFlasher implements Flasher {
 			else {
 				if (withlog)
 					logger.warn("   "+reply.getMessage()+" ( Hex unit value "+HexDump.toHex(unit)+" )");
+				return null;
 			}
-		}
-		return null;
 	}
 
 	public void writeTA(int partition, TAUnit unit) throws X10FlashException, IOException {
@@ -607,16 +571,17 @@ public class CommandFlasher implements Flasher {
 	}
 
 	public void getVar(String key) throws X10FlashException, IOException {
-		if (!_bundle.simulate()) {
-			String command = "getvar:"+key;
-			logger.info("Sending "+command);
-			USBFlash.write(command.getBytes());
-			CommandPacket reply = USBFlash.readCommandReply(true);
-			logger.info("   getvar status : "+reply.getResponse());
-			if (reply.getResponse().equals("FAIL")) {
-				logger.warn("   "+reply.getMessage());
-			}
-			phoneprops.setProperty(key,reply.getMessage());
+		String command = "getvar:"+key;
+		logger.info("Sending "+command);
+		USBFlash.write(command.getBytes());
+		CommandPacket reply = USBFlash.readCommandReply(true);
+		logger.info("   getvar status : "+reply.getResponse());
+		if (reply.getResponse().equals("FAIL")) {
+			logger.warn("   "+reply.getMessage());
+		}
+		phoneprops.setProperty(key,reply.getMessage());
+		if (key.equals("Sector-size")) {
+			System.out.println(Integer.parseInt(getPhoneProperty("Sector-size")));
 		}
 	}
 
@@ -631,21 +596,17 @@ public class CommandFlasher implements Flasher {
 
     public void powerDown() throws IOException, X10FlashException {
     	logger.info("Sending powerdown");
-    	if (!_bundle.simulate()) {
-			USBFlash.write(("powerdown").getBytes());
-			CommandPacket p = USBFlash.readCommandReply(true);
-			logger.info("   powerdown status : "+p.getResponse());
-    	}
+		USBFlash.write(("powerdown").getBytes());
+		CommandPacket p = USBFlash.readCommandReply(true);
+		logger.info("   powerdown status : "+p.getResponse());
     }
 
     public void getRootKeyHash() throws IOException, X10FlashException {
     	logger.info("Sending Get-root-key-hash");
-    	if (!_bundle.simulate()) {
-    		USBFlash.write("Get-root-key-hash".getBytes());
-    		CommandPacket p = USBFlash.readCommandReply(true);
-    		logger.info("   Get-root-key-hash status : "+p.getResponse());
-    		phoneprops.setProperty("root-key-hash", HexDump.toHex(p.getDataArray()).replaceAll(" ", ""));
-    	}
+		USBFlash.write("Get-root-key-hash".getBytes());
+		CommandPacket p = USBFlash.readCommandReply(true);
+		logger.info("   Get-root-key-hash status : "+p.getResponse());
+		phoneprops.setProperty("root-key-hash", HexDump.toHex(p.getDataArray()).replaceAll(" ", ""));
     }
 
 	public void repartition(SinFile sin, int partnumber) throws IOException, X10FlashException {
@@ -749,7 +710,7 @@ public class CommandFlasher implements Flasher {
 					}
 					else {
 						try {
-							Thread.sleep(50);} catch (Exception e) {}
+							Thread.sleep(10);} catch (Exception e) {}
 					}
 				}
 				if (!_bundle.simulate()) {

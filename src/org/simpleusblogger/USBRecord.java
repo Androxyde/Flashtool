@@ -1,30 +1,30 @@
 package org.simpleusblogger;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
-
-import org.apache.commons.compress.utils.IOUtils;
 import org.util.BytesUtil;
+import org.util.HexDump;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
+import com.igormaznitsa.jbbp.io.JBBPByteOrder;
 import com.igormaznitsa.jbbp.mapper.Bin;
 
 public class USBRecord {
+
 	@Bin long irp;
-	@Bin byte[] reserved1;
+	@Bin int unknown1;
+	@Bin int recordid;
 	@Bin int recordlength;
 	@Bin byte[] reserved2;
 	USBHeader header=null;
 	USBHeaderExtended headerext=null;
 	public int recnum=0;
 	public byte[] data=null;
-	
-	
+
 
 	public void parse(JBBPBitInputStream usbStream) throws IOException {
+
 		JBBPParser USBHeaderParser = JBBPParser.prepare(
 				"<short usb_Length;" +
 				"<short usb_Function;" +
@@ -54,11 +54,12 @@ public class USBRecord {
 				"<short wIndex;" + 
 				"<short wLength;"
 				);
-		
 		if (recordlength>=128) {
 			header = USBHeaderParser.parse(usbStream).mapTo(new USBHeader());
 		}
-		else usbStream.skip(recordlength);
+		else {
+			usbStream.skip(recordlength);
+		}
 		try {
 			if (header.usb_Length!=128) {
 				header=null;

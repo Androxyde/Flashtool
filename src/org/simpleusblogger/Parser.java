@@ -8,11 +8,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.riversun.bigdoc.bin.BigFileSearcher;
 import org.sinfile.parsers.SinFile;
+import org.util.BytesUtil;
 import org.util.HexDump;
+import org.util.StreamSearcher;
 
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
@@ -25,7 +30,8 @@ public class Parser {
 
 	static JBBPParser USBRecord = JBBPParser.prepare(
 			"<long irp;" +
-			"byte[8] reserved1;" +  
+			"<int unknown1;" + 
+			"<int recordid;" + 
 			"<int recordlength;" + 
 			"byte[28] reserved2;"
 			);
@@ -56,54 +62,54 @@ public class Parser {
 		  	FlashCommand ccurrent=null;
 		  	byte[] downloadContent = null;
 			USBHeader head=null;
-			FileInputStream fin=new FileInputStream(usblog);
+			FileInputStream fin=new FileInputStream(new File(usblog));
 			boolean s1parser=true;
-			
+			StreamSearcher searcher = new StreamSearcher(BytesUtil.getBytes("10D030970EACFFFF"));
+			long startpos=searcher.search(new FileInputStream(new File(usblog)));
 			JBBPBitInputStream usbStream = new JBBPBitInputStream(fin);
-			usbStream.skip(52);
+			usbStream.skip(startpos);
 			int recnum = 0;
 			HashSet<String> set = new HashSet<String>();
 			while (usbStream.hasAvailableData()) {
 				USBRecord rec = readRecord(usbStream);
-				
 				rec.recnum=recnum++;				
 				if (rec.header==null) continue;
 				if (rec.header.usb_UsbDeviceHandle==0) continue;
 				if (rec.getDataString().contains("getvar") && s1parser==true) s1parser=false;
 				if (s1parser==false) {
 					if (rec.getDirection().equals("WRITE")) {
-						if (rec.getDataString().startsWith("signature") ||
-								rec.getDataString().startsWith("Write-TA") ||
-								rec.getDataString().startsWith("Read-TA") ||
-								rec.getDataString().startsWith("getvar") ||
-								rec.getDataString().equals("powerdown") ||
-								rec.getDataString().equals("Sync") ||
-								rec.getDataString().startsWith("Getlog") ||
-								rec.getDataString().startsWith("set_active") ||
-								rec.getDataString().startsWith("Get-ufs-info") ||
-								rec.getDataString().startsWith("Get-gpt-info") ||
-								rec.getDataString().startsWith("flash") ||
-								rec.getDataString().startsWith("erase") ||
-								rec.getDataString().startsWith("download") ||
-								rec.getDataString().startsWith("Repartition") ||
-								rec.getDataString().startsWith("Get-root-key-hash")) {
-							//System.out.println(rec.getDirection()+" : "+rec.getDataString());
-							// 
-						}
-						else {
+						if (!rec.getDataString().equals("signature") &&
+								!rec.getDataString().startsWith("Write-TA:") &&
+								!rec.getDataString().startsWith("Read-TA:") &&
+								!rec.getDataString().startsWith("getvar:") &&
+								!rec.getDataString().equals("powerdown") &&
+								!rec.getDataString().equals("Sync") &&
+								!rec.getDataString().equals("Get-emmc-info") &&
+								!rec.getDataString().startsWith("Getlog") &&
+								!rec.getDataString().startsWith("set_active:") &&
+								!rec.getDataString().startsWith("Get-ufs-info") &&
+								!rec.getDataString().startsWith("Get-gpt-info:") &&
+								!rec.getDataString().startsWith("flash:") &&
+								!rec.getDataString().startsWith("erase:") &&
+								!rec.getDataString().startsWith("download:") &&
+								!rec.getDataString().startsWith("Repartition:") &&
+								!rec.getDataString().equals("Get-root-key-hash")) {
+							//if (rec.getDataString().length()<200) 
+								//System.out.println(rec.getDirection()+" : "+rec.getDataString());
 							downloadContent = rec.getData();
 						}
-						if (rec.getDataString().startsWith("signature") ||
-								rec.getDataString().startsWith("Write-TA") ||
-								rec.getDataString().startsWith("Read-TA") ||
-								rec.getDataString().startsWith("getvar") ||
+						if (rec.getDataString().equals("signature") ||
+								rec.getDataString().startsWith("Write-TA:") ||
+								rec.getDataString().startsWith("Read-TA:") ||
+								rec.getDataString().startsWith("getvar:") ||
 								rec.getDataString().equals("powerdown") ||
 								rec.getDataString().equals("Sync") ||
+								rec.getDataString().equals("Get-emmc-info") ||
 								rec.getDataString().startsWith("Getlog") ||
-								rec.getDataString().startsWith("set_active") ||
+								rec.getDataString().startsWith("set_active:") ||
 								rec.getDataString().startsWith("Get-ufs-info") ||
-								rec.getDataString().startsWith("Get-gpt-info") ||
-								rec.getDataString().startsWith("Get-root-key-hash")) {
+								rec.getDataString().startsWith("Get-gpt-info:") ||
+								rec.getDataString().equals("Get-root-key-hash")) {
 							
 							if (ccurrent!=null) {
 								session.addCommand(ccurrent);

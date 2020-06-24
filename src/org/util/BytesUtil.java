@@ -128,9 +128,9 @@ public class BytesUtil {
 	    return hex.toString();
 	 }
 
-	public static Byte[] getBytes(String hexString) {
+	public static byte[] getBytes(String hexString) {
 	    int len = hexString.length();
-	    Byte[] data = new Byte[len / 2];
+	    byte[] data = new byte[len / 2];
 	    for (int i = 0; i < len; i += 2) {
 	        data[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4)
 	                             + Character.digit(hexString.charAt(i+1), 16));

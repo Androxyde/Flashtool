@@ -43,10 +43,7 @@ public class FlashJob extends Job {
     		if (_bundle.open()) {
     			logger.info("Please connect your device into flashmode.");
     			String result = "";
-    			if (!_bundle.simulate()) {
-    				result = (String)WidgetTask.openWaitDeviceForFlashmode(_shell);
-    			}
-    			else result="OK";
+    			result = (String)WidgetTask.openWaitDeviceForFlashmode(_shell);
     			if (result.equals("OK")) {
     				flash = FlasherFactory.getFlasher(_bundle, _shell);
     				if (flash.open())
