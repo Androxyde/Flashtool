@@ -38,7 +38,7 @@ public class WaitForXperiFirm extends Dialog {
 		createContents();
 		
 		Label lblNewLabel = new Label(shlWaiForXperiFirm, SWT.NONE);
-		lblNewLabel.setBounds(10, 32, 323, 16);
+		lblNewLabel.setBounds(10, 32, 323, 18);
 		lblNewLabel.setText("Please wait until the end of process");
 		shlWaiForXperiFirm.open();
 		shlWaiForXperiFirm.layout();
@@ -68,7 +68,7 @@ public class WaitForXperiFirm extends Dialog {
 		    	  }
 		      }
 		    });
-		shlWaiForXperiFirm.setSize(365, 128);
+		shlWaiForXperiFirm.setSize(365, 130);
 		shlWaiForXperiFirm.setText("Running XperiFirm");
 		XperiFirmJob xj = new XperiFirmJob("XperiFirm");
 		xj.setShell(shlWaiForXperiFirm);

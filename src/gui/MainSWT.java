@@ -124,6 +124,7 @@ public class MainSWT {
 		guimode=true;
 		shlSonyericsson.open();
 		shlSonyericsson.layout();
+		shlSonyericsson.setSize(800, 450);
 		boolean folderexists = (new File(OS.getWorkDir()+File.separator+"firmwares").exists() || new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices").exists());
 		if (folderexists) {
 			HomeSelector hs = new HomeSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
@@ -220,7 +221,7 @@ public class MainSWT {
 		      }
 		    });
 
-		shlSonyericsson.setSize(794, 451);
+		shlSonyericsson.setSize(800, 460);
 		shlSonyericsson.setText("Sony Mobile Flasher by Androxyde");
 		shlSonyericsson.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/flash_512.png"));
 		shlSonyericsson.setLayout(new FormLayout() );

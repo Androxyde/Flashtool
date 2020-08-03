@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -368,6 +370,9 @@ public class SinFile {
 				name = name.substring(0,extpos);
 			return name;
 		}
+		if (extpos!=-1) {
+			name = name.substring(0,extpos);
+		}
 		if (name.indexOf("_AID")!=-1)
 			name = name.substring(0, name.indexOf("_AID"));
 		if (name.indexOf("_PLATFORM")!=-1)
@@ -382,14 +387,12 @@ public class SinFile {
 			name = name.substring(0, name.indexOf("_X_Boot"));
 		if (name.indexOf("-LUN")!=-1)
 			name = name.substring(0, name.indexOf("-LUN")+5);
+		if (name.toUpperCase().matches("^PARTITION-IMAGE_[0-9]+"))
+			name = "partition-image";
 		if (name.startsWith("elabel"))
 			name = "elabel";
 		//if (name.indexOf("-")!=-1)
 			//name = name.substring(0, name.indexOf("-"));
-		extpos = name.lastIndexOf(".");
-		if (extpos!=-1) {
-			name = name.substring(0,extpos);
-		}
 		return name;
 	}
 

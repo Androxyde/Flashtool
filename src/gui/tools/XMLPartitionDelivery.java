@@ -2,10 +2,13 @@ package gui.tools;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.jdom2.input.SAXBuilder;
 import org.sinfile.parsers.SinFile;
 
 import flashsystem.CommandFlasher.UfsInfos;
+import gui.FileSelector;
 
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -70,7 +73,7 @@ public class XMLPartitionDelivery {
 		}
 	}
 
-	public String getMatchingFile(String match) {
+	public String getMatchingFile(String match, Shell shell) {
 		Vector<String> matched = new Vector<String>();
 		Iterator<String> file = partitions.iterator();
 		while(file.hasNext()) {
@@ -81,8 +84,13 @@ public class XMLPartitionDelivery {
 		if (matched.size()==1)
 			return (folder.length()>0?folder+"/":"")+matched.get(0);
 		if (ufs_infos==null) {
-			if (matched.size()>0)
-				return (folder.length()>0?folder+"/":"")+matched.get(0);			
+			if (matched.size()>0) {
+				String result=WidgetTask.getPartition(matched, shell);
+				if (result.length() > 0) 
+					return (folder.length()>0?folder+"/":"")+result;
+				else
+					return null;
+			}
 		}
 		return null;
 	}

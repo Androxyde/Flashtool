@@ -1,11 +1,14 @@
 package gui.tools;
 
 import java.util.Properties;
+import java.util.Vector;
+
 import gui.BLUWizard;
 import gui.BootModeSelector;
 import gui.BundleCreator;
 import gui.BusyboxSelector;
 import gui.DeviceSelector;
+import gui.FileSelector;
 import gui.LoaderSelect;
 import gui.RootPackageSelector;
 import gui.TABackupSelector;
@@ -92,6 +95,22 @@ public class WidgetTask {
 					public void run() {
 			    		DeviceSelector dial = new DeviceSelector(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
 			    		Object obj = dial.open();
+			    		if (obj==null) obj = new String("");
+						res.setResult(obj);
+						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String getPartition(Vector<String> vFiles, final Shell parent) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+						FileSelector fs = new FileSelector(parent, SWT.PRIMARY_MODAL | SWT.SHEET);
+			    		Object obj = fs.open(vFiles);
 			    		if (obj==null) obj = new String("");
 						res.setResult(obj);
 						

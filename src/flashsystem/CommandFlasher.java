@@ -299,7 +299,7 @@ public class CommandFlasher implements Flasher {
     			}
     			else if (action.equals("Repartition")) {
    					if (pd!=null) {
-						String file = pd.getMatchingFile(SinFile.getShortName(param2));
+						String file = pd.getMatchingFile(SinFile.getShortName(param2), _curshell);
 						if (file!=null) {
 	    					SinFile sin =new SinFile(new File(file));
 	    					repartition(sin,Integer.parseInt(param1));
@@ -456,7 +456,6 @@ public class CommandFlasher implements Flasher {
              );		
 
     		try {
-    			System.out.println(HexDump.toHex(reply.getDataArray()));
     			JBBPBitInputStream stream = new JBBPBitInputStream(new ByteArrayInputStream(reply.getDataArray()));
     			ufs_infos = ufs_parser.parse(stream).mapTo(new UfsInfos());
     			ufs_infos.setSectorSize(Integer.parseInt(getPhoneProperty("Sector-size")));
@@ -465,7 +464,6 @@ public class CommandFlasher implements Flasher {
     			} catch (Exception streamclose ) {}
     		}
     		catch (Exception e) {
-    			System.out.println(e.getMessage());
     			ufs_infos=null;
     		}
 
@@ -477,7 +475,6 @@ public class CommandFlasher implements Flasher {
     		USBFlash.write(command.getBytes());
     		CommandPacket reply = USBFlash.readCommandReply(true);
     		logger.info("   Get-emmc-info status : "+reply.getResponse());
-    		System.out.println(HexDump.toHex(reply.getDataArray()));  
 	}
 
 	public void GetGptInfo(int partnumber)  throws IOException,X10FlashException {
@@ -486,7 +483,6 @@ public class CommandFlasher implements Flasher {
     	USBFlash.write(command.getBytes());
     	CommandPacket reply = USBFlash.readCommandReply(true);
     	logger.info("   Get-gpt-info status : "+reply.getResponse());
-    	System.out.println(HexDump.toHex(reply.getDataArray()));
 	}
 
 	public void setActive(String name)  throws IOException,X10FlashException {
@@ -580,9 +576,6 @@ public class CommandFlasher implements Flasher {
 			logger.warn("   "+reply.getMessage());
 		}
 		phoneprops.setProperty(key,reply.getMessage());
-		if (key.equals("Sector-size")) {
-			System.out.println(Integer.parseInt(getPhoneProperty("Sector-size")));
-		}
 	}
 
 	public void sync() throws IOException, X10FlashException {
