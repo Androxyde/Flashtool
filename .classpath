@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="libs/ini4j-0.5.4.jar"/>
 	<classpathentry kind="lib" path="libs/jsr305-3.0.2.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.55.jar"/>
-	<classpathentry kind="lib" path="libs/proxy-vole-1.0.6-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/jarchivelib-1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/bsh-3.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-2.0.0-alpha1.jar"/>
@@ -15,7 +14,6 @@
 	<classpathentry kind="lib" path="libs/lz4-java-1.7.1.jar"/>
 	<classpathentry kind="lib" path="libs/apk-parser-2.6.10.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.commands_3.9.700.v20191217-1850.jar"/>
-	<classpathentry kind="lib" path="libs/jbbp-2.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/commons-compress-1.20.jar"/>
 	<classpathentry kind="lib" path="libs/javax.activation-1.2.1-20181010.205421-2_modular.jar"/>
 	<classpathentry kind="lib" path="libs/jaxb-api-2.4.0-b180830.0359.jar"/>
@@ -56,6 +54,8 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.ssh.jsch_5.8.0.202006091008-r.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.6.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.6.0.jar"/>
+	<classpathentry kind="lib" path="libs/jbbp-2.0.2.jar"/>
+	<classpathentry kind="lib" path="libs/proxy-vole-1.0.10.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/emmanuel/git/Deploy/FlashTool/x10flasher_native/udev"/>
