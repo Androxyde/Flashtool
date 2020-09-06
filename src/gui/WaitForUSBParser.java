@@ -44,7 +44,7 @@ public class WaitForUSBParser extends Dialog {
 		createContents(file,folder);
 		
 		Label lblNewLabel = new Label(shlWaiForDevicesSync, SWT.NONE);
-		lblNewLabel.setBounds(10, 32, 323, 15);
+		lblNewLabel.setBounds(10, 32, 323, 20);
 		lblNewLabel.setText("Please wait until the end of process");
 		shlWaiForDevicesSync.open();
 		shlWaiForDevicesSync.layout();
@@ -74,7 +74,7 @@ public class WaitForUSBParser extends Dialog {
 		    	  }
 		      }
 		    });
-		shlWaiForDevicesSync.setSize(365, 128);
+		shlWaiForDevicesSync.setSize(365, 130);
 		shlWaiForDevicesSync.setText("Parsing USB log");
 		USBParseJob pj = new USBParseJob("USB log parser");
 		pj.setFilename(file);

@@ -64,10 +64,11 @@ public class Parser {
 			USBHeader head=null;
 			FileInputStream fin=new FileInputStream(new File(usblog));
 			boolean s1parser=true;
-			StreamSearcher searcher = new StreamSearcher(BytesUtil.getBytes("10D030970EACFFFF"));
+			
+			StreamSearcher searcher = new StreamSearcher(BytesUtil.getBytes("1B0000001300000000000000"));
 			long startpos=searcher.search(new FileInputStream(new File(usblog)));
 			JBBPBitInputStream usbStream = new JBBPBitInputStream(fin);
-			usbStream.skip(startpos);
+			usbStream.skip(startpos-48);
 			int recnum = 0;
 			HashSet<String> set = new HashSet<String>();
 			while (usbStream.hasAvailableData()) {
