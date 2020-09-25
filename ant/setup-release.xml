@@ -32,7 +32,7 @@
 		    <arg value="--compress=2"/>
 		    <arg value="--strip-debug"/>
 		    <arg value="--add-modules"/>
-			<arg value="java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.naming,java.prefs,java.rmi,java.scripting,java.security.jgss,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.attach,jdk.jdi,jdk.unsupported,jdk.xml.dom,jdk.security.auth,jdk.security.jgss,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.management,jdk.scripting.nashorn"/>
+			<arg value="java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.naming,java.prefs,java.rmi,java.scripting,java.security.jgss,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.attach,jdk.jdi,jdk.unsupported,jdk.xml.dom,jdk.security.auth,jdk.security.jgss,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.management"/>
 		</exec>        
 		<copy file="../jre/jce/local_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>
 		<copy file="../jre/jce/US_export_policy.jar" todir="../../Deploy/FlashTool/x10flasher_native/jre/lib/security"/>		
