@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="libs/ini4j-0.5.4.jar"/>
 	<classpathentry kind="lib" path="libs/jsr305-3.0.2.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.55.jar"/>
-	<classpathentry kind="lib" path="libs/jarchivelib-1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/bsh-3.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-2.0.0-alpha1.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-ext-2.0.0-alpha1.jar"/>
@@ -16,15 +15,9 @@
 	<classpathentry kind="lib" path="libs/commons-compress-1.20.jar"/>
 	<classpathentry kind="lib" path="libs/javax.activation-1.2.1-20181010.205421-2_modular.jar"/>
 	<classpathentry kind="lib" path="libs/jaxb-api-2.4.0-b180830.0359.jar"/>
-	<classpathentry kind="lib" path="libs/delight-nashorn-sandbox-0.1.28.jar"/>
-	<classpathentry kind="lib" path="libs/js-beautify-1.9.0.jar"/>
-	<classpathentry kind="lib" path="libs/guava-29.0-jre.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-api-2.13.3.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.13.3.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.13.3.jar"/>
-	<classpathentry kind="lib" path="libs/bcpg-jdk15on-165.jar"/>
-	<classpathentry kind="lib" path="libs/bcpkix-jdk15on-165.jar"/>
-	<classpathentry kind="lib" path="libs/bcprov-jdk15on-165.jar"/>
 	<classpathentry kind="lib" path="libs/icu4j-67.1.jar"/>
 	<classpathentry kind="lib" path="libs/bigdoc-0.3.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.6.0.jar"/>
@@ -56,7 +49,15 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.forms_3.10.0.v20200727-0948.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.workbench_3.120.0.v20200829-1411.jar"/>
 	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.115.0.v20200831-1002.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry kind="lib" path="libs/guava-30.0-jre.jar"/>
+	<classpathentry kind="lib" path="libs/bcpg-jdk15on-166.jar"/>
+	<classpathentry kind="lib" path="libs/bcpkix-jdk15on-166.jar"/>
+	<classpathentry kind="lib" path="libs/bcprov-ext-jdk15on-166.jar"/>
+	<classpathentry kind="lib" path="libs/bcprov-jdk15on-166.jar"/>
+	<classpathentry kind="lib" path="libs/delight-nashorn-sandbox-0.1.31.jar"/>
+	<classpathentry kind="lib" path="libs/jarchivelib-1.1.0.jar"/>
+	<classpathentry kind="lib" path="libs/picocli-4.5.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-15-openjdk-15.0.0.36-1.rolling.fc33.x86_64">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/emmanuel/git/Deploy/FlashTool/x10flasher_native/udev"/>
 			<attribute name="module" value="true"/>
