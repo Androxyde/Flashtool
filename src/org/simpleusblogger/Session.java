@@ -27,7 +27,13 @@ public class Session {
 		commands.add(c);
 		if (c.getCommand().startsWith("Read-TA")) {
 			if (c.getUnit()==2210) model=new String(c.getReply());
-			if (c.getUnit()==2202) version = new String(c.getReply()).split("_")[1];
+			if (c.getUnit()==2202) {
+				try {
+				version = new String(c.getReply()).split("_")[1];
+				} catch (ArrayIndexOutOfBoundsException npe1 ) {
+					version = new String(c.getReply());	
+				}
+			}
 		}
 	}
 
