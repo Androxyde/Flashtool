@@ -333,6 +333,8 @@ public class CommandFlasher implements Flasher {
     			}
     			else if (action.equals("Get-ufs-info")) {
     				getUfsInfo();
+    				if (pd != null)
+    				pd.setUfsInfos(ufs_infos);
     			}
     			else if (action.equals("Get-emmc-info")) {
     				getEmmcInfo();
@@ -357,7 +359,6 @@ public class CommandFlasher implements Flasher {
 			pd = _bundle.getXMLPartitionDelivery();
 			if (pd!=null) {
 				pd.setFolder(_bundle.getPartitionDelivery().getFolder());
-				pd.setUfsInfos(ufs_infos);
 			}
 			else {
 				String result = WidgetTask.openYESNOBox(_curshell, "No partition delivery included.\nMaybe a bundle created with a previous release of Flashtool.\nDo you want to continue ?");
@@ -453,7 +454,7 @@ public class CommandFlasher implements Flasher {
                   + "   int length; "
                   + "   byte[lunlength-19] lundata; "
                   + "}"
-             );		
+             );
 
     		try {
     			JBBPBitInputStream stream = new JBBPBitInputStream(new ByteArrayInputStream(reply.getDataArray()));
@@ -463,7 +464,8 @@ public class CommandFlasher implements Flasher {
     			   stream.close();
     			} catch (Exception streamclose ) {}
     		}
-    		catch (Exception e) {
+    		catch (Exception e)   {
+    			logger.error("Error parsing Get-ufs-info reply");
     			ufs_infos=null;
     		}
 
@@ -796,18 +798,22 @@ public class CommandFlasher implements Flasher {
 				while (icateg.hasNext()) {
 					BundleEntry bent = icateg.next();
 					if (bent.getName().toUpperCase().endsWith(".TA")) {
-						if (!bent.getName().toUpperCase().contains("SIM"))
-						try {
-							TAFileParser ta = new TAFileParser(new File(bent.getAbsolutePath()));
-							Iterator<TAUnit> i = ta.entries().iterator();
-							while (i.hasNext()) {
-								TAUnit ent = i.next();
-								TaPartition2.put(ent.getUnitNumber(),ent);
+						if (!bent.getName().toUpperCase().contains("SIMLOCK")) {
+							try {
+								TAFileParser ta = new TAFileParser(new File(bent.getAbsolutePath()));
+								Iterator<TAUnit> i = ta.entries().iterator();
+								while (i.hasNext()) {
+									TAUnit ent = i.next();
+									if  (ent.getUnitNumber()!=2010)
+										TaPartition2.put(ent.getUnitNumber(),ent);
+									else
+										logger.warn("Unit "+ent.getUnitNumber()+" is ignored");
+								}
+							}
+							catch (TAFileParseException tae) {
+								logger.error("Error parsing TA file. Skipping");
 							}
 						}
-						catch (TAFileParseException tae) {
-				    		logger.error("Error parsing TA file. Skipping");
-				    	}
 						else {
 							logger.warn("File "+bent.getName()+" is ignored");
 						}

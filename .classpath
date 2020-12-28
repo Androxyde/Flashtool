@@ -21,42 +21,42 @@
 	<classpathentry kind="lib" path="libs/jna-platform-5.6.0.jar"/>
 	<classpathentry kind="lib" path="libs/jbbp-2.0.2.jar"/>
 	<classpathentry kind="lib" path="libs/proxy-vole-1.0.10.jar"/>
-	<classpathentry kind="lib" path="libs/xstream-1.4.13.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.8.0.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.osgi_2.4.0.v20200318-1614.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.sftp_2.4.0.v20200319-1547.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.commands_3.9.700.v20191217-1850.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.contenttype_3.7.800.v20200724-0804.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.jobs_3.10.800.v20200421-0950.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.runtime_3.19.0.v20200724-1004.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.app_1.5.0.v20200717-0620.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.common_3.13.0.v20200828-1034.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.preferences_3.8.0.v20200422-1833.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.registry_3.9.0.v20200625-1425.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jface_3.21.0.v20200821-1458.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jface.text_3.16.400.v20200807-0831.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit_5.9.0.202009080501-r.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.archive_5.9.0.202009080501-r.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.http.apache_5.9.0.202009080501-r.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.ssh.apache_5.9.0.202009080501-r.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.ssh.jsch_5.9.0.202009080501-r.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.osgi_3.16.0.v20200828-0759.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.swt_3.115.0.v20200831-1002.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.text_3.10.300.v20200807-0831.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.forms_3.10.0.v20200727-0948.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.workbench_3.120.0.v20200829-1411.jar"/>
-	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.115.0.v20200831-1002.jar"/>
-	<classpathentry kind="lib" path="libs/guava-30.0-jre.jar"/>
-	<classpathentry kind="lib" path="libs/bcpg-jdk15on-166.jar"/>
-	<classpathentry kind="lib" path="libs/bcpkix-jdk15on-166.jar"/>
-	<classpathentry kind="lib" path="libs/bcprov-ext-jdk15on-166.jar"/>
-	<classpathentry kind="lib" path="libs/bcprov-jdk15on-166.jar"/>
 	<classpathentry kind="lib" path="libs/delight-nashorn-sandbox-0.1.31.jar"/>
 	<classpathentry kind="lib" path="libs/jarchivelib-1.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/picocli-4.5.2.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-api-2.14.0.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.14.0.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.14.0.jar"/>
+	<classpathentry kind="lib" path="libs/guava-30.1-jre.jar"/>
+	<classpathentry kind="lib" path="libs/xstream-1.4.15.jar"/>
+	<classpathentry kind="lib" path="libs/bcpg-jdk15on-168.jar"/>
+	<classpathentry kind="lib" path="libs/bcpkix-jdk15on-168.jar"/>
+	<classpathentry kind="lib" path="libs/bcprov-ext-jdk15on-168.jar"/>
+	<classpathentry kind="lib" path="libs/bcprov-jdk15on-168.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.commands_3.9.800.v20201021-1339.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.jobs_3.10.1000.v20200909-1312.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.runtime_3.20.0.v20201027-1526.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.common_3.14.0.v20201102-2053.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.preferences_3.8.100.v20201102-2042.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.registry_3.10.0.v20201107-1818.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jface_3.22.0.v20201106-0834.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jface.text_3.16.500.v20201112-1545.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit_5.10.0.202012080955-r.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.archive_5.10.0.202012080955-r.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.http.apache_5.10.0.202012080955-r.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.ssh.apache_5.10.0.202012080955-r.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.ssh.jsch_5.10.0.202012080955-r.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.osgi_3.16.100.v20201030-1916.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.swt_3.115.100.v20201202-1103.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.text_3.10.400.v20200925-0557.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.forms_3.11.0.v20201025-0656.jar"/>
+	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.workbench_3.122.0.v20201122-1345.jar"/>
+	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.115.100.v20201202-1103.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/emmanuel/git/Deploy/FlashTool/x10flasher_native/udev"/>
