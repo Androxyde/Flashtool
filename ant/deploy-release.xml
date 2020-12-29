@@ -18,8 +18,8 @@
 	    <os family="windows" />
 	</condition>
 
-	<property name="version" value="0.9.31.0"/>
-	<property name="progtime" value="26-09-2020 18:00:00"/>
+	<property name="version" value="0.9.32.0"/>
+	<property name="progtime" value="27-12-2020 19:30:00"/>
 
         <property name="lib.dir"     value="../libs"/>
 
