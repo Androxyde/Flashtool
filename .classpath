@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="libs/javax.annotation_1.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/javax.inject_1.0.0.jar"/>
-	<classpathentry kind="lib" path="libs/ini4j-0.5.4.jar"/>
 	<classpathentry kind="lib" path="libs/jsr305-3.0.2.jar"/>
 	<classpathentry kind="lib" path="libs/jsch-0.1.55.jar"/>
 	<classpathentry kind="lib" path="libs/bsh-3.0.0-SNAPSHOT.jar"/>
@@ -15,11 +14,9 @@
 	<classpathentry kind="lib" path="libs/commons-compress-1.20.jar"/>
 	<classpathentry kind="lib" path="libs/javax.activation-1.2.1-20181010.205421-2_modular.jar"/>
 	<classpathentry kind="lib" path="libs/jaxb-api-2.4.0-b180830.0359.jar"/>
-	<classpathentry kind="lib" path="libs/icu4j-67.1.jar"/>
 	<classpathentry kind="lib" path="libs/bigdoc-0.3.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.6.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.6.0.jar"/>
-	<classpathentry kind="lib" path="libs/jbbp-2.0.2.jar"/>
 	<classpathentry kind="lib" path="libs/proxy-vole-1.0.10.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.8.0.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.osgi_2.4.0.v20200318-1614.jar"/>
@@ -28,7 +25,6 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.app_1.5.0.v20200717-0620.jar"/>
 	<classpathentry kind="lib" path="libs/delight-nashorn-sandbox-0.1.31.jar"/>
 	<classpathentry kind="lib" path="libs/jarchivelib-1.1.0.jar"/>
-	<classpathentry kind="lib" path="libs/picocli-4.5.2.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-api-2.14.0.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.14.0.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.14.0.jar"/>
@@ -57,6 +53,10 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.forms_3.11.0.v20201025-0656.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.workbench_3.122.0.v20201122-1345.jar"/>
 	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.115.100.v20201202-1103.jar"/>
+	<classpathentry kind="lib" path="libs/icu4j-68.2.jar"/>
+	<classpathentry kind="lib" path="libs/ini4j-0.5.5-2.jar"/>
+	<classpathentry kind="lib" path="libs/jbbp-2.0.3.jar"/>
+	<classpathentry kind="lib" path="libs/picocli-4.6.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/emmanuel/git/Deploy/FlashTool/x10flasher_native/udev"/>
