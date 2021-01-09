@@ -3,6 +3,8 @@ package flashsystem;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,6 +37,7 @@ import org.util.HexDump;
 import com.Ostermiller.util.CircularByteBuffer;
 import com.igormaznitsa.jbbp.JBBPParser;
 import com.igormaznitsa.jbbp.io.JBBPBitInputStream;
+import com.igormaznitsa.jbbp.io.JBBPByteOrder;
 import com.igormaznitsa.jbbp.mapper.Bin;
 import flashsystem.io.USBFlash;
 import gui.tools.WidgetTask;
@@ -77,6 +80,156 @@ public class CommandFlasher implements Flasher {
 	
 	}
 
+	public class EmmcInfos {
+
+		 @Bin public byte[] not_used;
+		 @Bin public byte[] crc;
+		 @Bin public byte[] ecc;
+		 @Bin public byte[] file_format;
+		 @Bin public byte[] tmp_write_protect;
+		 @Bin public byte[] perm_write_protect;
+		 @Bin public byte[] copy;
+		 @Bin public byte[] file_format_group;
+		 @Bin public byte[] content_prop_app;
+		 @Bin public byte[] reserved1;
+		 @Bin public byte[] write_bl_partial;
+		 @Bin public byte[] write_bl_length;
+		 @Bin public byte[] r2w_factor;
+		 @Bin public byte[] default_ecc;
+		 @Bin public byte[] wp_grp_enable;
+		 @Bin public byte[] wp_grp_size;
+		 @Bin public byte[] erase_grp_mult;
+		 @Bin public byte[] erase_grp_size;
+		 @Bin public byte[] c_size_mult;
+		 @Bin public byte[] wdd_w_curr_max;
+		 @Bin public byte[] wdd_w_curr_min;
+		 @Bin public byte[] wdd_r_curr_max;
+		 @Bin public byte[] wdd_r_curr_min;
+		 @Bin public byte[] c_size;
+		 @Bin public byte[] reserved2;
+		 @Bin public byte[] dsr_imp;
+		 @Bin public byte[] read_blk_misalign;
+		 @Bin public byte[] write_blk_misalign;
+		 @Bin public byte[] read_blk_partial;
+		 @Bin public byte[] read_bl_length;
+		 @Bin public byte[] ccc;
+		 @Bin public byte[] tran_speed;
+		 @Bin public byte[] nsac;
+		 @Bin public byte[] taac;
+		 @Bin public byte[] reserved3;
+		 @Bin public byte[] spec_vers;
+		 @Bin public byte[] csd_structure;
+		 @Bin public byte[] reserved4;
+		 @Bin public byte[] sec_bad_blk_mgmnt;
+		 @Bin public byte[] reserved5;
+		 @Bin public byte[] enh_start_addr;
+		 @Bin public byte[] enh_size_mult;
+		 @Bin public byte[] gp_size_mult;
+		 @Bin public byte[] PARTITION_SETTING_COMPLETED;
+		 @Bin public byte[] PARTITIONS_ATTRIBUTE;
+		 @Bin public byte[] MAX_ENH_SIZE_MULT;
+		 @Bin public byte[] PARTITIONING_SUPPORT;
+		 @Bin public byte[] HPI_MGMT;
+		 @Bin public byte[] RST_n_FUNCTION;
+		 @Bin public byte[] BKOPS_EN;
+		 @Bin public byte[] BKOPS_START;
+		 @Bin public byte[] RESERVED6;
+		 @Bin public byte[] WR_REL_PARAM;
+		 @Bin public byte[] WR_REL_SET;
+		 @Bin public byte[] RPMB_SIZE_MULT;
+		 @Bin public byte[] FW_CONFIG;
+		 @Bin public byte[] RESERVED7;
+		 @Bin public byte[] USER_WP;
+		 @Bin public byte[] RESERVED8;
+		 @Bin public byte[] BOOT_WP;
+		 @Bin public byte[] ERASE_GROUP_DEF;
+		 @Bin public byte[] RESERVED9;
+		 @Bin public byte[] BOOT_BUS_WIDTH;
+		 @Bin public byte[] BOOT_CONFIG_PROT;
+		 @Bin public byte[] PARTITION_CONFIG;
+		 @Bin public byte[] RESERVED10;
+		 @Bin public byte[] ERASED_MEM_CONT;
+		 @Bin public byte[] RESERVED11;
+		 @Bin public byte[] BUS_WIDTH;
+		 @Bin public byte[] RESERVED12;
+		 @Bin public byte[] HS_TIMING;
+		 @Bin public byte[] RESERVED13;
+		 @Bin public byte[] POWER_CLASS;
+		 @Bin public byte[] RESERVED14;
+		 @Bin public byte[] CMD_SET_REV;
+		 @Bin public byte[] RESERVED15;
+		 @Bin public byte[] CMD_SET;
+		 @Bin public byte[] RESERVED16;
+		 @Bin public byte[] EXT_CSD_REV;
+		 @Bin public byte[] RESERVED17;
+		 @Bin public byte[] CSD_STRUCTURE1;
+		 @Bin public byte[] RESERVED18;
+		 @Bin public byte[] CARD_TYPE;
+		 @Bin public byte[] RESERVED19;
+		 @Bin public byte[] OUT_OF_INTERRUPT_TIME;
+		 @Bin public byte[] PARTITION_SWITCH_TIME;
+		 @Bin public byte[] PWR_CL_52_195;
+		 @Bin public byte[] PWR_CL_26_195;
+		 @Bin public byte[] PWR_CL_52_360;
+		 @Bin public byte[] PWR_CL_26_360;
+		 @Bin public byte[] RESERVED20;
+		 @Bin public byte[] MIN_PERF_R_4_26;
+		 @Bin public byte[] MIN_PERF_W_4_26;
+		 @Bin public byte[] MIN_PERF_R_8_26_4_52;
+		 @Bin public byte[] MIN_PERF_W_8_26_4_52;
+		 @Bin public byte[] MIN_PERF_R_8_52;
+		 @Bin public byte[] MIN_PERF_W_8_52;
+		 @Bin public byte[] RESERVED21;
+		 @Bin public int SEC_COUNT;
+		 @Bin public byte[] RESERVED22;
+		 @Bin public byte[] S_A_TIMEOUT;
+		 @Bin public byte[] RESERVED23;
+		 @Bin public byte[] S_C_VCCQ;
+		 @Bin public byte[] S_C_VCC;
+		 @Bin public byte[] HC_WP_GRP_SIZE;
+		 @Bin public byte[] REL_WR_SEC_C;
+		 @Bin public byte[] ERASE_TIMEOUT_MULT;
+		 @Bin public byte[] HC_ERASE_GRP_SIZE;
+		 @Bin public byte[] ACC_SIZE;
+		 @Bin public byte[] BOOT_SIZE_MULT;
+		 @Bin public byte[] RESERVED24;
+		 @Bin public byte[] BOOT_INFO;
+		 @Bin public byte[] SEC_TRIM_MULT;
+		 @Bin public byte[] SEC_ERASE_MULT;
+		 @Bin public byte[] SEC_FEATURE_SUPPORT;
+		 @Bin public byte[] TRIM_MULT;
+		 @Bin public byte[] RESERVED25;
+		 @Bin public byte[] MIN_PERF_DDR_R_8_52;
+		 @Bin public byte[] MIN_PERF_DDR_W_8_52;
+		 @Bin public byte[] RESERVED26;
+		 @Bin public byte[] PWR_CL_DDR_52_195;
+		 @Bin public byte[] PWR_CL_DDR_52_360;
+		 @Bin public byte[] RESERVED27;
+		 @Bin public byte[] INI_TIMEOUT_AP;
+		 @Bin public byte[] CORRECTLY_PRG_SECTORS_NUM;
+		 @Bin public byte[] BKOPS_STATUS;
+		 @Bin public byte[] RESERVED28;
+		 @Bin public byte[] BKOPS_SUPPORT;
+		 @Bin public byte[] HPI_FEATURES;
+		 @Bin public byte[] S_CMD_SET;
+		 @Bin public byte[] RESERVED29;
+	
+		long sectorSize=0;
+		
+		public void setSectorSize(long sectorsize) {
+			sectorSize=sectorsize;
+		}
+	
+		public long getDiskSize() {
+			return (long)SEC_COUNT*sectorSize/1024L;
+		}
+		
+	    public Object newInstance(Class<?> klazz){
+	       return klazz == Lun.class ? new Lun() : null;
+	    }
+	
+	}
+
 	private Bundle _bundle;
     private String currentdevice = "";
     private String serial = "";
@@ -87,6 +240,7 @@ public class CommandFlasher implements Flasher {
     private XMLPartitionDelivery pd=null;
     private Properties  phoneprops = null;
     private UfsInfos ufs_infos = null;
+    private EmmcInfos emmc_infos = null;
     
     public CommandFlasher(Bundle bundle, Shell shell) {
     	_bundle=bundle;
@@ -334,10 +488,12 @@ public class CommandFlasher implements Flasher {
     			else if (action.equals("Get-ufs-info")) {
     				getUfsInfo();
     				if (pd != null)
-    				pd.setUfsInfos(ufs_infos);
+    					pd.setUfsInfos(ufs_infos);
     			}
     			else if (action.equals("Get-emmc-info")) {
     				getEmmcInfo();
+       				if (pd != null)
+        				pd.setEmmcInfos(emmc_infos);
     			}
     			else if (action.equals("Get-gpt-info")) {
     				GetGptInfo(Integer.parseInt(param1));
@@ -477,6 +633,153 @@ public class CommandFlasher implements Flasher {
     		USBFlash.write(command.getBytes());
     		CommandPacket reply = USBFlash.readCommandReply(true);
     		logger.info("   Get-emmc-info status : "+reply.getResponse());
+
+    		JBBPParser emmc_parser = JBBPParser.prepare(
+    				 "byte[1] not_used;"
+    		      + "byte[7] crc;"
+    			  + "byte[2] ecc;"
+    			  + "byte[2] file_format;"
+    			  + "byte[1] tmp_write_protect;"
+    			  + "byte[1] perm_write_protect;"
+    			  + "byte[1] copy;"
+    			  + "byte[1] file_format_group;"
+    			  + "byte[1] content_prop_app;"
+    			  + "byte[4] reserved1;"
+    			  + "byte[1] write_bl_partial;"
+    			  + "byte[4] write_bl_length;"
+    			  + "byte[3] r2w_factor;"
+    			  + "byte[2] default_ecc;"
+    			  + "byte[1] wp_grp_enable;"
+    			  + "byte[5] wp_grp_size;"
+    			  + "byte[5] erase_grp_mult;"
+    			  + "byte[5] erase_grp_size;"
+    			  + "byte[3] c_size_mult;"
+    			  + "byte[3] wdd_w_curr_max;"
+    			  + "byte[3] wdd_w_curr_min;"
+    			  + "byte[3] wdd_r_curr_max;"
+    			  + "byte[3] wdd_r_curr_min;"
+    			  + "byte[12] c_size;"
+    			  + "byte[2] reserved2;"
+    			  + "byte[1] dsr_imp;"
+    			  + "byte[1] read_blk_misalign;"
+    			  + "byte[1] write_blk_misalign;"
+    			  + "byte[1] read_blk_partial;"
+    			  + "byte[4] read_bl_length;"
+    			  + "byte[12] ccc;"
+    			  + "byte[8] tran_speed;"
+    			  + "byte[8] nsac;"
+    			  + "byte[8] taac;"
+    			  + "byte[2] reserved3;"
+    			  + "byte[4] spec_vers;"
+    			  + "byte[2] csd_structure;"
+    			  + "byte[6] reserved4;"
+    			  + "byte[1] sec_bad_blk_mgmnt;"
+    			  + "byte[1] reserved5;"
+    			  + "byte[4] enh_start_addr;"
+    			  + "byte[3] enh_size_mult;"
+    			  + "byte[12] gp_size_mult;"
+    			  + "byte[1] PARTITION_SETTING_COMPLETED;"
+    			  + "byte[1] PARTITIONS_ATTRIBUTE;"
+    			  + "byte[3] MAX_ENH_SIZE_MULT;"
+    			  + "byte[1] PARTITIONING_SUPPORT;"
+    			  + "byte[1] HPI_MGMT;"
+    			  + "byte[1] RST_n_FUNCTION;"
+    			  + "byte[1] BKOPS_EN;"
+    			  + "byte[1] BKOPS_START;"
+    			  + "byte[1] RESERVED6;"
+    			  + "byte[1] WR_REL_PARAM;"
+    			  + "byte[1] WR_REL_SET;"
+    			  + "byte[1] RPMB_SIZE_MULT;"
+    			  + "byte[1] FW_CONFIG;"
+    			  + "byte[1] RESERVED7;"
+    			  + "byte[1] USER_WP;"
+    			  + "byte[1] RESERVED8;"
+    			  + "byte[1] BOOT_WP;"
+    			  + "byte[1] ERASE_GROUP_DEF;"
+    			  + "byte[1] RESERVED9;"
+    			  + "byte[1] BOOT_BUS_WIDTH;"
+    			  + "byte[1] BOOT_CONFIG_PROT;"
+    			  + "byte[1] PARTITION_CONFIG;"
+    			  + "byte[1] RESERVED10;"
+    			  + "byte[1] ERASED_MEM_CONT;"
+    			  + "byte[1] RESERVED11;"
+    			  + "byte[1] BUS_WIDTH;"
+    			  + "byte[1] RESERVED12;"
+    			  + "byte[1] HS_TIMING;"
+    			  + "byte[1] RESERVED13;"
+    			  + "byte[1] POWER_CLASS;"
+    			  + "byte[1] RESERVED14;"
+    			  + "byte[1] CMD_SET_REV;"
+    			  + "byte[1] RESERVED15;"
+    			  + "byte[1] CMD_SET;"
+    			  + "byte[1] RESERVED16;"
+    			  + "byte[1] EXT_CSD_REV;"
+    			  + "byte[1] RESERVED17;"
+    			  + "byte[1] CSD_STRUCTURE1;"
+    			  + "byte[1] RESERVED18;"
+    			  + "byte[1] CARD_TYPE;"
+    			  + "byte[1] RESERVED19;"
+    			  + "byte[1] OUT_OF_INTERRUPT_TIME;"
+    			  + "byte[1] PARTITION_SWITCH_TIME;"
+    			  + "byte[1] PWR_CL_52_195;"
+    			  + "byte[1] PWR_CL_26_195;"
+    			  + "byte[1] PWR_CL_52_360;"
+    			  + "byte[1] PWR_CL_26_360;"
+    			  + "byte[1] RESERVED20;"
+    			  + "byte[1] MIN_PERF_R_4_26;"
+    			  + "byte[1] MIN_PERF_W_4_26;"
+    			  + "byte[1] MIN_PERF_R_8_26_4_52;"
+    			  + "byte[1] MIN_PERF_W_8_26_4_52;"
+    			  + "byte[1] MIN_PERF_R_8_52;"
+    			  + "byte[1] MIN_PERF_W_8_52;"
+    			  + "byte[1] RESERVED21;"
+                  + "<int SEC_COUNT;"
+    			  + "byte[1] RESERVED22;"
+    			  + "byte[1] S_A_TIMEOUT;"
+    			  + "byte[1] RESERVED23;"
+    			  + "byte[1] S_C_VCCQ;"
+    			  + "byte[1] S_C_VCC;"
+    			  + "byte[1] HC_WP_GRP_SIZE;"
+    			  + "byte[1] REL_WR_SEC_C;"
+    			  + "byte[1] ERASE_TIMEOUT_MULT;"
+    			  + "byte[1] HC_ERASE_GRP_SIZE;"
+    			  + "byte[1] ACC_SIZE;"
+    			  + "byte[1] BOOT_SIZE_MULT;"
+    			  + "byte[1] RESERVED24;"
+    			  + "byte[1] BOOT_INFO;"
+    			  + "byte[1] SEC_TRIM_MULT;"
+    			  + "byte[1] SEC_ERASE_MULT;"
+    			  + "byte[1] SEC_FEATURE_SUPPORT;"
+    			  + "byte[1] TRIM_MULT;"
+    			  + "byte[1] RESERVED25;"
+    			  + "byte[1] MIN_PERF_DDR_R_8_52;"
+    			  + "byte[1] MIN_PERF_DDR_W_8_52;"
+    			  + "byte[2] RESERVED26;"
+    			  + "byte[1] PWR_CL_DDR_52_195;"
+    			  + "byte[1] PWR_CL_DDR_52_360;"
+    			  + "byte[1] RESERVED27;"
+    			  + "byte[1] INI_TIMEOUT_AP;"
+    			  + "byte[4] CORRECTLY_PRG_SECTORS_NUM;"
+    			  + "byte[1] BKOPS_STATUS;"
+    			  + "byte[255] RESERVED28;"
+    			  + "byte[1] BKOPS_SUPPORT;"
+    			  + "byte[1] HPI_FEATURES;"
+    			  + "byte[1] S_CMD_SET;"
+    			  + "byte[7] RESERVED29;"
+             );
+
+    		try {
+    			JBBPBitInputStream stream = new JBBPBitInputStream(new ByteArrayInputStream(reply.getDataArray()));
+    			emmc_infos = emmc_parser.parse(stream).mapTo(new EmmcInfos());
+    			emmc_infos.setSectorSize(Integer.parseInt(getPhoneProperty("Sector-size")));
+    			try {
+    			   stream.close();
+    			} catch (Exception streamclose ) {}
+    		}
+        	catch (Exception e)   {
+        			logger.error("Error parsing Emmc-info reply");
+        			emmc_infos=null;
+        	}  
 	}
 
 	public void GetGptInfo(int partnumber)  throws IOException,X10FlashException {
