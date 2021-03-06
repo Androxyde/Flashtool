@@ -15,7 +15,6 @@
 	<classpathentry kind="lib" path="libs/javax.activation-1.2.1-20181010.205421-2_modular.jar"/>
 	<classpathentry kind="lib" path="libs/jaxb-api-2.4.0-b180830.0359.jar"/>
 	<classpathentry kind="lib" path="libs/bigdoc-0.3.0.jar"/>
-	<classpathentry kind="lib" path="libs/proxy-vole-1.0.10.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.8.0.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.osgi_2.4.0.v20200318-1614.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.sftp_2.4.0.v20200319-1547.jar"/>
@@ -57,6 +56,7 @@
 	<classpathentry kind="lib" path="libs/picocli-4.6.1.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.7.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.7.0.jar"/>
+	<classpathentry kind="lib" path="libs/proxy-vole-1.0.11.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/emmanuel/git/Deploy/FlashTool/x10flasher_native/udev"/>
