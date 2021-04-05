@@ -14,10 +14,7 @@ import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.JschConfigSessionFactory;
-import org.eclipse.jgit.transport.OpenSshConfig.Host;
-import org.eclipse.jgit.transport.SshSessionFactory;
-import com.jcraft.jsch.Session;
+
 
 public class DevicesGit {
 
@@ -28,12 +25,6 @@ public class DevicesGit {
     static final Logger logger = LogManager.getLogger(DevicesGit.class);
     
     public static void gitSync() throws IOException, InvalidRemoteException, org.eclipse.jgit.api.errors.TransportException, GitAPIException {
-    	SshSessionFactory.setInstance(new JschConfigSessionFactory() {
-    		  public void configure(Host hc, Session session) {
-    		    session.setConfig("StrictHostKeyChecking", "no");
-    		  };
-    		}
-    	);
     	if (openRepository()) {
     		pullRepository();
     	}
