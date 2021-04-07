@@ -125,7 +125,7 @@ public class OS {
 	
 	public static String getPathXperiFirm() {
 		String fsep = OS.getFileSeparator();
-		return new File(OS.getFolderUserFlashtool()+fsep+"XperiFirm.exe").getAbsolutePath();
+		return new File(OS.getFolderUserFlashtool()+fsep+"XperiFirm-"+(System.getProperty("sun.arch.data.model")=="64"?"x64":"x86")+".exe").getAbsolutePath();
 	}
 	
 	public static String getWorkDir() {

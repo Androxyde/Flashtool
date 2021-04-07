@@ -39,23 +39,24 @@ public class XperiFirm {
 	static final Logger logger = LogManager.getLogger(XperiFirm.class);
 	static Shell _parent;
 
+	private static final String ROOT_URL = "https://igoreisberg.com/xperifirm";
+	private static final String VERSION_URL = ROOT_URL+"/version.php";
+	private static final String DOWNLOAD_URL = ROOT_URL+"/download.php";
+
 	public static void run(Shell parent) throws IOException,JDOMException {
 			_parent = parent;
 			TextFile tf=null;
 			String version = null;
-			String downloadurl=null;
 			try {
-				File f = new File(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.exe.config");
-				if (f.exists()) f.delete();
-				version = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/version"),Charset.forName("UTF-8"));
-				version = version.substring(0,version.indexOf("|"));
-				downloadurl = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/download"),Charset.forName("UTF-8"));
+				new File(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.exe").delete();
+				new File(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.exe.config").delete();
+				version = IOUtils.toString(new URL(VERSION_URL),Charset.forName("UTF-8"));
 				tf = new TextFile(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.version","ISO8859-15");
 				tf.readLines();
 				if (!version.equals(tf.getLines().iterator().next())) {
 					tf.open(false);
 					logger.info("Downloading latest XperiFirm");
-					OS.unpackArchive(new URL(downloadurl), new File(OS.getFolderUserFlashtool()));
+					OS.unpackArchive(new URL(DOWNLOAD_URL), new File(OS.getFolderUserFlashtool()));
 					tf.write(version);
 					tf.close();
 				}
@@ -63,7 +64,7 @@ public class XperiFirm {
 				if (tf!=null) {
 					tf.open(false);
 					logger.info("Downloading latest XperiFirm");
-					OS.unpackArchive(new URL(downloadurl), new File(OS.getFolderUserFlashtool()));			tf.write(version);
+					OS.unpackArchive(new URL(DOWNLOAD_URL), new File(OS.getFolderUserFlashtool()));
 					tf.write(version);
 					tf.close();
 				}
