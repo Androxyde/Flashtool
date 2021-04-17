@@ -4,7 +4,6 @@
 	<classpathentry kind="lib" path="libs/javax.annotation_1.2.0.jar"/>
 	<classpathentry kind="lib" path="libs/javax.inject_1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/jsr305-3.0.2.jar"/>
-	<classpathentry kind="lib" path="libs/jsch-0.1.55.jar"/>
 	<classpathentry kind="lib" path="libs/bsh-3.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-2.0.0-alpha1.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-ext-2.0.0-alpha1.jar"/>
@@ -18,14 +17,11 @@
 	<classpathentry kind="lib" path="libs/commons-io-2.8.0.jar"/>
 	<classpathentry kind="lib" path="libs/delight-nashorn-sandbox-0.1.31.jar"/>
 	<classpathentry kind="lib" path="libs/jarchivelib-1.1.0.jar"/>
-	<classpathentry kind="lib" path="libs/guava-30.1-jre.jar"/>
-	<classpathentry kind="lib" path="libs/xstream-1.4.15.jar"/>
 	<classpathentry kind="lib" path="libs/bcpg-jdk15on-168.jar"/>
 	<classpathentry kind="lib" path="libs/bcpkix-jdk15on-168.jar"/>
 	<classpathentry kind="lib" path="libs/bcprov-ext-jdk15on-168.jar"/>
 	<classpathentry kind="lib" path="libs/bcprov-jdk15on-168.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.commands_3.9.800.v20201021-1339.jar"/>
-	<classpathentry kind="lib" path="libs/icu4j-68.2.jar"/>
 	<classpathentry kind="lib" path="libs/ini4j-0.5.5-2.jar"/>
 	<classpathentry kind="lib" path="libs/jbbp-2.0.3.jar"/>
 	<classpathentry kind="lib" path="libs/picocli-4.6.1.jar"/>
@@ -56,6 +52,9 @@
 	<classpathentry kind="lib" path="libs/log4j-api-2.14.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-core-2.14.1.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-slf4j18-impl-2.14.1.jar"/>
+	<classpathentry kind="lib" path="libs/guava-30.1.1-jre.jar"/>
+	<classpathentry kind="lib" path="libs/icu4j-69.1.jar"/>
+	<classpathentry kind="lib" path="libs/xstream-1.4.16.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/emmanuel/git/Deploy/FlashTool/x10flasher_native/udev"/>
