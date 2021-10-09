@@ -41,7 +41,9 @@ public class JUsb {
 					VendorId = "";
 					DeviceId = "";
 					Serial = "";
-					dev.destroy();
+					try {
+						dev.destroy();
+					} catch (Exception e1) {}
 				}
 			}
 		}
@@ -66,10 +68,12 @@ public class JUsb {
 	
 	public static UsbDevice getDevice() {
 		UsbDevice device=null;
+		try {
 		UsbDevList ulist = us.getDevices("0fce");
 	    if (ulist.size()> 0 ) {
 	    	device = ulist.get(0);
 	    }
+		} catch (LibUsbException e) {}
 	    return device;
 	}
 	
@@ -77,24 +81,26 @@ public class JUsb {
   	  	dev.openAndClaim(0);
 	}
 	
-	public static void writeBytes(byte[] towrite) throws Exception {
+	public static void writeBytes(byte[] towrite) throws LibUsbException {
 		dev.bulkWrite(BytesUtil.getReply(towrite, towrite.length));
 	}
 
 	public static void close() {
 		if (dev!=null)
-			dev.releaseAndClose();
+			try {
+				dev.releaseAndClose();
+			} catch (Exception e) {}
 	}
 	
-	public static byte[] readBytes() {
+	public static byte[] readBytes() throws LibUsbException {
 		return dev.bulkRead(0x1000);
 	}
 	
-	public static byte[] readBytes(int count) {
+	public static byte[] readBytes(int count) throws LibUsbException {
 		return dev.bulkRead(count);
 	}
 
-	public static byte[] readBytes(int count, int timeout) {
+	public static byte[] readBytes(int count, int timeout) throws LibUsbException {
 		return dev.bulkRead(count);
 	}
 

@@ -22,7 +22,7 @@ public class UsbDevice
   private byte default_endpoint_in=0, default_endpoint_out=0;
   private int nbconfig=0;
 
-  public UsbDevice(Pointer device) {
+  public UsbDevice(Pointer device) throws LibUsbException {
     this.usb_device = device;
     libusb_device_descriptor[] arr = new libusb_device_descriptor[1];
     int result = LibUsbLibrary.libUsb.libusb_get_device_descriptor(this.usb_device, arr);
@@ -56,7 +56,7 @@ public class UsbDevice
 	    refcount++;
 	  }
 
-  public void close() {
+  public void close() throws LibUsbException {
 	  if (handle != null) {
 		  releaseInterface();
 		  LibUsbLibrary.libUsb.libusb_close(this.handle);
@@ -99,12 +99,12 @@ public class UsbDevice
 	  claimInterface(iface);
   }
   
-  public void releaseAndClose() {
+  public void releaseAndClose() throws LibUsbException {
 	  releaseInterface();
 	  close();
   }
   
-  public String getSerial() {
+  public String getSerial() throws LibUsbException {
     byte[] buffer = new byte[256];
     if (handle!=null) {
     	int result = LibUsbLibrary.libUsb.libusb_get_string_descriptor_ascii(this.handle, this.iSerialNumber, buffer, buffer.length);
@@ -115,7 +115,7 @@ public class UsbDevice
     else return "";    
   }
 
-  public String getManufacturer() {
+  public String getManufacturer() throws LibUsbException {
     byte[] buffer = new byte[256];
     if (handle!=null) {
 	    int result = LibUsbLibrary.libUsb.libusb_get_string_descriptor_ascii(this.handle, this.iManufacturer, buffer, buffer.length);
@@ -173,7 +173,7 @@ public class UsbDevice
     return this.confs;
   }
 
-  public void claimInterface(int ifacenum) {
+  public void claimInterface(int ifacenum) throws LibUsbException {
 	  if (handle != null) {
 		  int result = LibUsbLibrary.libUsb.libusb_claim_interface(this.handle, ifacenum);
 		  UsbSystem.checkError("claim_interface", result);
@@ -188,7 +188,7 @@ public class UsbDevice
 	  }
   }
 
-  public void releaseInterface() {
+  public void releaseInterface() throws LibUsbException {
 	  if (handle != null && iface_claimed>=0) {
 		  int result = LibUsbLibrary.libUsb.libusb_release_interface(this.handle, iface_claimed);
 		  UsbSystem.checkError("release_interface", result);
@@ -200,15 +200,15 @@ public class UsbDevice
 	  }
   }
 
-  public byte[] bulkRead(int count) {
+  public byte[] bulkRead(int count) throws LibUsbException {
 	  if (handle != null) {
 		  byte[] data = new byte[count];
 		  int[] actual_length = new int[1];
-		  int result = LibUsbLibrary.libUsb.libusb_bulk_transfer(this.handle, default_endpoint_in, data, data.length, actual_length, 0);
+		  int result = LibUsbLibrary.libUsb.libusb_bulk_transfer(this.handle, default_endpoint_in, data, data.length, actual_length, 10000);
 		  int retries=0;
 		  if (result <0) {
 			  while (retries<2) {
-				  result = LibUsbLibrary.libUsb.libusb_bulk_transfer(this.handle, default_endpoint_in, data, data.length, actual_length, 0);
+				  result = LibUsbLibrary.libUsb.libusb_bulk_transfer(this.handle, default_endpoint_in, data, data.length, actual_length, 10000);
 				  if (result==0) retries=3;
 				  retries++;
 			  }			  
@@ -222,7 +222,7 @@ public class UsbDevice
 	  else return null;
   }
 
-  public void bulkWrite(byte[] data) {
+  public void bulkWrite(byte[] data) throws LibUsbException {
 	  if (handle != null) {
 		  int[] actual_length = new int[1];
 		  int result = LibUsbLibrary.libUsb.libusb_bulk_transfer(this.handle, default_endpoint_out, data, data.length, actual_length, 0);
@@ -243,7 +243,7 @@ public class UsbDevice
     return newreply;
   }
   
-  public void destroy() {
+  public void destroy() throws LibUsbException {
 	  close();
 	  if (refcount>0) {
 		  while (refcount>0)

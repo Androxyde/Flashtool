@@ -79,6 +79,8 @@ public class Parser {
 				if (rec.getDataString().contains("getvar") && s1parser==true) s1parser=false;
 				if (s1parser==false) {
 					if (rec.getDirection().equals("WRITE")) {
+						//if (rec.getDataString().matches("^[A-Za-z].*$") && rec.getData().length<100) 
+							//System.out.println(rec.getDirection()+" : "+rec.getDataString());
 						if (!rec.getDataString().equals("signature") &&
 								!rec.getDataString().startsWith("Write-TA:") &&
 								!rec.getDataString().startsWith("Read-TA:") &&
@@ -95,8 +97,6 @@ public class Parser {
 								!rec.getDataString().startsWith("download:") &&
 								!rec.getDataString().startsWith("Repartition:") &&
 								!rec.getDataString().equals("Get-root-key-hash")) {
-							//if (rec.getDataString().length()<200) 
-								//System.out.println(rec.getDirection()+" : "+rec.getDataString());
 							downloadContent = rec.getData();
 						}
 						if (rec.getDataString().equals("signature") ||
@@ -111,7 +111,6 @@ public class Parser {
 								rec.getDataString().startsWith("Get-ufs-info") ||
 								rec.getDataString().startsWith("Get-gpt-info:") ||
 								rec.getDataString().equals("Get-root-key-hash")) {
-							
 							if (ccurrent!=null) {
 								session.addCommand(ccurrent);
 							}							

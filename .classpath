@@ -55,7 +55,7 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.forms_3.11.100.v20210108-1139.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.workbench_3.122.200.v20210506-1640.jar"/>
 	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.116.100.v20210602-2209.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-16-openjdk-16.0.2.0.7-1.rolling.fc34.x86_64">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/emmanuel/git/Deploy/FlashTool/x10flasher_native/udev"/>
 			<attribute name="module" value="true"/>

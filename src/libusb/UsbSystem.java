@@ -43,7 +43,7 @@ public class UsbSystem {
 	  return version;
   }
   
-  public UsbDevList getDevices(String vendorid) {
+  public UsbDevList getDevices(String vendorid) throws LibUsbException{
 	  UsbDevList list = new UsbDevList();
     Pointer[] devs = new Pointer[1];
     int result = LibUsbLibrary.libUsb.libusb_get_device_list(null, devs);
@@ -130,47 +130,34 @@ public class UsbSystem {
     LibUsbLibrary.libUsb.libusb_exit(this.context);
   }
 
-  public static void checkError(String action, int error) {
+  public static void checkError(String action, int error) throws LibUsbException {
     switch (error) {
     case -1:
-        System.err.println(action + " : I/O Errors");
-        break;
+        throw new LibUsbException(action + " : I/O Errors");
     case -2:
-    	System.err.println(action + " : Invalid parameters");
-    	break;
+    	throw new LibUsbException(action + " : Invalid parameters");
     case -3:
-        System.err.println(action + " : Access error. No permission on device");
-        break;
+    	throw new LibUsbException(action + " : Access error. No permission on device");
     case -4:
-    	System.err.println(action + " : No device");
-    	break;
+    	throw new LibUsbException(action + " : No device");
     case -5:
-    	System.err.println(action + " : Device Not found");
-    	break;
+    	throw new LibUsbException(action + " : Device Not found");
     case -6:
-        System.err.println(action + " : Device busy");
-        break;
+    	throw new LibUsbException(action + " : Device busy");
     case -7:
-        System.err.println(action + " : Timeout");
-        break;
+    	throw new LibUsbException(action + " : Timeout");
     case -8:
-    	System.err.println(action + " : Overflow");
-    	break;
+    	throw new LibUsbException(action + " : Overflow");
     case -9:
-    	System.err.println(action + " : Pipe error");
-    	break;
+    	throw new LibUsbException(action + " : Pipe error");
     case -10:
-        System.err.println(action + " : Interrupted by user");
-        break;
+    	throw new LibUsbException(action + " : Interrupted by user");
     case -11:
-    	System.err.println(action + " : No memory");
-    	break;
+    	throw new LibUsbException(action + " : No memory");
     case -12:
-    	System.err.println(action + " : Not supported");
-    	break;
+    	throw new LibUsbException(action + " : Not supported");
     case -99:
-    	System.err.println(action + " : Other");
-    	break;        
+    	throw new LibUsbException(action + " : Other");
     }
   }
 }

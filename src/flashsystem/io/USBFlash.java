@@ -2,6 +2,7 @@ package flashsystem.io;
 
 import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
+import libusb.LibUsbException;
 import flashsystem.CommandPacket;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -70,11 +71,16 @@ public class USBFlash {
 
     public static  S1Packet readS1Reply() throws X10FlashException, IOException
     {
-    	byte[] read = read(readbuffer);
-    	S1Packet p=new S1Packet(read);
+    	byte[] read=null;
+    	S1Packet p=new S1Packet("".getBytes());
     	while (p.hasMoreToRead()) {
-    		read = read(readbuffer);
-    		p.addData(read);
+    		try {
+    			read = read(readbuffer);
+    		} catch (LibUsbException e) {
+    			read=null;
+    		}
+    		if (read != null)
+    			p.addData(read);
     	}
 		p.validate();
 		return p;
@@ -83,19 +89,23 @@ public class USBFlash {
     public static  CommandPacket readCommandReply(boolean withOK) throws X10FlashException, IOException
     {
     	logger.debug("Reading packet from phone");
-    	byte[] read = read(readbuffer);
-    	CommandPacket p=new CommandPacket(read,withOK);
+    	byte[] read=null;
+    	CommandPacket p = new CommandPacket("".getBytes(),withOK);
     	while (p.hasMoreToRead()) {
-    		read = read(readbuffer);
-    		p.addData(read);
+    		try {
+    			read = read(readbuffer);
+    		} catch (LibUsbException e) {
+    			read=null;
+    		}
+    		if (read != null)
+    			p.addData(read);
     	}
-    	
 		logger.debug("IN : " + p);
 		return p;
 		//lastflags = p.getFlags();
     }
 
-	private static byte[] read(int length)  throws IOException,X10FlashException {
+	private static byte[] read(int length)  throws LibUsbException, IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
 			return USBFlashWin32.windowsRead(length);
 		}

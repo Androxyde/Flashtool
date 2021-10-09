@@ -47,6 +47,8 @@ import gui.tools.XMLPartitionDelivery;
 
 public class CommandFlasher implements Flasher {
 
+	String version = "v2";
+	
 	public class Lun {
 		
         @Bin public byte lunlength;
@@ -910,16 +912,23 @@ public class CommandFlasher implements Flasher {
 	public void repartition(SinFile sin, int partnumber) throws IOException, X10FlashException {
 		//wrotedata=true;
 		String command="";
+		CommandPacket p;
 		logger.info("processing "+sin.getName());
-			command = "signature:"+HexDump.toHex(sin.getHeader().length);
+		command = "download:"+HexDump.toHex(sin.getHeader().length);
+		logger.info("   "+command);
+		if (!_bundle.simulate()) {
+			USBFlash.write(command.getBytes());
+			p = USBFlash.readCommandReply(false);
+			USBFlash.write(sin.getHeader());
+			p = USBFlash.readCommandReply(true);
+			logger.info("   download status : "+p.getResponse());
+			command = "signature";
 			logger.info("   "+command);
-			if (!_bundle.simulate()) {
-				USBFlash.write(command.getBytes());
-				CommandPacket p = USBFlash.readCommandReply(false);
-				USBFlash.write(sin.getHeader());
-				p = USBFlash.readCommandReply(true);
-				logger.info("   signature status : "+p.getResponse());
-			}
+			USBFlash.write(command.getBytes());
+			p = USBFlash.readCommandReply(true);
+			logger.info("   signature status : "+p.getResponse());
+		}
+		
 		TarArchiveInputStream tarIn = sin.getTarInputStream();
 		TarArchiveEntry entry=null;
 		while ((entry = tarIn.getNextTarEntry()) != null) {
@@ -929,7 +938,7 @@ public class CommandFlasher implements Flasher {
 					command = "download:"+HexDump.toHex((int)entry.getSize());
 					logger.info("      "+command);
 					USBFlash.write(command.getBytes());
-					CommandPacket p = USBFlash.readCommandReply(false);
+					p = USBFlash.readCommandReply(false);
 					//logger.info("      Download reply : "+p.getResponse());
 				}
 				CircularByteBuffer cb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
@@ -941,7 +950,7 @@ public class CommandFlasher implements Flasher {
 						USBFlash.write(buffer);
 					}
 				}
-				CommandPacket p=null;
+				p=null;
 				if (!_bundle.simulate()) {
 					p = USBFlash.readCommandReply(true);
 					logger.info("      download status : "+p.getResponse());
@@ -963,16 +972,17 @@ public class CommandFlasher implements Flasher {
 		//wrotedata=true;
 		String command="";
 		logger.info("processing "+sin.getName());
-		command = "signature:"+HexDump.toHex(sin.getHeader().length);
-		logger.info("   signature:"+HexDump.toHex(sin.getHeader().length));
+		command = "download:"+HexDump.toHex(sin.getHeader().length);
 		CommandPacket p=null;
 		if (!_bundle.simulate()) {
+			logger.info("      "+command);
 			USBFlash.write(command.getBytes());
 			p = USBFlash.readCommandReply(false);
-			//logger.info("   signature reply : "+p.getResponse());
 			USBFlash.write(sin.getHeader());
 			p = USBFlash.readCommandReply(true);
+			logger.info("      download status : "+p.getResponse());
 			command="signature";
+			logger.info("      "+command);
 			USBFlash.write(command.getBytes());
 			p = USBFlash.readCommandReply(true);
 			logger.info("   signature status : "+p.getResponse());
@@ -994,7 +1004,6 @@ public class CommandFlasher implements Flasher {
 					logger.info("      "+command);
 					USBFlash.write(command.getBytes());
 					p = USBFlash.readCommandReply(false);
-					//logger.info("      Download reply : "+p.getResponse());
 				}
 				CircularByteBuffer cb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
 				IOUtils.copy(tarIn, cb.getOutputStream());

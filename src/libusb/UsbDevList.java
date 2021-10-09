@@ -22,7 +22,9 @@ public class UsbDevList {
 	public void destroyDevices() {
 		Iterator<UsbDevice> i = getDevices();
 		while (i.hasNext()) {
-			i.next().destroy();
+			try {
+				i.next().destroy();
+			} catch (LibUsbException e) {}
 		}
 		list.clear();
 	}

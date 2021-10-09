@@ -1,6 +1,8 @@
 package flashsystem.io;
 
 import flashsystem.X10FlashException;
+import libusb.LibUsbException;
+
 import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +37,7 @@ public class USBFlashLinux {
 		}
 	}
 
-	public static byte[] linuxRead(int length) throws IOException {
+	public static byte[] linuxRead(int length) throws LibUsbException {
     	return JUsb.readBytes(length);
     }
 
