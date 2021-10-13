@@ -31,7 +31,6 @@
 	<classpathentry kind="lib" path="libs/log4j-slf4j-impl-2.14.1.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.equinox.common_3.15.0.v20210518-0604.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.text_3.12.0.v20210512-1644.jar"/>
-	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.116.100.v20210602-2209.jar"/>
 	<classpathentry kind="lib" path="libs/guava-31.0.1-jre.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.9.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.9.0.jar"/>
@@ -55,6 +54,7 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.swt_3.117.0.v20210906-0842.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.forms_3.11.200.v20210622-0925.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.ui.workbench_3.123.0.v20210817-0704.jar"/>
+	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.117.0.v20210906-0842.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/emmanuel/git/Deploy/FlashTool/x10flasher_native/udev"/>
