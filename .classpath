@@ -13,11 +13,8 @@
 	<classpathentry kind="lib" path="libs/slf4j-api-1.7.32.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-ext-1.7.32.jar"/>
 	<classpathentry kind="lib" path="libs/guava-31.0.1-jre.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.osgi_2.7.0.v20210623-0618.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.apache.sshd.sftp_2.7.0.v20210623-0618.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.commands_3.10.100.v20210722-1426.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.core.jobs_3.12.0.v20210723-1034.jar"/>
-	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.117.0.v20210906-0842.jar"/>
 	<classpathentry kind="lib" path="libs/jna-5.10.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-5.10.0.jar"/>
 	<classpathentry kind="lib" path="libs/jdom2-2.0.6.1.jar"/>
@@ -42,14 +39,10 @@
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit_6.0.0.202111291000-r.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.archive_6.0.0.202111291000-r.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.http.apache_6.0.0.202111291000-r.jar"/>
-	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jgit.ssh.apache_6.0.0.202111291000-r.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.osgi_3.17.100.v20211104-1730.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.swt_3.118.0.v20211123-0851.jar"/>
-	<classpathentry kind="lib" path="libs/eddsa-0.3.0.jar"/>
-	<classpathentry kind="lib" path="libs/httpclient-4.5.13.jar"/>
-	<classpathentry kind="lib" path="libs/httpcore-4.4.14.jar"/>
-	<classpathentry kind="lib" path="libs/JavaEWAH-1.1.13.jar"/>
 	<classpathentry kind="lib" path="libs/eclipse/org.eclipse.jface_3.24.0.v20211110-1517.jar"/>
+	<classpathentry kind="lib" path="libs/linux/x86_64/org.eclipse.swt.gtk.linux.x86_64_3.118.0.v20211123-0851.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/emmanuel/git/Deploy/FlashTool/x10flasher_native/udev"/>
