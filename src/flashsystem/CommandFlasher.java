@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-import org.jdom2.JDOMException;
 import org.logger.LogProgress;
 import org.rauschig.jarchivelib.IOUtils;
 import org.sinfile.parsers.SinFile;
@@ -537,7 +536,7 @@ public class CommandFlasher implements Flasher {
 		close();
 	}
 
-	public XMLBootConfig getBootConfig() throws FileNotFoundException, IOException,X10FlashException, JDOMException, TAFileParseException, BootDeliveryException  {
+	public XMLBootConfig getBootConfig() throws FileNotFoundException, IOException,X10FlashException, TAFileParseException, BootDeliveryException  {
 		if (!_bundle.hasBootDelivery()) {
 			logger.info("No boot delivery into the bundle");
 			return null;
