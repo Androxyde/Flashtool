@@ -166,12 +166,12 @@ public class XMLBootConfig {
 
 	public boolean isComplete() {
 		if (!new File(getTA()).exists()) {
-			logger.error("missing TA "+getTA());
+			log.error("missing TA "+getTA());
 			return false;
 		}
 		if (hasAppsBootFile()) {
 			if (!new File(getAppsBootFile()).exists()) {
-				logger.error("missing appsboot "+getAppsBootFile());
+				log.error("missing appsboot "+getAppsBootFile());
 				return false;
 			}
 		}
@@ -180,7 +180,7 @@ public class XMLBootConfig {
 			String f = i.next();
 			if (f.length()>0) { 
 			if (!new File(f).exists()) {
-				logger.error("missing file "+f); 
+				log.error("missing file "+f); 
 				return false;
 			}
 			}

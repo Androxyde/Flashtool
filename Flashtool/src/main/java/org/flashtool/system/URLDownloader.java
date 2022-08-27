@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.flashtool.logger.LogProgress;
+import org.flashtool.log.LogProgress;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

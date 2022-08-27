@@ -30,9 +30,9 @@ public class Yaffs2Job extends Job {
     	try {
 				int index = _fname.lastIndexOf(".yaffs2");
 				String folder = _fname.substring(0, index)+"_content";
-				logger.info("Extracting " + _fname + " to " + folder);
+				log.info("Extracting " + _fname + " to " + folder);
 				OS.unyaffs(_fname, folder);
-				logger.info("Extraction finished");
+				log.info("Extraction finished");
 				return Status.OK_STATUS;
     	}
     	catch (Exception e) {

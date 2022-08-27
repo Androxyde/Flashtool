@@ -89,7 +89,7 @@ public class FTDEntry {
 	    	return true;
     	}
     	else {
-    		logger.info("Import canceled");
+    		log.info("Import canceled");
     		return false;
     	}
     }

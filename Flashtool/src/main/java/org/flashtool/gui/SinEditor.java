@@ -213,7 +213,7 @@ public class SinEditor extends Dialog {
 				SinAdvanced sadv = new SinAdvanced(shlSinEditor,SWT.PRIMARY_MODAL | SWT.SHEET);
 				sadv.open(sin);
 				} catch (Exception ex) {
-					logger.error(ex.getMessage());
+					log.error(ex.getMessage());
 				}
 			}
 		});

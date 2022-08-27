@@ -39,11 +39,11 @@ public class SeusSinTool {
 		if (!decrypt(enc,dec)) throw new Exception("Unable to decrypt "+FILESET);
 		String folder = enc.getParentFile().getAbsolutePath()+File.separator+"decrypted";
 		new File(folder).mkdirs();
-	    logger.info("Identifying fileset content");
+	    log.info("Identifying fileset content");
 	    ZipFile file=null;
 	    try {
 	    	 file = new ZipFile(dec.getAbsolutePath());
-	    	 logger.info("Found zip file. Extracting content");
+	    	 log.info("Found zip file. Extracting content");
 	    	 Enumeration<? extends ZipEntry> entries = file.entries();
 	    	 while ( entries.hasMoreElements() ) {
 	    		 ZipEntry entry = entries.nextElement();
@@ -54,7 +54,7 @@ public class SeusSinTool {
 	    		 try {
 	    			 if (!out.getName().toUpperCase().endsWith("SIN")) {
 		    			 ZipFile subzip = new ZipFile(out);
-		    			 logger.info("Extracting "+out.getName());
+		    			 log.info("Extracting "+out.getName());
 		    			 String subfolder = folder + File.separator+entry.getName().substring(0,entry.getName().lastIndexOf("."));
 		    			 new File(subfolder).mkdirs();
 		    			 PrintWriter pw = null;
@@ -92,20 +92,20 @@ public class SeusSinTool {
 	    	try {
 	    		org.flashtool.parsers.sin.SinFile sf = new org.flashtool.parsers.sin.SinFile(new File(dec.getAbsolutePath()));
 	    		if (sf.getType().equals("LOADER")) {
-	    			logger.info("Found sin loader. Moving file to loader.sin");
+	    			log.info("Found sin loader. Moving file to loader.sin");
 	    			dec.renameTo(getFile(new File(folder+File.separator+"loader.sin")));
 	    		}
 	    		if (sf.getType().equals("BOOT")) {
-	    			logger.info("Found sin boot. Moving file to boot.sin");
+	    			log.info("Found sin boot. Moving file to boot.sin");
 	    			dec.renameTo(getFile(new File(folder+File.separator+"boot.sin")));
 	    		}
 	    	} catch (SinFileException sine) {
 	    		try {
 	    			TAFileParser ta = new TAFileParser(new FileInputStream(dec.getAbsolutePath()));
-	    			logger.info("Found ta file. Moving file to preset.ta");
+	    			log.info("Found ta file. Moving file to preset.ta");
 	    			dec.renameTo(getFile(new File(folder+File.separator+"preset.ta")));
 	    		} catch(TAFileParseException tae) {
-	    			logger.error(dec.getAbsolutePath() + " is unrecognizable");
+	    			log.error(dec.getAbsolutePath() + " is unrecognizable");
 	    		}
 	    	}
 	    }

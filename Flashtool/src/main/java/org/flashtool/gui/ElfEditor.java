@@ -132,7 +132,7 @@ public class ElfEditor extends Dialog {
 		        			textNbParts.setText(Integer.toString(elfobj.getProgramHeaders().length));
 		        			sourceFile.setText(dir);
 		        			btnExtract.setEnabled(true);
-		        			logger.info("You can now press the Unpack button to get the elf data content");
+		        			log.info("You can now press the Unpack button to get the elf data content");
 		        		}
 		        		catch (Exception ex) {
 		        			ex.printStackTrace();
@@ -172,7 +172,7 @@ public class ElfEditor extends Dialog {
 					doUnpack(elfobj);
 				}
 				catch (Exception ex) {
-					logger.error(ex.getMessage());
+					log.error(ex.getMessage());
 				}
 			}
 		});
@@ -221,7 +221,7 @@ public class ElfEditor extends Dialog {
 			fin.seek(ph.getFileOffset());
 			byte[] image = new byte[(int)ph.getFileSize()];
 			fin.read(image);
-			logger.info("Extracting part " + i + " to " +elf.getFilename()+"."+ctype);
+			log.info("Extracting part " + i + " to " +elf.getFilename()+"."+ctype);
 			File f = new File(elf.getFilename()+"."+ctype);
 			FileOutputStream fout = new FileOutputStream(f);
 			fout.write(image);
@@ -231,7 +231,7 @@ public class ElfEditor extends Dialog {
 			i++;
 		}
 		fin.close();
-		logger.info("ELF Extraction finished");		
+		log.info("ELF Extraction finished");		
 	}
 
 }

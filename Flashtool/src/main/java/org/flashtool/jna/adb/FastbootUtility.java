@@ -55,7 +55,7 @@ public class FastbootUtility {
 	}
 
 	public static RunOutputs unlock(String key) throws Exception {
-		logger.info("Unlocking phone using key "+key);
+		log.info("Unlocking phone using key "+key);
 		ProcessBuilderWrapper pbd = new ProcessBuilderWrapper(new String[] {fastbootpath,"-i", "0xfce","oem", "unlock","0x"+key },true);
 		return pbd.getOutputs();
 	}

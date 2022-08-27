@@ -44,16 +44,16 @@ public class VersionCheckerJob extends Job {
 		try {
 			SAXBuilder builder = new SAXBuilder();
 			Document doc = null;
-			logger.debug("Resolving github");
+			log.debug("Resolving github");
             if  (Proxy.canResolve("github.com")) {
-            	logger.debug("Finished resolving github. Result : Success");
+            	log.debug("Finished resolving github. Result : Success");
             	URL u;
             	if (About.build==null) throw new Exception("no version");
             	if (OS.getChannel().equals("beta"))
             		u = new URL("https://github.com/Androxyde/Flashtool/raw/master/ant/deploy-beta.xml");
             	else
             		u = new URL("https://github.com/Androxyde/Flashtool/raw/master/ant/deploy-release.xml");
-            	logger.debug("opening connection");
+            	log.debug("opening connection");
 				if (!aborted)
 					uconn = (HttpURLConnection) u.openConnection();
 				if (!aborted)
@@ -63,10 +63,10 @@ public class VersionCheckerJob extends Job {
 				if (!aborted)
 					uconn.connect();
 			    
-				logger.debug("Getting stream on connection");
+				log.debug("Getting stream on connection");
 				if (!aborted)
 					ustream = uconn.getInputStream();
-				if (ustream!=null) logger.debug("stream opened");
+				if (ustream!=null) log.debug("stream opened");
 				doc = builder.build(ustream);
 				Iterator<Element> mainitr = doc.getRootElement().getChildren().iterator();
 				while (mainitr.hasNext()) {
@@ -81,7 +81,7 @@ public class VersionCheckerJob extends Job {
 				return "";
             }
             else {
-            	logger.debug("Finished resolving github. Result : Failed");
+            	log.debug("Finished resolving github. Result : Failed");
             	return "";
             }
 		}
@@ -94,11 +94,11 @@ public class VersionCheckerJob extends Job {
 		String netrelease = "";
 		int nbretry = 0;
 		while (netrelease.length()==0 && !aborted) {
-			logger.debug("Fetching latest release from github");
+			log.debug("Fetching latest release from github");
 			netrelease = getLatestRelease();
 			if (netrelease.length()==0) {
 				if (!aborted)
-					logger.debug("Url content not fetched. Retrying "+nbretry+" of 10");
+					log.debug("Url content not fetched. Retrying "+nbretry+" of 10");
 				nbretry++;
 				if (nbretry<10) {
 					try {
@@ -109,10 +109,10 @@ public class VersionCheckerJob extends Job {
 					aborted=true;
 			}
 		}
-		logger.debug("out of loop");
+		log.debug("out of loop");
 		final String latest = netrelease;
-		logger.debug("Latest : " + latest);
-		logger.debug("Current build : "+About.build);
+		log.debug("Latest : " + latest);
+		log.debug("Current build : "+About.build);
 		ended = true;
 		if (About.build!=null) {
 			if (latest.length()>0 && !About.build.contains(latest)) {
@@ -133,14 +133,14 @@ public class VersionCheckerJob extends Job {
 	public void done() {
 		if (!ended) {
 			ended = true;
-			logger.debug("aborting job");
+			log.debug("aborting job");
 			aborted=true;
 			if (uconn!=null)
 			try {
-				logger.debug("closing connection");
+				log.debug("closing connection");
 				uconn.disconnect();
 			} catch (Exception e) {
-				logger.debug("Error : "+e.getMessage());
+				log.debug("Error : "+e.getMessage());
 			}
 		}
 	}

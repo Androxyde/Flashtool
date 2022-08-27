@@ -87,7 +87,7 @@ public class OldUnlockJob extends Job {
 			if (platform.equals("X10"))
 				if (!new File(ent.getDeviceDir()+File.separator+"blu"+File.separator+"files"+File.separator+"mapper_2.6.29-00054-g5f01537.ko").exists())
 					throw new Exception("mapper_2.6.29-00054-g5f01537.ko is missing");
-			logger.info("Waiting for device to reboot");
+			log.info("Waiting for device to reboot");
 			Devices.waitForReboot(false);
 			if (!Devices.getCurrent().getKernelVersion().equals("2.6.29-00054-g5f01537") && !Devices.getCurrent().getKernelVersion().equals("2.6.29"))
 				throw new Exception("Kernel does not match a compatible one");
@@ -99,7 +99,7 @@ public class OldUnlockJob extends Job {
 			String output = fixpart.runRoot();
 			if (!output.contains("success"))
 				throw new Exception("Error applying fixpart: "+output);
-			logger.info("Successfully applied fixPart. Rebooting");
+			log.info("Successfully applied fixPart. Rebooting");
 			Devices.getCurrent().reboot();
 			Devices.waitForReboot(false);
 			AdbUtility.push(ent.getDeviceDir()+File.separator+"blu"+File.separator+"files"+File.separator+mapper, GlobalConfig.getProperty("deviceworkdir"));
@@ -110,13 +110,13 @@ public class OldUnlockJob extends Job {
 			output = runbootwrite.runRoot();
 			if (!output.contains("success"))
 				throw new Exception("Error applying fixpart: "+output);
-			logger.info("Successfully applied bootwrite. Bootloader should be unlocked. Rebooting");
+			log.info("Successfully applied bootwrite. Bootloader should be unlocked. Rebooting");
 			Devices.getCurrent().reboot();
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
     		e.printStackTrace();
-    		 logger.error(e.getMessage());
+    		 log.error(e.getMessage());
     		return Status.CANCEL_STATUS;
     	}
     }

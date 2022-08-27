@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.flashtool.flashsystem.Flasher;
 import org.flashtool.gui.TARestore;
-import org.flashtool.logger.LogProgress;
+import org.flashtool.log.LogProgress;
 import org.flashtool.system.DeviceChangedListener;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class BackupTAJob extends Job {
 			flash.sendLoader();
 			flash.backupTA();
 			flash.close();
-			logger.info("Dumping TA finished.");
+			log.info("Dumping TA finished.");
 			LogProgress.initProgress(0);
 			DeviceChangedListener.enableDetection();
 			return Status.OK_STATUS;

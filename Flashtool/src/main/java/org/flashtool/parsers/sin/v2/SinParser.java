@@ -11,7 +11,7 @@ import net.jpountz.lz4.LZ4FastDecompressor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.flashtool.logger.LogProgress;
+import org.flashtool.log.LogProgress;
 import org.flashtool.parsers.sin.v1.PartitionInfo;
 import org.flashtool.parsers.sin.v3.AddrBlock;
 import org.flashtool.parsers.sin.v3.LZ4ABlock;
@@ -157,13 +157,13 @@ public class SinParser {
 	  public void dumpImage() throws IOException {
 			try {
 				RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
-				logger.info("Generating container file");
+				log.info("Generating container file");
 				String ext = "."+getDataType();
 				String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+ext;
 				RandomAccessFile fout = OS.generateEmptyFile(foutname, dataSize, (byte)0xFF);
-				logger.info("Finished Generating container file");
+				log.info("Finished Generating container file");
 				// Positionning in files
-				logger.info("Extracting data into container");
+				log.info("Extracting data into container");
 				fin.seek(headerLen);
 				LogProgress.initProgress(blocks.block.length);
 				for (int i=0;i<blocks.block.length;i++) {
@@ -177,10 +177,10 @@ public class SinParser {
 				}
 				LogProgress.initProgress(0);
 				fout.close();
-				logger.info("Extraction finished to "+foutname);
+				log.info("Extraction finished to "+foutname);
 			}
 			catch (Exception e) {
-				logger.error("Error while extracting data : "+e.getMessage());
+				log.error("Error while extracting data : "+e.getMessage());
 				LogProgress.initProgress(0);
 				e.printStackTrace();
 			}
@@ -195,7 +195,7 @@ public class SinParser {
 			fout.write(buff);
 			fout.close();
 			fin.close();
-			logger.info("Extraction finished to "+foutname);
+			log.info("Extraction finished to "+foutname);
 		}
 
 }

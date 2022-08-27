@@ -170,7 +170,7 @@ public class TARestore extends Dialog {
 						t.writeln(HexDump.toHex((byte)Integer.parseInt(comboPartition.getText())));
 						t.writeln(u.toString());
 						t.close();
-						logger.info("Unit saved to "+folder+File.separator+u.getUnitHex()+".ta");
+						log.info("Unit saved to "+folder+File.separator+u.getUnitHex()+".ta");
 					} catch (Exception ex) {}
 				}
 			}

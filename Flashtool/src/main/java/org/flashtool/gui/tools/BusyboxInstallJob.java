@@ -37,13 +37,13 @@ public class BusyboxInstallJob extends Job {
     		shell = new FTShell("instbusybox");
 			shell.setProperty("BUSYBOXINSTALLPATH", Devices.getCurrent().getBusyBoxInstallPath());
 			shell.runRoot();
-	        logger.info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(true));
-	        logger.info("Finished");
+	        log.info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(true));
+	        log.info("Finished");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
     		e.printStackTrace();
-    		logger.error(e.getMessage());
+    		log.error(e.getMessage());
     		return Status.CANCEL_STATUS;
     	}
     }

@@ -47,24 +47,24 @@ public class MyLogger {
 	public static Level getLevel() {
 		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 		Logger logger = loggerContext.getLogger("root");
-		return logger.getLevel();
+		return log.getLevel();
 	}
 	
 	public static void setLevel(Level level) {
 		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 		Logger logger = loggerContext.getLogger("root");
-		logger.setLevel(level);
+		log.setLevel(level);
 		if (level == Level.ERROR) {
-			logger.error("<- This level is successfully initialized");
+			log.error("<- This level is successfully initialized");
 		}
 		if (level == Level.WARN) {
-			logger.warn("<- This level is successfully initialized");
+			log.warn("<- This level is successfully initialized");
 		}
 		if (level == Level.DEBUG) {
-			logger.debug("<- This level is successfully initialized");
+			log.debug("<- This level is successfully initialized");
 		}
 		if (level == Level.INFO) {
-			logger.info("<- This level is successfully initialized");
+			log.info("<- This level is successfully initialized");
 		}
 	}
 

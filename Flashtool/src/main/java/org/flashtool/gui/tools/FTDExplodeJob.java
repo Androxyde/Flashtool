@@ -29,9 +29,9 @@ public class FTDExplodeJob extends Job {
 	
     protected IStatus run(IProgressMonitor monitor) {
     	try {
-			logger.info("Beginning import of "+entry.getName());
+			log.info("Beginning import of "+entry.getName());
 			if (entry.explode())
-				logger.info(entry.getName()+" imported successfully");
+				log.info(entry.getName()+" imported successfully");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {

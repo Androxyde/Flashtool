@@ -79,7 +79,7 @@ public class AdbUtility  {
 				shpath = "";
 			}
 		}
-		logger.debug("Default shell for scripts : "+shpath);
+		log.debug("Default shell for scripts : "+shpath);
 		return shpath;
 	}
 
@@ -245,12 +245,12 @@ public class AdbUtility  {
 	
 	public static void uninstall(String apk, boolean silent) throws Exception {
 		if (!silent)
-			logger.info("Uninstalling "+apk);
+			log.info("Uninstalling "+apk);
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"uninstall",apk},false);
 	}
 
 	public static void killServer() throws Exception {
-		//logger.info("Killing adb service");
+		//log.info("Killing adb service");
 		if (OS.getName().equals("windows")) {
 			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"kill-server"},false);
 		}
@@ -261,7 +261,7 @@ public class AdbUtility  {
 	}
 
 	public static void startServer() throws Exception {
-			logger.info("Starting adb service");
+			log.info("Starting adb service");
 			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"start-server"},false);
 	}
 
@@ -281,8 +281,8 @@ public class AdbUtility  {
 	public static void push(String source, String destination, boolean log) throws Exception {
 		File f = new File(source);
 		if (!f.exists()) throw new AdbException(source+" : Not found");
-		if (log) logger.info("Pushing "+f.getAbsolutePath()+" to "+destination);
-		else logger.debug("Pushing "+f.getAbsolutePath()+" to "+destination);
+		if (log) log.info("Pushing "+f.getAbsolutePath()+" to "+destination);
+		else log.debug("Pushing "+f.getAbsolutePath()+" to "+destination);
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"push",f.getAbsolutePath(),destination},false);
 		if (command.getStatus()!=0) {
 			throw new AdbException(command.getStdOut()+ " " + command.getStdErr());
@@ -329,9 +329,9 @@ public class AdbUtility  {
 
 	public static void pull(String source, String destination, boolean log) throws Exception {
 		if (log)
-			logger.info("Pulling "+source+" to "+destination);
+			log.info("Pulling "+source+" to "+destination);
 		else
-			logger.debug("Pulling "+source+" to "+destination);
+			log.debug("Pulling "+source+" to "+destination);
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"pull",source, destination},false);
 		if (command.getStatus()!=0) {
 			throw new AdbException(command.getStdOut()+ " " + command.getStdErr());
@@ -358,9 +358,9 @@ public class AdbUtility  {
 	public static String run(FTShell shell, boolean debug) throws Exception {
 		push(shell.getPath(),GlobalConfig.getProperty("deviceworkdir")+"/"+shell.getName(),false);
 		if (debug)
-			logger.debug("Running "+shell.getName());
+			log.debug("Running "+shell.getName());
 		else
-			logger.info("Running "+shell.getName());
+			log.info("Running "+shell.getName());
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"shell", "sh "+GlobalConfig.getProperty("deviceworkdir")+"/"+shell.getName()+";exit $?"},false);
 		if (command.getStdOut().contains("FTError")) throw new Exception(command.getStdErr()+" "+command.getStdOut());
 		return command.getStdOut();
@@ -368,9 +368,9 @@ public class AdbUtility  {
 
 	public static String run(String com, boolean debug) throws Exception {
 		if (debug)
-			logger.debug("Running "+ com + " command");
+			log.debug("Running "+ com + " command");
 		else
-			logger.info("Running "+ com + " command");
+			log.info("Running "+ com + " command");
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"shell",com},false);
 		return command.getStdOut().trim();
 	}
@@ -390,9 +390,9 @@ public class AdbUtility  {
 		s.clean();
 		push(shell.getPath(),GlobalConfig.getProperty("deviceworkdir")+"/runscript",false);
 		if (log)
-			logger.info("Running "+shell.getName()+"  as root thru sysrun");
+			log.info("Running "+shell.getName()+"  as root thru sysrun");
 		else
-			logger.debug("Running "+shell.getName()+"  as root thru sysrun");
+			log.debug("Running "+shell.getName()+"  as root thru sysrun");
 		ProcessBuilderWrapper command;
 		if (rootnative)
 			command=new ProcessBuilderWrapper(new String[] {adbpath,"shell", "sh "+GlobalConfig.getProperty("deviceworkdir")+"/sysrun"},false);
@@ -402,19 +402,19 @@ public class AdbUtility  {
 	}
 
 	public static boolean Sysremountrw() throws Exception {
-		logger.info("Remounting system read-write");
+		log.info("Remounting system read-write");
 		FTShell shell = new FTShell("remount");
 		return !shell.runRoot(false).contains("FTError");
 	}
 
 	public static void clearcache() throws Exception {
-		logger.info("Clearing dalvik cache and rebooting");
+		log.info("Clearing dalvik cache and rebooting");
 		FTShell shell = new FTShell("clearcache");
 		shell.runRoot(false);
 	}
 
 	public static void install(String apk) throws Exception {
-		logger.info("Installing "+apk);
+		log.info("Installing "+apk);
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"install", "\""+apk+"\""},false);
 		if (command.getStdOut().contains("Failure")) {
 			uninstall(APKUtility.getPackageName(apk),true);
@@ -422,7 +422,7 @@ public class AdbUtility  {
 			if (command.getStdOut().contains("Failure")) {
 				Scanner sc = new Scanner(command.getStdOut());
 				sc.nextLine();
-				logger.error(sc.nextLine());
+				log.error(sc.nextLine());
 			}
 		}
 	}
@@ -446,7 +446,7 @@ public class AdbUtility  {
 	
 	public static boolean isConnected() {
 		try {
-			logger.debug("Testing if device is connected");
+			log.debug("Testing if device is connected");
 			return AdbUtility.getDevices().hasMoreElements();
 		}
 		catch (Exception e) {
@@ -455,7 +455,7 @@ public class AdbUtility  {
 	}
 /*	public static boolean isConnected() {
 		try {
-			logger.info("Searching Adb Device");
+			log.info("Searching Adb Device");
 			String res =Device.AdbId();
 			if (res.equals("ErrNotPlugged")) {
 				MyLogger.error("Please plug your device with USB Debugging and Unknown sources on");
@@ -569,9 +569,9 @@ public class AdbUtility  {
 			}
 			scan.close();
 			if (path.length()>0) {
-				logger.info("Stopping ric service");
+				log.info("Stopping ric service");
 				AdbUtility.run("su -c 'mount -o remount,rw / && mv "+path+" "+path+"c && mount -o remount,ro / && kill -9 "+pid+"'");
-				logger.info("ric service stopped successfully");
+				log.info("ric service stopped successfully");
 			}
 		}
 		catch (Exception e) {

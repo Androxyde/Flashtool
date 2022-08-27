@@ -339,7 +339,7 @@ public class SinFile {
 			sinv3.dumpImage();
 		}
 		if (sinv4!=null) {
-			logger.error("This sin version is not yet supported");
+			log.error("This sin version is not yet supported");
 		}
 		return;
 	}
@@ -355,7 +355,7 @@ public class SinFile {
 			sinv3.dumpHeader();
 		}
 		if (sinv4!=null) {
-			logger.error("This sin version is not yet supported");
+			log.error("This sin version is not yet supported");
 		}
 		return;
 	}
@@ -450,7 +450,7 @@ public class SinFile {
 			Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.TAR, CompressionType.GZIP);
 			unpackFolder=new File(sinfile.getParent()+File.separator+Category.getCategoryFromName(sinfile.getName()));
 			unpackFolder.mkdirs();
-			logger.info("Extracting sin content to "+Category.getCategoryFromName(sinfile.getName()));
+			log.info("Extracting sin content to "+Category.getCategoryFromName(sinfile.getName()));
 			archiver.extract(sinfile.getAbsoluteFile(), unpackFolder);
 		}
 	}

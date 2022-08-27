@@ -55,7 +55,7 @@ public class XperiFirm {
 				tf.readLines();
 				if (!version.equals(tf.getLines().iterator().next())) {
 					tf.open(false);
-					logger.info("Downloading latest XperiFirm");
+					log.info("Downloading latest XperiFirm");
 					OS.unpackArchive(new URL(downloadurl), new File(OS.getFolderUserFlashtool()));
 					tf.write(version);
 					tf.close();
@@ -63,7 +63,7 @@ public class XperiFirm {
 			} catch (Exception fne) {
 				if (tf!=null) {
 					tf.open(false);
-					logger.info("Downloading latest XperiFirm");
+					log.info("Downloading latest XperiFirm");
 					OS.unpackArchive(new URL(downloadurl), new File(OS.getFolderUserFlashtool()));			tf.write(version);
 					tf.write(version);
 					tf.close();
@@ -86,7 +86,7 @@ public class XperiFirm {
 				command = new ProcessBuilderWrapper(cmdargs);
 			}
 			catch (Exception e) {
-				logger.warn(command.getStdOut()+" / "+command.getStdErr());
+				log.warn(command.getStdOut()+" / "+command.getStdErr());
 			}
 			String[] downloaded = new File(OS.getFolderFirmwaresDownloaded()).list();
 			for (int i = 0; i<downloaded.length;i++) {
@@ -99,11 +99,11 @@ public class XperiFirm {
 						info = new XMLFwInfo(fwinfo);
 					} catch (Exception e) {}
 					if (info!=null) {
-						logger.info("Creating bundle for "+info.getProduct()+" "+info.getOperator()+" "+info.getVersion());
+						log.info("Creating bundle for "+info.getProduct()+" "+info.getOperator()+" "+info.getVersion());
 						try {
 							createBundle(OS.getFolderFirmwaresDownloaded()+File.separator+downloaded[i],info);
 						} catch (Exception e) {
-							logger.error(e.getMessage());
+							log.error(e.getMessage());
 						}
 					}
 				}
@@ -173,7 +173,7 @@ public class XperiFirm {
 		
 		if (srcpartzip.exists()) {
 			ZipFile zip = new ZipFile(srcpartzip);
-    		logger.info("Extracting "+zip.getName());
+    		log.info("Extracting "+zip.getName());
 			String subfolder = srcdir.getAbsolutePath()+File.separator+"partition";
 			new File(subfolder).mkdirs();
 			File xmlpartition = new File(subfolder+File.separator+"partition_delivery.xml");

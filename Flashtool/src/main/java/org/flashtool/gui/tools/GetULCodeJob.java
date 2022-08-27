@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.flashtool.flashsystem.Flasher;
 import org.flashtool.gui.TARestore;
-import org.flashtool.logger.LogProgress;
+import org.flashtool.log.LogProgress;
 import org.flashtool.parsers.ta.TAUnit;
 import org.flashtool.system.ULCodeFile;
 import org.flashtool.util.HexDump;
@@ -80,8 +80,8 @@ public class GetULCodeJob extends Job {
 				if (blstatus.equals("ROOTED")) {
 					flash.close();
 					LogProgress.initProgress(0);
-					logger.info("Phone already unlocked");
-					logger.info("You can safely reboot in normal mode");
+					log.info("Phone already unlocked");
+					log.info("You can safely reboot in normal mode");
 				}
 				else {
 					LogProgress.initProgress(1);
@@ -119,7 +119,7 @@ public class GetULCodeJob extends Job {
     	}
     	catch (Exception e) {
     		e.printStackTrace();
-    		logger.error(e.getMessage());
+    		log.error(e.getMessage());
     		return Status.CANCEL_STATUS;
     	}
     }

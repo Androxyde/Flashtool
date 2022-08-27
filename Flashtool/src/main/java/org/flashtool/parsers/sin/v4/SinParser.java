@@ -114,7 +114,7 @@ public class SinParser {
 			tarIn.close();
 			fout.flush();
 			fout.close();
-			logger.info("Extraction finished to "+"D:\\test.ext4");
+			log.info("Extraction finished to "+"D:\\test.ext4");
 		} catch (Exception e) {}		
 	}
 

@@ -40,18 +40,18 @@ public class BLUnlockJob extends Job {
 				if (out.getStdErr().contains("FAIL") || out.getStdOut().contains("FAIL"))
 						unlocksuccess = false;
 				if (unlocksuccess) {
-					logger.info("Device will reboot into system now");
+					log.info("Device will reboot into system now");
 					FastbootUtility.rebootDevice();
 				}
 			}
 			else {
-				logger.error("Your device must be in fastboot mode");
-				logger.error("Please restart it in fastboot mode");							
+				log.error("Your device must be in fastboot mode");
+				log.error("Please restart it in fastboot mode");							
 			}
 			return Status.OK_STATUS;
 		}
 		catch (Exception exc) {
-			logger.error(exc.getMessage());
+			log.error(exc.getMessage());
     		exc.printStackTrace();
     		return Status.CANCEL_STATUS;
 		}    	

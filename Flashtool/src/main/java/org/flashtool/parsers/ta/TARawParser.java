@@ -49,7 +49,7 @@ public class TARawParser {
 		}
 		else
 			ddFile = ddfile;
-		logger.info("Parsing image "+ddFile.getAbsolutePath());
+		log.info("Parsing image "+ddFile.getAbsolutePath());
 		openStreams();
 		while (ddStream.hasAvailableData()) {
 			TARawBlock parsedblock = partblock.parse(ddStream).mapTo(new TARawBlock());
@@ -74,7 +74,7 @@ public class TARawParser {
 			}
 		}
 		closeStreams();
-		logger.info("Parsing finished");
+		log.info("Parsing finished");
 	}
  
 	public void closeStreams() {
@@ -101,12 +101,12 @@ public class TARawParser {
 
 	public boolean open(File bundle) {
 		try {
-			logger.info("Preparing files for flashing");
+			log.info("Preparing files for flashing");
 			String prepared = bundle.getParentFile().getAbsolutePath()+File.separator+"prepared";
 			OS.deleteDirectory(new File(prepared));
 			File f = new File(prepared);
 			f.mkdir();
-			logger.debug("Created the "+f.getName()+" folder");
+			log.debug("Created the "+f.getName()+" folder");
 			JarFile jar=new JarFile(bundle);
 			Enumeration<JarEntry>  entries = jar.entries();
 			while (entries.hasMoreElements()) {
@@ -127,7 +127,7 @@ public class TARawParser {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 			return false;
 		}
     }

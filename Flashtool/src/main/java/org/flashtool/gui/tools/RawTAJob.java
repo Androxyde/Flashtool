@@ -83,7 +83,7 @@ public class RawTAJob extends Job {
 					throw new Exception("Your phone is not compatible");
 				partition = "/dev/block/"+partition;
 			}
-			logger.info("Begin backup of "+partition);
+			log.info("Begin backup of "+partition);
 			long transferred = AdbUtility.rawBackup(partition, phonetemp+File.separator+tafilename);
 			if (transferred == 0L)
 				throw new Exception("Erreur when doing raw backup");
@@ -92,15 +92,15 @@ public class RawTAJob extends Job {
 			AdbUtility.pull(phonetemp+File.separator+tafilename, folder);
 			AdbUtility.run("rm -f "+phonetemp+File.separator+tafilename);
 			hash.setProperty("local", OS.getMD5(new File(folder+File.separator+tafilename)).toUpperCase());
-			logger.info("End of backup");
+			log.info("End of backup");
 			if (hash.getProperty("local").equals(hash.getProperty("partition"))) {
-				logger.info("Backup is OK");
+				log.info("Backup is OK");
 				createFTA(partition, folder);
 			}
 			else throw new Exception("Backup is not OK");
 			}
 			else {
-				logger.info("Device not rooted. Trying to backup ta using dirtycow exploit");
+				log.info("Device not rooted. Trying to backup ta using dirtycow exploit");
 				AdbUtility.run("rm -f /data/local/tmp/*");
 				String platform = Devices.getCurrent().getArch();
 				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"dirtycow"+File.separator+"backupTA.sh", "/data/local/tmp/");
@@ -126,11 +126,11 @@ public class RawTAJob extends Job {
 						createFTA("", folder);
 					}
 					else {
-						logger.error("dirtycow expoit failed. No ta backup done");
+						log.error("dirtycow expoit failed. No ta backup done");
 					}
 				}
 				else {
-					logger.error("dirtycow expoit failed. No ta backup done");
+					log.error("dirtycow expoit failed. No ta backup done");
 				}	
 			}
 		} catch (Exception ex) {
@@ -138,7 +138,7 @@ public class RawTAJob extends Job {
 			try {
 				AdbUtility.run("rm -f "+phonetemp+File.separator+tafilename);
 			} catch (Exception ex1) {}
-			logger.error(ex.getMessage()); 
+			log.error(ex.getMessage()); 
 		}
     }
     
@@ -156,9 +156,9 @@ public class RawTAJob extends Job {
 				File[] chld = srcdir.listFiles();
 				if (chld.length>0)
 					backupset = WidgetTask.openTABackupSelector(_shell);
-				else logger.info("No backup");
+				else log.info("No backup");
 			}
-			else logger.info("No backup");
+			else log.info("No backup");
 			if (backupset.length()==0) {
 				throw new Exception("Operation canceled");
 			} 
@@ -198,26 +198,26 @@ public class RawTAJob extends Job {
 			hash.setProperty("partitionbefore", AdbUtility.getMD5(partition));
 			if (hash.getProperty("remote").equals(hash.getProperty("partitionbefore")))
 				throw new Exception("Backup and current partition match. Nothing to be done. Aborting");
-			logger.info("Making a backup on device before flashing.");
+			log.info("Making a backup on device before flashing.");
 			long transferred = AdbUtility.rawBackup(partition, phonetemp+"/"+tafilenamebefore);
 			if (transferred == 0)
 				throw new Exception("Failed to take a backup before flashing new TA. Aborting");
-			logger.info("Flashing new TA.");
+			log.info("Flashing new TA.");
 			transferred = AdbUtility.rawBackup(phonetemp+"/"+tafilename, partition);
 			hash.setProperty("partitionafter", AdbUtility.getMD5(partition));
 			if (!hash.getProperty("remote").equals(hash.getProperty("partitionafter"))) {
-				logger.error("Error flashing new TA. Reverting back to the previous TA.");
+				log.error("Error flashing new TA. Reverting back to the previous TA.");
 				transferred = AdbUtility.rawBackup(phonetemp+"/"+tafilenamebefore, partition);
 				if (transferred == 0L)
 					throw new Exception("Failed to restore previous TA");
-				logger.info("Restore previous TA OK");
+				log.info("Restore previous TA OK");
 			}
 			else {
-				logger.info("Restore is OK");
+				log.info("Restore is OK");
 				Devices.getCurrent().reboot();
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 		}
     }
 
@@ -239,7 +239,7 @@ public class RawTAJob extends Job {
 		    FileOutputStream stream = new FileOutputStream(fta);
 		    JarOutputStream out = new JarOutputStream(stream, manifest);
 		    out.setLevel(Deflater.BEST_SPEED);
-			logger.info("Creating backupset bundle");
+			log.info("Creating backupset bundle");
 		    JarEntry jarAdd = new JarEntry(tafilename);
 	        out.putNextEntry(jarAdd);
 	        InputStream in = new FileInputStream(tadd);
@@ -255,18 +255,18 @@ public class RawTAJob extends Job {
 	        stream.flush();
 		    stream.close();
 		    tadd.delete();
-		    logger.info("Bundle "+fta.getAbsolutePath()+" creation finished");
+		    log.info("Bundle "+fta.getAbsolutePath()+" creation finished");
 		}
 		catch (Exception e) {
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 		}
     }
 
     private void saveEntry(JarFile jar, JarEntry entry, String folder) throws IOException {
-			logger.debug("Saving entry "+entry.getName()+" to disk");
+			log.debug("Saving entry "+entry.getName()+" to disk");
 			InputStream in = jar.getInputStream(entry);
 			String outname = folder+File.separator+entry.getName();
-			logger.debug("Writing Entry to "+outname);
+			log.debug("Writing Entry to "+outname);
 			OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
 			byte[] buffer = new byte[10240];
 			int len;

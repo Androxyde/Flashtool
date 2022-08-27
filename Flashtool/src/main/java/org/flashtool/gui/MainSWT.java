@@ -59,9 +59,9 @@ import org.flashtool.gui.tools.WidgetTask;
 import org.flashtool.gui.tools.Yaffs2Job;
 import org.flashtool.jna.adb.AdbUtility;
 import org.flashtool.jna.linux.JUsb;
-import org.flashtool.logger.LogProgress;
-import org.flashtool.logger.MyLogger;
-import org.flashtool.logger.TextAreaAppender;
+import org.flashtool.log.LogProgress;
+import org.flashtool.log.MyLogger;
+import org.flashtool.log.TextAreaAppender;
 import org.flashtool.parsers.ta.TARawParser;
 import org.flashtool.system.DeviceChangedListener;
 import org.flashtool.system.DeviceEntry;
@@ -148,38 +148,38 @@ public class MainSWT {
 		StatusListener phoneStatus = new StatusListener() {
 			public void statusChanged(StatusEvent e) {
 				if (!e.isDriverOk()) {
-					logger.error("Drivers need to be installed for connected device.");
-					logger.error("You can find them in the drivers folder of Flashtool.");
+					log.error("Drivers need to be installed for connected device.");
+					log.error("You can find them in the drivers folder of Flashtool.");
 				}
 				else {
 					if (e.getNew().equals("adb_unauthorized")) {
-						logger.info("Unauthorized device connected with USB debugging on");
-						logger.info("Check the device to accept the authorization");
+						log.info("Unauthorized device connected with USB debugging on");
+						log.info("Check the device to accept the authorization");
 					}
 					if (e.getNew().equals("adb")) {
-						logger.info("Device connected with USB debugging on");
-						logger.debug("Device connected, continuing with identification");
+						log.info("Device connected with USB debugging on");
+						log.debug("Device connected, continuing with identification");
 						doIdent();
 					}
 					if (e.getNew().equals("none")) {
-						logger.info("Device disconnected");
+						log.info("Device disconnected");
 						doDisableIdent();
 					}
 					if (e.getNew().equals("flash")) {
-						logger.info("Device connected in flash mode");
+						log.info("Device connected in flash mode");
 						doDisableIdent();
 					}
 					if (e.getNew().equals("flash_obsolete")) {
-						logger.error("Device connected in flash mode but driver is too old");
+						log.error("Device connected in flash mode but driver is too old");
 						doDisableIdent();
 					}
 					if (e.getNew().equals("fastboot")) {
-						logger.info("Device connected in fastboot mode");
+						log.info("Device connected in fastboot mode");
 						doDisableIdent();
 					}
 					if (e.getNew().equals("normal")) {
-						logger.info("Device connected with USB debugging off");
-						logger.info("For 2011 devices line, be sure you are not in MTP mode");
+						log.info("Device connected with USB debugging off");
+						log.info("For 2011 devices line, be sure you are not in MTP mode");
 						doDisableIdent();
 					}
 				}
@@ -187,7 +187,7 @@ public class MainSWT {
 		};
 		killAdbandFastboot();
 		Devices.load();
-		logger.info("Starting phone detection");
+		log.info("Starting phone detection");
 		DeviceChangedListener.starts(phoneStatus);
 		//phoneWatchdog = new AdbPhoneThread();
 		//phoneWatchdog.start();
@@ -398,7 +398,7 @@ public class MainSWT {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					logger.info("Launching Service Menu. Plese check on your phone.");
+					log.info("Launching Service Menu. Plese check on your phone.");
 					AdbUtility.run("am start -a android.intent.action.MAIN -n com.sonyericsson.android.servicemenu/.ServiceMainMenu");
 				}
 				catch (Exception ex) {
@@ -488,7 +488,7 @@ public class MainSWT {
 							if (new File(folder+File.separator+"decrypted").exists()) {
 								String result = WidgetTask.openBundleCreator(shlSonyericsson,folder+File.separator+"decrypted");
 								if (result.equals("Cancel"))
-									logger.info("Bundle creation canceled");
+									log.info("Bundle creation canceled");
 							}
 						}
 
@@ -506,7 +506,7 @@ public class MainSWT {
 					dec.schedule();
 				}
 				else {
-					logger.info("Decrypt canceled");
+					log.info("Decrypt canceled");
 				}
 			}
 		});
@@ -519,7 +519,7 @@ public class MainSWT {
 				BundleCreator cre = new BundleCreator(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 				String result = (String)cre.open();
 				if (result.equals("Cancel"))
-					logger.info("Bundle creation canceled");
+					log.info("Bundle creation canceled");
 			}
 		});
 		mntmBundleCreation.setText("Create");
@@ -531,7 +531,7 @@ public class MainSWT {
 				DBEditor dbe = new DBEditor(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 				String result = (String)dbe.open();
 				if (result.equals("Cancel"))
-					logger.info("Bundle creation canceled");
+					log.info("Bundle creation canceled");
 			}
 		});
 		mntmBundleCreationFrom.setText("Create From Sony DB");*/
@@ -596,18 +596,18 @@ public class MainSWT {
 							result = (TADevice)restore.open(backupset);
 						}
 						else {
-							logger.info("No backup found");
+							log.info("No backup found");
 						}
 					}
 					else {
-						logger.info("No backup found");
+						log.info("No backup found");
 					}
 				}
 				else {
-					logger.info("No backup found");
+					log.info("No backup found");
 				}
 				if (result==null) {
-					logger.info("Canceled TA restore task");
+					log.info("Canceled TA restore task");
 				}
 				else {
 					boolean toflash = false;
@@ -615,13 +615,13 @@ public class MainSWT {
 						if (result.getBags().get(i).toflash.size()>0) toflash=true;
 					}
 					if (!toflash) {
-						logger.info("Nothing to do with TA restore task");
+						log.info("Nothing to do with TA restore task");
 					}
 					else {
 						Bundle bundle = new Bundle();
 						bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
 						bundle.setMaxBuffer(3);
-						logger.info("Please connect your device into flashmode.");
+						log.info("Please connect your device into flashmode.");
 						String connect = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson);
 						if (connect.equals("OK")) {
 							final Flasher flash = FlasherFactory.getFlasher(bundle,shlSonyericsson);
@@ -632,15 +632,15 @@ public class MainSWT {
 								rjob.schedule();
 							}
 							catch (Exception ex){
-								logger.error(ex.getMessage());
+								log.error(ex.getMessage());
 								if (flash.getBundle()!=null)
 									flash.getBundle().close();
-								logger.info("Flash canceled");
+								log.info("Flash canceled");
 								DeviceChangedListener.enableDetection();
 							}
 						} else {
 							DeviceChangedListener.enableDetection();
-							logger.info("Flash canceled");
+							log.info("Flash canceled");
 						}
 					}
 				}
@@ -675,10 +675,10 @@ public class MainSWT {
 					result = (TADevice)restore.open(backupset);
 				}
 				else {
-					logger.info("No TA file selected");
+					log.info("No TA file selected");
 				}
 			if (result==null) {
-				logger.info("Canceled TA restore task");
+				log.info("Canceled TA restore task");
 			}
 			else {
 				boolean toflash = false;
@@ -686,12 +686,12 @@ public class MainSWT {
 					if (result.getBags().get(i).toflash.size()>0) toflash=true;
 				}
 				if (!toflash) {
-					logger.info("Nothing to do with TA restore task");
+					log.info("Nothing to do with TA restore task");
 				}
 				else {
 					Bundle bundle = new Bundle();
 					bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
-					logger.info("Please connect your device into flashmode.");
+					log.info("Please connect your device into flashmode.");
 					String connect = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson);
 					if (connect.equals("OK")) {
 						final Flasher flash = FlasherFactory.getFlasher(bundle,shlSonyericsson);
@@ -702,14 +702,14 @@ public class MainSWT {
 							rjob.schedule();
 						}
 						catch (Exception ex){
-							logger.error(ex.getMessage());
-							logger.info("Flash canceled");
+							log.error(ex.getMessage());
+							log.info("Flash canceled");
 							DeviceChangedListener.enableDetection();
 							if (flash.getBundle()!=null)
 								flash.getBundle().close();
 						}
 					} else {
-						logger.info("Flash canceled");
+						log.info("Flash canceled");
 						DeviceChangedListener.enableDetection();
 					}
 
@@ -761,7 +761,7 @@ public class MainSWT {
 				String dir = dlg.open();
 				if (dir!=null) {
 					try {
-					logger.info("Parsing " + dir+". Please wait");
+					log.info("Parsing " + dir+". Please wait");
 					TARawParser p = new TARawParser(new File(dir));
 					HashMap<String,Vector<TABag>> backup = new HashMap<String, Vector<TABag>>();
 					backup.put("rawta", p.getBags());
@@ -771,10 +771,10 @@ public class MainSWT {
 						result = (TADevice)restore.open(backup);
 					}
 					else {
-						logger.info("Bad TA image. Aborting");
+						log.info("Bad TA image. Aborting");
 					}
 					if (result==null) {
-						logger.info("Canceled TA restore task");
+						log.info("Canceled TA restore task");
 					}
 					else {
 						boolean toflash = false;
@@ -782,12 +782,12 @@ public class MainSWT {
 							if (result.getBags().get(i).toflash.size()>0) toflash=true;
 						}
 						if (!toflash) {
-							logger.info("Nothing to do with TA restore task");
+							log.info("Nothing to do with TA restore task");
 						}
 						else {
 							Bundle bundle = new Bundle();
 							bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
-							logger.info("Please connect your device into flashmode.");
+							log.info("Please connect your device into flashmode.");
 							String connect = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson);
 							if (connect.equals("OK")) {
 								final Flasher flash = FlasherFactory.getFlasher(bundle,shlSonyericsson);
@@ -798,15 +798,15 @@ public class MainSWT {
 										rjob.schedule();
 								}
 								catch (Exception ex){
-									logger.error(ex.getMessage());
-									logger.info("Flash canceled");
+									log.error(ex.getMessage());
+									log.info("Flash canceled");
 									DeviceChangedListener.enableDetection();
 									if (flash.getBundle()!=null)
 										flash.getBundle().close();
 								}
 							}
 							else {
-								logger.info("Flash canceled");
+								log.info("Flash canceled");
 								DeviceChangedListener.enableDetection();
 							}
 						}
@@ -814,7 +814,7 @@ public class MainSWT {
 					} catch (Exception exc) {}
 		    	}
 				else {
-					logger.info("Operation canceled");
+					log.info("Operation canceled");
 				}
 			}
 		});
@@ -934,14 +934,14 @@ public class MainSWT {
 						models.put(m.getModel(), m);
 						mng.open(models);
 					}
-					else logger.warn("This updateurl already exists");
+					else log.warn("This updateurl already exists");
 					} catch (Exception e1) {
-						logger.error(e1.getMessage());
+						log.error(e1.getMessage());
 						e1.printStackTrace();
 					}
 				}
 				else {
-					logger.info("Add update URL canceled");
+					log.info("Add update URL canceled");
 				}
 			}
 		});
@@ -966,12 +966,12 @@ public class MainSWT {
 				DeviceEntry ent = Devices.getDevice(devid);
         		if (devid.length()>0) {
         			try {
-        				logger.info("Beginning export of "+ent.getName());
+        				log.info("Beginning export of "+ent.getName());
         				doExportDevice(devid);
-        				logger.info(ent.getName()+" exported successfully");
+        				log.info(ent.getName()+" exported successfully");
         			}
         			catch (Exception ex) {
-        				logger.error(ex.getMessage());
+        				log.error(ex.getMessage());
         			}
         		}
 			}
@@ -1006,11 +1006,11 @@ public class MainSWT {
 							j.schedule();
 						}
 						catch (Exception ex) {
-							logger.error(ex.getMessage());
+							log.error(ex.getMessage());
 						}
 	        		}
 	        		else {
-	        			logger.info("Import canceled");
+	        			log.info("Import canceled");
 	        		}
         		}
         		else {
@@ -1175,7 +1175,7 @@ public class MainSWT {
 					aij.schedule();
 				}
 				else {
-					logger.info("Install APK canceled");
+					log.info("Install APK canceled");
 				}
 			}
 		});
@@ -1194,7 +1194,7 @@ public class MainSWT {
 					cj.schedule();
 				}
 				else
-					logger.info("Cleaning canceled");
+					log.info("Cleaning canceled");
 				//WidgetTask.openOKBox(shlSonyericsson, "To be implemented");
 			}
 		});
@@ -1270,11 +1270,11 @@ public class MainSWT {
 /*		try {
 		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
 		} catch (Exception e) {
-			logger.info("Language files not installed");
+			log.info("Language files not installed");
 		}*/
-		logger.info("Flashtool "+About.getVersion());
+		log.info("Flashtool "+About.getVersion());
 		if (JUsb.getVersion().length()>0)
-			logger.info(JUsb.getVersion());
+			log.info(JUsb.getVersion());
 		Proxy.setProxy();
 		vcheck = new VersionCheckerJob("Version Checker Job");
 		vcheck.setMessageFrame(shlSonyericsson);
@@ -1295,7 +1295,7 @@ public class MainSWT {
 	public void exitProgram() {
 		try {
 			MyLogger.setMode(MyLogger.CONSOLE_MODE);
-			logger.info("Stopping watchdogs and exiting ...");
+			log.info("Stopping watchdogs and exiting ...");
 			if (GlobalConfig.getProperty("killadbonexit").equals("yes")) {
 				killAdbandFastboot();
 			}
@@ -1309,8 +1309,8 @@ public class MainSWT {
     		String devid = Devices.identFromRecognition();
     		if (devid.length()==0) {
     			if (Devices.listDevices(false).hasMoreElements()) {
-    				logger.error("Cannot identify your device.");
-	        		logger.info("Selecting from user input");
+    				log.error("Cannot identify your device.");
+	        		log.info("Selecting from user input");
 	        		devid=(String)WidgetTask.openDeviceSelector(shlSonyericsson);
 	    			if (devid.length()>0) {
 	        			Devices.setCurrent(devid);
@@ -1321,17 +1321,17 @@ public class MainSWT {
 	        					Devices.getCurrent().addRecognitionToList(prop);
 	        			}
 	            		if (!Devices.isWaitingForReboot())
-	            			logger.info("Connected device : " + Devices.getCurrent().getId());
+	            			log.info("Connected device : " + Devices.getCurrent().getId());
 	        		}
 	        		else {
-	        			logger.error("You can only flash devices.");
+	        			log.error("You can only flash devices.");
 	        		}
     			}
     		}
     		else {
 	    		Devices.setCurrent(devid);
 				if (!Devices.isWaitingForReboot())
-					logger.info("Connected device : " + Devices.getCurrent().getName());
+					log.info("Connected device : " + Devices.getCurrent().getName());
     		}
     		if (devid.length()>0) {
     			WidgetTask.setEnabled(mntmNoDevice, true);
@@ -1339,11 +1339,11 @@ public class MainSWT {
     			WidgetTask.setEnabled(mntmInstallBusybox,false);
     			WidgetTask.setEnabled(mntmBackupSystemApps,false);
     			if (!Devices.isWaitingForReboot()) {
-    				logger.info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
-    				logger.info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Platform : "+Devices.getCurrent().getArch()+"bits / Build number : " + Devices.getCurrent().getBuildId());
+    				log.info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
+    				log.info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Platform : "+Devices.getCurrent().getArch()+"bits / Build number : " + Devices.getCurrent().getBuildId());
     			}
     			if (Devices.getCurrent().isRecovery()) {
-    				logger.info("Phone in recovery mode");
+    				log.info("Phone in recovery mode");
     				WidgetTask.setEnabled(tltmRoot,false);
     				WidgetTask.setEnabled(tltmAskRoot,false);
     				WidgetTask.setEnabled(tltmApkInstall,false);
@@ -1355,7 +1355,7 @@ public class MainSWT {
     				WidgetTask.setEnabled(tltmApkInstall, true);
     				boolean hasRoot=false;
     				if (hasSU) {
-        				logger.info("Checking root access");
+        				log.info("Checking root access");
     					hasRoot = Devices.getCurrent().hasRoot();
     					if (hasRoot) {
     						doInstFlashtool();
@@ -1363,31 +1363,31 @@ public class MainSWT {
     				}
     				doGiveRoot(hasRoot);
     			}
-    			logger.debug("Now setting buttons availability - btnRoot");
-    			logger.debug("mtmRootzergRush menu");
+    			log.debug("Now setting buttons availability - btnRoot");
+    			log.debug("mtmRootzergRush menu");
     			/*mntmRootzergRush.setEnabled(true);
-    			logger.debug("mtmRootPsneuter menu");
+    			log.debug("mtmRootPsneuter menu");
     			mntmRootPsneuter.setEnabled(true);
-    			logger.debug("mtmRootEmulator menu");
+    			log.debug("mtmRootEmulator menu");
     			mntmRootEmulator.setEnabled(true);
-    			logger.debug("mtmRootAdbRestore menu");
+    			log.debug("mtmRootAdbRestore menu");
     			mntmRootAdbRestore.setEnabled(true);
-    			logger.debug("mtmUnRoot menu");
+    			log.debug("mtmUnRoot menu");
     			mntmUnRoot.setEnabled(true);*/
 
     			boolean flash = Devices.getCurrent().canFlash();
-    			logger.debug("flashBtn button "+flash);
+    			log.debug("flashBtn button "+flash);
     			WidgetTask.setEnabled(tltmFlash,flash);
-    			//logger.debug("custBtn button");
+    			//log.debug("custBtn button");
     			//custBtn.setEnabled(true);
-    			logger.debug("Now adding plugins");
+    			log.debug("Now adding plugins");
     			//mnPlugins.removeAll();
     			//addDevicesPlugins();
     			//addGenericPlugins();
-    			logger.debug("Stop waiting for device");
+    			log.debug("Stop waiting for device");
     			if (Devices.isWaitingForReboot())
     				Devices.stopWaitForReboot();
-    			logger.debug("End of identification");
+    			log.debug("End of identification");
     		}
     	}
 	}
@@ -1423,17 +1423,17 @@ public class MainSWT {
 		WidgetTask.setEnabled(tltmAskRoot,!hasRoot);
 		if (!Devices.isWaitingForReboot())
 			if (hasRoot) {
-				logger.info("Root Access Allowed");
+				log.info("Root Access Allowed");
 				AdbUtility.antiRic();
 			}
 			else
-				logger.info("Root access denied");
+				log.info("Root access denied");
     }
 
 	public void doAskRoot() {
 		Job job = new Job("Give Root") {
 			protected IStatus run(IProgressMonitor monitor) {
-				logger.warn("Please check your Phone and 'ALLOW' Superuseraccess!");
+				log.warn("Please check your Phone and 'ALLOW' Superuseraccess!");
         		boolean hasRoot = Devices.getCurrent().hasRoot();
         		doGiveRoot(hasRoot);
         		return Status.OK_STATUS;				
@@ -1446,14 +1446,14 @@ public class MainSWT {
 		try {
 			if (!AdbUtility.exists("/system/flashtool")) {
 				Devices.getCurrent().doBusyboxHelper();
-				logger.info("Installing toolbox to device...");
+				log.info("Installing toolbox to device...");
 				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
 				FTShell ftshell = new FTShell("installftkit");
 				ftshell.runRoot();
 			}
 		}
 		catch (Exception e) {
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 		}
     }
 
@@ -1465,7 +1465,7 @@ public class MainSWT {
 		else if (select.equals("fastboot"))
 			doFastBoot();
 		else
-			logger.info("Flash canceled");
+			log.info("Flash canceled");
 	}
 	
 	public void doFastBoot() throws Exception {
@@ -1481,7 +1481,7 @@ public class MainSWT {
 			FTFSelector ftfsel = new FTFSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
 			if (bundle !=null) {
-				logger.info("Selected "+bundle);
+				log.info("Selected "+bundle);
 				FlashJob fjob = new FlashJob("Flash");
 				try {
 						fjob.setBundle(bundle);
@@ -1489,14 +1489,14 @@ public class MainSWT {
 						fjob.schedule();
 				}
 				catch (Exception e){
-					logger.error(e.getMessage());
-					logger.info("Flash canceled");
+					log.error(e.getMessage());
+					log.info("Flash canceled");
 					if (bundle!=null)
 						bundle.close();
 				}
 			}
 			else
-				logger.info("Flash canceled");
+				log.info("Flash canceled");
 
 		}
 		catch (Exception e) {
@@ -1512,7 +1512,7 @@ public class MainSWT {
 				if (bundle!=null) {
 					X10flash flash=null;
 					try {
-			    		logger.info("Preparing files for flashing");
+			    		log.info("Preparing files for flashing");
 			    		bundle.open();
 				    	bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
 						flash = new X10flash(bundle);
@@ -1528,14 +1528,14 @@ public class MainSWT {
 						}
 					}
 					catch (BundleException ioe) {
-						logger.error("Error preparing files");
+						log.error("Error preparing files");
 					}
 					catch (Exception e) {
-						logger.error(e.getMessage());
+						log.error(e.getMessage());
 					}
 					bundle.close();
 				}
-				else logger.info("Flash canceled");
+				else log.info("Flash canceled");
 				return null;
 			}
 		});*/
@@ -1545,7 +1545,7 @@ public class MainSWT {
 		try {
 			Bundle b = new Bundle();
 			b.setMaxBuffer(512*1024);
-			logger.info("Please connect your device into flashmode.");
+			log.info("Please connect your device into flashmode.");
 			String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson);
 			if (result.equals("OK")) {
 				final Flasher flash = FlasherFactory.getFlasher(b,shlSonyericsson);
@@ -1580,7 +1580,7 @@ public class MainSWT {
 									}
 									else {
 										flash.close();
-										logger.warn("Your device cannot be relocked");
+										log.warn("Your device cannot be relocked");
 									}
 								}
 								if (j.isRootable()) {
@@ -1590,13 +1590,13 @@ public class MainSWT {
 									}
 									else {
 										flash.close();
-										logger.info("Now unplug your device and restart it into fastbootmode");
+										log.info("Now unplug your device and restart it into fastbootmode");
 										String result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
 										if (result.equals("OK")) {
 											result = WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, null, "U");
 										}
 										else {
-											logger.info("Bootloader unlock canceled");
+											log.info("Bootloader unlock canceled");
 										}
 									}
 								}
@@ -1609,18 +1609,18 @@ public class MainSWT {
 			}
 			catch (Exception e) {
 				flash.close();
-				logger.info("Bootloader unlock canceled");
+				log.info("Bootloader unlock canceled");
 				LogProgress.initProgress(0);
 				DeviceChangedListener.enableDetection();
 			}
 		}
 		else {
-			logger.info("Bootloader unlock canceled");
+			log.info("Bootloader unlock canceled");
 			DeviceChangedListener.enableDetection();
 		}
 		}
 		catch (Exception e) {
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 			DeviceChangedListener.enableDetection();
 		}
 	}
@@ -1661,7 +1661,7 @@ public class MainSWT {
 		Bundle bundle = new Bundle();
 		bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
 		bundle.setMaxBuffer(512*1024);
-		logger.info("Please connect your device into flashmode.");
+		log.info("Please connect your device into flashmode.");
 		String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson);
 		if (result.equals("OK")) {
 			final Flasher flash = FlasherFactory.getFlasher(bundle,shlSonyericsson);
@@ -1671,8 +1671,8 @@ public class MainSWT {
 					fjob.schedule();
 			}
 			catch (Exception e) {
-				logger.error(e.getMessage());
-				logger.info("S1 TA backup canceled");
+				log.error(e.getMessage());
+				log.info("S1 TA backup canceled");
 				DeviceChangedListener.enableDetection();
 				if (flash.getBundle()!=null)
 					flash.getBundle().close();
@@ -1680,7 +1680,7 @@ public class MainSWT {
 		}
 		else {
 			DeviceChangedListener.enableDetection();
-			logger.info("S1 TA backup canceled");
+			log.info("S1 TA backup canceled");
 		}
 	}
 
@@ -1731,7 +1731,7 @@ public class MainSWT {
         	yj.schedule();
         }
         else
-        	logger.info("Canceled");
+        	log.info("Canceled");
 	}
 	
 	public void forceMove(String source, String dest) {

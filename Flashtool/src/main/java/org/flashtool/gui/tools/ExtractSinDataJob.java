@@ -35,12 +35,12 @@ public class ExtractSinDataJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
     	try {
     		if (mode.equals("data")) {
-    			logger.info("Starting data extraction");
+    			log.info("Starting data extraction");
     			sin.dumpImage();
     		}
     		else
     			if (mode.equals("raw"))
-    				logger.error("this feature is not implemented");
+    				log.error("this feature is not implemented");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {

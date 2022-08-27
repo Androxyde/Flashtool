@@ -29,7 +29,7 @@ import javax.crypto.NoSuchPaddingException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.flashtool.logger.LogProgress;
+import org.flashtool.log.LogProgress;
 import org.flashtool.util.HexDump;
 
 import java.util.zip.CheckedInputStream;
@@ -87,7 +87,7 @@ public class OS {
 			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {getWorkDir()+File.separator+"x10flasher_lib"+File.separator+"unyaffs",yaffsfile,folder},false);
 		}
 		catch (Exception e) {
-			logger.warn("Failed : "+e.getMessage());
+			log.warn("Failed : "+e.getMessage());
 		}
 	}
 	
@@ -213,10 +213,10 @@ public class OS {
 		  }
 		  }
 		  catch(FileNotFoundException ex){
-			  logger.error(ex.getMessage() + " in the specified directory.");
+			  log.error(ex.getMessage() + " in the specified directory.");
 		  }
 		  catch(IOException e){
-			  logger.error(e.getMessage());  
+			  log.error(e.getMessage());  
 		  }
 	}
 	
@@ -317,9 +317,9 @@ public class OS {
 	public static RandomAccessFile generateEmptyFile(String fname, long size, byte fill) {
 		// To fill the empty file with FF values
 		if ((size/1024/1024)<0)
-			logger.info("File size : "+size/1024/1024+" Mb");
+			log.info("File size : "+size/1024/1024+" Mb");
 		else
-			logger.info("File size : "+size/1024+" Kb");
+			log.info("File size : "+size/1024+" Kb");
 		try {
 			byte[] empty = new byte[65*1024];
 			for (int i=0; i<empty.length;i++)
@@ -345,7 +345,7 @@ public class OS {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}

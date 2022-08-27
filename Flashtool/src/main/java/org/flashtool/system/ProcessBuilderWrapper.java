@@ -92,9 +92,9 @@ public class ProcessBuilderWrapper {
                 	if (line.trim().replaceAll("\n", "").length()>0) {
                 		line = line.replaceAll("\n", "");
 	                	if (print)
-	                		logger.info(line);
+	                		log.info(line);
 	                	else
-	                		logger.debug(line);
+	                		log.debug(line);
 	                    pw.println(line);
                 	}
                 }

@@ -63,20 +63,20 @@ public class FastBootToolBoxJob extends Job {
 	protected void doRebootFastbootViaAdb() {
 		if (Devices.HasOneAdbConnected()) {
 			if (Devices.getCurrent().canFastboot()) {
-				logger.info("Please wait device is rebooting into fastboot mode (via ADB)");
+				log.info("Please wait device is rebooting into fastboot mode (via ADB)");
 				try {
 					FastbootUtility.adbRebootFastboot();
-					logger.info("Device will soon enter fastboot mode");
+					log.info("Device will soon enter fastboot mode");
 				}
 				catch (Exception e1) {
-					logger.error(e1.getMessage());
+					log.error(e1.getMessage());
 				}
 			}
 			else
-				logger.error("This action can be done only if the connected phone has fastboot mode");
+				log.error("This action can be done only if the connected phone has fastboot mode");
 		}
 		else
-			logger.error("This action needs a connected device in ADB mode");
+			log.error("This action needs a connected device in ADB mode");
 	}
 
 	public void doCheckDeviceStatus() {
@@ -88,66 +88,66 @@ public class FastBootToolBoxJob extends Job {
 		else
 			if (FastbootUtility.getDevices().hasMoreElements())
 				deviceStatus="FASTBOOT mode";	
-		logger.info("Device Status: " + deviceStatus);
+		log.info("Device Status: " + deviceStatus);
 	}
 
 	public void doGetConnectedDeviceInfo(){
 		if (!Devices.HasOneFastbootConnected()) {
-			logger.error("This action can only be done in fastboot mode");
+			log.error("This action can only be done in fastboot mode");
 			return;
 		}
-		logger.info("Fetching connected device info");
+		log.info("Fetching connected device info");
 		try {
 			RunOutputs outputsRun = FastbootUtility.getDeviceInfo();
-			logger.info("Connected device info: [ " + outputsRun.getStdOut().split("fastboot")[0].trim() + " ]");
+			log.info("Connected device info: [ " + outputsRun.getStdOut().split("fastboot")[0].trim() + " ]");
 		}
 		catch (Exception e1) {
-			logger.error(e1.getMessage());
+			log.error(e1.getMessage());
 		}
 	}
 
 	public void doGetFastbootVerInfo(){
 		if (!Devices.HasOneFastbootConnected()) {
-			logger.error("This action can only be done in fastboot mode");
+			log.error("This action can only be done in fastboot mode");
 			return;
 		}
-		logger.info("Fetching fastboot version info from connected device");
+		log.info("Fetching fastboot version info from connected device");
 		try {
 			RunOutputs outputsRun = FastbootUtility.getFastbootVerInfo();
-			logger.info("FASTBOOT version info: [ " + outputsRun.getStdErr().split("\n")[0].trim() + " ]");
+			log.info("FASTBOOT version info: [ " + outputsRun.getStdErr().split("\n")[0].trim() + " ]");
 			
 		}
 		catch (Exception e1) {
-			logger.error(e1.getMessage());
+			log.error(e1.getMessage());
 		}
 	}
 
 	public void doRebootBackIntoFastbootMode(){
 		if (!Devices.HasOneFastbootConnected()) {
-			logger.error("This action can only be done in fastboot mode");
+			log.error("This action can only be done in fastboot mode");
 			return;
 		}
-		logger.info("Please wait device is rebooting into fastboot mode (via Fastboot)");
+		log.info("Please wait device is rebooting into fastboot mode (via Fastboot)");
 		try {
 			FastbootUtility.rebootFastboot();
-			logger.info("Device will soon reboot back into fastboot mode");
+			log.info("Device will soon reboot back into fastboot mode");
 		}
 		catch (Exception e1) {
-			logger.error(e1.getMessage());
+			log.error(e1.getMessage());
 		}
 	}
 
 	public void doFastbootReboot(){
 		if (!Devices.HasOneFastbootConnected()) {
-			logger.error("This action can only be done in fastboot mode");
+			log.error("This action can only be done in fastboot mode");
 			return;
 		}
-		logger.info("Device will now exit fastboot mode and start booting into system");
+		log.info("Device will now exit fastboot mode and start booting into system");
 		try {
 			FastbootUtility.rebootDevice();
 		}
 		catch (Exception e1) {
-			logger.error(e1.getMessage());
+			log.error(e1.getMessage());
 		}
 	}
 
@@ -157,24 +157,24 @@ public class FastBootToolBoxJob extends Job {
 	
 	public void doHotbootKernel() {
 		if (!Devices.HasOneFastbootConnected()) {
-			logger.error("This action can only be done in fastboot mode");
+			log.error("This action can only be done in fastboot mode");
 			return;
 		}
 		if (_image.length()==0) {
-			logger.error("no kernel (boot.img or kernel.sin) selected!");
+			log.error("no kernel (boot.img or kernel.sin) selected!");
 		} 
 		else {						
-			logger.info("Selected kernel (boot.img or kernel.sin): " + _image);
+			log.info("Selected kernel (boot.img or kernel.sin): " + _image);
 			// this wont wait for reply and will move on to next command
-			logger.info("HotBooting selected kernel");
+			log.info("HotBooting selected kernel");
 			try {
 				RunOutputs outputsRun = FastbootUtility.hotBoot(_image);
-				logger.info("FASTBOOT Output: \n " + outputsRun.getStdErr().trim() + "\n");
+				log.info("FASTBOOT Output: \n " + outputsRun.getStdErr().trim() + "\n");
 				if (!outputsRun.getStdErr().trim().contains("FAILED"))
-					logger.info("Device should now start booting with this kernel");
+					log.info("Device should now start booting with this kernel");
 			}
 			catch (Exception e1) {
-				logger.error(e1.getMessage());
+				log.error(e1.getMessage());
 			}
 			_image="";
 		}
@@ -182,22 +182,22 @@ public class FastBootToolBoxJob extends Job {
 
 	public void doFlashKernel() {
 		if (!Devices.HasOneFastbootConnected()) {
-			logger.error("This action can only be done in fastboot mode");
+			log.error("This action can only be done in fastboot mode");
 			return;
 		}
 		if (_image.length()==0) {
-			logger.error("no kernel (boot.img or kernel.sin) selected!");
+			log.error("no kernel (boot.img or kernel.sin) selected!");
 		}
 		else {						
-			logger.info("Selected kernel (boot.img or kernel.sin): " + _image);
-			logger.info("Flashing selected kernel");
+			log.info("Selected kernel (boot.img or kernel.sin): " + _image);
+			log.info("Flashing selected kernel");
 			try {
 				RunOutputs outputsRun = FastbootUtility.flashBoot(_image);
-				logger.info("FASTBOOT Output: \n " + outputsRun.getStdErr().trim() + "\n");
-				logger.info("Please check the log before rebooting into system");
+				log.info("FASTBOOT Output: \n " + outputsRun.getStdErr().trim() + "\n");
+				log.info("Please check the log before rebooting into system");
 			}
 			catch (Exception e1) {
-				logger.error(e1.getMessage());
+				log.error(e1.getMessage());
 			}
 		}
 		_image="";
@@ -205,21 +205,21 @@ public class FastBootToolBoxJob extends Job {
 
 	public void doFlashSystem() {
 		if (!Devices.HasOneFastbootConnected()) {
-			logger.error("This action can only be done in fastboot mode");
+			log.error("This action can only be done in fastboot mode");
 			return;
 		}
 		if (_image.length()==0) {
-			logger.error("no kernel (boot.img or kernel.sin) selected!");
+			log.error("no kernel (boot.img or kernel.sin) selected!");
 		}
 		else {						
-			logger.info("Selected system (system.img or system.sin): " + _image);
-			logger.info("Flashing selected system");
+			log.info("Selected system (system.img or system.sin): " + _image);
+			log.info("Flashing selected system");
 			try {
 				RunOutputs outputsRun = FastbootUtility.flashSystem(_image);
-				logger.info("Please check the log before rebooting into system");
+				log.info("Please check the log before rebooting into system");
 			}
 			catch (Exception e1) {
-				logger.error(e1.getMessage());
+				log.error(e1.getMessage());
 			}
 		}
 		_image="";

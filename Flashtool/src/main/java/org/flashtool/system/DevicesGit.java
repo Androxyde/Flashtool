@@ -35,7 +35,7 @@ public class DevicesGit {
 
     public static void cloneRepository() {
 		try {
-			logger.info("Cloning devices repository to "+OS.getFolderDevices());
+			log.info("Cloning devices repository to "+OS.getFolderDevices());
 	        File lPath = new File(OS.getFolderDevices());
 	        OS.deleteDirectory(lPath);
 	        lPath.mkdir();
@@ -51,18 +51,18 @@ public class DevicesGit {
 
     public static boolean openRepository() {
 		try {
-			logger.info("Opening devices repository.");
+			log.info("Opening devices repository.");
 	        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-	        logger.debug("Local path : "+localPath);
+	        log.debug("Local path : "+localPath);
 	        localRepo = builder.setGitDir(new File(localPath))
 	                .readEnvironment() // scan environment GIT_* variables
 	                .findGitDir() // scan up the file system tree
 	                .build();
-	        logger.debug("Getting new git object");
+	        log.debug("Getting new git object");
 	        git = new Git(localRepo);
 	        return true;
 		} catch (Exception e) {
-			logger.info("Error opening devices repository.");
+			log.info("Error opening devices repository.");
 			closeRepository();
 			return false;
 		}
@@ -70,20 +70,20 @@ public class DevicesGit {
 
     public static void pullRepository() {
     	try {
-	    	logger.info("Scanning devices folder for changes.");
+	    	log.info("Scanning devices folder for changes.");
 	    	git.add().addFilepattern(".").call();
 	    	Status status = git.status().call();
 	    	if (status.getChanged().size()>0 || status.getAdded().size()>0 || status.getModified().size()>0) {
-	    		logger.info("Changes have been found. Doing a hard reset (removing user modifications).");
+	    		log.info("Changes have been found. Doing a hard reset (removing user modifications).");
 	    		ResetCommand reset = git.reset();
 	    		reset.setMode(ResetType.HARD);
 	    		reset.setRef(Constants.HEAD);
 	    		reset.call();
 	    	}
-	    	logger.info("Pulling changes from github.");
+	    	log.info("Pulling changes from github.");
 	    	git.pull().call();
     	} catch (NoHeadException e) {
-    		logger.info("Pull failed. Trying to clone repository instead");
+    		log.info("Pull failed. Trying to clone repository instead");
     		closeRepository();
     		cloneRepository();
     	}
@@ -93,7 +93,7 @@ public class DevicesGit {
     }
 
     public static void closeRepository() {
-    	logger.info("Quietly closing devices repository.");
+    	log.info("Quietly closing devices repository.");
     	try {
         	git.close();
 		} catch (Exception e) {

@@ -18,7 +18,7 @@ public class Proxy {
 	
 	public static void setProxy() {
 		if (dps==null) dps=ProxySelector.getDefault();
-		logger.info("Searching for a web proxy");
+		log.info("Searching for a web proxy");
 		ProxySearch proxySearch = new ProxySearch();
         
 		if (PlatformUtil.getCurrentPlattform() == Platform.WIN) {
@@ -35,11 +35,11 @@ public class Proxy {
 		}
 		ProxySelector ps = proxySearch.getProxySelector();
 		if (ps!=null) {
-			logger.info("A proxy has been found. Using it as default");
+			log.info("A proxy has been found. Using it as default");
 			ProxySelector.setDefault(ps);
 		}
 		else {
-			logger.info("No proxy found, using direct connection");
+			log.info("No proxy found, using direct connection");
 		}
 	}
 	

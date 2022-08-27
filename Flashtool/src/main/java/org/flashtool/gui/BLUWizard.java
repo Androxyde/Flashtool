@@ -167,7 +167,7 @@ public class BLUWizard extends Dialog {
 								WidgetTask.setButtonText(btnCancel, "Close");
 							}
 							else {
-								logger.warn("Maybe the OEM is not enabled");
+								log.warn("Maybe the OEM is not enabled");
 							}
 						}
 
@@ -178,7 +178,7 @@ public class BLUWizard extends Dialog {
 				else {
 					if (_action.equals("R")) {
 						TAUnit ta = new TAUnit(2226, null);
-						logger.info("Relocking device");
+						log.info("Relocking device");
 						WriteTAJob tj = new WriteTAJob("Write TA");
 						tj.addJobChangeListener(new IJobChangeListener() {
 							public void aboutToRun(IJobChangeEvent event) {}
@@ -187,7 +187,7 @@ public class BLUWizard extends Dialog {
 							public void scheduled(IJobChangeEvent event) {}
 							public void sleeping(IJobChangeEvent event) {}
 							public void done(IJobChangeEvent event) {
-								logger.info("Relock finished");
+								log.info("Relock finished");
 								WriteTAJob res = (WriteTAJob) event.getJob();
 								WidgetTask.setEnabled(btnUnlock, !res.writeSuccess());
 								if (res.writeSuccess()) {
@@ -201,7 +201,7 @@ public class BLUWizard extends Dialog {
 					}
 					else {
 						TAUnit ta = new TAUnit(2226, textULCODE.getText().getBytes());
-						logger.info("Unlocking device");
+						log.info("Unlocking device");
 						WriteTAJob tj = new WriteTAJob("Write TA");
 						tj.addJobChangeListener(new IJobChangeListener() {
 							public void aboutToRun(IJobChangeEvent event) {}
@@ -210,7 +210,7 @@ public class BLUWizard extends Dialog {
 							public void scheduled(IJobChangeEvent event) {}
 							public void sleeping(IJobChangeEvent event) {}
 							public void done(IJobChangeEvent event) {
-								logger.info("Unlock finished");
+								log.info("Unlock finished");
 								WriteTAJob res = (WriteTAJob) event.getJob();
 								WidgetTask.setEnabled(btnUnlock, !res.writeSuccess());
 								if (res.writeSuccess()) {

@@ -29,7 +29,7 @@ public class createFTFJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
     	try {
     		bundle.createFTF();
-    		logger.info("Bundle creation finished");
+    		log.info("Bundle creation finished");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {

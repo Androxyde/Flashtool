@@ -13,7 +13,7 @@ import org.flashtool.flashsystem.Flasher;
 import org.flashtool.gui.TARestore;
 import org.flashtool.gui.models.TABag;
 import org.flashtool.gui.models.TADevice;
-import org.flashtool.logger.LogProgress;
+import org.flashtool.log.LogProgress;
 import org.flashtool.system.DeviceChangedListener;
 
 import lombok.extern.slf4j.Slf4j;
@@ -55,13 +55,13 @@ public class RestoreTAJob extends Job {
 				}
 				flash.setFlashState(false);
 				flash.close();
-				logger.info("Restoring TA finished.");
+				log.info("Restoring TA finished.");
 				LogProgress.initProgress(0);
 			}
 			else {
-				logger.info("Those TA units are not for your device");
+				log.info("Those TA units are not for your device");
 				flash.close();
-				logger.info("Restoring TA finished.");
+				log.info("Restoring TA finished.");
 				LogProgress.initProgress(0);
 			}
 			DeviceChangedListener.enableDetection();

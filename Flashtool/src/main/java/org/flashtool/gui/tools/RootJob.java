@@ -80,19 +80,19 @@ public class RootJob extends Job {
 				new File(OS.getFolderCustom()+File.separator+"root"+File.separator+"ZergRush"+File.separator+"zergrush.tar.uue").delete();
 				doPushRootFiles(pck,false);
 				FTShell shell = new FTShell("rootit");
-				logger.info("Running part1 of Root Exploit, please wait");
+				log.info("Running part1 of Root Exploit, please wait");
 				shell.run(true);
 				Devices.waitForReboot(true);
 				if (AdbUtility.hasRootNative(true)) {
-					logger.info("Running part2 of Root Exploit");
+					log.info("Running part2 of Root Exploit");
 					shell = new FTShell("rootit2");
 					shell.run(false);
-					logger.info("Finished!.");
-					logger.info("Root should be available after reboot!");
+					log.info("Finished!.");
+					log.info("Root should be available after reboot!");
 				}
 				else {
-					logger.error("The part1 exploit did not work");
-					logger.info("Cleaning files");
+					log.error("The part1 exploit did not work");
+					log.info("Cleaning files");
 					AdbUtility.run("rm /data/local/tmp/zergrush");
 					AdbUtility.run("rm /data/local/tmp/busybox");
 					AdbUtility.run("rm /data/local/tmp/Superuser.apk");
@@ -102,7 +102,7 @@ public class RootJob extends Job {
 				}
 			}
 			catch (Exception e) {
-				logger.error(e.getMessage());
+				log.error(e.getMessage());
 			}
 		}
 	}
@@ -115,19 +115,19 @@ public class RootJob extends Job {
 				new File(OS.getFolderCustom()+File.separator+"root"+File.separator+"PsNeuter"+File.separator+"psneuter.tar.uue").delete();
 				doPushRootFiles(pck,false);
 				FTShell shell = new FTShell("rootit");
-				logger.info("Running part1 of Root Exploit, please wait");
+				log.info("Running part1 of Root Exploit, please wait");
 				shell.run(false);
 				Devices.waitForReboot(true);
 				if (AdbUtility.hasRootNative(true)) {
-					logger.info("Running part2 of Root Exploit");
+					log.info("Running part2 of Root Exploit");
 					shell = new FTShell("rootit2");
 					shell.run(false);
-					logger.info("Finished!.");
-					logger.info("Root should be available after reboot!");		
+					log.info("Finished!.");
+					log.info("Root should be available after reboot!");		
 				}
 				else {
-					logger.error("The part1 exploit did not work");
-					logger.info("Cleaning files");
+					log.error("The part1 exploit did not work");
+					log.info("Cleaning files");
 					AdbUtility.run("rm /data/local/tmp/psneuter");
 					AdbUtility.run("rm /data/local/tmp/busybox");
 					AdbUtility.run("rm /data/local/tmp/Superuser.apk");
@@ -138,45 +138,45 @@ public class RootJob extends Job {
 			}
 		}
 		catch (Exception e) {
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 
 	public void doRootEmulator() {
 		try {
 			if (pck.length()>0) {
-				logger.info("Preparing first part of the hack");
+				log.info("Preparing first part of the hack");
 				AdbUtility.run("cd /data/local && mkdir tmp");
 				AdbUtility.run("cd /data/local/tmp/ && rm *");
 				AdbUtility.run("mv /data/local/tmp /data/local/tmp.bak");
 				AdbUtility.run("ln -s /data /data/local/tmp");
-				logger.info("Rebooting device. Please wait");
+				log.info("Rebooting device. Please wait");
 				Devices.getCurrent().reboot();
 				Devices.waitForReboot(false);
-				logger.info("Preparing second part of the hack");
+				log.info("Preparing second part of the hack");
 				AdbUtility.run("rm /data/local.prop");
 				AdbUtility.run("echo \"ro.kernel.qemu=1\" > /data/local.prop");
-				logger.info("Rebooting device. Please wait");
+				log.info("Rebooting device. Please wait");
 				Devices.getCurrent().reboot();
 				Devices.waitForReboot(false);
 				if (AdbUtility.hasRootNative(true)) {
-					logger.info("Now you have root");
-					logger.info("Remounting system r/w");
+					log.info("Now you have root");
+					log.info("Remounting system r/w");
 					AdbUtility.run("mount -o remount,rw /system");
-					logger.info("Installing root package");
+					log.info("Installing root package");
 					doPushRootFiles(pck,true);
-					logger.info("Cleaning hack");
+					log.info("Cleaning hack");
 					AdbUtility.run("rm /data/local.prop");
 					AdbUtility.run("rm /data/local/tmp");
 					AdbUtility.run("mv /data/local/tmp.bak /data/local/tmp");
-					logger.info("Rebooting device. Please wait. Your device is now rooted");
+					log.info("Rebooting device. Please wait. Your device is now rooted");
 					Devices.getCurrent().reboot();
 				}
 				else {
 					AdbUtility.run("rm /data/local.prop");
 					AdbUtility.run("rm /data/local/tmp");
 					AdbUtility.run("mv /data/local/tmp.bak /data/local/tmp");
-					logger.info("Hack did not work. Cleaning and rebooting");
+					log.info("Hack did not work. Cleaning and rebooting");
 					Devices.getCurrent().reboot();
 				}
 			}
@@ -197,48 +197,48 @@ public class RootJob extends Job {
 					AdbUtility.run("rm -r /mnt/sdcard/.semc-fullbackup/RootMe* > /dev/null 2>&1");
 					AdbUtility.run("cd /mnt/sdcard/.semc-fullbackup;/data/local/tmp/busybox tar xf /data/local/tmp/RootMe.tar");
 					AdbUtility.run("am start com.sonyericsson.vendor.backuprestore/.ui.BackupActivity");
-					logger.info("Now open your device and restore \"RootMe\" backup. Waiting ...");
+					log.info("Now open your device and restore \"RootMe\" backup. Waiting ...");
 				}
 				else {
 					AdbUtility.restore(OS.getFolderCustom()+File.separator+"root"+File.separator+"AdbRestore"+File.separator+"fakebackup.ab");
-					logger.info("Please look at your device and click RESTORE!");
+					log.info("Please look at your device and click RESTORE!");
 				}
 				String delay = "60";
-				logger.info("You have "+delay+" seconds to follow the restore advice");
+				log.info("You have "+delay+" seconds to follow the restore advice");
 				FTShell exploit = new FTShell("adbrestoreexploit");
 				exploit.setProperty("DELAY", delay);
 				String result = exploit.run(false);
 				if (result.contains("Success")) {
-					logger.info("Restore worked fine. Rebooting device. Please wait ...");
+					log.info("Restore worked fine. Rebooting device. Please wait ...");
 					Devices.getCurrent().reboot();
 					Devices.waitForReboot(false);
 					if (AdbUtility.hasRootNative(true)) {
-						logger.info("Root achieved. Installing root files. Device will reboot. Please wait.");
+						log.info("Root achieved. Installing root files. Device will reboot. Please wait.");
 						doInstallRootFiles();
 						Devices.waitForReboot(false);
-						logger.info("Cleaning hack files");
+						log.info("Cleaning hack files");
 						AdbUtility.run("rm /data/local/tmp/busybox;rm -r /mnt/sdcard/.semc-fullbackup/RootMe;rm /data/local/tmp/RootMe.tar;rm /data/local/tmp/su;rm /data/local/tmp/Superuser.apk;rm /data/local/tmp/adbrestoreexploit");
-						logger.info("Finished.");
+						log.info("Finished.");
 					}
 					else {
-						logger.info("Root hack did not work.");
-						logger.info("Cleaning hack files");
+						log.info("Root hack did not work.");
+						log.info("Cleaning hack files");
 						AdbUtility.run("rm /data/local/tmp/busybox;rm -r /mnt/sdcard/.semc-fullbackup/RootMe;rm /data/local/tmp/RootMe.tar;rm /data/local/tmp/su;rm /data/local/tmp/Superuser.apk;rm /data/local/tmp/adbrestoreexploit");
 					}
-					logger.info("Rebooting device. Please wait.");
+					log.info("Rebooting device. Please wait.");
 					Devices.getCurrent().reboot();
 				}
 				else {
-					logger.info("Root hack did not work. Cleaning hack files");
+					log.info("Root hack did not work. Cleaning hack files");
 					AdbUtility.run("rm /data/local/tmp/busybox;rm -r /mnt/sdcard/.semc-fullbackup/RootMe;rm /data/local/tmp/RootMe.tar;rm /data/local/tmp/su;rm /data/local/tmp/Superuser.apk;rm /data/local/tmp/adbrestoreexploit");
 				}
 			}
 			else {
-				logger.info("Canceled");
+				log.info("Canceled");
 			}
 		}
 		catch (Exception e) {
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 
@@ -272,29 +272,29 @@ public class RootJob extends Job {
 					WidgetTask.openOKBox(_parent, "Please look at your device and click RESTORE. Press OK when done!");
 				}				
 				AdbUtility.run("am start -a android.intent.action.MAIN -n com.sonyericsson.android.servicemenu/.ServiceMainMenu");
-				logger.info("Look at your phone. Choose Service Test, then Display.");
-				logger.info("Waiting for uevent_helper rw");
+				log.info("Look at your phone. Choose Service Test, then Display.");
+				log.info("Waiting for uevent_helper rw");
 				AdbUtility.run("while : ; do [ -w /sys/kernel/uevent_helper ] && exit; done");
-				logger.info("Waiting for rooted shell");
+				log.info("Waiting for rooted shell");
 				AdbUtility.run("echo /data/local/tmp/getroot.sh > /sys/kernel/uevent_helper");
 				AdbUtility.run("while : ; do [ -f /dev/sh ] && exit; done");
-				logger.info("Root achieved. Installing root files. Device will reboot. Please wait.");
+				log.info("Root achieved. Installing root files. Device will reboot. Please wait.");
 				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"installsu.sh", "/data/local/tmp/");
 				AdbUtility.run("chmod 755 /data/local/tmp/installsu.sh");
 				AdbUtility.run("/dev/sh /data/local/tmp/installsu.sh");
 				if (AdbUtility.hasRootPerms()) {
-					logger.info("Device rooted. Now cleaning and rebooting. Please wait");
+					log.info("Device rooted. Now cleaning and rebooting. Please wait");
 					FTShell shell = new FTShell("rebootservicemenu");
 					shell.runRoot();
 					shell.clean();
 				}
 			}
 			else {
-				logger.info("Canceled");
+				log.info("Canceled");
 			}
 		}
 		catch (Exception e) {
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 
@@ -314,16 +314,16 @@ public class RootJob extends Job {
 				AdbUtility.push(OS.getFolderCustom()+File.separator+"root"+File.separator+"run_root_shell"+File.separator+"device.db", "/data/local/tmp/");
 				AdbUtility.run("chmod 755 /data/local/tmp/install_root.sh");
 				AdbUtility.run("chmod 755 /data/local/tmp/run_root_shell");
-				logger.info("Trying to apply root exploit. It can be very long. Please wait ...");
+				log.info("Trying to apply root exploit. It can be very long. Please wait ...");
 				AdbUtility.run("/data/local/tmp/run_root_shell -c /data/local/tmp/install_root.sh");
 				if (AdbUtility.hasRootPerms()) {
-					logger.info("Device rooted.");
+					log.info("Device rooted.");
 					AdbUtility.pull("/data/local/tmp/device.db", OS.getFolderCustom()+File.separator+"root"+File.separator+"run_root_shell"+File.separator+"device.db");
 				}
 				else {
-					logger.info("Root failed");;
+					log.info("Root failed");;
 				}
-				logger.info("Cleaning workdir");
+				log.info("Cleaning workdir");
 				AdbUtility.run("rm /data/local/tmp/su");
 				AdbUtility.run("rm /data/local/tmp/Superuser.apk");
 				AdbUtility.run("rm /data/local/tmp/busybox");
@@ -335,11 +335,11 @@ public class RootJob extends Job {
 				AdbUtility.run("rm /data/local/tmp/install-recovery.sh");
 			}
 			else {
-				logger.info("Canceled");
+				log.info("Canceled");
 			}
 		}
 		catch (Exception e) {
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 
@@ -367,16 +367,16 @@ public class RootJob extends Job {
 				AdbUtility.run("chmod 755 /data/local/tmp/antiric");
 				AdbUtility.install(tr);
 				AdbUtility.run("am start -n com.geohot.towelroot/.TowelRoot");
-				logger.info("Click the Make it ra1n button on your phone. Waiting for root");
+				log.info("Click the Make it ra1n button on your phone. Waiting for root");
 				while (!AdbUtility.hasRootPerms()) {
 					Thread.sleep(1000);
 				}
 				AdbUtility.uninstall("com.geohot.towelroot", false);
-				logger.info("Installing latest su binaries");
+				log.info("Installing latest su binaries");
 				AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
 				AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 				AdbUtility.run("/system/xbin/su -c '/data/local/tmp/install_root.sh'");
-				logger.info("Root done. Cleaning files");
+				log.info("Root done. Cleaning files");
 				AdbUtility.run("rm /data/local/tmp/99SuperSUDaemon");
 				AdbUtility.run("rm /data/local/tmp/Superuser.apk");
 				AdbUtility.run("rm /data/local/tmp/chattr");
@@ -394,16 +394,16 @@ public class RootJob extends Job {
 				AdbUtility.run("rm /data/local/tmp/zxz_run");
 				AdbUtility.run("rm /data/local/tmp/antiric");
 				AdbUtility.run("rm /data/local/tmp/modulecrcpatch");
-				logger.info("Rebooting device");
+				log.info("Rebooting device");
 				Devices.getCurrent().reboot();
 			}
 			else {
-				logger.info("Canceled");
+				log.info("Canceled");
 			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 

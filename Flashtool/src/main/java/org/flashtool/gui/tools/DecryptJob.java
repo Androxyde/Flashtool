@@ -40,12 +40,12 @@ public class DecryptJob extends Job {
 			for (int i=0;i<files.size();i++) {
 				File f = (File)files.get(i);
 				decryptfolder=f.getParentFile().getAbsolutePath()+File.separator+"decrypted";
-				logger.info("Decrypting "+f.getName());
+				log.info("Decrypting "+f.getName());
 				try {
 					SeusSinTool.decryptAndExtract(f.getAbsolutePath());
 				}
 				catch (Exception e) {
-					logger.error(e.getMessage());
+					log.error(e.getMessage());
 				}
 			}
 			File update = new File(decryptfolder+File.separator+"update.xml");
@@ -66,7 +66,7 @@ public class DecryptJob extends Job {
 				update1.delete();
 				newupdate.renameTo(update);
 			}
-			logger.info("Decryption finished");
+			log.info("Decryption finished");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {

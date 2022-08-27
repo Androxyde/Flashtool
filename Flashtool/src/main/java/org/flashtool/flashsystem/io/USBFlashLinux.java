@@ -16,10 +16,10 @@ public class USBFlashLinux {
 	static final Logger logger = LogManager.getLogger(USBFlashLinux.class);
 
 	public static void linuxOpen(String pid) throws IOException, Exception  {
-			logger.info("Opening device for R/W");
+			log.info("Opening device for R/W");
 			JUsb.fillDevice(false);
 			JUsb.open();
-			logger.info("Device ready for R/W.");
+			log.info("Device ready for R/W.");
 	}
 
 	public static void linuxClose() {

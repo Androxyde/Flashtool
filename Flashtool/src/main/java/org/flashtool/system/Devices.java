@@ -99,7 +99,7 @@ public class Devices  {
 	}
 	
 	public static void load() {
-		logger.info("Loading devices database");
+		log.info("Loading devices database");
 		if (devices==null) {
 			devices=new Properties();
 			models = new Properties();
@@ -127,11 +127,11 @@ public class Devices  {
 								models.put(variant, entry);
 							}
 						}
-						else logger.error(device + " : this bundle is not valid");
+						else log.error(device + " : this bundle is not valid");
 					}
 				}
 				catch (Exception fne) {
-					logger.error(device + " : this bundle is not valid");
+					log.error(device + " : this bundle is not valid");
 				}
 			}
 		}
@@ -154,22 +154,22 @@ public class Devices  {
 								models.put(variant, entry);
 							}
 						}
-						else logger.error(device + " : this bundle is not valid");
+						else log.error(device + " : this bundle is not valid");
 					}
 				}
 				catch (Exception fne) {
-					logger.error(device + " : this bundle is not valid");
+					log.error(device + " : this bundle is not valid");
 				}
 			}
 		}
-		logger.info("Loaded "+devices.size()+" devices");
+		log.info("Loaded "+devices.size()+" devices");
 	}
 
 	public static void waitForReboot(boolean tobeforced) {
 		if (!tobeforced)
-			logger.info("Waiting for device");
+			log.info("Waiting for device");
 		else
-			logger.info("Waiting for device. After 60secs, stop waiting will be forced");
+			log.info("Waiting for device. After 60secs, stop waiting will be forced");
 		waitforreboot=true;
 		int count=0;
 		while (waitforreboot) {
@@ -177,7 +177,7 @@ public class Devices  {
 			if (tobeforced) {
 				count++;
 				if (Devices.getLastConnected(false).getStatus().equals("adb") && count==3000) {
-					logger.info("Forced stop waiting.");
+					log.info("Forced stop waiting.");
 					waitforreboot=false;
 				}
 				else if (count==3000) count=0;
@@ -206,8 +206,8 @@ public class Devices  {
 
 	public static String identFromRecognition() {
 		if (devices.isEmpty()) {
-			logger.error("No device is registered in Flashtool.");
-			logger.error("You can only flash devices.");
+			log.error("No device is registered in Flashtool.");
+			log.error("You can only flash devices.");
 			return "";
 		}
 		String dev = DeviceProperties.getProperty("ro.product.device");
@@ -277,7 +277,7 @@ public class Devices  {
     	DeviceIdent id = new DeviceIdent();
     	HDEVINFO hDevInfo = JsetupAPi.getHandleForConnectedInterfaces();
         if (hDevInfo.equals(WinBase.INVALID_HANDLE_VALUE)) {
-        	logger.error("Cannot have device list");
+        	log.error("Cannot have device list");
         }
         else {
         	SP_DEVINFO_DATA DeviceInfoData;
@@ -299,7 +299,7 @@ public class Devices  {
         }
     	hDevInfo = JsetupAPi.getHandleForConnectedDevices();
         if (hDevInfo.equals(WinBase.INVALID_HANDLE_VALUE)) {
-        	logger.error("Cannot have device list");
+        	log.error("Cannot have device list");
         }
         else {
         	SP_DEVINFO_DATA DeviceInfoData;
@@ -356,8 +356,8 @@ public class Devices  {
 	        }
     	}
     	catch (UnsatisfiedLinkError e) {
-    		logger.error("libusb-1.0 is not installed");
-    		logger.error(e.getMessage());
+    		log.error("libusb-1.0 is not installed");
+    		log.error(e.getMessage());
     	}
     	catch (NoClassDefFoundError e1) {
     	}
@@ -365,7 +365,7 @@ public class Devices  {
     }
 
     public static void CheckAdbDrivers() {
-    	logger.info("List of connected devices (Device Id) :");
+    	log.info("List of connected devices (Device Id) :");
     	DeviceIdent id=getLastConnected(false);
     	String driverstatus;
     	int maxsize = id.getMaxSize();
@@ -373,24 +373,24 @@ public class Devices  {
     	while (e.hasMoreElements()) {
     		String dev = (String)e.nextElement();
     		String driver = id.getIds().getProperty(dev);
-    		logger.info("      - "+String.format("%1$-" + maxsize + "s", dev)+"\tDriver installed : "+driver);
+    		log.info("      - "+String.format("%1$-" + maxsize + "s", dev)+"\tDriver installed : "+driver);
     	}
-	    logger.info("List of ADB devices :");
+	    log.info("List of ADB devices :");
 	    Enumeration<String> e1 = AdbUtility.getDevices();
 	    if (e1.hasMoreElements()) {
 	    while (e1.hasMoreElements()) {
-	    	logger.info("      - "+e1.nextElement() + " (Device : " + DeviceProperties.getProperty("ro.product.device") + ". Model : "+DeviceProperties.getProperty("ro.product.model")+")");
+	    	log.info("      - "+e1.nextElement() + " (Device : " + DeviceProperties.getProperty("ro.product.device") + ". Model : "+DeviceProperties.getProperty("ro.product.model")+")");
 	    }
 	    }
-	    else logger.info("      - none");
-	    logger.info("List of fastboot devices :");
+	    else log.info("      - none");
+	    log.info("List of fastboot devices :");
 	    Enumeration<String> e2 = FastbootUtility.getDevices();
 	    if (e2.hasMoreElements()) {
 	    while (e2.hasMoreElements()) {
-	    	logger.info("      - "+e2.nextElement());
+	    	log.info("      - "+e2.nextElement());
 	    }
 	    }
-	    else logger.info("      - none");
+	    else log.info("      - none");
     }
 
     public static void clean() {

@@ -11,7 +11,7 @@ import net.jpountz.lz4.LZ4FastDecompressor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.flashtool.logger.LogProgress;
+import org.flashtool.log.LogProgress;
 import org.flashtool.parsers.sin.v1.PartitionInfo;
 import org.flashtool.system.OS;
 import org.flashtool.util.BytesUtil;
@@ -232,10 +232,10 @@ public class SinParser {
 					bcount = blocks.blocks.length;
 				String ext = "."+dataType;
 				String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+ext;
-				logger.info("Generating empty container file");
+				log.info("Generating empty container file");
 				RandomAccessFile fout = OS.generateEmptyFile(foutname, dataSize, (byte)0xFF);
 				if (fout!=null) {
-					logger.info("Container generated. Now extracting data to container");
+					log.info("Container generated. Now extracting data to container");
 					LogProgress.initProgress(bcount);
 					long srcoffset=0;
 					long destoffset=0;
@@ -283,10 +283,10 @@ public class SinParser {
 				fout.close();
 				fin.close();
 				LogProgress.initProgress(0);
-				logger.info("Extraction finished to "+foutname);
+				log.info("Extraction finished to "+foutname);
 			}
 			else {
-				logger.error("An error occured while generating container");
+				log.error("An error occured while generating container");
 			}
 		}
 
@@ -299,7 +299,7 @@ public class SinParser {
 			fout.write(buff);
 			fout.close();
 			fin.close();
-			logger.info("Extraction finished to "+foutname);
+			log.info("Extraction finished to "+foutname);
 		}
 
 		public byte[] getHeader()  throws IOException {

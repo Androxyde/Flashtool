@@ -125,13 +125,13 @@ public class FastbootToolbox extends Dialog {
 		btnRebootFBFB.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			logger.info("Now plug your device in Fastboot Mode");
+			log.info("Now plug your device in Fastboot Mode");
 			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
 			if (result.equals("OK")) {
 				doRebootBackIntoFastbootMode();
 			}
 			else {
-				logger.info("Failed");
+				log.info("Failed");
 			}
 		   }
 		});
@@ -142,7 +142,7 @@ public class FastbootToolbox extends Dialog {
 		btnHotboot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			logger.info("Now plug your device in Fastboot Mode");
+			log.info("Now plug your device in Fastboot Mode");
 			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
 			if (result.equals("OK")) {
 				FileDialog dlg = new FileDialog(shlFastbootToolbox);
@@ -152,7 +152,7 @@ public class FastbootToolbox extends Dialog {
 		        if (dir!=null)
 		        	doHotBoot(dir);
 			} else {
-				logger.info("Failed");
+				log.info("Failed");
 			}
 		   }
 		});
@@ -163,7 +163,7 @@ public class FastbootToolbox extends Dialog {
 		btnFlashSystem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			logger.info("Now plug your device in Fastboot Mode");
+			log.info("Now plug your device in Fastboot Mode");
 			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
 			if (result.equals("OK")) {
 				FileDialog dlg = new FileDialog(shlFastbootToolbox);
@@ -174,7 +174,7 @@ public class FastbootToolbox extends Dialog {
 		        	doFlashSystem(dir);
 			}
 			else {
-				logger.info("Failed");
+				log.info("Failed");
 			}
 		   }
 		});
@@ -185,7 +185,7 @@ public class FastbootToolbox extends Dialog {
 		btnFlashKernel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			logger.info("Now plug your device in Fastboot Mode");
+			log.info("Now plug your device in Fastboot Mode");
 			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
 			if (result.equals("OK")) {
 				FileDialog dlg = new FileDialog(shlFastbootToolbox);
@@ -196,7 +196,7 @@ public class FastbootToolbox extends Dialog {
 		        	doFlashKernel(dir);
 			}
 			else {
-				logger.info("Failed");
+				log.info("Failed");
 			}
 		   }
 		});
@@ -207,12 +207,12 @@ public class FastbootToolbox extends Dialog {
 		btnGetVerInfo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			logger.info("Now plug your device in Fastboot Mode");
+			log.info("Now plug your device in Fastboot Mode");
 			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
 			if (result.equals("OK")) {
 				doGetFastbootVerInfo();
 			} else {
-				logger.info("Filed");
+				log.info("Filed");
 			}
 		   }
 		});
@@ -224,12 +224,12 @@ public class FastbootToolbox extends Dialog {
 		btnGetDeviceInfo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			logger.info("Now plug your device in Fastboot Mode");
+			log.info("Now plug your device in Fastboot Mode");
 			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
 			if (result.equals("OK")) {
 				doGetConnectedDeviceInfo();
 			} else {
-				logger.info("Failed");
+				log.info("Failed");
 			}
 		   }
 		});
@@ -241,13 +241,13 @@ public class FastbootToolbox extends Dialog {
 		btnReboot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			logger.info("Now plug your device in Fastboot Mode");
+			log.info("Now plug your device in Fastboot Mode");
 			String result = (String)WidgetTask.openWaitDeviceForFastboot(shlFastbootToolbox);
 			if (result.equals("OK")) {
 				doFastbootReboot();
 			}
 			else {
-				logger.info("failed");
+				log.info("failed");
 			}
 		   }
 		});

@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.flashtool.gui.TARestore;
 import org.flashtool.jna.adb.AdbUtility;
-import org.flashtool.logger.LogProgress;
+import org.flashtool.log.LogProgress;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,12 +48,12 @@ public class APKInstallJob extends Job {
 				LogProgress.updateProgress();
 			}
 			LogProgress.initProgress(0);
-			logger.info("APK Installation finished");
+			log.info("APK Installation finished");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
     		e.printStackTrace();
-    		logger.error(e.getMessage());
+    		log.error(e.getMessage());
     		LogProgress.initProgress(0);
     		return Status.CANCEL_STATUS;
     	}

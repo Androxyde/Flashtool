@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.flashtool.gui.TARestore;
 import org.flashtool.jna.adb.AdbUtility;
-import org.flashtool.logger.LogProgress;
+import org.flashtool.log.LogProgress;
 import org.flashtool.system.Devices;
 import org.flashtool.system.OS;
 
@@ -41,13 +41,13 @@ public class BackupSystemJob extends Job {
 				}
 				catch (Exception e) {}
 			}
-			logger.info("Backup Finished");
+			log.info("Backup Finished");
 			LogProgress.initProgress(0);
 			return Status.OK_STATUS;
 		}
     	catch (Exception e) {
     		e.printStackTrace();
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 			LogProgress.initProgress(0);
     		return Status.CANCEL_STATUS;
     	}

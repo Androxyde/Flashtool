@@ -92,7 +92,7 @@ public class USBFlash {
 
     public static  CommandPacket readCommandReply(boolean withOK) throws X10FlashException, IOException
     {
-    	logger.debug("Reading packet from phone");
+    	log.debug("Reading packet from phone");
     	byte[] read=null;
     	CommandPacket p = new CommandPacket("".getBytes(),withOK);
     	while (p.hasMoreToRead()) {
@@ -104,7 +104,7 @@ public class USBFlash {
     		if (read != null)
     			p.addData(read);
     	}
-		logger.debug("IN : " + p);
+		log.debug("IN : " + p);
 		return p;
 		//lastflags = p.getFlags();
     }

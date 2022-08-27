@@ -16,9 +16,9 @@ public class USBFlashWin32 {
 	static final Logger logger = LogManager.getLogger(USBFlashWin32.class);
 
 	public static void windowsOpen(String pid) throws IOException {
-    		logger.info("Opening device for R/W");
+    		log.info("Opening device for R/W");
 			JKernel32.openDevice();
-			logger.info("Device ready for R/W.");
+			log.info("Device ready for R/W.");
 	}
 
 	public static void windowsClose() {

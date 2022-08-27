@@ -145,11 +145,11 @@ public class TABackupSelector extends Dialog {
 						tabackups.add(attr.getValue("timestamp")+ " : " + attr.getValue("build"));
 					}
 					else {
-						logger.info("File skipped : "+chld[i].getName()+". Not for your device");
+						log.info("File skipped : "+chld[i].getName()+". Not for your device");
 					}
 					jf.close();
 				} catch (Exception e) {
-					logger.error("This file : " + chld[i].getName()+" is corrupted");
+					log.error("This file : " + chld[i].getName()+" is corrupted");
 				}
 				
 			}

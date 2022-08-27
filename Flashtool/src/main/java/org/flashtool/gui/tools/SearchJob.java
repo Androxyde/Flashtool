@@ -48,11 +48,11 @@ public class SearchJob extends Job {
 			DeviceIdent id = Devices.getConnectedDevice();
 			found = id.getStatus().equals("flash");
 	    	if (found && OS.getName().equals("windows")) {
-	    		logger.info("Using Gordon gate drivers version "+id.getDriverMajor()+"."+id.getDriverMinor()+"."+id.getDriverMili()+"."+id.getDriverMicro());
+	    		log.info("Using Gordon gate drivers version "+id.getDriverMajor()+"."+id.getDriverMinor()+"."+id.getDriverMili()+"."+id.getDriverMicro());
 	    	}
 			if (id.getStatus().equals("flash_obsolete")) {
 				if (!obsolete) {
-					logger.error("Device connected in flash mode but driver is too old");
+					log.error("Device connected in flash mode but driver is too old");
 					obsolete=true;
 				}
 			}

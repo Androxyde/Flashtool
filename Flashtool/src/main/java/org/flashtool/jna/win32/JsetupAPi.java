@@ -55,7 +55,7 @@ public class JsetupAPi {
 			return name;
 		}
 		else {
-			logger.error("Error calling SetupDiClassNameFromGuid");
+			log.error("Error calling SetupDiClassNameFromGuid");
 		}
 		return "";
 	}
@@ -68,7 +68,7 @@ public class JsetupAPi {
 			return ClassGuidList[0];
 		}
 		else {
-			logger.error("Error calling SetupDiClassNameFromGuid for "+classname);
+			log.error("Error calling SetupDiClassNameFromGuid for "+classname);
 		}
 		return null;
 	}

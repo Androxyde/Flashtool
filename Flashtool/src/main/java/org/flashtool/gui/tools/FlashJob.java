@@ -44,7 +44,7 @@ public class FlashJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
     	try {
     		if (_bundle.open()) {
-    			logger.info("Please connect your device into flashmode.");
+    			log.info("Please connect your device into flashmode.");
     			String result = "";
     			result = (String)WidgetTask.openWaitDeviceForFlashmode(_shell);
     			if (result.equals("OK")) {
@@ -55,17 +55,17 @@ public class FlashJob extends Job {
     			}
     			else {
     				_bundle.close();
-    				logger.info("Flash canceled");
+    				log.info("Flash canceled");
     			}
     		}
     		else {
-    			logger.info("Cannot open bundle. Flash operation canceled");
+    			log.info("Cannot open bundle. Flash operation canceled");
     		}
     		DeviceChangedListener.enableDetection();
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {
-    		logger.error(e.getMessage());
+    		log.error(e.getMessage());
     		DeviceChangedListener.enableDetection();
     		return Status.CANCEL_STATUS;
     	}

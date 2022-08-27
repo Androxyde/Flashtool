@@ -26,14 +26,14 @@ public class DevicesSyncJob extends Job {
 	
     protected IStatus run(IProgressMonitor monitor) {
 		try {
-			logger.info("Syncing devices from github");
+			log.info("Syncing devices from github");
 			DevicesGit.gitSync();
-	    	logger.info("Devices sync finished.");
+	    	log.info("Devices sync finished.");
 			return Status.OK_STATUS;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Cannot sync devices : "+e.getMessage());
+			log.error("Cannot sync devices : "+e.getMessage());
 			return Status.CANCEL_STATUS;
 		}
     }

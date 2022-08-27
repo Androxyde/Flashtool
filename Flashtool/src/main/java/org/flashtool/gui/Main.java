@@ -8,7 +8,7 @@ import org.flashtool.flashsystem.FlasherConsole;
 import org.flashtool.flashsystem.S1Command;
 import org.flashtool.jna.linux.JUsb;
 import org.flashtool.libusb.LibUsbException;
-import org.flashtool.logger.MyLogger;
+import org.flashtool.log.MyLogger;
 import org.flashtool.system.AWTKillerThread;
 import org.flashtool.system.GlobalConfig;
 import org.flashtool.system.OS;

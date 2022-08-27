@@ -32,10 +32,10 @@ public class ULCodeFile extends TextFile {
 			open(true);
 			write(code);
 			close();
-			logger.info("Unlock code saved to "+new File(fFileName).getAbsolutePath());
+			log.info("Unlock code saved to "+new File(fFileName).getAbsolutePath());
 		}
 		catch (Exception e) {
-			logger.error("Error saving unlock code : " + e.getMessage());
+			log.error("Error saving unlock code : " + e.getMessage());
 		}
 	}
 
