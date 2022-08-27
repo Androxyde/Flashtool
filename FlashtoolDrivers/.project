@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Flashtool Project</name>
-	<comment>Project Flashtool.gradle created by Buildship.</comment>
+	<name>FlashtoolDrivers</name>
+	<comment>Project FlashtoolDrivers created by Buildship.</comment>
 	<projects>
 	</projects>
 	<buildSpec>

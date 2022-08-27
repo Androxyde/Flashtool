@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR" packages="org.flashtool.logger">
+   <Scripts>
+   						<Script name="isconsole" language="bsh"><![CDATA[
+         					return org.flashtool.logger.MyLogger.getMode().equals("console");
+      					]]></Script>
+                    <Script name="selector" language="bsh"><![CDATA[
+                    	return org.apache.logging.log4j.LogManager.getRootLogger().getLevel().toString();]]>
+                    </Script>
+   </Scripts>
+
+    <Appenders>
+
+		<ConsoleAppender name="CONSOLELogger">
+			<PatternLayout>
+                <ScriptPatternSelector defaultPattern="%d{dd/mmm/yyyy HH:mm:ss} - %-5p - %m%n">
+                    <ScriptRef ref="selector"/>
+                    <!-- INFO and DEBUG are using the defaultPattern -->
+                    <PatternMatch key="DEBUG" pattern="%d{dd/mmm/yyyy HH:mm:ss} - %-5p - (%F:%L) - %m%n" />
+                </ScriptPatternSelector>
+            </PatternLayout>
+        </ConsoleAppender>
+		
+		<TextAreaAppender name="GUILogger">
+			<PatternLayout>
+                <ScriptPatternSelector defaultPattern="%d{dd/mmm/yyyy HH:mm:ss} - %-5p - %m%n">
+                    <ScriptRef ref="selector"/>
+                    <!-- INFO and DEBUG are using the defaultPattern -->
+                    <PatternMatch key="DEBUG" pattern="%d{dd/mmm/yyyy HH:mm:ss} - %-5p - (%F:%L) - %m%n" />
+                </ScriptPatternSelector>
+            </PatternLayout>
+        </TextAreaAppender>
+        
+		<StringBuilderAppender name="StringLogger">
+			<PatternLayout>
+                <ScriptPatternSelector defaultPattern="%d{dd/mmm/yyyy HH:mm:ss} - %-5p - %m%n">
+                    <ScriptRef ref="selector"/>
+                    <!-- INFO and DEBUG are using the defaultPattern -->
+                    <PatternMatch key="DEBUG" pattern="%d{dd/mmm/yyyy HH:mm:ss} - %-5p - (%F:%L) - %m%n" />
+                </ScriptPatternSelector>
+            </PatternLayout>
+        </StringBuilderAppender>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+
+            <AppenderRef ref="GUILogger">
+            	<ScriptFilter onMatch="DENY" onMisMatch="ACCEPT">
+						<ScriptRef ref="isconsole"/>
+      			</ScriptFilter>
+            </AppenderRef>
+
+            <AppenderRef ref="CONSOLELogger">
+                    <ScriptFilter onMatch="ACCEPT" onMisMatch="DENY">
+						<ScriptRef ref="isconsole"/>
+    			</ScriptFilter>
+            </AppenderRef>
+
+            <AppenderRef ref="StringLogger"/>
+
+        </Root>
+    </Loggers>
+
+</Configuration>
