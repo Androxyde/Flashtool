@@ -17,8 +17,6 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.Deflater;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,7 +34,6 @@ public class RawTAJob extends Job {
 
 	String _action = "";
 	Shell _shell;
-	static final Logger logger = LogManager.getLogger(RawTAJob.class);
 	String phonetemp = "/data/local/tmp";
 	String tafilename = "ta.dd";
 	String tafilenamebefore="tabefore.dd";

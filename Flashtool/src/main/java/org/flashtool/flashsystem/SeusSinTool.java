@@ -16,8 +16,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.crypto.NoSuchPaddingException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.parsers.sin.SinFileException;
 import org.flashtool.parsers.ta.TAFileParseException;
 import org.flashtool.parsers.ta.TAFileParser;
@@ -31,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SeusSinTool {
 
-	static final Logger logger = LogManager.getLogger(SeusSinTool.class);
 
 	public static void decryptAndExtract(String FILESET) throws Exception,FileNotFoundException,IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
 		File enc= new File(FILESET);

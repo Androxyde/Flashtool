@@ -1,7 +1,6 @@
 package org.flashtool.flashsystem;
 
 import java.io.IOException;
-import org.apache.logging.log4j.Level;
 import org.flashtool.flashsystem.io.USBFlash;
 import org.flashtool.log.LogProgress;
 import org.flashtool.log.MyLogger;

@@ -1,7 +1,5 @@
 package org.flashtool.gui.tools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.gui.TARestore;
 import org.jdom2.input.SAXBuilder;
 
@@ -23,7 +21,6 @@ public class XMLBootDelivery {
 
 	private Vector<XMLBootConfig> bootconfigs = new Vector<XMLBootConfig>();
 	private String bootversion;
-	static final Logger logger = LogManager.getLogger(XMLBootDelivery.class);
 
 	public XMLBootDelivery(File xmlsource) throws IOException, JDOMException {
 		SAXBuilder builder = new SAXBuilder();

@@ -3,8 +3,6 @@ package org.flashtool.gui.tools;
 import java.io.File;
 import java.io.FilenameFilter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,7 +25,6 @@ class APKFilter implements FilenameFilter {
 public class APKInstallJob extends Job {
 
 	String instpath;
-	static final Logger logger = LogManager.getLogger(APKInstallJob.class);
 
 	public APKInstallJob(String name) {
 		super(name);

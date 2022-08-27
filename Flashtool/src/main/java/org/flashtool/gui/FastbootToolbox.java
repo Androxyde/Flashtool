@@ -1,7 +1,5 @@
 package org.flashtool.gui;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -29,7 +27,6 @@ public class FastbootToolbox extends Dialog {
 
 	protected Object result;
 	protected Shell shlFastbootToolbox;
-	static final Logger logger = LogManager.getLogger(FastbootToolbox.class);
 
 	/**
 	 * Create the dialog.

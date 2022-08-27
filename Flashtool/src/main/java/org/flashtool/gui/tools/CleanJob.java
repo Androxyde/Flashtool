@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 public class CleanJob extends Job {
 
 	DeviceApps _apps;
-	static final Logger logger = LogManager.getLogger(CleanJob.class);
 	
 	public CleanJob(String name) {
 		super(name);

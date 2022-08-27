@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -39,7 +37,6 @@ public class FileSelector extends Dialog {
 	protected Shell shlTABackupSelector;
 	private Button btnCancel;
 	private List listFiles;
-	static final Logger logger = LogManager.getLogger(TABackupSelector.class);
 	private Label lblNewLabel;
 	private Label lblNewLabel_1;
 

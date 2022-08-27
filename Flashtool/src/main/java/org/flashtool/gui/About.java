@@ -9,8 +9,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -40,7 +38,6 @@ public class About extends Dialog {
 	protected Object result;
 	protected Shell shlAbout;
 	public static String build = About.class.getPackage().getImplementationVersion();
-	static final Logger logger = LogManager.getLogger(About.class);
 	private Label lblNewLabel;
 	private Label lblNewLabel_2;
 	private Label lblNewLabel_1;

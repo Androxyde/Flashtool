@@ -2,8 +2,6 @@ package org.flashtool.jna.win32;
 
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.flashsystem.io.USBFlashLinux;
 import org.flashtool.jna.linux.JUsb;
 import org.flashtool.system.Devices;
@@ -24,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JKernel32 {
 
-	static final Logger logger = LogManager.getLogger(JKernel32.class);
 
 	public static Kernel32RW kernel32 = (Kernel32RW) Native.loadLibrary("kernel32", Kernel32RW.class, W32APIOptions.UNICODE_OPTIONS);
 	static WinNT.HANDLE HandleToDevice = WinBase.INVALID_HANDLE_VALUE;

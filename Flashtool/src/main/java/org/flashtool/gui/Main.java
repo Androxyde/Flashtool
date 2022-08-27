@@ -1,9 +1,6 @@
 package org.flashtool.gui;
 
 import java.io.IOException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.config.ConfigurationSource;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.flashtool.flashsystem.FlasherConsole;
 import org.flashtool.flashsystem.S1Command;
 import org.flashtool.jna.linux.JUsb;

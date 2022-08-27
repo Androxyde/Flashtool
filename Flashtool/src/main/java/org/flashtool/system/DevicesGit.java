@@ -2,8 +2,6 @@ package org.flashtool.system;
 
 import java.io.File;
 import java.io.IOException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
@@ -24,7 +22,6 @@ public class DevicesGit {
 	private static String localPath=OS.getFolderDevices()+File.separator+".git";
     private static Repository localRepo;
     private static Git git;
-    static final Logger logger = LogManager.getLogger(DevicesGit.class);
     
     public static void gitSync() throws IOException, InvalidRemoteException, org.eclipse.jgit.api.errors.TransportException, GitAPIException {
     	if (openRepository()) {

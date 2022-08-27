@@ -1,7 +1,5 @@
 package org.flashtool.gui.tools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.flashtool.flashsystem.CommandFlasher.EmmcInfos;
@@ -29,7 +27,6 @@ import java.util.Vector;
 public class XMLPartitionDelivery {
 
 	private Vector<String> partitions = new Vector<String>();
-	static final Logger logger = LogManager.getLogger(XMLPartitionDelivery.class);
 	String folder = "";
 	UfsInfos ufs_infos = null;
 	EmmcInfos emmc_infos=null;

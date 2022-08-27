@@ -1,8 +1,6 @@
 package org.flashtool.gui;
 
 import java.io.IOException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -37,7 +35,6 @@ public class SinAdvanced extends Dialog {
 	private Text textSpare;
 	private Text textContent;
 	private SinFile _sin;
-	static final Logger logger = LogManager.getLogger(SinAdvanced.class);
 
 	/**
 	 * Create the dialog.

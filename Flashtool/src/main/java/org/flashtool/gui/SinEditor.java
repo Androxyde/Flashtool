@@ -1,8 +1,6 @@
 package org.flashtool.gui;
 
 import java.io.File;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -41,7 +39,6 @@ public class SinEditor extends Dialog {
 	private Text sourceFile;
 	private Button button;
 	private FormData fd_btnClose;
-	static final Logger logger = LogManager.getLogger(SinEditor.class);
 	private Composite composite;
 	
 	/**

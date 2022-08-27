@@ -15,8 +15,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.flashtool.flashsystem.Bundle;
@@ -37,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class XperiFirm {
 
-	static final Logger logger = LogManager.getLogger(XperiFirm.class);
 	static Shell _parent;
 
 	public static void run(Shell parent) throws IOException,JDOMException {

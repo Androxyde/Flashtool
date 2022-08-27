@@ -8,8 +8,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.log.LogProgress;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +20,6 @@ public class URLDownloader {
 	BufferedInputStream input = null;
 	RandomAccessFile outFile = null;
 	boolean canceled = false;
-	static final Logger logger = LogManager.getLogger(URLDownloader.class);
 	
 	public long Download(String strurl, String filedest, long seek) throws IOException {
 		try {

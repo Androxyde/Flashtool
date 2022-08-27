@@ -14,8 +14,6 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.gui.models.TABag;
 import org.flashtool.system.OS;
 
@@ -30,7 +28,6 @@ public class TARawParser {
 	BufferedInputStream bin = null;
 	File ddFile = null;
 	Vector<TABag> bags = new Vector<TABag>();
-	static final Logger logger = LogManager.getLogger(TARawParser.class);
 
 	JBBPParser partblock = JBBPParser.prepare(
 	            "          <int magic;"

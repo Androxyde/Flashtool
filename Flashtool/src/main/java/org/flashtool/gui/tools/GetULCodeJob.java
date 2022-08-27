@@ -1,7 +1,5 @@
 package org.flashtool.gui.tools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -28,7 +26,6 @@ public class GetULCodeJob extends Job {
 	String platform = "";
 	boolean alreadyunlocked = false;
 	boolean relockable = false;
-	static final Logger logger = LogManager.getLogger(GetULCodeJob.class);
 
 
 	public String getBLStatus() {

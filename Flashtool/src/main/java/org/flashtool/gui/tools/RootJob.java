@@ -2,8 +2,6 @@ package org.flashtool.gui.tools;
 
 import java.io.File;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,7 +24,6 @@ public class RootJob extends Job {
 	String _action = "";
 	String pck = "";
 	Shell _parent;
-	static final Logger logger = LogManager.getLogger(RootJob.class);
 
 	public RootJob(String name) {
 		super(name);

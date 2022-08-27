@@ -9,8 +9,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +19,6 @@ public class ProcessBuilderWrapper {
     private StringWriter errors;
     private int status;
     private boolean print = false;
-    static final Logger logger = LogManager.getLogger(ProcessBuilderWrapper.class);
 
     public ProcessBuilderWrapper(File directory, List<String> command) throws Exception {
     	run(directory, command);

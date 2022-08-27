@@ -1,7 +1,5 @@
 package org.flashtool.gui.tools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -16,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class XperiFirmJob extends Job {
 
-	static final Logger logger = LogManager.getLogger(DecryptJob.class);
 	Shell _parent;
 	
 	public XperiFirmJob(String name) {

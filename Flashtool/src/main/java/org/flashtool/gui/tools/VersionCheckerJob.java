@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,7 +27,6 @@ public class VersionCheckerJob extends Job {
 	private boolean ended = false;
 	private InputStream ustream=null;
 	private HttpURLConnection uconn=null;
-	static final Logger logger = LogManager.getLogger(VersionCheckerJob.class);
 	
 
 	public VersionCheckerJob(String name) {

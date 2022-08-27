@@ -2,8 +2,6 @@ package org.flashtool.system;
 
 import java.net.ProxySelector;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.github.markusbernhardt.proxy.ProxySearch;
 import com.github.markusbernhardt.proxy.ProxySearch.Strategy;
 import com.github.markusbernhardt.proxy.util.PlatformUtil;
@@ -14,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 public class Proxy {
 
 	private static ProxySelector dps = null;
-	static final Logger logger = LogManager.getLogger(Proxy.class);
 	
 	public static void setProxy() {
 		if (dps==null) dps=ProxySelector.getDefault();

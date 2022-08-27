@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.libusb.LibUsbException;
 import org.flashtool.parsers.sin.SinFile;
 import org.flashtool.util.BytesUtil;
@@ -29,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Parser {
 	
-	static final Logger logger = LogManager.getLogger(Parser.class);
 
 	static JBBPParser USBRecord = JBBPParser.prepare(
 			"<long irp;" +

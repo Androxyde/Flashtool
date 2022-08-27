@@ -10,8 +10,6 @@ import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.swt.SWT;
 import org.flashtool.gui.tools.MsgBox;
@@ -24,7 +22,6 @@ public class FTDEntry {
 
 	File ftdfile;
 	Properties entry = new Properties();
-	static final Logger logger = LogManager.getLogger(FTDEntry.class);
 
 	public FTDEntry(String id) throws FileNotFoundException, IOException {
 		ftdfile = new File(OS.getFolderMyDevices()+File.separator+id+".ftd");

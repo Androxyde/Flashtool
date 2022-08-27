@@ -85,8 +85,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Slf4j
 public class MainSWT {
@@ -112,7 +110,6 @@ public class MainSWT {
 	protected MenuItem mntmFlashSingleTA;
 	protected MenuItem mntmFlashFromRaw;
 	protected VersionCheckerJob vcheck; 
-	static final Logger logger = LogManager.getLogger(MainSWT.class);
 	
 	/**
 	 * Open the window.

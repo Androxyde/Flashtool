@@ -1,8 +1,6 @@
 package org.flashtool.flashsystem.io;
 
 import java.io.IOException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.flashsystem.S1Command;
 import org.flashtool.flashsystem.X10FlashException;
 import org.flashtool.jna.linux.JUsb;
@@ -13,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class USBFlashLinux {
 
-	static final Logger logger = LogManager.getLogger(USBFlashLinux.class);
 
 	public static void linuxOpen(String pid) throws IOException, Exception  {
 			log.info("Opening device for R/W");

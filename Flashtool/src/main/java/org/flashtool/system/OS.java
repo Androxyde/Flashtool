@@ -27,8 +27,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.crypto.NoSuchPaddingException;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.log.LogProgress;
 import org.flashtool.util.HexDump;
 
@@ -39,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OS {
 
-	static final Logger logger = LogManager.getLogger(OS.class);
 	
 	public static String RC4Key = "DoL6FBfnYcNJBjH31Vnz6lKATTaDGe4y";
 	public static String AESKey = "qAp!wmvl!cOS7xSQV!aoR7Qz*neY^5Sx";

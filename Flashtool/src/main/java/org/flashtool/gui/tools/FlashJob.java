@@ -1,7 +1,5 @@
 package org.flashtool.gui.tools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -23,7 +21,6 @@ public class FlashJob extends Job {
 	Bundle _bundle;
 	boolean canceled = false;
 	Shell _shell;
-	static final Logger logger = LogManager.getLogger(FlashJob.class);
 	
 	public FlashJob(String name) {
 		super(name);

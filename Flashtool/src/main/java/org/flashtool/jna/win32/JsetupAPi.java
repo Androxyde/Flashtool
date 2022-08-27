@@ -1,7 +1,5 @@
 package org.flashtool.jna.win32;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.jna.adb.AdbUtility;
 import org.flashtool.jna.linux.JUsb;
 import org.flashtool.jna.win32.SetupApi.HDEVINFO;
@@ -24,7 +22,6 @@ public class JsetupAPi {
     public static GUID USBGuid = new GUID();
     private static SP_DEVINFO_DATA DeviceInfoData = new SP_DEVINFO_DATA();
     private static SP_DRVINFO_DATA DriverInfoData = new SP_DRVINFO_DATA();
-    static final Logger logger = LogManager.getLogger(JsetupAPi.class);
     
     static {
 	    USBGuid.Data1=0xA5DCBF10;

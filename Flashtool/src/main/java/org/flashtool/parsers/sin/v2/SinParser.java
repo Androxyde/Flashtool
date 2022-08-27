@@ -9,8 +9,6 @@ import java.util.Vector;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.log.LogProgress;
 import org.flashtool.parsers.sin.v1.PartitionInfo;
 import org.flashtool.parsers.sin.v3.AddrBlock;
@@ -42,7 +40,6 @@ public class SinParser {
 	  private long size;
 	  private long dataSize=0L;
 	  String dataType;
-	  static final Logger logger = LogManager.getLogger(SinParser.class);
 	  
 	  public void setFile(File f) {
 		  sinfile = f;

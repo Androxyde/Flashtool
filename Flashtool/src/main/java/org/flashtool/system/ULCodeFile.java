@@ -2,8 +2,6 @@ package org.flashtool.system;
 
 import java.io.File;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.jna.adb.AdbUtility;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ULCodeFile extends TextFile {
 	
-	static final Logger logger = LogManager.getLogger(ULCodeFile.class);
 
 	public ULCodeFile(String serial) {
 		super(OS.getFolderRegisteredDevices()+File.separator+serial+File.separator+"ulcode.txt", "ISO-8859-1");

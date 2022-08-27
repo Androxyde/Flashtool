@@ -1,7 +1,5 @@
 package org.flashtool.gui.tools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -21,7 +19,6 @@ public class FastBootToolBoxJob extends Job {
 	boolean canceled = false;
 	String _action = "";
 	String _image = "";
-	static final Logger logger = LogManager.getLogger(FastBootToolBoxJob.class);
 	
 	public FastBootToolBoxJob(String name) {
 		super(name);

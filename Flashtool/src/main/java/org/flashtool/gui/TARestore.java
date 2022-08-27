@@ -42,8 +42,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Combo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -71,7 +69,6 @@ public class TARestore extends Dialog {
 	private Vector<TAUnit> toflash;
 	private TADevice result;
 	CTabItemWithHexViewer hexviewer;
-	static final Logger logger = LogManager.getLogger(TARestore.class);
 	String device = "";
 	String serial = "";
 	DeviceEntry id = null;

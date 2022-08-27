@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.flashsystem.Category;
 import org.rauschig.jarchivelib.ArchiveFormat;
 import org.rauschig.jarchivelib.Archiver;
@@ -41,7 +39,6 @@ public class SinFile {
 	public org.flashtool.parsers.sin.v3.SinParser sinv3 = null;
 	public org.flashtool.parsers.sin.v4.SinParser sinv4 = null;
 	
-	static final Logger logger = LogManager.getLogger(SinFile.class);
 	
 	public SinFile(File f) throws SinFileException {
 		sinfile = f;

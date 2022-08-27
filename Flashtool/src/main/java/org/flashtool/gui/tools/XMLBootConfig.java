@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.flashsystem.Category;
 import org.flashtool.gui.TARestore;
 import org.flashtool.parsers.sin.SinFile;
@@ -23,7 +21,6 @@ public class XMLBootConfig {
 	private Vector<String> files = new Vector<String>();
 	private Properties attributes = new Properties();
 	private String _folder="";
-	static final Logger logger = LogManager.getLogger(XMLBootConfig.class);
 	private Properties matcher = new Properties();
 
 	public XMLBootConfig(String name) {

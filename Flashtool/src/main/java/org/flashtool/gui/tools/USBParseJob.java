@@ -2,8 +2,6 @@ package org.flashtool.gui.tools;
 
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -22,7 +20,6 @@ public class USBParseJob extends Job {
 
 	String logfile="";
 	String sindir="";
-	static final Logger logger = LogManager.getLogger(USBParseJob.class);
 	Session session;
 	
 	public USBParseJob(String name) {

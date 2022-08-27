@@ -2,8 +2,6 @@ package org.flashtool.flashsystem.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.flashsystem.CommandPacket;
 import org.flashtool.flashsystem.S1Command;
 import org.flashtool.flashsystem.S1Packet;
@@ -16,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class USBFlash {
 
-	static final Logger logger = LogManager.getLogger(USBFlash.class);
 	private static int buffersize=512*1024;
 	private static int readbuffer=512*1024;
 	

@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,7 +26,6 @@ public class OldUnlockJob extends Job {
 	String blstatus = "";
 	String phonecert = "";
 	String platform = "";
-	static final Logger logger = LogManager.getLogger(OldUnlockJob.class);
 	
 	public void setStatus(String status) {
 		blstatus = status;

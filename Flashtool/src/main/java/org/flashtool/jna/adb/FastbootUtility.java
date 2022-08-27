@@ -4,8 +4,6 @@ import java.util.Enumeration;
 import java.util.Scanner;
 import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.system.OS;
 import org.flashtool.system.ProcessBuilderWrapper;
 import org.flashtool.system.RunOutputs;
@@ -17,7 +15,6 @@ public class FastbootUtility {
 
 	private static String adbpath = OS.getPathAdb();
 	private static String fastbootpath = OS.getPathFastBoot();
-	static final Logger logger = LogManager.getLogger(FastbootUtility.class);
 	
 	public static void adbRebootFastboot() throws Exception {
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"reboot", "bootloader"},false);

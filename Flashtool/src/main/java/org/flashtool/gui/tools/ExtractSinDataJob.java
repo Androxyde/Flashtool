@@ -1,7 +1,5 @@
 package org.flashtool.gui.tools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -18,7 +16,6 @@ public class ExtractSinDataJob extends Job {
 	boolean canceled = false;
 	SinFile sin;
 	private String mode="raw";
-	static final Logger logger = LogManager.getLogger(ExtractSinDataJob.class);
 	
 	public ExtractSinDataJob(String name) {
 		super(name);

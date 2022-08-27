@@ -2,8 +2,6 @@ package org.flashtool.flashsystem.io;
 
 
 import java.io.IOException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.flashsystem.S1Command;
 import org.flashtool.flashsystem.X10FlashException;
 import org.flashtool.jna.win32.JKernel32;
@@ -13,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class USBFlashWin32 {
 	
-	static final Logger logger = LogManager.getLogger(USBFlashWin32.class);
 
 	public static void windowsOpen(String pid) throws IOException {
     		log.info("Opening device for R/W");

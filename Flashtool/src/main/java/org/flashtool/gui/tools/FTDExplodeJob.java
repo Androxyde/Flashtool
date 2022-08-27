@@ -1,7 +1,5 @@
 package org.flashtool.gui.tools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -17,7 +15,6 @@ public class FTDExplodeJob extends Job {
 
 	FTDEntry entry = null;
 	boolean canceled = false;
-	static final Logger logger = LogManager.getLogger(FTDExplodeJob.class);
 	
 	public FTDExplodeJob(String name) {
 		super(name);

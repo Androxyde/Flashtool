@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Vector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.system.Devices;
 import org.flashtool.system.FTShell;
 import org.flashtool.system.GlobalConfig;
@@ -28,7 +26,6 @@ public class AdbUtility  {
 	private static String shellpath = OS.getFolderCustom()+fsep+"shells";
 	private static String adbpath = OS.getPathAdb();
 	private static String shpath ="";
-	static final Logger logger = LogManager.getLogger(AdbUtility.class);
 
 	public static void resetRoot() {
 		rootnative=false;

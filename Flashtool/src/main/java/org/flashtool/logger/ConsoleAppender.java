@@ -1,14 +1,5 @@
 package org.flashtool.logger;
 
-import org.apache.logging.log4j.core.Filter;  
-import org.apache.logging.log4j.core.Layout;  
-import org.apache.logging.log4j.core.LogEvent;  
-import org.apache.logging.log4j.core.appender.AbstractAppender;  
-import org.apache.logging.log4j.core.config.plugins.Plugin;  
-import org.apache.logging.log4j.core.config.plugins.PluginAttribute;  
-import org.apache.logging.log4j.core.config.plugins.PluginElement;  
-import org.apache.logging.log4j.core.config.plugins.PluginFactory;  
-import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.eclipse.swt.custom.StyledText;
 import org.flashtool.gui.MainSWT;
 import org.flashtool.libusb.LibUsbException;

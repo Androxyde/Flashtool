@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.flashtool.log.LogProgress;
 import org.flashtool.parsers.sin.v2.HashBlock;
 import org.flashtool.parsers.sin.v2.HashBlocks;
@@ -37,7 +35,6 @@ public class SinParser {
 	  private long size;
 	  private long dataSize=0L;
 	  String dataType;
-	  static final Logger logger = LogManager.getLogger(SinParser.class);
 
 	  public void parseHash(JBBPBitInputStream sinStream) throws IOException {
 		  JBBPParser hashBlocksV2 = JBBPParser.prepare(

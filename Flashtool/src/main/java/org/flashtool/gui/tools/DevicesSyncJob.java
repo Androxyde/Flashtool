@@ -1,8 +1,6 @@
 package org.flashtool.gui.tools;
 
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -18,7 +16,6 @@ public class DevicesSyncJob extends Job {
 
 	boolean canceled = false;
 	
-	static final Logger logger = LogManager.getLogger(DevicesSyncJob.class);
 
 	public DevicesSyncJob(String name) {
 		super(name);
