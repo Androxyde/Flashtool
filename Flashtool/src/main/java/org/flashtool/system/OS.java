@@ -19,9 +19,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -480,11 +483,30 @@ public class OS {
       }
     
     public static String getChannel() {
-    	try {
-    		return OS.getManifest(OS.class).getMainAttributes().getValue("Internal-Channel");
-    	} catch (Exception e) {
-    		return "";
-    	}
+	    Enumeration resEnum;
+	    try {
+	        resEnum = Thread.currentThread().getContextClassLoader().getResources(JarFile.MANIFEST_NAME);
+	        while (resEnum.hasMoreElements()) {
+	            try {
+	                URL url = (URL)resEnum.nextElement();
+	                InputStream is = url.openStream();
+	                if (is != null) {
+	                    Manifest manifest = new Manifest(is);
+	                    Attributes mainAttribs = manifest.getMainAttributes();
+	                    String version = mainAttribs.getValue("Internal-Channel");
+	                    if(version != null) {
+	                        return version;
+	                    }
+	                }
+	            }
+	            catch (Exception e) {
+	                // Silently ignore wrong manifests on classpath?
+	            }
+	        }
+	    } catch (IOException e1) {
+	        // Silently ignore wrong manifests on classpath?
+	    }
+	    return null; 
     }
 
     public static void decrypt(File infile) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
