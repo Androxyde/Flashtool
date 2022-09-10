@@ -275,10 +275,10 @@ public class AdbUtility  {
 		}
 	}
 
-	public static void push(String source, String destination, boolean log) throws Exception {
+	public static void push(String source, String destination, boolean logging) throws Exception {
 		File f = new File(source);
 		if (!f.exists()) throw new AdbException(source+" : Not found");
-		if (log) log.info("Pushing "+f.getAbsolutePath()+" to "+destination);
+		if (logging) log.info("Pushing "+f.getAbsolutePath()+" to "+destination);
 		else log.debug("Pushing "+f.getAbsolutePath()+" to "+destination);
 		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"push",f.getAbsolutePath(),destination},false);
 		if (command.getStatus()!=0) {
@@ -324,8 +324,8 @@ public class AdbUtility  {
 		pull(source,destination,true);
 	}
 
-	public static void pull(String source, String destination, boolean log) throws Exception {
-		if (log)
+	public static void pull(String source, String destination, boolean logging) throws Exception {
+		if (logging)
 			log.info("Pulling "+source+" to "+destination);
 		else
 			log.debug("Pulling "+source+" to "+destination);
@@ -380,13 +380,13 @@ public class AdbUtility  {
 		return runRoot(shell,true);
 	}
 	
-	public static String runRoot(FTShell shell,boolean log) throws Exception {
+	public static String runRoot(FTShell shell,boolean logging) throws Exception {
 		FTShell s=new FTShell("sysrun");
 		s.save();
 		push(s.getPath(),GlobalConfig.getProperty("deviceworkdir")+"/sysrun",false);
 		s.clean();
 		push(shell.getPath(),GlobalConfig.getProperty("deviceworkdir")+"/runscript",false);
-		if (log)
+		if (logging)
 			log.info("Running "+shell.getName()+"  as root thru sysrun");
 		else
 			log.debug("Running "+shell.getName()+"  as root thru sysrun");

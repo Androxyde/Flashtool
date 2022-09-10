@@ -1,0 +1,124 @@
+#!/system/bin/sh
+
+export SAVE_PATH=$PATH
+export PATH=/system/bin:/system/xbin:/data/local/tmp
+
+installModule(){
+	if [ "$(lsmod | grep wp_mod)" = "" ]; then
+		insmod $WPMODULE
+		if [ $? -ne 0 ]; then
+			kernelver=$($BUSYBOX cat /proc/version | $BUSYBOX cut -d' ' -f3)
+			echo "$kernelver" | dd of=$WPMODULE conv=notrunc obs=476 seek=1 ibs=19 count=1
+			$MODULECRCPATCH /system/lib/modules/scsi_wait_scan.ko $WPMODULE
+			insmod $WPMODULE
+			return $?
+		fi
+		return 0
+	fi
+	return 0
+}
+
+if [ -e /data/local/tmp/busybox ]
+then
+	BUSYBOX=/data/local/tmp/busybox
+else
+	BUSYBOX=/system/xbin/busybox
+fi
+
+if [ -e /data/local/tmp/writekmem ]
+then
+	WRITEKMEM=/data/local/tmp/writekmem
+else
+	WRITEKMEM=/system/xbin/writekmem
+fi
+
+if [ -e /data/local/tmp/modulecrcpatch ]
+then
+	MODULECRCPATCH=/data/local/tmp/modulecrcpatch
+else
+	MODULECRCPATCH=/system/xbin/modulecrcpatch
+fi
+
+if [ -e /data/local/tmp/findricaddr ]
+then
+	FINDRICADDR=/data/local/tmp/findricaddr
+else
+	FINDRICADDR=/system/xbin/findricaddr
+fi
+
+if [ -e /data/local/tmp/wp_mod.ko ]
+then
+	WPMODULE=/data/local/tmp/wp_mod.ko
+else
+	WPMODULE=/system/lib/modules/wp_mod.ko
+fi
+
+if [ ! -e ${BUSYBOX} ]
+then
+	echo "No busybox"
+	exit 1
+fi
+
+if [ ! -e ${WRITEKMEM} ]
+then
+	echo "No writekmem"
+	exit 1
+fi
+
+if [ ! -e $FINDRICADDR ]
+then
+	echo "No findricaddr"
+	exit 1
+fi
+
+if [ ! -e $MODULECRCPATCH ]
+then
+	echo "No modulecrcpatch"
+	exit 1
+fi
+
+if [ ! -e $WPMODULE ]
+then
+	echo "No wp_module.ko"
+	exit 1
+fi
+
+touch /data/local/tmp/zxz_run
+
+RICPATH=$(ps | ${BUSYBOX} grep "bin/ric" | ${BUSYBOX} awk '{ print $NF }')
+if [ "$RICPATH" != "" ]; then
+	mount -o remount,rw / && mv ${RICPATH} ${RICPATH}c && ${BUSYBOX} pkill -f ${RICPATH} && mount -o remount,ro /
+fi
+
+kmem_exists=$(ls /dev/kmem|$BUSYBOX wc -l 2> /dev/null)
+
+if [ $kmem_exists -eq 1 ]; then
+	touch /data/local/tmp/ricaddr
+	chmod 777 /data/local/tmp/ricaddr
+
+	findrica=$(${FINDRICADDR} 2> /dev/null)
+	if [ "$?" = "0" ]; then
+		echo "$findrica" | ${BUSYBOX} tail -n1 | ${BUSYBOX} cut -d= -f2 > /data/local/tmp/ricaddr
+	else
+		echo 0 > /proc/sys/kernel/kptr_restrict
+		kallsyms_RIC=$(${BUSYBOX} cat /proc/kallsyms | ${BUSYBOX} grep "sony_ric_enabled" | ${BUSYBOX} grep "T" | ${BUSYBOX} cut -d' ' -f1)
+		RIC_dump=$(dd if=/dev/kmem skip=$(( 0x$kallsyms_RIC )) bs=1 count=16 2> /dev/null | ${BUSYBOX} hexdump)
+		echo -n $(echo $RIC_dump | ${BUSYBOX} cut -d' ' -f9) > /data/local/tmp/ricaddr
+		echo $(echo $RIC_dump | ${BUSYBOX} cut -d' ' -f8) >> /data/local/tmp/ricaddr
+	fi
+	RIC_addr=$(${BUSYBOX} cat /data/local/tmp/ricaddr)
+	if [ ${#RIC_addr} -gt 7 ]; then
+		${WRITEKMEM} $RIC_addr 0 &> /dev/null
+	else
+		installModule
+	fi
+else
+	installModule
+fi
+
+export PATH=$SAVE_PATH
+
+rm -f /data/local/tmp/ricaddr
+rm -f /data/local/tmp/zxz_run
+
+exit

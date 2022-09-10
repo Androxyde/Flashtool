@@ -23,7 +23,7 @@ import org.flashtool.gui.tools.WidgetTask;
 import org.flashtool.gui.tools.XMLBootConfig;
 import org.flashtool.gui.tools.XMLBootDelivery;
 import org.flashtool.gui.tools.XMLPartitionDelivery;
-import org.flashtool.log.LogProgress;
+import org.flashtool.logger.LogProgress;
 import org.flashtool.parsers.sin.SinFile;
 import org.flashtool.parsers.sin.SinFileException;
 import org.flashtool.parsers.ta.TAFileParseException;

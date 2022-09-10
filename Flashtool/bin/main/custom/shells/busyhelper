@@ -1,0 +1,2 @@
+chmod 755 DEVICEWORKDIR/busybox
+rm -r DEVICEWORKDIR/busyhelper

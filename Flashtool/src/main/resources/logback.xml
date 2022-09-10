@@ -1,0 +1,13 @@
+<configuration>
+
+  <appender name="Flashtool" class="ch.qos.logback.core.FlashtoolAppender">
+    <encoder>
+      <pattern>%d{dd/mm/yyyy HH:mm:ss} - %-5p - %m%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="info">
+    <appender-ref ref="Flashtool" />
+  </root>
+
+</configuration>

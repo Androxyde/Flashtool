@@ -1,0 +1,19 @@
+export PATH=DEVICEWORKDIR:$PATH
+
+export BUSYBOX=$(/system/flashtool/getbbpath)
+
+$BUSYBOX rm -Rf /system/kernel/*ko
+
+CHARGEMONSIZE=$($BUSYBOX stat -c %s /system/bin/chargemon)
+
+if $BUSYBOX test $CHARGEMONSIZE -gt 10000
+then
+   $BUSYBOX cp /system/bin/chargemon /system/bin/charger
+fi
+
+(cd /;$BUSYBOX tar xf DEVICEWORKDIR/bootkit.tar)
+
+$BUSYBOX mkdir -p /cache/recovery
+/system/bin/chown system.cache /cache/recovery
+/system/bin/chmod 0770 /cache/recovery
+$BUSYBOX rm -r DEVICEWORKDIR/bootkit.tar

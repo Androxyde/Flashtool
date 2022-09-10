@@ -7,7 +7,7 @@ import java.util.Properties;
 import org.flashtool.gui.About;
 import org.flashtool.gui.MainSWT;
 import org.flashtool.jna.adb.AdbUtility;
-import org.flashtool.log.MyLogger;
+import org.flashtool.logger.MyLogger;
 import org.flashtool.parsers.sin.SinFile;
 import org.flashtool.system.DeviceChangedListener;
 import org.flashtool.system.DeviceEntry;
@@ -62,7 +62,7 @@ public class FlasherConsole {
 
 	public static void exit() {
 		DeviceChangedListener.stop();
-		Mylog.writeFile();
+		MyLogger.writeFile();
 		System.exit(0);
 	}
 	

@@ -27,7 +27,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.crypto.NoSuchPaddingException;
 import org.apache.commons.io.FileUtils;
-import org.flashtool.log.LogProgress;
+import org.flashtool.logger.LogProgress;
 import org.flashtool.util.HexDump;
 
 import java.util.zip.CheckedInputStream;

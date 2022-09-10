@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Text;
 import org.flashtool.gui.tools.DevicesSyncJob;
 import org.flashtool.gui.tools.USBParseJob;
 import org.flashtool.gui.tools.WidgetTask;
-import org.flashtool.parsers.simpleusblog.Session;
+import org.flashtool.parsers.simpleusblogger.Session;
 
 import lombok.extern.slf4j.Slf4j;
 

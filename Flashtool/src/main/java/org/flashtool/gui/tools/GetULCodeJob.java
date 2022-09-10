@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.flashtool.flashsystem.Flasher;
 import org.flashtool.gui.TARestore;
-import org.flashtool.log.LogProgress;
+import org.flashtool.logger.LogProgress;
 import org.flashtool.parsers.ta.TAUnit;
 import org.flashtool.system.ULCodeFile;
 import org.flashtool.util.HexDump;

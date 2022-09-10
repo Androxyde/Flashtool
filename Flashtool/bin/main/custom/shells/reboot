@@ -1,0 +1,3 @@
+#!SHELLPATH
+
+rm DEVICEWORKDIR/runscript && rm DEVICEWORKDIR/sysrun && /system/bin/reboot

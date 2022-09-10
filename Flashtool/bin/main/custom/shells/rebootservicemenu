@@ -1,0 +1,15 @@
+export PATH=DEVICEWORKDIR:$PATH
+
+export BUSYBOX=/system/xbin/busybox
+
+$BUSYBOX rm -Rf /data/usf
+
+if $BUSYBOX test -d /data/usf-
+then
+   $BUSYBOX mv /data/usf- /data/usf
+fi
+
+$BUSYBOX rm -Rf /data/local/tmp/*
+$BUSYBOX rm -Rf /data/data/com.sonyericsson.android.servicemenu
+
+reboot

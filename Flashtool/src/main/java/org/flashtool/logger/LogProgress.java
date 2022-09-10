@@ -2,12 +2,8 @@ package org.flashtool.logger;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.flashtool.libusb.LibUsbException;
 import org.flashtool.system.GlobalState;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class LogProgress {
 
 	static ProgressBar _bar = null;

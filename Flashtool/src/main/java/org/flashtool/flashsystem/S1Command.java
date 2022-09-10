@@ -2,9 +2,10 @@ package org.flashtool.flashsystem;
 
 import java.io.IOException;
 import org.flashtool.flashsystem.io.USBFlash;
-import org.flashtool.log.LogProgress;
-import org.flashtool.log.MyLogger;
+import org.flashtool.logger.LogProgress;
+import org.flashtool.logger.MyLogger;
 
+import ch.qos.logback.classic.Level;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

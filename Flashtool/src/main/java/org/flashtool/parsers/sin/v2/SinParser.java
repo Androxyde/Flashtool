@@ -9,7 +9,7 @@ import java.util.Vector;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
 
-import org.flashtool.log.LogProgress;
+import org.flashtool.logger.LogProgress;
 import org.flashtool.parsers.sin.v1.PartitionInfo;
 import org.flashtool.parsers.sin.v3.AddrBlock;
 import org.flashtool.parsers.sin.v3.LZ4ABlock;

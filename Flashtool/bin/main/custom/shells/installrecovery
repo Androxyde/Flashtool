@@ -1,0 +1,27 @@
+export PATH=DEVICEWORKDIR:$PATH
+
+# cleanup any old recovery install
+rm -r /system/bin/*recovery*tar*
+rm -r /system/xbin/*recovery*tar*
+rm -r /system/recovtools
+rm /system/recovery/sh
+rm /system/recovery/*tar*
+rm /system/recovery/*img*
+
+# install recovery files
+export PATH=DEVICEWORKDIR:$PATH
+
+export RVER=`tar tf DEVICEWORKDIR/recovery.tar|head -n 1|cut -d "/" -f 1`
+
+rm -r /system/recovery/$RVER
+
+(cd /system/recovery;tar xf DEVICEWORKDIR/recovery.tar)
+
+rm -r DEVICEWORKDIR/recovery.tar
+
+rm -r DEVICEWORKDIR/*tar*
+
+if [ ! -e /system/recovery/default ]
+then
+	cp /system/recovery/$RVER/recovery.desc /system/recovery/default
+fi

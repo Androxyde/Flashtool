@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.flashtool.gui.TARestore;
 import org.flashtool.jna.adb.AdbUtility;
-import org.flashtool.log.LogProgress;
+import org.flashtool.logger.LogProgress;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +21,7 @@ class APKFilter implements FilenameFilter {
     }
 }
 
-
+@Slf4j
 public class APKInstallJob extends Job {
 
 	String instpath;

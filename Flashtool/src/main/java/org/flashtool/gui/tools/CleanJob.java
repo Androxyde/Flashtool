@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.flashtool.gui.TARestore;
 import org.flashtool.jna.adb.AdbUtility;
-import org.flashtool.log.LogProgress;
+import org.flashtool.logger.LogProgress;
 import org.flashtool.system.Devices;
 import org.flashtool.system.FTShell;
 import org.flashtool.system.GlobalConfig;

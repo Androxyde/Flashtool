@@ -1,40 +1,50 @@
 package org.flashtool.logger;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.flashtool.libusb.LibUsbException;
+import org.flashtool.system.OS;
 import org.slf4j.LoggerFactory;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-
+import ch.qos.logback.core.FlashtoolAppender;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MyLogger {
 
-	private static int logmode=1;
+	private static String logmode="CONSOLE";
 	public static String lastaction = "";
-	public static final int CONSOLE_MODE=1;
-	public static final int GUI_MODE=2;
+	public static final String CONSOLE_MODE="CONSOLE";
+	public static final String GUI_MODE="GUI";
+
 	
 	public static String writeFile() {
 		String fname = MyLogger.getTimeStamp();
-		StringBuilderAppender.writeFile(fname);
+		FlashtoolAppender<?> fa = getAppender();
+		fa.writeFile(OS.getFolderUserFlashtool()+File.separator+"flashtool_"+fname+".log");
 		return fname;
 	}
 	
-	public static void setMode(int mode) {
+	public static FlashtoolAppender<?> getAppender() {
+		Logger root = (Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+		FlashtoolAppender<?> sa = (FlashtoolAppender<?>)root.getAppender("Flashtool");
+		return sa;
+	}
+
+	public static void setMode(String mode) {
+
 		logmode=mode;
+		FlashtoolAppender<?> fa = getAppender();
+		fa.setMode(logmode);
+
 	}
 
 	public static String getMode() {
-		if (logmode==CONSOLE_MODE) return "console";
-		return "gui";
+		return logmode.toLowerCase();
 	}
 
 	public static void setLevel(String level) {
@@ -45,15 +55,13 @@ public class MyLogger {
 	}
 
 	public static Level getLevel() {
-		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-		Logger logger = loggerContext.getLogger("root");
-		return log.getLevel();
+		Logger root = (Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+		return root.getLevel();
 	}
 	
 	public static void setLevel(Level level) {
-		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-		Logger logger = loggerContext.getLogger("root");
-		log.setLevel(level);
+		Logger root = (Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+		root.setLevel(level);
 		if (level == Level.ERROR) {
 			log.error("<- This level is successfully initialized");
 		}

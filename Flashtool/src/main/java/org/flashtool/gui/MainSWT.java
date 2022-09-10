@@ -30,9 +30,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MenuItem;
 import org.flashtool.windowbuilder.swt.SWTResourceManager;
-
 import lombok.extern.slf4j.Slf4j;
-
 import org.flashtool.flashsystem.Bundle;
 import org.flashtool.flashsystem.Flasher;
 import org.flashtool.flashsystem.FlasherFactory;
@@ -59,9 +57,8 @@ import org.flashtool.gui.tools.WidgetTask;
 import org.flashtool.gui.tools.Yaffs2Job;
 import org.flashtool.jna.adb.AdbUtility;
 import org.flashtool.jna.linux.JUsb;
-import org.flashtool.log.LogProgress;
-import org.flashtool.log.MyLogger;
-import org.flashtool.log.TextAreaAppender;
+import org.flashtool.logger.LogProgress;
+import org.flashtool.logger.MyLogger;
 import org.flashtool.parsers.ta.TARawParser;
 import org.flashtool.system.DeviceChangedListener;
 import org.flashtool.system.DeviceEntry;
@@ -1244,7 +1241,8 @@ public class MainSWT {
 		
 		StyledText logWindow = new StyledText(scrolledLog, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		logWindow.setEditable(false);
-		TextAreaAppender.setTextArea(logWindow);
+		MyLogger.getAppender().setStyledText(logWindow);
+		//StringAppender.setTextArea(logWindow);
 		GlobalState.setGUI();
 		scrolledLog.setContent(logWindow);
 		scrolledLog.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));

@@ -9,9 +9,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.flashtool.flashsystem.Bundle;
 import org.flashtool.gui.TARestore;
-import org.flashtool.parsers.simpleusblog.Parser;
-import org.flashtool.parsers.simpleusblog.S1Packet;
-import org.flashtool.parsers.simpleusblog.Session;
+import org.flashtool.parsers.simpleusblogger.Parser;
+import org.flashtool.parsers.simpleusblogger.S1Packet;
+import org.flashtool.parsers.simpleusblogger.Session;
 
 import lombok.extern.slf4j.Slf4j;
 

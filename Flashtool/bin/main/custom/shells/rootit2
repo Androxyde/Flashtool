@@ -1,0 +1,111 @@
+export PATH=DEVICEWORKDIR:$PATH
+
+echo "Cleaning rootit files"
+busybox rm -f DEVICEWORKDIR/rootit
+busybox rm -f DEVICEWORKDIR/psneuter
+busybox rm -f DEVICEWORKDIR/zergrush
+busybox rm -f DEVICEWORKDIR/sh
+busybox rm -f DEVICEWORKDIR/boomsh
+
+echo "Mounting /system R/W"
+busybox mount -o remount,rw yaffs2 /system >/dev/null 2>&1
+export RCU=$?
+
+if busybox test $RCU -eq 0
+then
+	echo "Copying Superuser.apk to /system/app"
+	export RES=`dd if=DEVICEWORKDIR/Superuser.apk of=/system/app/Superuser.apk`
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+if busybox test $RCU -eq 0
+then
+	echo "Copying su to /system/xbin"
+	dd if=DEVICEWORKDIR/su of=/system/xbin/su
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+if busybox test $RCU -eq 0
+then
+	echo "Copying busybox to /system/xbin"
+	dd if=DEVICEWORKDIR/busybox of=/system/xbin/busybox
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+if busybox test $RCU -eq 0
+then
+	chown root.root /system/app/Superuser.apk
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+if busybox test $RCU -eq 0
+then
+	chown root.root /system/xbin/su
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+if busybox test $RCU -eq 0
+then
+	chown root.root /system/xbin/busybox
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+if busybox test $RCU -eq 0
+then
+	chmod 644 /system/app/Superuser.apk
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+if busybox test $RCU -eq 0
+then
+	chmod 06755 /system/xbin/su
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+if busybox test $RCU -eq 0
+then
+	chmod 04755 /system/xbin/busybox
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+if busybox test $RCU -eq 0
+then
+	/system/xbin/busybox --install -s /system/xbin
+	export RCU=$?
+else
+	echo FTError $RES
+	exit 31
+fi
+
+busybox rm -f DEVICEWORKDIR/su
+busybox rm -f DEVICEWORKDIR/busybox
+busybox rm -f DEVICEWORKDIR/Superuser.apk
+busybox rm -f DEVICEWORKDIR/rootit2
+/system/bin/reboot

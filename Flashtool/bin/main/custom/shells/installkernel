@@ -1,0 +1,9 @@
+export PATH=DEVICEWORKDIR:$PATH
+
+export KVER=`tar tf DEVICEWORKDIR/kernel.tar|head -n 1|cut -d "/" -f 1`
+
+rm -r /system/kernel/$KVER
+
+(cd /system/kernel;tar xf DEVICEWORKDIR/kernel.tar)
+
+rm -r DEVICEWORKDIR/kernel.tar

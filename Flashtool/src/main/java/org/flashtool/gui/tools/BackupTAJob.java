@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.flashtool.flashsystem.Flasher;
 import org.flashtool.gui.TARestore;
-import org.flashtool.log.LogProgress;
+import org.flashtool.logger.LogProgress;
 import org.flashtool.system.DeviceChangedListener;
 
 import lombok.extern.slf4j.Slf4j;

@@ -1,0 +1,7 @@
+export PATH=DEVICEWORKDIR:$PATH
+cd /system
+cp DEVICEWORKDIR/build.prop /system
+chmod 644 /system/build.prop
+chown root.root /system/build.prop
+rm DEVICEWORKDIR/build.prop
+reboot

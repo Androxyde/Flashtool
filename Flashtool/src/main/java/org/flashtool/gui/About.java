@@ -8,16 +8,11 @@ import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.flashtool.flashsystem.S1Command;
 import org.flashtool.system.OS;
-
 import lombok.extern.slf4j.Slf4j;
-
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormLayout;

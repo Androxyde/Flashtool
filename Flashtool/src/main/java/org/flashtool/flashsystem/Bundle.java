@@ -1,6 +1,5 @@
 package org.flashtool.flashsystem;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,13 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -24,14 +21,14 @@ import java.util.zip.Deflater;
 import org.flashtool.gui.tools.FirmwareFileFilter;
 import org.flashtool.gui.tools.XMLBootDelivery;
 import org.flashtool.gui.tools.XMLPartitionDelivery;
-import org.flashtool.log.LogProgress;
+import org.flashtool.logger.LogProgress;
 import org.flashtool.parsers.sin.SinFile;
 import org.flashtool.system.Devices;
 import org.flashtool.system.OS;
 import org.flashtool.system.XMLUpdate;
 import com.turn.ttorrent.common.Torrent;
-
 import lombok.extern.slf4j.Slf4j;
+
 
 @Slf4j
 public final class Bundle {

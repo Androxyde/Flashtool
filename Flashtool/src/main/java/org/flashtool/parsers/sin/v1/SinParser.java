@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.flashtool.log.LogProgress;
+import org.flashtool.logger.LogProgress;
 import org.flashtool.parsers.sin.v2.HashBlock;
 import org.flashtool.parsers.sin.v2.HashBlocks;
 import org.flashtool.system.OS;
