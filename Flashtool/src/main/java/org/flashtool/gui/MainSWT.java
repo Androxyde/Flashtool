@@ -1289,7 +1289,7 @@ public class MainSWT {
 
 	public void exitProgram() {
 		try {
-			MyLogger.setMode(MyLogger.CONSOLE_MODE);
+			MyLogger.getAppender().setStyledText(null);
 			log.info("Stopping watchdogs and exiting ...");
 			if (GlobalConfig.getProperty("killadbonexit").equals("yes")) {
 				killAdbandFastboot();

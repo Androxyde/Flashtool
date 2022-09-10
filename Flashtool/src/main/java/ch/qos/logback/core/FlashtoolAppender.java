@@ -381,7 +381,11 @@ public class FlashtoolAppender<E> extends UnsynchronizedAppenderBase<E> {
     }
 
     public void setStyledText(StyledText text) {
+        lock.lock();
+        boolean first=false;
+        if (this.text==null) first=true;
     	this.text=text;
+    	if (first) {
     	Scanner sc = new Scanner(getContent());
     	while (sc.hasNextLine()) {
     		String line = sc.nextLine();
@@ -400,6 +404,8 @@ public class FlashtoolAppender<E> extends UnsynchronizedAppenderBase<E> {
     			}
     		});
     	}
+    	}
+    	lock.unlock();
     }
 
     public String getContent() {
