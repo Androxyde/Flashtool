@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.Properties;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -49,7 +51,7 @@ public class VersionCheckerJob extends Job {
             	if (OS.getChannel().equals("beta"))
             		u = new URL("https://github.com/Androxyde/Flashtool/raw/master/ant/deploy-beta.xml");
             	else
-            		u = new URL("https://github.com/Androxyde/Flashtool/raw/master/ant/deploy-release.xml");
+            		u = new URL("https://github.com/Androxyde/Flashtool/raw/master/gradle.properties");
             	log.debug("opening connection");
 				if (!aborted)
 					uconn = (HttpURLConnection) u.openConnection();
@@ -64,18 +66,10 @@ public class VersionCheckerJob extends Job {
 				if (!aborted)
 					ustream = uconn.getInputStream();
 				if (ustream!=null) log.debug("stream opened");
-				doc = builder.build(ustream);
-				Iterator<Element> mainitr = doc.getRootElement().getChildren().iterator();
-				while (mainitr.hasNext()) {
-					Element e = mainitr.next();
-					if (e.getName().equals("property"))
-						if (e.getAttributeValue("name").equals("version")) {
-							ustream.close();
-							return e.getAttributeValue("value");
-						}
-				}
+				Properties p = new Properties();
+				p.load(ustream);
 				ustream.close();
-				return "";
+				return p.getProperty("flashtoolVersion");
             }
             else {
             	log.debug("Finished resolving github. Result : Failed");
