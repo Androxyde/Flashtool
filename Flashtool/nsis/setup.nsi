@@ -9,7 +9,6 @@ RequestExecutionLevel highest
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.9.31.0
 !define COMPANY Androxyde
 !define URL http://androxyde.github.com/Flashtool/
 

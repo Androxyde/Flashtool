@@ -87,6 +87,7 @@ public class XperiFirm {
 			}
 			String[] downloaded = new File(OS.getFolderFirmwaresDownloaded()).list();
 			for (int i = 0; i<downloaded.length;i++) {
+				log.info(downloaded[i]);
 				File bundled = new File(OS.getFolderFirmwaresDownloaded()+File.separator+downloaded[i]+File.separator+"bundled");
 				if (bundled.exists()) continue;
 				File fwinfo = new File(OS.getFolderFirmwaresDownloaded()+File.separator+downloaded[i]+File.separator+"fwinfo.xml");
@@ -98,6 +99,7 @@ public class XperiFirm {
 					if (info!=null) {
 						log.info("Creating bundle for "+info.getProduct()+" "+info.getOperator()+" "+info.getVersion());
 						try {
+							info.setOperator(info.getOperator().replaceAll("/", "-"));
 							createBundle(OS.getFolderFirmwaresDownloaded()+File.separator+downloaded[i],info);
 						} catch (Exception e) {
 							log.error(e.getMessage());
