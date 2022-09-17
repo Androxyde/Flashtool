@@ -121,12 +121,6 @@ distributions {
 			}
         }
     }
-}
-
-task unixApp {
-
-	dependsOn installDist
-	
 	doLast {
 		def os = System.getProperty("os.name").toLowerCase()
 		def dist = "${buildDir}/install/${project.name}"
@@ -150,6 +144,7 @@ task unixApp {
 			ant.symlink(resource: "$dist/x10flasher_native/udev/libusbx-1.0.0.dylib", link: "$dist/x10flasher_native/udev/libusbx-1.0.dylib")
 		}
 	}
+
 }
 
 [distZip, distTar, installDist, createInstaller]*.dependsOn(':FlashtoolDrivers:createInstaller')
