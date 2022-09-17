@@ -148,8 +148,10 @@ task unixApp {
 		}*/
 		project.exec {
 			commandLine('chmod', '+x', "$dist/FlashTool")
-			commandLine('ln', '-sf', "$dist/FlashTool/x10flasher_native/udev/libusbx-1.0.0.dylib $dist/FlashTool/x10flasher_native/udev/libusbx-1.0.dylib")
 		}
+		project.exec {
+				commandLine('ln', '-sf', "$dist/FlashTool/x10flasher_native/udev/libusbx-1.0.0.dylib $dist/FlashTool/x10flasher_native/udev/libusbx-1.0.dylib")
+		}		
 		}
 	}
 }
