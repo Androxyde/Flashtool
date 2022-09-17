@@ -123,6 +123,36 @@ distributions {
     }
 }
 
+task unixApp {
+
+	dependsOn installDist
+	
+	doLast {
+		def os = System.getProperty("os.name").toLowerCase()
+		if (os.contains("mac")) {
+		def dist = "${buildDir}/install/${project.name}"
+		/*mkdir("$dist/Contents/MacOS")
+		mkdir("$dist/Contents/Resources")
+		ant.copy(file: "src/main/app/Info.plist", todir: "$dist/Contents")
+		ant.copy(file: "src/main/app/launcher", todir: "$dist/Contents/MacOS") {
+			filterset {
+				filter(token: 'APP_JAR', value: "${project.name}-${version}.jar")
+				filter(token: 'APP_NAME', value: project.name)
+				filter(token: 'JAVA_VERSION', value: jvm_version)
+			}
+		}
+		ant.copy(file: "src/main/app/application.icns", todir: "$dist/Contents/Resources")
+		ant.copy(file: "build/libs/${project.name}-${version}.jar", todir: "$dist/Contents/MacOS")
+		project.exec {
+			commandLine('chmod', '+x', "$dist/Contents/MacOS/launcher")
+		}*/
+		project.exec {
+			commandLine('chmod', '+x', "$dist/FlashTool")
+		}
+		}
+	}
+}
+
 [distZip, distTar, installDist, createInstaller]*.dependsOn(':FlashtoolDrivers:createInstaller')
 
 jar {
