@@ -112,7 +112,7 @@ distributions {
 				}
             }
 			from(jre) {
-				into 'jre'
+				into 'x10flasher_native/jre'
 			}
 			if (os.contains("windows")) {
 				from (project(':FlashtoolDrivers').buildDir.toString()+'/distributions') {

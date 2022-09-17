@@ -15,14 +15,14 @@ rootandudevcheck() {
         fi
         if test "$HASRULES" = "true"
         then
-    		echo "Not running as root but Sony/SonyEriccson Vendor ID found on your udev rules"
-       		echo "if Flashing didn't work well, run flashtool as root"
-       	else
-       		echo "Not running as root and there is no Sony/SonyEriccson Vendor ID on your udev rules"   
-       		echo "The user must be granted access to adb/flashmode/fastboot"
-       		echo "If you are unsure what to do, run flashtool as root"
-       		exit 1
-       	fi
+                echo "Not running as root but Sony/SonyEriccson Vendor ID found on your udev rules"
+                echo "if Flashing didn't work well, run flashtool as root"
+        else
+                echo "Not running as root and there is no Sony/SonyEriccson Vendor ID on your udev rules"
+                echo "The user must be granted access to adb/flashmode/fastboot"
+                echo "If you are unsure what to do, run flashtool as root"
+                exit 1
+        fi
     else
         echo "Running as root."
     fi
@@ -46,7 +46,7 @@ setworkingdir() {
       DZERO=$(cd $CPATH ; command -v $LNKTO)
    done
 
-   if [ -d $CPATH/x10flasher_lib ] ; then
+   if [ -d $CPATH/lib ] ; then
       working_dir=$CPATH
    else
       working_dir=$(cd $CPATH/..;pwd)
@@ -79,8 +79,10 @@ fi
 
 export JNI_PATH=$working_dir/x10flasher_native/udev
 
+echo $JNI_PATH
+
 $JAVA_HOME/bin/java -classpath $CLASSPATH $COCOA \
                     -Xms256m -Xmx1024m -Duser.country=US -Duser.language=en \
                     -Djava.library.path=$JNI_PATH \
                     -Djna.library.path=$JNI_PATH \
-                    -Djsse.enableSNIExtension=false gui.Main
+                    -Djsse.enableSNIExtension=false org.flashtool.gui.Main
