@@ -149,9 +149,7 @@ task unixApp {
 		project.exec {
 			commandLine('chmod', '+x', "$dist/FlashTool")
 		}
-		project.exec {
-				commandLine('ln', '-sf', "$dist/FlashTool/x10flasher_native/udev/libusbx-1.0.0.dylib $dist/FlashTool/x10flasher_native/udev/libusbx-1.0.dylib")
-		}		
+		ant.symlink(resource: "$dist/FlashTool/x10flasher_native/udev/libusbx-1.0.0.dylib", link: "$dist/FlashTool/x10flasher_native/udev/libusbx-1.0.dylib")
 		}
 	}
 }
