@@ -124,7 +124,9 @@ distributions {
 	doLast {
 		def os = System.getProperty("os.name").toLowerCase()
 		def dist = "${buildDir}/install/${project.name}"
-		ant.chmod(file: "$dist/FlashTool", perm: '755')
+		if (os.contains("mac") || os.contains("linux")) {
+			ant.chmod(file: "$dist/FlashTool", perm: '755')
+		}
 		if (os.contains("mac")) {
 		/*mkdir("$dist/Contents/MacOS")
 		mkdir("$dist/Contents/Resources")
