@@ -99,7 +99,7 @@ nsis {
 distributions {
     main {
         def os = System.getProperty("os.name").toLowerCase()
-                contents {
+        contents {
             from ('src/main/resources/custom') { into 'custom' }
                         from {
                                 if (os.contains("windows")) {
@@ -107,9 +107,11 @@ distributions {
                                 }
                                 else if (os.contains("linux")) {
                                         'src/main/resources/native/linux'
+										fileMode 0755
                                 }
                                 else if (os.contains("mac")) {
                                         'src/main/resources/native/mac'
+										fileMode 0755
                                 }
             }
                         from(jre) {
@@ -122,7 +124,6 @@ distributions {
                         }
         }
     }
-
 }
 
 [distZip, distTar, installDist, createInstaller]*.dependsOn(':FlashtoolDrivers:createInstaller')
@@ -134,7 +135,6 @@ distTar.doLast() {
 }
 
 installDist.doLast() {
-        println "last"
         def os = System.getProperty("os.name").toLowerCase()
         def dist = "${buildDir}/install/${project.name}"
         if (os.contains("mac") || os.contains("linux")) {
