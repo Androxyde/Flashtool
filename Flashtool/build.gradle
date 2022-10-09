@@ -101,19 +101,22 @@ distributions {
         def os = System.getProperty("os.name").toLowerCase()
         contents {
             from ('src/main/resources/custom') { into 'custom' }
-                        from {
+            from {
                                 if (os.contains("windows")) {
                                         'src/main/resources/native/windows'
                                 }
                                 else if (os.contains("linux")) {
                                         'src/main/resources/native/linux'
-										fileMode 0755
+										
                                 }
                                 else if (os.contains("mac")) {
                                         'src/main/resources/native/mac'
-										fileMode 0755
                                 }
-            }
+            } { into '.' 
+				if (os.contains("linux") || os.contains("mac")) {
+					fileMode 0755
+				} 
+			  }
                         from(jre) {
                                 into 'x10flasher_native/jre'
                         }
