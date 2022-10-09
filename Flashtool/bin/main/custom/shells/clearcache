@@ -1,4 +1,0 @@
-export PATH=DEVICEWORKDIR:$PATH
-busybox rm -r /data/dalvik-cache/*
-busybox rm DEVICEWORKDIR/busybox
-reboot

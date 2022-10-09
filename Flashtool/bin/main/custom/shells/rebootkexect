@@ -1,4 +1,0 @@
-#!SHELLPATH
-
-cp /system/kernel/KERNELTOBOOT/kernel.desc DEVICEWORKDIR/kernel
-rm DEVICEWORKDIR/runscript && rm DEVICEWORKDIR/sysrun && /system/bin/reboot

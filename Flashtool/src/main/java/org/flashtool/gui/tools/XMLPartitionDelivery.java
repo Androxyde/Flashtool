@@ -1,16 +1,11 @@
 package org.flashtool.gui.tools;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.flashtool.flashsystem.CommandFlasher.EmmcInfos;
 import org.flashtool.flashsystem.CommandFlasher.UfsInfos;
-import org.flashtool.gui.FileSelector;
-import org.flashtool.gui.TARestore;
 import org.flashtool.parsers.sin.SinFile;
 import org.jdom2.input.SAXBuilder;
-
 import lombok.extern.slf4j.Slf4j;
-
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.Element;
@@ -18,10 +13,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Vector;
+
 
 @Slf4j
 public class XMLPartitionDelivery {
@@ -54,38 +48,41 @@ public class XMLPartitionDelivery {
 	}
 
 	public String getMatchingFile(String match, Shell shell) {
+
 		Vector<String> matched = new Vector<String>();
-		Iterator<String> file = partitions.iterator();
-		while(file.hasNext()) {
-			String name = file.next();
+		Vector<String> keep = new Vector<String>();
+
+		for (String name:partitions) {
 			if (SinFile.getShortName(name).equals(match))
-				matched.add(name);
+				matched.add(name);			
 		}
+
 		if (matched.size()>0) {
 			if (emmc_infos!=null) {
-				Enumeration<String> e = matched.elements();
-				while (e.hasMoreElements()) {
-					String f=e.nextElement();
-					if (!f.contains(String.valueOf(emmc_infos.getDiskSize()))) matched.removeElement(f);
+				for (String f:matched) {
+					if (f.contains(String.valueOf(emmc_infos.getDiskSize()))) 
+						keep.add(f);
 				}
 			} else if (ufs_infos!=null) {
-				Enumeration<String> e = matched.elements();
-				while (e.hasMoreElements()) {
-					String f=e.nextElement();
-					if (f.contains("LUN0"))
-						if (!f.contains(String.valueOf(ufs_infos.getLunSize(0)))) matched.removeElement(f);
-					if (f.contains("LUN1"))
-						if (!f.contains(String.valueOf(ufs_infos.getLunSize(1)))) matched.removeElement(f);
-					if (f.contains("LUN2"))
-						if (!f.contains(String.valueOf(ufs_infos.getLunSize(2)))) matched.removeElement(f);
-					if (f.contains("LUN3"))
-						if (!f.contains(String.valueOf(ufs_infos.getLunSize(3)))) matched.removeElement(f);
-					if (f.contains("LUN4"))
-						if (!f.contains(String.valueOf(ufs_infos.getLunSize(4)))) matched.removeElement(f);
-					if (f.contains("LUN5"))
-						if (!f.contains(String.valueOf(ufs_infos.getLunSize(5)))) matched.removeElement(f);
-					if (f.contains("LUN6"))
-						if (!f.contains(String.valueOf(ufs_infos.getLunSize(6)))) matched.removeElement(f);
+
+				String size="";
+
+				if (match.contains("LUN0")) size=String.valueOf(ufs_infos.getLunSize(0));
+				if (match.contains("LUN1")) size=String.valueOf(ufs_infos.getLunSize(1));
+				if (match.contains("LUN2")) size=String.valueOf(ufs_infos.getLunSize(2));
+				if (match.contains("LUN3")) size=String.valueOf(ufs_infos.getLunSize(3));
+				if (match.contains("LUN4")) size=String.valueOf(ufs_infos.getLunSize(4));
+				if (match.contains("LUN5")) size=String.valueOf(ufs_infos.getLunSize(5));
+				if (match.contains("LUN6")) size=String.valueOf(ufs_infos.getLunSize(6));
+				
+				for (String f : matched) {
+					if (f.contains(size)) {
+						keep.add(f);
+					}
+				}
+				if (keep.size()>0) {
+					matched.clear();
+					matched=keep;
 				}
 			}
 		}
@@ -100,6 +97,7 @@ public class XMLPartitionDelivery {
 				else
 					return null;
 		}
+
 		return null;
 
 	}
