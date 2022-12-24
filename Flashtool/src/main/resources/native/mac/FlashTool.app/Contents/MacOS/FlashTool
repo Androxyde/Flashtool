@@ -63,7 +63,7 @@ setworkingdir
 
 CLASSPATH=$(find $working_dir -name '*.jar'|xargs|tr ' ' ':')
 
-export JAVA_HOME=$working_dir/x10flasher_native/jre
+export JAVA_HOME=$working_dir/jre
 
 unset COCOA
 
