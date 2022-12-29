@@ -107,8 +107,13 @@ distributions {
 					fileMode 0755
 				}
 			}
-            from ('src/main/resources/custom') { into 'custom' }
- 			from(jre) { into 'jre' }
+			if (os.contains("mac") {
+               from ('src/main/resources/custom') { into 'FlashTool.app/Contents/MacOS/custom' }
+ 			   from(jre) { into 'FlashTool.app/Contents/MacOS/jre' }
+			} else {
+               from ('src/main/resources/custom') { into 'custom' }
+ 			   from(jre) { into 'jre' }
+ 			}
             if (os.contains("windows")) {
                 from (project(':FlashtoolDrivers').buildDir.toString()+'/distributions') { into 'drivers' }
             }
@@ -120,35 +125,26 @@ distributions {
 
 [createInstaller]*.dependsOn('installDist')
 
+installDist.doLast() {
+        if (os.contains("mac")) {
+           def dist = "${buildDir}/install/${project.name}"
+           ant.move(file: "$dist/lib", toFile: "$dist/FlashTool.app/Contents/MacOS/lib")
+           ant.symlink(resource: "$dist/FlashTool.app/Contents/MacOS/x10flasher_native/udev/libusbx-1.0.0.dylib", link: "$dist/FlashTool.app/Contents/MacOS/x10flasher_native/udev/libusbx-1.0.dylib")
+        }
+}
+
+task createDMG() {
+        if (os.contains("mac")) {
+           def dist = "${buildDir}/distributions/"
+        }
+}
+
+createDMG.dependsOn('installDist')
+
 distTar.doLast() {
         def dist = "${buildDir}/distributions/"
         ant.move(file: "${dist}/${project.name}.tar", tofile: "${dist}/${project.name}-${flashtoolVersion}.tar")
         ant.bzip2(src: "${dist}/${project.name}-${flashtoolVersion}.tar", destfile: "${dist}/${project.name}-${flashtoolVersion}.tar.bz2")
-}
-
-installDist.doLast() {
-        def dist = "${buildDir}/install/${project.name}"
-        if (os.contains("mac") || os.contains("linux")) {
-                ant.chmod(file: "$dist/FlashTool", perm: '755')
-        }
-        if (os.contains("mac")) {
-                /*mkdir("$dist/Contents/MacOS")
-                mkdir("$dist/Contents/Resources")
-                ant.copy(file: "src/main/app/Info.plist", todir: "$dist/Contents")
-                ant.copy(file: "src/main/app/launcher", todir: "$dist/Contents/MacOS") {
-                        filterset {
-                                filter(token: 'APP_JAR', value: "${project.name}-${version}.jar")
-                                filter(token: 'APP_NAME', value: project.name)
-                                filter(token: 'JAVA_VERSION', value: jvm_version)
-                        }
-                }
-                ant.copy(file: "src/main/app/application.icns", todir: "$dist/Contents/Resources")
-                ant.copy(file: "build/libs/${project.name}-${version}.jar", todir: "$dist/Contents/MacOS")
-                project.exec {
-                        commandLine('chmod', '+x', "$dist/Contents/MacOS/launcher")
-                }*/
-                        ant.symlink(resource: "$dist/x10flasher_native/udev/libusbx-1.0.0.dylib", link: "$dist/x10flasher_native/udev/libusbx-1.0.dylib")
-        }
 }
 
 jar {
