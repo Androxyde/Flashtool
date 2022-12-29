@@ -107,7 +107,7 @@ distributions {
 					fileMode 0755
 				}
 			}
-			if (os.contains("mac") {
+			if (os.contains("mac")) {
                from ('src/main/resources/custom') { into 'FlashTool.app/Contents/MacOS/custom' }
  			   from(jre) { into 'FlashTool.app/Contents/MacOS/jre' }
 			} else {
