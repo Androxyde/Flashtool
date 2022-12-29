@@ -143,8 +143,8 @@ createDMG.dependsOn('installDist')
 
 distTar.doLast() {
         def dist = "${buildDir}/distributions/"
-        ant.move(file: "${dist}/${project.name}.tar", tofile: "${dist}/${project.name}-${flashtoolVersion}.tar")
-        ant.bzip2(src: "${dist}/${project.name}-${flashtoolVersion}.tar", destfile: "${dist}/${project.name}-${flashtoolVersion}.tar.bz2")
+        ant.bzip2(src: "${dist}/Flashtool.tar", destfile: "${dist}/${project.name}-${flashtoolVersion}-${os}.tar.bz2")
+        delete "${dist}/Flashtool.tar"
 }
 
 jar {
