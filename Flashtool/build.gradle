@@ -134,8 +134,15 @@ installDist.doLast() {
 }
 
 task createDMG() {
+        doLast() {
         if (os.contains("mac")) {
+           def inst = "${buildDir}/install/${project.name}/"
            def dist = "${buildDir}/distributions/"
+           new File(dist).mkdirs()
+           def command="hdiutil create -fs HFS+ -srcfolder ${inst} -volname FlashTool ${dist}/${project.name}-${flashtoolVersion}-${os}.dmg"
+           println command
+           command.execute()
+        }
         }
 }
 
