@@ -137,7 +137,7 @@ public class TARestore extends Dialog {
 		lblTAFlash.setLayoutData(fd_lblTAFlash);
 		lblTAFlash.setText("TA Unit to flash :");
 		
-		listViewerTAUnits = new ListViewer(shlTARestore, SWT.BORDER | SWT.V_SCROLL);
+		listViewerTAUnits = new ListViewer(shlTARestore, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		listViewerTAUnits.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent arg0) {
 				IStructuredSelection selection = (IStructuredSelection)listViewerTAUnits.getSelection();
@@ -212,7 +212,7 @@ public class TARestore extends Dialog {
 
 		  });
 		
-		listViewerTAUnitsToFlash = new ListViewer(shlTARestore, SWT.BORDER | SWT.V_SCROLL);
+		listViewerTAUnitsToFlash = new ListViewer(shlTARestore, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		List listTAUnitsToFlash = listViewerTAUnitsToFlash.getList();
 		fd_lblTAFlash.left = new FormAttachment(listTAUnitsToFlash, 0, SWT.LEFT);
 		FormData fd_listTAUnitsToFlash = new FormData();
