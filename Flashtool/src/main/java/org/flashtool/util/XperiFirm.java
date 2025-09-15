@@ -45,9 +45,9 @@ public class XperiFirm {
 			try {
 				File f = new File(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.exe.config");
 				if (f.exists()) f.delete();
-				version = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/version"),Charset.forName("UTF-8"));
+				version = IOUtils.toString(new URL("https://igoreisberg.com/xperifirm/version.php"),Charset.forName("UTF-8"));
 				version = version.substring(0,version.indexOf("|"));
-				downloadurl = IOUtils.toString(new URL("http://www.iagucool.com/xperifirm/download"),Charset.forName("UTF-8"));
+				downloadurl = IOUtils.toString(new URL("https://igoreisberg.com/xperifirm/download.php"),Charset.forName("UTF-8"));
 				tf = new TextFile(OS.getFolderUserFlashtool()+File.separator+"XperiFirm.version","ISO8859-15");
 				tf.readLines();
 				if (!version.equals(tf.getLines().iterator().next())) {
