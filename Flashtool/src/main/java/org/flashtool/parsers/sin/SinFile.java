@@ -88,7 +88,7 @@ public class SinFile {
 				sinv1.parseHash(sinStream);
 				closeStreams();
 			}
-			if (version==2) {
+			else if (version==2) {
 				sinv2 = sinParserV2.parse(sinStream).mapTo(new org.flashtool.parsers.sin.v2.SinParser());
 				sinv2.setLength(sinfile.length());
 				sinv2.setFile(sinfile);
@@ -96,7 +96,7 @@ public class SinFile {
 				sinv2.parseHash(sinStream);
 				closeStreams();
 			}
-			if (version==3) {
+			else if (version==3) {
 				sinv3 = sinParserV3.parse(sinStream).mapTo(new org.flashtool.parsers.sin.v3.SinParser());
 				sinv3.setLength(sinfile.length());
 				sinv3.setFile(sinfile);
