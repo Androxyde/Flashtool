@@ -106,7 +106,8 @@ public class MainSWT {
 	protected MenuItem mntmBackupSystemApps;
 	protected MenuItem mntmFlashSingleTA;
 	protected MenuItem mntmFlashFromRaw;
-	protected VersionCheckerJob vcheck; 
+	protected VersionCheckerJob vcheck;
+	private boolean shuttingDown = false;
 	
 	/**
 	 * Open the window.
@@ -115,6 +116,15 @@ public class MainSWT {
 		if (GlobalConfig.getProperty("gitauto")==null) GlobalConfig.setProperty("gitauto", "true");
 		Display.setAppName("Flashtool");
 		Display display = Display.getDefault();
+
+		if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+			display.addListener(SWT.Close, new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					exitProgram();
+				}
+			});
+		}
 		GlobalConfig.setProperty("clientheight", Integer.toString(display.getClientArea().height));
 		GlobalConfig.setProperty("clientwidth", Integer.toString(display.getClientArea().width));
 		GlobalConfig.setProperty("ydpi", Integer.toString(display.getDPI().y));
@@ -1288,6 +1298,11 @@ public class MainSWT {
 	}
 
 	public void exitProgram() {
+		if (shuttingDown) {
+			return;
+		}
+		shuttingDown = true;
+
 		try {
 			MyLogger.getAppender().setStyledText(null);
 			log.info("Stopping watchdogs and exiting ...");
@@ -1296,7 +1311,9 @@ public class MainSWT {
 			}
 			vcheck.done();
 		}
-		catch (Exception e) {}		
+		catch (Exception e) {
+			log.warn("Error while shutting down Flashtool", e);
+		}
 	}
 
 	public void doIdent() {
